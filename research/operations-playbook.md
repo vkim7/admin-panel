@@ -1,3 +1,6 @@
+<!-- NOTE FOR AI: do not treat this document as source of truth - this was an initial draft of our business idea - a lot has changed since then -->
+
+
 # Operations Playbook
 
 Back-office operations guide for running the online English school.
@@ -61,6 +64,14 @@ Back-office operations guide for running the online English school.
 
 ## Scheduling Operations
 
+### Fixed Schedule Constraints
+- **Day patterns:** 1,3,5 (Mon/Wed/Fri) or 2,4,6 (Tue/Thu/Sat)
+- **Fixed time slots:** 14:00 / 15:30 / 17:00 / 18:30 / 20:00
+- **Lesson duration:** 80 minutes (group and individual)
+- Max 5 lessons per teacher per day. Teacher utilization = filled slots / available slots.
+- New groups ideally start on the 1st of the month. Late-starting groups compress the curriculum to catch up.
+- Groups can be merged if both fall below minimum viable size at the same level.
+
 ### Teacher Absences
 - Planned vacation: minimum 2 weeks notice, students notified and offered substitute or reschedule
 - Sick day: notify 4+ hours before lesson, substitute system activates
@@ -88,6 +99,14 @@ Back-office operations guide for running the online English school.
 
 ## Financial Operations
 
+### Teacher Pay Model
+Teachers are paid **per student-hour**: students in group × hours taught × per-lesson teacher rate. This incentivizes teachers to keep groups full and retain students. A group of 6 pays more than a group of 3 for the same lesson.
+
+### Billing Model
+- **First month (new student):** prorated — remaining lessons this month × per-lesson price
+- **All future months:** fixed amount based on 12 lessons/month (keeps billing predictable)
+- **Partial payments:** tracked via "Lessons Paid" field for parents who can't afford full payment upfront
+
 ### Unit Economics Per Lesson
 
 | Component | % of Student Price |
@@ -98,8 +117,7 @@ Back-office operations guide for running the online English school.
 | **Net margin** | **10-25%** |
 
 ### Pricing Strategy
-- Offer 3 tiers (monthly packages: 8/12/16 lessons)
-- Bulk discounts of 10-20% for larger packages
+- Monthly billing: 12 lessons/month standard (first month prorated)
 - Never discount more than 25%
 - Target LTV:CAC ratio of 3:1
 
@@ -159,7 +177,7 @@ Back-office operations guide for running the online English school.
 
 ## What Breaks First (In Scaling Order)
 
-1. **10-20 students:** Manual scheduling unsustainable → need software
+1. **10-20 students:** Manual scheduling becomes tedious → software helps (note: fixed time slots + day patterns delay this pain point significantly vs free-form scheduling)
 2. **20-30:** Teacher quality varies → need standardized QA
 3. **30-50:** Can't personally respond to everyone → need systems
 4. **50-75:** Billing complexity → need accounting/billing system

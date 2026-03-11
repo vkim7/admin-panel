@@ -23,16 +23,19 @@ Three surfaces + a Telegram bot:
 | Admin panel | Next.js web app | Admin/operations team |
 | Telegram bot | Bot API | Students (notifications) |
 
-Lessons happen on **Zoom (paid)**. No in-app video for now. Zoom recordings enabled — shared via link for students who missed a lesson or want to review.
+Lessons happen on **Zoom (paid)**, 80 minutes each (group and individual). No in-app video for now. Zoom recordings enabled — shared via link for students who missed a lesson or want to review.
 
 ---
 
 ## Student App (Telegram Mini App)
 
 ### Onboarding
-- Application form: name, phone, goal (general English / IELTS prep / business / kids), self-assessed level, preferred days + time slots
-- Application goes to admin queue for manual review and teacher/group assignment
-- Student notified via Telegram when assigned
+- Lead management and placement test handled in **amoCRM (Kommo)** — not in our app at launch
+- Once placement test passed, student record is created in our system via amoCRM API integration (status: awaiting_assignment)
+- Student appears in admin's Reception tab for group assignment
+- Admin assigns to group → student status becomes "active" → student notified via Telegram
+- Student data includes: name, phone, level, preferred day pattern (1,3,5 or 2,4,6), preferred time slot (14:00 / 15:30 / 17:00 / 18:30 / 20:00)
+- **Later:** in-app placement test in Telegram Mini App, students enter our system at application stage
 
 ### Homework
 - View assigned exercises for each lesson
@@ -70,6 +73,14 @@ Lessons happen on **Zoom (paid)**. No in-app video for now. Zoom recordings enab
 - Weekly calendar showing all assigned individual students and groups
 - Each lesson entry shows: student/group name, level, time, Zoom link
 
+### Group Details (teacher's primary view per group)
+- Student roster with per-lesson attendance tracking (teacher marks absent per lesson date)
+- Total absent count per student
+- Uncertain flag — teacher can mark students they feel are at risk of leaving (surfaces on admin's Uncertain List)
+- Lessons paid per student (visible to teacher for awareness)
+- Mid/Final exam dates — teacher manually sets these based on curriculum progress
+- Comments per student
+
 ### Lesson Delivery
 - Pre-loaded lesson guide per session (digitized from physical materials)
 - Presentation content to screen-share on Zoom
@@ -83,13 +94,9 @@ Lessons happen on **Zoom (paid)**. No in-app video for now. Zoom recordings enab
 - Review and grade writing/speaking submissions
 - Add comments/corrections
 
-### Students
-- List of all assigned students (individual + within groups)
-- Per-student view: level, progress, homework history, lesson history, teacher notes
-
 ### Earnings
 - Lessons completed this period
-- Pay rate
+- Number of students per group (affects payout — per student-hour model)
 - Expected payout amount
 
 ### Out of Scope (Later)
@@ -102,56 +109,34 @@ Lessons happen on **Zoom (paid)**. No in-app video for now. Zoom recordings enab
 
 ## Admin Panel (Next.js Web App)
 
-### Student Management
-- View all students with search/filter (by level, group, teacher, payment status, active/inactive)
-- Add new student (from application queue or manually)
-- Assign student to teacher (individual) or group
-- Move student between groups
-- Set/update student level
-- Mark payment status (paid / unpaid / expiry date)
-- View student history (lessons, homework, payments)
+Detailed in separate file: **admin-panel-plan.md**
 
-### Teacher Management
-- Add/edit teacher profiles
-- Assign students and groups to teachers
-- Set teacher schedule (what days/times they teach, which student/group in each slot)
-- View teacher load (number of students, lessons per week)
+Must-have tabs:
+- **Main Schedule** — capacity grid (teachers × fixed time slots × day patterns). The operational pulse.
+- **Group Details** — per-group student roster, CRM codes, payment status, uncertain flags
+- **Reception** — student pipeline: placement test → follow-up calls → group assignment
+- **No Payment List** — daily ops tool for tracking and reminding unpaid students (SMS reminders)
+- **Student Management** — search/lookup any student, edit profile, move between groups, full history
+- **Teacher Management** — profiles, availability, load overview, assignments
 
-### Group Management
-- Create group: name, level, max 6 students, assigned teacher, recurring schedule (e.g. Mon/Wed/Fri 14:00)
-- Add/remove students from group
-- View group roster and attendance
-
-### Content Management
-- Upload and organize digitized lesson plans by level and course type
-- Upload exercises organized by level and topic
-- Organize presentation materials (what teacher screen-shares)
-- Structure: Course → Level → Unit → Lesson → Exercises
-- Designed so a full CMS builder (drag-drop exercise creation, versioning, publish/unpublish) can replace this later without restructuring data
-
-### Analytics (Basic)
-- Total students (active / inactive / churned)
-- Revenue per month (manual tracking based on payment status)
-- Teacher utilization (lessons per teacher)
-- Homework completion rates
-- New applications pending
-
-### Out of Scope (Later)
-- Payment integration (Click, Payme)
-- Teacher recruitment pipeline
-- Automated re-engagement comms
-- Content analytics (exercise error rates, lesson effectiveness)
-- Full financial reporting
-- Bulk student actions
+Later scope: Uncertain List, Exam List, Lost List, Payment List, Content Management, Analytics
 
 ---
 
-## Telegram Bot
+## Notifications
 
-### Notifications
+Two channels:
+- **SMS** — payment reminders (higher urgency/open rate). Routing configurable.
+- **Telegram** — everything else
+
+### Telegram Bot
 - Lesson reminder (configurable, e.g. 1 hour before)
 - Homework assigned notification
 - Homework due reminder
+
+### SMS
+- Payment reminder (triggered from No Payment List in admin panel, single or multi-select)
+- Fallback for students/parents without Telegram
 
 ### Out of Scope (Later)
 - Daily vocab word
@@ -161,17 +146,17 @@ Lessons happen on **Zoom (paid)**. No in-app video for now. Zoom recordings enab
 
 ---
 
-## Content Structure
+## Teaching Materials
 
-Physical materials to be digitized into structured format:
+Teachers manage materials themselves for now — physical Oxford Navigate textbooks + their own presentations shared via Zoom screen-share. No content management system at launch.
+
+## Content Structure (for homework exercises in student app)
 
 ```
 Course (e.g. "Beginner General English", "IELTS Prep")
-  └── Level (A1, A2, B1, B2, C1)
+  └── Level (Beginner, Elementary, Pre-intermediate, Intermediate, Upper-intermediate, Advanced)
        └── Unit (thematic grouping)
             └── Lesson
-                 ├── Lesson guide (teacher-facing: what to teach, how, tips)
-                 ├── Presentation content (screen-share materials)
                  └── Exercises (student-facing homework)
                       ├── Type: multiple_choice
                       ├── Type: fill_in_blank
@@ -187,10 +172,14 @@ Exercises are assigned per level by default. Data model supports overriding at t
 ## Key Architectural Considerations
 
 - **Scale target**: 1000+ students, design data model and APIs accordingly
-- **CMS evolution**: content management starts as simple admin forms with structured data; must be replaceable with a full CMS builder later without data migration
+- **CMS evolution**: no content management at launch (teachers use physical textbooks). When we digitize, start with simple admin forms; must be replaceable with a full CMS builder later without data migration
 - **Exercise customization**: fixed per level now, per-student overrides later — model both from the start
 - **Payment integration**: not built now but the student model should have payment-related fields ready (status, expiry, package type)
 - **Schedule view**: not in student app now but the data exists (lesson times, Zoom links) so adding a calendar view later is trivial
+- **Fixed scheduling constraints**: 5 time slots × 2 day patterns. Keeps scheduling manageable at scale. All lessons are 80 minutes.
+- **amoCRM (Kommo) integration**: leads managed in amoCRM up to placement test. Student record created in our DB after placement passed (API polling at launch, webhooks later). Student entity supports full lifecycle: awaiting_assignment → active → inactive
+- **CRM codes**: every student gets a unique CRM code (plain sequence number, e.g. "1", "42") used as identifier across all surfaces
+- **Single student entity**: one record per student, surfaced in multiple views (Reception, Student Management, Group Details, No Payment List) via status/filter — not separate tables
 - **Group flexibility**: students can be moved between groups; a student can be in one group + have individual lessons simultaneously
 - **Bilingual UI**: Uzbek + Russian from day one on all surfaces
 - **Telegram Mini App constraints**: design exercises for mobile-first touch interaction; no drag-drop initially if it's unreliable on mobile — use tap-to-select alternatives

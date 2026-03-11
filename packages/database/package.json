@@ -1,0 +1,32 @@
+{
+  "name": "@eng/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.4.2",
+    "@prisma/client": "^7.4.2",
+    "dotenv": "^17.3.1",
+    "pg": "^8.19.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.4.2",
+    "tsx": "^4",
+    "typescript": "^5"
+  }
+}

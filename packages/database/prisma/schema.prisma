@@ -1,0 +1,1257 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Application-Level Constraints (implement in code) ──────────────────────────
+//
+// 1. Student.phone uniqueness — enforced at DB level (@unique). May need to relax
+//    later if siblings share a parent's phone. If relaxed, show a warning in the
+//    UI instead: "this phone is already used by student X — are you sure?"
+//
+// 2. Trial membership staleness — GroupMembership.isTrial should be resolved
+//    (set to false if committed, or leaveDate set if not) right after the trial
+//    lesson. Show a persistent visual alert for any unresolved trial memberships
+//    (query: isTrial = true AND joinDate < today). This is urgent — admin needs
+//    to confirm whether the student is staying immediately after the class.
+//
+// 3. Group.maxStudents — enforce in a transaction before adding a GroupMembership.
+//    Count active memberships (leaveDate IS NULL) and reject if >= maxStudents.
+//    Over-capacity is a soft business rule, not a hard DB constraint.
+//    Default: 6 for GROUP type, 1 for INDIVIDUAL type.
+//
+// 4. TeacherScheduleSlots are per-date — pre-created alongside Lesson records
+//    when a group is created. Not synced with Group.days (days defines the
+//    pattern; slots are the actual dates). Same transaction rule applies for
+//    Attendance.groupId (denormalized from Lesson.groupId).
+//
+// 5. Exam duplicates — a group can have multiple exams of the same type (e.g.,
+//    rescheduled mid exam). Validate in the UI if this is intentional.
+//
+// 6. Price must be a multiple of 1,000 — validate pricePerLesson on
+//    PriceSetting (Zod: z.number().int().multipleOf(1000)). This guarantees
+//    price × discountPercent / 100 always produces a whole number, keeping the
+//    entire billing chain as pure integer math with zero rounding.
+//
+// 7. Minor enrollment requires Family — when creating a student whose
+//    dateOfBirth makes them under 18 at enrollment time, familyId must be set.
+//    Validate in the enrollment form (Zod refine). The family link persists even
+//    after the student turns 18 — this is an enrollment-time rule, not an ongoing
+//    constraint.
+//
+// 8. Lesson pre-creation — when creating a group, generate all Lesson records
+//    and TeacherScheduleSlots from startDate through endDate, skipping holidays.
+//    Each Lesson gets teacherId from the group's teacher, originalTeacherId set
+//    to the same value, startTime denormalized, status SCHEDULED.
+//
+// 9. Cancellation flow — mark Lesson status CANCELLED + set cancelledAt,
+//    cancelledById, and cancellationReasonId. Delete its TeacherScheduleSlot.
+//    Create a replacement Lesson at the next valid date after current endDate
+//    (with rescheduledFromId pointing to the cancelled one, and originalLessonId
+//    pointing to the first lesson in the chain — if cancelled lesson has
+//    originalLessonId, copy it; otherwise use the cancelled lesson's own ID).
+//    Create new TeacherScheduleSlot for the replacement, update Group endDate
+//    to the new last lesson date.
+//
+//    ⚠ CRITICAL — originalLessonId propagation: the billing rule "exclude
+//    where originalLessonId IS NOT NULL" means a propagation bug = double
+//    billing. When a replacement lesson (B) is itself cancelled and rescheduled
+//    to (C), copy originalLessonId FROM B (which already points to chain root
+//    A), do NOT use B's own ID. Chain: A(billed) → B(originalLessonId=A) →
+//    C(originalLessonId=A, NOT B). Requires thorough test coverage — unit
+//    test the A→B→C chain scenario and verify billing exclusion.
+//
+// 10. Group merge — set mergedIntoGroupId on the absorbed group, set isActive
+//     to false, set leaveDate on all active memberships (triggers per-membership
+//     leave billing #31 — overpayment becomes transfer credit, not refund),
+//     create new memberships in the surviving group (with previousMembershipId
+//     linking to the old one, triggers billing period pre-creation #32).
+//
+// 11. Teacher deactivation — before setting Teacher.isActive = false, reassign
+//     each of the teacher's active groups to a different teacher individually
+//     (each group may go to a different teacher based on availability and level).
+//     Update all future SCHEDULED lessons and their TeacherScheduleSlots for
+//     each reassigned group. Do not deactivate a teacher with unresolved groups.
+//
+// 12. Group.days validation — only [1,3,5] (Mon/Wed/Fri) or [2,4,6]
+//     (Tue/Thu/Sat) are valid day patterns. Validate with Zod at the app level.
+//
+// 12a. Group.durationMinutes validation — only 60 or 80 are valid values.
+//     Validate with Zod at the app level (z.union([z.literal(60), z.literal(80)])).
+//     The schedule slot conflict detection assumes lessons fit within the
+//     90-minute grid spacing between start times (14:00/15:30/17:00/18:30/20:00).
+//     A non-standard duration would silently break overlap detection.
+//
+// 12b. Group.days immutability — days cannot be changed after group creation.
+//     All Lessons and TeacherScheduleSlots are pre-created based on the day
+//     pattern (#8). Changing days would invalidate every existing lesson date.
+//     If a day pattern change is needed, create a new group with the correct
+//     days and transfer students via the standard transfer workflow.
+//
+// 13. Group.startTime change — when updating a group's startTime, programmatically
+//     update all future SCHEDULED lessons' startTime and their TeacherScheduleSlots
+//     in the same transaction. Don't rely on manual updates.
+//
+// 14. Teacher rate and lesson price changes — teacher rates tracked in
+//     TeacherRateChange, lesson prices tracked in PriceSetting (global, keyed
+//     by levelCategory + groupType). Both use effectiveFrom dates. When
+//     generating TeacherPaymentPeriod or StudentPaymentPeriod, look up the
+//     rate/price from the most recent history entry where effectiveFrom <=
+//     period start date. TeacherPaymentPeriod.rate and
+//     StudentPaymentPeriod.pricePerLesson are snapshots — immutable after
+//     creation. Initial teacher rate is recorded as the first history entry
+//     when a teacher is created. Initial prices are seeded in PriceSetting.
+//
+// 15. StudentPaymentPeriod manual editing — admin can manually adjust amountDue,
+//     totalLessons, discountAmount on a billing period (e.g., error correction).
+//     Always recalculate paymentStatus from amountPaid vs (amountDue - discountAmount)
+//     whenever either side changes — use a single helper function for this.
+//
+// 16. paymentStatus sync — never update amountPaid or paymentStatus independently.
+//     Use a single helper that computes status from amountPaid vs
+//     (amountDue - discountAmount) and updates both fields atomically.
+//
+// 17. lostReasonId ↔ Student.status coupling — setting lostReasonId requires
+//     status = INACTIVE (with inactivatedAt and inactivatedById set). Setting
+//     status = INACTIVE requires lostReasonId. Enforce in application code.
+//
+// 18. Attendance pre-creation — for each lesson, attendance records are created
+//     for all active group members (leaveDate IS NULL) with isAbsent = false.
+//     Teacher updates isAbsent during or after the lesson. isAbsent does NOT
+//     affect student active/inactive status — attendance is for tracking only.
+//
+// 19. Group.endDate > Group.startDate — validate with Zod at the app level.
+//
+// 20. TeacherAvailability overlap — validate in application code that a teacher's
+//     availability blocks for the same dayOfWeek don't overlap in time.
+//
+// 20a. TeacherUnavailability overlap — validate in application code that a
+//     teacher's unavailability records for the same date don't have overlapping
+//     time ranges. Allow multiple non-overlapping blocks per day (e.g., morning
+//     and evening). A whole-day entry (startTime IS NULL) conflicts with any
+//     other entry on the same date.
+//
+// 21. Permanent teacher change — when a group's teacher is permanently changed
+//     (not a one-off substitution): update Group.teacherId, close the current
+//     GroupTeacherHistory record (set endDate), create a new one, and update ALL
+//     future SCHEDULED lessons' teacherId AND originalTeacherId to the new
+//     teacher. Swap TeacherScheduleSlots for those lessons. This ensures
+//     teacherId != originalTeacherId on a Lesson always means a substitution,
+//     never a permanent reassignment.
+//
+// 22. mergedIntoGroupId — allowed for both GROUP and INDIVIDUAL types.
+//     GROUP merge: two small groups at the same level combine into one.
+//     INDIVIDUAL merge: two 1-student individual arrangements combine into
+//     one 2-student individual group. Same flow in both cases: set
+//     mergedIntoGroupId on absorbed group, isActive = false, close
+//     memberships, create new memberships in surviving group.
+//
+// 23. Group graduation — admin triggers when no SCHEDULED/PENDING_RESOLUTION
+//     lessons remain (all COMPLETED or CANCELLED, including replacements).
+//     Skip if skipAutoGraduation = true or level = IELTS. Otherwise:
+//     create new group at next level (same teacher, days, startTime, durationMinutes,
+//     maxStudents, progressStage = BEGINNING). startDate = next valid lesson date
+//     after old group's last lesson (matching day pattern, skipping holidays).
+//     endDate auto-calculated. Price is determined by PriceSetting (looked up
+//     from the new group's level category + type). Create
+//     GroupTeacherHistory + pre-create lessons/slots. Admin selects continuing
+//     students → new memberships with previousMembershipId (which triggers
+//     billing period pre-creation per #32). Close old group: isActive = false,
+//     graduatedIntoGroupId set, leaveDate on all memberships (for record-keeping
+//     only — since all lessons are already COMPLETED/CANCELLED, billing periods
+//     are already finalized and no billing adjustment is needed; this is NOT the
+//     same as the mid-program leave billing in #31).
+//     Auto-update Student.level to the new group's level for continuing students.
+//
+// 24. Level progression order: BEGINNER → ELEMENTARY → PRE_INTERMEDIATE →
+//     INTERMEDIATE → UPPER_INTERMEDIATE → IELTS. IELTS has no next level.
+//
+// 25. Transfer billing — when a student transfers mid-month with unused paid
+//     lessons: adjust Group A's billing period (audit trail via
+//     PaymentPeriodAdjustment), create a Payment on Group B's period with
+//     isTransferCredit = true and the credit amount. Recalculate paymentStatus
+//     on both periods.
+//
+// 26. Individual lesson student cancellation — students in INDIVIDUAL groups
+//     may cancel lessons subject to: max 2 cancellations per calendar month,
+//     min 24 hours advance notice. Late cancellation (< 24h) = lesson counts
+//     as delivered, no reschedule. Count by querying CANCELLED lessons for the
+//     student's individual group in the current month where cancellationReasonId
+//     = "Student request". Group lessons do NOT allow student cancellations.
+//
+// 27. Individual lesson offline reschedule — when student and teacher agree to
+//     move an individual lesson to a different time (lesson still happens):
+//     set originalDate/originalStartTime to preserve the old values, update
+//     lessonDate/startTime to the new values, delete old TeacherScheduleSlot
+//     and create new one at the new date/time. Does NOT count toward
+//     cancellation limit. Not applicable to group lessons.
+//
+// 28. TeacherUnavailability auto-detection — when a TeacherUnavailability
+//     record is created, query all SCHEDULED lessons for that teacher on the
+//     affected date (matching time range if startTime/endTime are set). Set
+//     those lessons to PENDING_RESOLUTION with pendingAt = now(). Validate
+//     no duplicate unavailability entries for same teacher+date+time (app-level).
+//
+// 29. PENDING_RESOLUTION alert — persistent visual indicator (like stale
+//     trials) for lessons WHERE status = 'PENDING_RESOLUTION', ordered by
+//     pendingAt ascending (oldest unresolved first). Resolution: assign a
+//     substitute (swap schedule slot) or cancel + append to end of program.
+//     Schedule slot is KEPT during PENDING_RESOLUTION (prevents double-booking
+//     while unresolved) and only cleaned up at resolution time.
+//
+// 30. Absence policy — group lessons: no freezes, no free absences. Student
+//     pays for every lesson regardless of attendance. Individual lessons:
+//     student cancellation allowed per constraint #26. Only teacher-initiated
+//     cancellations (via TeacherUnavailability) result in free rescheduling
+//     for group lessons.
+//
+// 31. Per-membership leave billing — triggered when leaveDate is set on a
+//     GroupMembership mid-program (dropout, transfer, or merge). NOT triggered
+//     for graduation — at graduation all lessons are already COMPLETED/CANCELLED
+//     and billing periods are finalized (see #23).
+//     a) Current month's StudentPaymentPeriod: reduce totalLessons to lessons
+//        up to leaveDate, recalculate amountDue. Create PaymentPeriodAdjustment.
+//     b) Future months' StudentPaymentPeriods: hard-delete (they are untouched —
+//        UNPAID, no payments, no adjustments, no applied promotions).
+//     c) Recalculate paymentStatus on current period.
+//     d) Handle overpayment based on leave type:
+//        - Transfer (transferReasonId set) or Merge (group.mergedIntoGroupId set):
+//          Do NOT create a Refund. Instead, create a Payment with
+//          isTransferCredit = true on the new group's billing period (#25).
+//        - Dropout / other: if amountPaid > (amountDue - discountAmount),
+//          auto-create a Refund with status PENDING.
+//     e) Pending refunds surface in a Pending Refunds list for admin to process.
+//     Note: Student goes INACTIVE only when ALL active memberships end. Setting
+//     INACTIVE requires lostReasonId (constraint #17). A student can leave one
+//     group while staying ACTIVE in others.
+//
+// 32. Billing period pre-creation — when a GroupMembership is created (and
+//     isTrial = false), generate StudentPaymentPeriod records for each month
+//     from joinDate through group endDate:
+//     a) Count pre-created Lessons per calendar month from joinDate onward.
+//     b) Create a StudentPaymentPeriod per month with totalLessons = lesson
+//        count for that month, pricePerLesson snapshotted from PriceSetting
+//        (derive levelCategory from group level, then most recent where
+//        effectiveFrom <= period start), amountDue = totalLessons × pricePerLesson.
+//     c) Apply active promotions: query the student's active StudentPromotions,
+//        calculate discountAmount per period, create AppliedPromotion records,
+//        and set discountAmount on each StudentPaymentPeriod. For recurring
+//        promos, increment monthsUsed and check recurringMonths / expiresAt.
+//     d) First month: isPartialPeriod = true if joining after the 1st.
+//     e) Trial students (isTrial = true): do NOT create billing periods.
+//        Create them when the student commits (isTrial → false), using the
+//        original joinDate as the start.
+//     This makes the No Payment List purely query-based — all periods exist
+//     from membership creation. No cron jobs or generation steps needed.
+//
+// 33. Student.level auto-update on graduation — when a student moves to a
+//     graduated group (constraint #23), update Student.level to match the
+//     new group's level. This keeps Student.level in sync with current
+//     enrollment. App-level warning (not constraint) if manually assigning
+//     a student to a group with a different level.
+//
+// 34. Time format validation — all time String fields must be in HH:mm format
+//     (24-hour, zero-padded). Validate with Zod: z.string().regex(/^\d{2}:\d{2}$/).
+//     Applies to: Group.startTime, Lesson.startTime, Lesson.originalStartTime,
+//     TeacherAvailability.startTime/endTime, TeacherScheduleSlot.startTime,
+//     TeacherUnavailability.startTime/endTime, Student.preferredStartTime.
+//     Inconsistent format (e.g., "9:00" vs "09:00") would break the
+//     TeacherScheduleSlot unique constraint and lexicographic time comparisons.
+//
+// 35. Family.parentPhone dedup — when creating a Family, search for existing
+//     families with the same parentPhone. If found, warn the admin: "A family
+//     with this phone already exists — link to it instead?" This prevents
+//     duplicate Family records for the same parent. Not a hard constraint
+//     (different guardians could theoretically share a phone), just a UI warning.
+//
+// 36. Discount cap — when applying promotions during billing period creation
+//     (#32) or manual editing (#15), clamp total discountAmount to amountDue.
+//     Promotions stack additively with no cap at the Promotion level, but the
+//     resulting discountAmount on StudentPaymentPeriod must never exceed
+//     amountDue. Otherwise (amountDue - discountAmount) goes negative, which
+//     makes paymentStatus always PAID and produces nonsensical billing data.
+//     Validate with Zod: discountAmount <= amountDue.
+//
+// 37. activeStudentCount snapshot timing — when marking a Lesson COMPLETED,
+//     set activeStudentCount to the count of active group members (leaveDate
+//     IS NULL on GroupMembership) as of lessonDate, NOT as of the moment the
+//     teacher clicks "complete." If there's a delay between the lesson and
+//     completion marking, a student may have left in between — the count
+//     should reflect who was enrolled when the lesson actually happened.
+//
+// ────────────────────────────────────────────────────────────────────────────────
+
+// ─── Enums ──────────────────────────────────────────────────────────────────────
+
+enum StudentStatus {
+  AWAITING_ASSIGNMENT
+  ACTIVE
+  INACTIVE
+}
+
+enum PreferredLanguage {
+  UZBEK
+  RUSSIAN
+}
+
+enum Level {
+  BEGINNER
+  ELEMENTARY
+  PRE_INTERMEDIATE
+  INTERMEDIATE
+  UPPER_INTERMEDIATE
+  IELTS
+}
+
+enum LevelCategory {
+  GENERAL // BEGINNER through UPPER_INTERMEDIATE
+  IELTS // IELTS level only
+}
+
+enum ProgressStage {
+  BEGINNING
+  MID
+  FINAL
+}
+
+enum GroupType {
+  GROUP
+  INDIVIDUAL
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+}
+
+enum ExamType {
+  MID
+  FINAL
+}
+
+enum UncertainFlagSource {
+  TEACHER
+  ADMIN
+}
+
+enum LessonStatus {
+  SCHEDULED
+  PENDING_RESOLUTION
+  COMPLETED
+  CANCELLED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
+enum PromotionType {
+  SEASONAL
+  FAMILY
+  LOYALTY
+  WIN_BACK
+  TRIAL
+  EARLY_PAYMENT
+  PARTNER
+  OTHER
+}
+
+enum TeacherPayStatus {
+  UNPAID
+  PAID
+}
+
+enum ReferralStatus {
+  PENDING
+  COMPLETED
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+}
+
+enum AdjustmentType {
+  MANUAL
+  TRANSFER
+  DROPOUT
+  MERGE
+}
+
+enum SmsStatus {
+  SENT
+  DELIVERED
+  FAILED
+}
+
+// ─── Core Entities ──────────────────────────────────────────────────────────────
+
+model AdminUser {
+  id         String    @id @default(cuid())
+  telegramId BigInt    @unique
+  firstName  String
+  lastName   String
+  username   String?
+  role       AdminRole @default(ADMIN)
+  isActive   Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  recordedPayments         Payment[]                 @relation("RecordedByAdmin")
+  callsMade                CallHistory[]             @relation("CalledByAdmin")
+  smsSent                  SmsHistory[]              @relation("SentByAdmin")
+  assignedMemberships      GroupMembership[]         @relation("AssignedByAdmin")
+  activatedStudents        Student[]                 @relation("ActivatedByAdmin")
+  inactivatedStudents      Student[]                 @relation("InactivatedByAdmin")
+  cancelledLessons         Lesson[]                  @relation("CancelledByAdmin")
+  groupTeacherChanges      GroupTeacherHistory[]     @relation("TeacherChangedByAdmin")
+  paymentPeriodAdjustments PaymentPeriodAdjustment[] @relation("AdjustedByAdmin")
+  teacherUnavailabilities  TeacherUnavailability[]   @relation("UnavailabilityCreatedByAdmin")
+  refundsInitiated         Refund[]                  @relation("RefundInitiatedByAdmin")
+  refundsProcessed         Refund[]                  @relation("RefundProcessedByAdmin")
+  teacherRateChanges       TeacherRateChange[]       @relation("RateChangedByAdmin")
+  priceSettings            PriceSetting[]            @relation("PriceChangedByAdmin")
+  generatedTeacherPayments TeacherPaymentPeriod[]    @relation("GeneratedByAdmin")
+  deactivatedTeachers      Teacher[]                 @relation("DeactivatedTeacher")
+}
+
+model Teacher {
+  id         String  @id @default(cuid())
+  firstName  String
+  lastName   String
+  phone      String  @unique
+  telegramId BigInt? @unique
+
+  // Levels this teacher can teach (PostgreSQL array, queryable via `has` filter)
+  levels Level[]
+
+  // Language capabilities
+  canTeachUzbek       Boolean @default(false)
+  canTeachRussian     Boolean @default(false)
+  canTeachEnglishOnly Boolean @default(true)
+
+  // Pay rates are tracked in TeacherRateChange (history table with effectiveFrom dates).
+  // No rate fields on Teacher — query the most recent TeacherRateChange where
+  // effectiveFrom <= target date. Rates are per-teacher (not per-group).
+
+  isActive        Boolean   @default(true)
+  deactivatedAt   DateTime? // When isActive was set to false (audit trail)
+  deactivatedById String?   // Which admin deactivated this teacher
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deactivatedBy       AdminUser?              @relation("DeactivatedTeacher", fields: [deactivatedById], references: [id], onDelete: Restrict)
+  availability        TeacherAvailability[]
+  unavailability      TeacherUnavailability[]
+  groups              Group[]
+  scheduleSlots       TeacherScheduleSlot[]
+  lessons             Lesson[]                @relation("LessonTeacher")
+  originalLessons     Lesson[]                @relation("OriginalLessonTeacher")
+  paymentPeriods      TeacherPaymentPeriod[]
+  groupTeacherHistory GroupTeacherHistory[]
+  rateChanges         TeacherRateChange[]
+}
+
+model Family {
+  id              String  @id @default(cuid())
+  name            String? // Optional label, e.g. "Lee family"
+  parentFirstName String
+  parentLastName  String
+  parentPhone     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  students Student[]
+
+  @@index([parentPhone])
+}
+
+model Student {
+  id             String @id @default(cuid())
+  crmCode        String @unique @default("") // e.g. "1", "42" — plain sequenceNumber as string, computed by DB trigger. Provide explicitly to override.
+  sequenceNumber Int    @unique @default(autoincrement()) // Race-condition-free ID generation. crmCode is computed from this at creation time.
+
+  firstName   String
+  lastName    String
+  phone       String        @unique // Student's own Telegram-linked phone (required for Mini App invite)
+  telegramId  BigInt?       @unique // For future student Mini App auth via Telegram initData
+  dateOfBirth DateTime      @db.Date
+  level       Level
+  status      StudentStatus @default(AWAITING_ASSIGNMENT)
+
+  // Family — null for adults, set on creation for minors
+  familyId String?
+
+  // Reception placement preferences (flexible scheduling)
+  preferredDays      Int[] // e.g. [1, 3, 5] for Mon/Wed/Fri. 1=Mon, 7=Sun (ISO 8601)
+  preferredStartTime String? // e.g. "14:00"
+  preferredLanguage  PreferredLanguage? // Null = no preference (typically advanced students)
+
+  // Referral code — unique, auto-generated, for referral tracking
+  referralCode String? @unique
+
+  // Uncertain flag — teacher or admin can flag a student as uncertain
+  isUncertain        Boolean              @default(false)
+  uncertainFlaggedBy UncertainFlagSource?
+  uncertainComment   String?
+
+  comment      String?
+  amoCrmLeadId String? @unique // Dedup for amoCRM polling
+
+  // Lifecycle audit
+  activatedAt     DateTime? // When status changed to ACTIVE (assigned to first group)
+  activatedById   String? // Which admin activated
+  inactivatedAt   DateTime? // When status changed to INACTIVE
+  inactivatedById String? // Which admin deactivated
+  lostReasonId    String?
+  otherLostReason String? // Free text when reason isOther
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  family            Family?                @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  activatedBy       AdminUser?             @relation("ActivatedByAdmin", fields: [activatedById], references: [id], onDelete: Restrict)
+  inactivatedBy     AdminUser?             @relation("InactivatedByAdmin", fields: [inactivatedById], references: [id], onDelete: Restrict)
+  lostReason        LostReason?            @relation(fields: [lostReasonId], references: [id], onDelete: Restrict)
+  groupMemberships  GroupMembership[]
+  attendanceRecords Attendance[]
+  payments          Payment[]
+  paymentPeriods    StudentPaymentPeriod[]
+  callHistory       CallHistory[]
+  smsHistory        SmsHistory[]
+  studentPromotions StudentPromotion[]
+  refunds           Refund[]
+  referralsMade     Referral[]             @relation("Referrer")
+  referralReceived  Referral?              @relation("Referred")
+
+  @@index([status])
+  @@index([level])
+  @@index([isUncertain])
+  @@index([familyId])
+}
+
+// ─── Scheduling ─────────────────────────────────────────────────────────────────
+
+model TeacherAvailability {
+  id        String @id @default(cuid())
+  teacherId String
+  dayOfWeek Int // 1=Monday, 7=Sunday (ISO 8601)
+  startTime String // e.g. "14:00"
+  endTime   String // e.g. "22:00"
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+
+  @@unique([teacherId, dayOfWeek, startTime])
+}
+
+// One-off unavailability for specific dates — sick days, personal days,
+// appointments. Separate from TeacherAvailability (recurring weekly pattern).
+//
+// - startTime null, endTime null → whole day (sick, traveling)
+// - startTime "08:00", endTime "13:00" → morning block only
+// - startTime "16:00", endTime null → from 16:00 onwards (rest of day)
+//
+// When created, the system auto-detects affected SCHEDULED lessons and sets
+// them to PENDING_RESOLUTION. Multiple records for the same day are allowed
+// (e.g., two separate time blocks).
+model TeacherUnavailability {
+  id        String   @id @default(cuid())
+  teacherId String
+  date      DateTime @db.Date
+  startTime String? // null = whole day
+  endTime   String? // null with startTime set = from startTime onwards
+  reason    String?
+
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  teacher   Teacher    @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  createdBy AdminUser? @relation("UnavailabilityCreatedByAdmin", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([teacherId, date])
+}
+
+// Teacher schedule slots — per-date conflict detection.
+// One slot is created for each actual lesson date (not recurring day-of-week).
+// When lessons are pre-created for a group, a matching slot is created for each
+// lesson date. This enables accurate conflict detection even when lessons are
+// cancelled/rescheduled to different dates.
+//
+// Slots are DELETED when a lesson is cancelled (the Lesson record preserves
+// history; slots are only for conflict detection). A replacement lesson gets
+// its own new slot at the rescheduled date.
+//
+// IMPORTANT: Overlap detection relies on fixed slot spacing — start times
+// are 90 minutes apart (14:00 / 15:30 / 17:00 / 18:30 / 20:00) while
+// lessons are 80 minutes (or 60), leaving a buffer. The unique constraint
+// on (teacherId, date, startTime) prevents double-booking at any slot.
+// If start times ever become free-form (not on the 90-min grid), add
+// durationMinutes/endTime and enforce overlap checks in application logic.
+model TeacherScheduleSlot {
+  id        String   @id @default(cuid())
+  teacherId String
+  date      DateTime @db.Date // Specific lesson date (not recurring day-of-week)
+  startTime String // e.g. "14:00"
+  groupId   String
+  lessonId  String   @unique // Direct link to the Lesson this slot belongs to
+
+  teacher Teacher @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  group   Group   @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+
+  @@unique([teacherId, date, startTime])
+  @@index([groupId])
+}
+
+// Unified model for both group lessons (up to 6 students) and individual
+// lessons (1–2 students, not yet decided). The `type` field determines which:
+// - GROUP: standard group, maxStudents defaults to 6
+// - INDIVIDUAL: individual arrangement, maxStudents = 1 (may become 2)
+//
+// Both types share the same lifecycle: pre-created lessons, attendance
+// tracking, billing periods, exams, and teacher schedule slots.
+// Teacher pay rate is determined by type: GROUP → groupLessonRate,
+// INDIVIDUAL → individualLessonRate.
+model Group {
+  id             String @id @default(cuid())
+  publicId       String @unique @default("") // e.g. "GR-1" for groups, "IND-1" for individual — computed from type + sequenceNumber by DB trigger. Provide explicitly to override.
+  sequenceNumber Int    @unique @default(autoincrement()) // Race-condition-free ID generation. publicId is computed from this at creation time.
+
+  type            GroupType     @default(GROUP)
+  teacherId       String
+  days            Int[] // e.g. [1, 3, 5] for Mon/Wed/Fri. 1=Mon, 7=Sun (ISO 8601). Only [1,3,5] or [2,4,6] valid — enforce via Zod.
+  startTime       String // e.g. "14:00"
+  durationMinutes Int           @default(80)
+  level           Level
+  progressStage   ProgressStage @default(BEGINNING)
+  maxStudents     Int           @default(6) // 6 for groups, 1 for individual (enforced at app level)
+  // pricePerLesson is determined by PriceSetting (global, keyed by levelCategory + groupType).
+  // Derive levelCategory from level: IELTS → IELTS, everything else → GENERAL.
+  // Query the most recent PriceSetting where (levelCategory, groupType, effectiveFrom <= target date).
+
+  isActive             Boolean  @default(true)
+  startDate            DateTime @db.Date
+  endDate              DateTime @db.Date // Auto-calculated: before 15th → end of startMonth+2, after 15th → end of startMonth+3
+  mergedIntoGroupId    String? // Self-ref: if this group was merged into another (GROUP or INDIVIDUAL type)
+  skipAutoGraduation   Boolean  @default(false) // If true, skip auto-graduation prompt when program ends
+  graduatedIntoGroupId String? // Self-ref: the next-level group created when this group's program ends
+  zoomLink             String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher               Teacher                @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  mergedIntoGroup       Group?                 @relation("GroupMerge", fields: [mergedIntoGroupId], references: [id], onDelete: Restrict)
+  mergedFromGroups      Group[]                @relation("GroupMerge")
+  graduatedIntoGroup    Group?                 @relation("GroupGraduation", fields: [graduatedIntoGroupId], references: [id], onDelete: Restrict)
+  graduatedFromGroups   Group[]                @relation("GroupGraduation")
+  memberships           GroupMembership[]
+  lessons               Lesson[]
+  attendanceRecords     Attendance[]
+  exams                 Exam[]
+  studentPaymentPeriods StudentPaymentPeriod[]
+  teacherPaymentPeriods TeacherPaymentPeriod[]
+  scheduleSlots         TeacherScheduleSlot[]
+  teacherHistory        GroupTeacherHistory[]
+
+  @@index([teacherId])
+  @@index([isActive, type])
+  @@index([level])
+}
+
+// Tracks teacher assignments at the group level over time.
+// Created when a group is first set up (initial assignment) and whenever
+// the group's teacher is permanently changed. NOT used for one-off substitutions
+// (those are tracked at the Lesson level via teacherId != originalTeacherId).
+//
+// Permanent teacher change flow:
+// 1. Update Group.teacherId → new teacher
+// 2. Set endDate on current GroupTeacherHistory record
+// 3. Create new GroupTeacherHistory (new teacher, startDate = today)
+// 4. Update all future SCHEDULED lessons: teacherId AND originalTeacherId → new teacher
+// 5. Swap TeacherScheduleSlots for those future lessons
+model GroupTeacherHistory {
+  id        String    @id @default(cuid())
+  groupId   String
+  teacherId String
+  startDate DateTime  @db.Date // When this teacher started teaching this group
+  endDate   DateTime? @db.Date // When they stopped (null = current teacher)
+
+  changedById String? // Which admin made the change (null for initial assignment at group creation)
+
+  createdAt DateTime @default(now())
+
+  group     Group      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  teacher   Teacher    @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  changedBy AdminUser? @relation("TeacherChangedByAdmin", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@index([groupId])
+  @@index([teacherId])
+}
+
+// ─── Transfer, Lost & Cancellation Reasons (Reference Tables) ────────────────
+
+model TransferReason {
+  id        String  @id @default(cuid())
+  name      String  @unique // e.g. "Teacher dissatisfaction", "Level too low"
+  isOther   Boolean @default(false) // If true, free-text input is required
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  groupMemberships GroupMembership[]
+}
+
+model LostReason {
+  id        String  @id @default(cuid())
+  name      String  @unique // e.g. "Too expensive", "Taking a break"
+  isOther   Boolean @default(false)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  students Student[]
+}
+
+model CancellationReason {
+  id        String  @id @default(cuid())
+  name      String  @unique // e.g. "Teacher absence", "Student request"
+  isOther   Boolean @default(false)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  lessons Lesson[]
+}
+
+// ─── Group Membership ───────────────────────────────────────────────────────────
+
+model GroupMembership {
+  id        String @id @default(cuid())
+  studentId String
+  groupId   String
+
+  joinDate  DateTime  @db.Date
+  leaveDate DateTime? @db.Date // null = currently in group
+  isTrial   Boolean   @default(false) // Trial student — occupies a seat but may not commit
+
+  // Why the membership ended — inferred from context:
+  // - transferReasonId set → transfer
+  // - student.status = INACTIVE → dropped (reason on Student.lostReasonId)
+  // - group.mergedIntoGroupId set → group merged
+  // - group.graduatedIntoGroupId set → group graduated (null for IELTS — no next level)
+  // - leaveDate set, none of the above → program completed
+  transferReasonId    String?
+  otherTransferReason String? // Free text when transfer reason isOther
+
+  comment String? // Per-group notes (e.g. "struggling with grammar", "catching up from lesson 5")
+
+  // Lesson tracking
+  lessonsStart     Int? // Which lesson number the student joined at (for proration)
+  lessonsCompleted Int? // How many lessons taken before leaving
+
+  // Audit & lineage
+  assignedById         String? // Which admin created this membership (assigned the student)
+  previousMembershipId String? // Links to the membership this continues from (group merge or transfer)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student                Student                @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  group                  Group                  @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  transferReason         TransferReason?        @relation(fields: [transferReasonId], references: [id], onDelete: Restrict)
+  assignedBy             AdminUser?             @relation("AssignedByAdmin", fields: [assignedById], references: [id], onDelete: Restrict)
+  previousMembership     GroupMembership?       @relation("MembershipContinuation", fields: [previousMembershipId], references: [id], onDelete: Restrict)
+  continuedAsMemberships GroupMembership[]      @relation("MembershipContinuation")
+  paymentPeriods         StudentPaymentPeriod[]
+
+  // No unique on [studentId, groupId] — a student can rejoin a group
+  @@index([studentId])
+  @@index([groupId])
+  @@index([groupId, leaveDate])
+  @@index([studentId, leaveDate])
+  @@index([isTrial])
+}
+
+// ─── Lessons & Attendance ───────────────────────────────────────────────────────
+
+model Lesson {
+  id                String @id @default(cuid())
+  groupId           String
+  teacherId         String // Who actually teaches this lesson (default: group teacher, updated for substitutes)
+  originalTeacherId String // Who was originally scheduled. Always set at creation (= group teacher). Stays unchanged when a substitute is assigned — only teacherId changes. Compare teacherId != originalTeacherId to detect substitutions.
+
+  lessonNumber Int // Sequential within group
+  lessonDate   DateTime     @db.Date
+  startTime    String // Denormalized from Group for direct queries
+  status       LessonStatus @default(SCHEDULED)
+
+  // Offline reschedule tracking (individual lessons only — when student & teacher
+  // agree to move a lesson to a different time without cancelling it)
+  originalDate      DateTime? @db.Date // Original date before reschedule. Null = never moved.
+  originalStartTime String? // Original start time before reschedule. Null = never moved.
+
+  // Teacher unavailability resolution
+  pendingAt DateTime? // When the lesson entered PENDING_RESOLUTION status
+
+  // Cancellation & rescheduling
+  rescheduledFromId       String?   @unique // Self-ref: replacement lesson points to cancelled original (one hop back)
+  originalLessonId        String? // Always points to the FIRST lesson in the reschedule chain (the one that was billed). Copied forward when a replacement is itself rescheduled. Billing rule: exclude where originalLessonId IS NOT NULL.
+  cancelledAt             DateTime? // When the lesson was cancelled
+  cancelledById           String? // Which admin cancelled this lesson
+  cancellationReasonId    String? // Why the lesson was cancelled
+  otherCancellationReason String? // Free text when cancellation reason isOther
+
+  completedAt DateTime? // When the lesson was marked as completed (no hard constraint — teacher may update later)
+
+  // Snapshotted when lesson is marked COMPLETED — used for teacher pay calculation.
+  // For group lessons: count of active members at lesson time.
+  // For individual lessons: typically 1 (could be 2).
+  // Null while lesson is still SCHEDULED.
+  activeStudentCount Int?
+
+  notes        String?
+  recordingUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  group              Group                @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  teacher            Teacher              @relation("LessonTeacher", fields: [teacherId], references: [id], onDelete: Restrict)
+  originalTeacher    Teacher              @relation("OriginalLessonTeacher", fields: [originalTeacherId], references: [id], onDelete: Restrict)
+  rescheduledFrom    Lesson?              @relation("LessonReschedule", fields: [rescheduledFromId], references: [id], onDelete: Restrict)
+  rescheduledTo      Lesson?              @relation("LessonReschedule")
+  originalLesson     Lesson?              @relation("LessonOriginal", fields: [originalLessonId], references: [id], onDelete: Restrict)
+  replacementChain   Lesson[]             @relation("LessonOriginal")
+  cancelledBy        AdminUser?           @relation("CancelledByAdmin", fields: [cancelledById], references: [id], onDelete: Restrict)
+  cancellationReason CancellationReason?  @relation(fields: [cancellationReasonId], references: [id], onDelete: Restrict)
+  attendanceRecords  Attendance[]
+  scheduleSlot       TeacherScheduleSlot?
+
+  @@unique([groupId, lessonNumber])
+  @@index([groupId, lessonDate])
+  @@index([lessonDate])
+  @@index([status])
+  @@index([teacherId, lessonDate])
+  @@index([teacherId, status, lessonDate])
+  @@index([originalLessonId])
+  @@index([groupId, status])
+}
+
+model Attendance {
+  id        String @id @default(cuid())
+  lessonId  String
+  studentId String
+  groupId   String // Denormalized from Lesson.groupId for query performance
+
+  isAbsent Boolean @default(false) // Teachers mark absences, not presences
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lesson  Lesson  @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  group   Group   @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@unique([lessonId, studentId])
+  @@index([studentId, groupId])
+  @@index([groupId])
+}
+
+// ─── Payments ───────────────────────────────────────────────────────────────────
+
+model StudentPaymentPeriod {
+  id                String @id @default(cuid())
+  studentId         String
+  groupId           String
+  groupMembershipId String
+
+  periodYear  Int
+  periodMonth Int
+
+  totalLessons Int // Actual lesson count in that month (not fixed 12). Varies by holidays.
+
+  pricePerLesson Int // UZS — snapshot from PriceSetting (levelCategory + groupType) at period creation
+  amountDue      Int // UZS — totalLessons × pricePerLesson, captured at period creation
+  discountAmount Int           @default(0) // Total discount from all promotions
+  amountPaid     Int           @default(0)
+  paymentStatus  PaymentStatus @default(UNPAID)
+
+  isPartialPeriod Boolean @default(false) // True for first-month proration AND mid-month transfers (student leaves/joins mid-month)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student           Student                   @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  group             Group                     @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  groupMembership   GroupMembership           @relation(fields: [groupMembershipId], references: [id], onDelete: Restrict)
+  payments          Payment[]
+  appliedPromotions AppliedPromotion[]
+  adjustments       PaymentPeriodAdjustment[]
+  refunds           Refund[]
+
+  @@unique([groupMembershipId, periodYear, periodMonth])
+  @@index([studentId])
+  @@index([groupId])
+  @@index([groupMembershipId])
+  @@index([paymentStatus])
+  @@index([periodYear, periodMonth, paymentStatus])
+}
+
+model Payment {
+  id                     String  @id @default(cuid())
+  studentId              String
+  studentPaymentPeriodId String?
+
+  amount           Int // UZS
+  isTransferCredit Boolean @default(false) // True when this payment represents a credit from unused lessons after a mid-month transfer
+  paymentMethod    String?
+  note             String?
+  recordedById     String?
+
+  paidAt    DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student              Student               @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  studentPaymentPeriod StudentPaymentPeriod? @relation(fields: [studentPaymentPeriodId], references: [id], onDelete: Restrict)
+  recordedBy           AdminUser?            @relation("RecordedByAdmin", fields: [recordedById], references: [id], onDelete: Restrict)
+
+  @@index([studentId])
+  @@index([studentPaymentPeriodId])
+}
+
+// Audit trail for billing period modifications. One record per adjustment,
+// snapshots before/after values so changes are fully traceable.
+// Created for: manual admin edits, transfer credits, student dropout, group merge.
+model PaymentPeriodAdjustment {
+  id                     String @id @default(cuid())
+  studentPaymentPeriodId String
+
+  type AdjustmentType // What triggered this adjustment
+
+  previousTotalLessons   Int
+  previousAmountDue      Int
+  previousDiscountAmount Int
+  newTotalLessons        Int
+  newAmountDue           Int
+  newDiscountAmount      Int
+
+  reason       String? // Additional context (always useful for MANUAL, optional for system-triggered)
+  adjustedById String
+
+  createdAt DateTime @default(now())
+
+  studentPaymentPeriod StudentPaymentPeriod @relation(fields: [studentPaymentPeriodId], references: [id], onDelete: Restrict)
+  adjustedBy           AdminUser            @relation("AdjustedByAdmin", fields: [adjustedById], references: [id], onDelete: Restrict)
+
+  @@index([studentPaymentPeriodId])
+}
+
+// Refund for unused lessons when a student leaves a group mid-billing-period.
+// Auto-created in PENDING state by per-membership leave billing (#31) when
+// overpayment is detected and the leave is NOT a transfer or merge (those use
+// transfer credits instead — see #25).
+//
+// Flow:
+// 1. leaveDate set on membership → billing period auto-adjusted (#31)
+// 2. If overpayment and not transfer/merge, Refund created with status PENDING
+// 3. Admin processes actual money transfer outside the system
+// 4. Admin records completion → amountRefunded, paymentMethod, processedById, processedAt
+model Refund {
+  id                     String @id @default(cuid())
+  studentId              String
+  studentPaymentPeriodId String
+
+  amount         Int // Calculated refund amount (overpayment = amountPaid - (amountDue - discountAmount))
+  amountRefunded Int? // Actual amount returned — recorded on completion. Null while pending.
+  status         RefundStatus @default(PENDING)
+
+  paymentMethod String? // How money was returned (recorded on completion)
+  note          String?
+
+  initiatedById String
+  initiatedAt   DateTime  @default(now())
+  processedById String? // Which admin completed the refund (null while pending)
+  processedAt   DateTime? // When money was actually returned (null while pending)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  studentPaymentPeriod StudentPaymentPeriod @relation(fields: [studentPaymentPeriodId], references: [id], onDelete: Restrict)
+  initiatedBy          AdminUser            @relation("RefundInitiatedByAdmin", fields: [initiatedById], references: [id], onDelete: Restrict)
+  processedBy          AdminUser?           @relation("RefundProcessedByAdmin", fields: [processedById], references: [id], onDelete: Restrict)
+
+  @@index([studentId])
+  @@index([studentPaymentPeriodId])
+  @@index([status])
+}
+
+// ─── Teacher Payments ───────────────────────────────────────────────────────────
+
+// Monthly teacher pay record, per group. Generated on demand (admin triggers
+// "generate teacher pay for month X"). One record per teacher per group per month.
+//
+// Teacher pay = totalStudentLessons × rate
+// Where totalStudentLessons = sum of activeStudentCount from each completed lesson.
+// Rate is looked up from TeacherRateChange: most recent where effectiveFrom <= period start.
+//
+// Processed on the 1st of the next month.
+model TeacherPaymentPeriod {
+  id        String @id @default(cuid())
+  teacherId String
+  groupId   String
+
+  periodYear  Int
+  periodMonth Int
+
+  lessonsCompleted    Int // How many lessons the teacher taught in this period
+  totalStudentLessons Int // Sum of activeStudentCount across all completed lessons
+  rate                Int // Snapshot of groupLessonRate or individualLessonRate at period creation
+  amount              Int // totalStudentLessons × rate
+
+  status TeacherPayStatus @default(UNPAID) // UNPAID → PAID
+  paidAt DateTime? // When the payout was processed
+
+  generatedById String? // Which admin triggered pay generation (audit trail)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teacher     Teacher    @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  group       Group      @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  generatedBy AdminUser? @relation("GeneratedByAdmin", fields: [generatedById], references: [id], onDelete: Restrict)
+
+  @@unique([teacherId, groupId, periodYear, periodMonth])
+  @@index([teacherId])
+  @@index([periodYear, periodMonth, status])
+}
+
+// ─── Rate & Price History ──────────────────────────────────────────────────────
+
+// Teacher pay rate history. One entry per rate change. The initial rate when a
+// teacher is first hired is the first entry (effectiveFrom = hire/group start date).
+// To find the current rate: query most recent where effectiveFrom <= today.
+// To find the rate for a specific billing period: effectiveFrom <= period start date.
+//
+// Rates are fixed amounts per student per lesson (negotiated from percentages,
+// then rounded). Both rates are always required — UI prefills with existing
+// values. Separate rates for group vs individual because percentages differ.
+// Group pay = lessons delivered × active students × groupLessonRate
+// Individual pay = lessons delivered × activeStudentCount × individualLessonRate
+model TeacherRateChange {
+  id        String @id @default(cuid())
+  teacherId String
+
+  groupLessonRate      Int // Required — UI prefills with existing rate
+  individualLessonRate Int // Required — UI prefills with existing rate
+  effectiveFrom        DateTime @db.Date // First day of the month this rate applies
+
+  changedById String? // Null for initial rate set at teacher creation
+  createdAt   DateTime @default(now())
+
+  teacher   Teacher    @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  changedBy AdminUser? @relation("RateChangedByAdmin", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@unique([teacherId, effectiveFrom]) // One rate entry per teacher per effective date — to correct, update the existing entry
+}
+
+// Global lesson price settings. 4 price points based on two dimensions:
+//   - LevelCategory: GENERAL (BEGINNER–UPPER_INTERMEDIATE) or IELTS
+//   - GroupType: GROUP or INDIVIDUAL
+//
+// To find the current price for a group: derive levelCategory from group.level
+// (IELTS → IELTS, everything else → GENERAL), then query most recent PriceSetting
+// where (levelCategory, groupType, effectiveFrom <= today).
+//
+// Price must be a multiple of 1,000 UZS (validate with Zod) to ensure discount
+// calculations always produce whole numbers.
+model PriceSetting {
+  id            String        @id @default(cuid())
+  levelCategory LevelCategory // GENERAL or IELTS
+  groupType     GroupType // GROUP or INDIVIDUAL
+
+  pricePerLesson Int // UZS per lesson (whole numbers, no fractional som)
+  effectiveFrom  DateTime @db.Date // First day this price applies
+
+  changedById String? // Null for initial price seeding
+  createdAt   DateTime @default(now())
+
+  changedBy AdminUser? @relation("PriceChangedByAdmin", fields: [changedById], references: [id], onDelete: Restrict)
+
+  @@unique([levelCategory, groupType, effectiveFrom]) // One price per category per type per effective date
+}
+
+// ─── Promotions ─────────────────────────────────────────────────────────────────
+
+model Promotion {
+  id              String        @id @default(cuid())
+  name            String // "Summer 2026 Campaign", "Sibling Discount"
+  type            PromotionType
+  discountType    DiscountType // PERCENTAGE or FIXED_AMOUNT
+  discountPercent Int? // Whole number, e.g. 10 for 10%. Set when discountType = PERCENTAGE.
+  discountAmount  Int? // UZS, e.g. 50000 for 50k. Set when discountType = FIXED_AMOUNT.
+  // Exactly one must be set — validate with Zod at the app level
+
+  // Scope — empty arrays = applies to all
+  levels     Level[]
+  groupTypes GroupType[] // Filter by GROUP or INDIVIDUAL
+
+  // Duration & limits
+  isRecurring       Boolean @default(false)
+  recurringMonths   Int? // null = indefinite, 3 = applies for 3 months
+  maxUsesPerStudent Int? // null = unlimited, 1 = one-time
+  maxUsesTotal      Int? // null = unlimited, 100 = first 100 students only
+  validityDays      Int? // null = never expires, 90 = credit expires 90 days after applied
+
+  // Campaign window
+  validFrom DateTime?
+  validTo   DateTime?
+
+  // Promo / influencer code (null for non-code promotions)
+  code String? @unique
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentPromotions StudentPromotion[]
+}
+
+model StudentPromotion {
+  id          String @id @default(cuid())
+  studentId   String
+  promotionId String
+
+  appliedAt  DateTime  @default(now())
+  expiresAt  DateTime? // Calculated from Promotion.validityDays; null = never expires
+  monthsUsed Int       @default(0) // Tracks usage for recurring promos
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student           Student            @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  promotion         Promotion          @relation(fields: [promotionId], references: [id], onDelete: Restrict)
+  appliedPromotions AppliedPromotion[]
+
+  @@index([studentId])
+  @@index([promotionId])
+}
+
+model AppliedPromotion {
+  id                     String @id @default(cuid())
+  studentPaymentPeriodId String
+  studentPromotionId     String
+
+  discountAmount Int // UZS — how much this specific promo discounted
+
+  createdAt DateTime @default(now())
+
+  studentPaymentPeriod StudentPaymentPeriod @relation(fields: [studentPaymentPeriodId], references: [id], onDelete: Restrict)
+  studentPromotion     StudentPromotion     @relation(fields: [studentPromotionId], references: [id], onDelete: Restrict)
+
+  @@unique([studentPaymentPeriodId, studentPromotionId])
+}
+
+// ─── Referrals ──────────────────────────────────────────────────────────────────
+
+model Referral {
+  id                String         @id @default(cuid())
+  referrerStudentId String
+  referredStudentId String         @unique // Business rule: one referral source per student
+  status            ReferralStatus @default(PENDING)
+
+  completedAt DateTime? // When referred student made first payment
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  referrer Student @relation("Referrer", fields: [referrerStudentId], references: [id], onDelete: Restrict)
+  referred Student @relation("Referred", fields: [referredStudentId], references: [id], onDelete: Restrict)
+
+  @@unique([referrerStudentId, referredStudentId])
+  @@index([referrerStudentId])
+}
+
+// ─── Communication History ──────────────────────────────────────────────────────
+
+model CallHistory {
+  id         String   @id @default(cuid())
+  studentId  String
+  calledAt   DateTime @default(now())
+  note       String?
+  calledById String?
+
+  createdAt DateTime @default(now())
+
+  student  Student    @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  calledBy AdminUser? @relation("CalledByAdmin", fields: [calledById], references: [id], onDelete: Restrict)
+
+  @@index([studentId])
+}
+
+model SmsHistory {
+  id        String   @id @default(cuid())
+  studentId String
+  phone     String // The phone number SMS was sent to (student's own or parent's)
+  message   String
+  sentAt    DateTime @default(now())
+  sentById  String?
+
+  // Delivery tracking
+  status            SmsStatus @default(SENT)
+  deliveredAt       DateTime? // When provider confirmed delivery
+  failureReason     String? // Why delivery failed (if status = FAILED)
+  providerMessageId String? // SMS provider's message ID for tracking
+
+  createdAt DateTime @default(now())
+
+  student Student    @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  sentBy  AdminUser? @relation("SentByAdmin", fields: [sentById], references: [id], onDelete: Restrict)
+
+  @@index([studentId])
+}
+
+// ─── Holidays ────────────────────────────────────────────────────────────────────
+
+model Holiday {
+  id   String   @id @default(cuid())
+  date DateTime @unique @db.Date
+  name String
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Exams ──────────────────────────────────────────────────────────────────────
+
+model Exam {
+  id            String   @id @default(cuid())
+  groupId       String
+  type          ExamType
+  scheduledDate DateTime @db.Date
+  comment       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Restrict)
+
+  @@index([groupId])
+}
