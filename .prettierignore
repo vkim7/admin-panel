@@ -1,0 +1,6 @@
+node_modules/
+.next/
+dist/
+packages/database/src/generated/
+pnpm-lock.yaml
+package-lock.json

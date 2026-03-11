@@ -19,9 +19,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 | File | Contains | Use When |
 |------|----------|----------|
-| `plan.md` | Master product plan — all three apps, business context, content structure, architectural constraints | Understanding overall product scope, data model requirements, or how apps relate to each other |
+| `master-product-plan.md` | Master product plan — all three apps, business context, content structure, architectural constraints | Understanding overall product scope, data model requirements, or how apps relate to each other |
 | `admin-panel-plan.md` | Detailed admin panel spec — tabs, tables, fields, workflows, billing model | Implementing any admin panel feature. This is the primary requirements doc. |
-| `admin-panel-draft.md` | Raw operational draft with real spreadsheet examples from the co-founder | Understanding the real-world usage patterns, edge cases, and what the admin actually sees day-to-day |
 | `ISSUES.md` | Known pain points from current operations | Prioritizing what to solve first |
 | `packages/database/DATA_MODEL.md` | Human-readable data model reference — entity relationships, field purposes, constraints, lifecycle flows, business rules | Understanding how entities relate, what constraints exist, and edge cases. **Read this before making data model or query decisions.** |
 
@@ -57,6 +56,14 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 ## Working Conventions
 
 - **Use Context7 MCP** to pull latest documentation for any library (Prisma, Next.js, shadcn/ui, etc.) before making implementation decisions. Always resolve the library ID first, then query docs.
+
+- **Data fetching architecture:**
+  - `src/lib/queries/*.ts` — Read-only database operations. NO `'use server'` directive. Called directly from Server Components (same process, no overhead).
+  - `src/lib/actions/*.ts` — Mutations only. MUST have `'use server'` directive. Called from Client Components. Server Actions are queued sequentially — never use them for reads.
+
+- **Server Action error handling:** Return validation errors and known business errors (duplicate phone, group full) as `{ error }` so forms can show inline messages. Don't try/catch unexpected errors — let them throw so Next.js `error.tsx` boundaries handle them. If you catch a specific error (e.g. Prisma P2002), re-throw anything you don't recognize.
+
+- **Validation:** All type coercion (string→number, empty→null) happens in Zod schemas (`src/schemas/`), never in react-hook-form or Server Actions. Use helpers from `src/schemas/helpers.ts` (e.g. `requiredString()`, `nullableId()`, `requiredTime()`) — they handle DB column semantics (NULL vs NOT NULL, empty→null transforms). Read `tech/database-first-validation-guide.md` for the decision flowchart on which helper to use for each column type.
 
 ## Key Domain Concepts
 

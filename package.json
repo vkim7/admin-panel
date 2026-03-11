@@ -1,10 +1,13 @@
 {
   "name": "eng-platform",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "db:generate": "turbo run db:generate",
     "db:migrate": "npm run db:migrate --workspace=@eng/database",
     "db:seed": "npm run db:seed --workspace=@eng/database",
@@ -15,6 +18,8 @@
     "packages/*"
   ],
   "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2",
     "turbo": "^2"
   },
   "packageManager": "npm@10.9.2"

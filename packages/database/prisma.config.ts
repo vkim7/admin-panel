@@ -14,4 +14,7 @@ export default defineConfig({
       return new PrismaPg({ connectionString: env("DATABASE_URL") });
     },
   },
+  migrations: {
+    seed: "npx tsx prisma/seed.ts",
+  },
 });
