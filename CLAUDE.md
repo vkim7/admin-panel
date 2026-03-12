@@ -29,7 +29,7 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 | File | Contains | Relevant To Admin Panel? |
 |------|----------|--------------------------|
 | `tech/implementation.md` | Tech stack, monorepo structure, architecture decisions, deployment strategy | **Yes** — core stack decisions (Next.js, Prisma, shadcn/ui, Zod, Vercel, Neon), auth strategy, notification channels, amoCRM integration approach. |
-| `tech/database-first-validation-guide.md` | Patterns for form validation aligned with DB schema — required vs nullable vs clearable fields, Zod helpers, PATCH semantics | **Yes** — follow these patterns for all admin panel forms. |
+| `tech/database-first-validation-guide.md` | Patterns for form validation aligned with DB schema — required vs nullable vs clearable fields, Zod helpers, PATCH semantics | **Yes** — conceptual guidance (flowchart, PATCH semantics, anti-patterns) is still valid, but **code examples are outdated (Zod v3)**. Use `apps/admin/src/schemas/helpers.ts` as the source of truth for validation code. |
 | `tech/hosting.md` | Hosting comparison, latency analysis, cost projections, data residency laws | **Yes** — for deployment decisions. Key takeaway: Vercel Dubai + Neon Frankfurt + Cloudflare CDN. |
 | `tech/telegram-mini-apps.md` | TMA technical research — Bot API, sharing, payments, viewport, auth | **No** — only relevant to the student app (Telegram Mini App). |
 | `tech/tma-technical-research.md` | Deep TMA research — initData, WebView behavior, cookie/session issues, limitations | **No** — only relevant to the student app (Telegram Mini App). |

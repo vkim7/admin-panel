@@ -8,7 +8,9 @@
     "dev": "next dev --turbo",
     "start": "next start",
     "lint": "next lint",
-    "check": "next lint && tsc --noEmit"
+    "check": "next lint && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@eng/database": "*",
@@ -42,6 +44,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0"
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^4.0.18"
   }
 }

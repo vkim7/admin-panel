@@ -1,11 +1,9 @@
 <!-- AI-INSTRUCTION-SUMMARY
-When implementing forms:
-1. Check if DB column is NULL or NOT NULL
-2. NULL columns → use nullable*() helpers
-3. NOT NULL columns → use required*() helpers
-4. NOT NULL + DEFAULT → use .optional() 
-5. All type coercion happens in Zod, not RHF
-6. PATCH: omit = no change, null = clear
+OUTDATED: The code examples in this guide were written for Zod v3 and have NOT been
+updated for Zod v4. Do NOT copy code from this guide. Instead, use the tested helpers
+in apps/admin/src/schemas/helpers.ts as the source of truth for validation patterns.
+The conceptual guidance (decision flowchart, translation table, PATCH semantics,
+anti-patterns, mental models) is still valid.
 -->
 
 # Database-First Validation & Form Handling Guide

@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+// --- Utility ---
+
+/** Check if a value is blank (null, undefined, empty string, whitespace-only). */
+export function isBlank(val: unknown): val is null | undefined | "" {
+  if (val === null || val === undefined) return true;
+  if (typeof val === "string") return val.trim() === "";
+  return false;
+}
+
 // --- String helpers ---
 
 /** Required non-empty string (NOT NULL column). Trims whitespace. */
@@ -8,13 +17,9 @@ export const requiredString = (error = "Required") =>
 
 /** Nullable string — empty/whitespace becomes null (NULL column). */
 export const nullableString = (maxLength?: number) => {
-  const base = maxLength ? z.string().max(maxLength) : z.string();
-  return base
-    .transform((val) => {
-      const trimmed = val.trim();
-      return trimmed === "" ? null : trimmed;
-    })
-    .nullable();
+  let base = z.string().trim();
+  if (maxLength) base = base.max(maxLength);
+  return base.transform((val) => (val === "" ? null : val)).nullable();
 };
 
 // --- ID helpers (handle string→number from form selects) ---
@@ -22,19 +27,15 @@ export const nullableString = (maxLength?: number) => {
 /** Required FK ID — rejects empty, converts string to number (NOT NULL FK). */
 export const requiredId = (error = "Required") =>
   z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number({ error }).int().positive(),
+    (val) => (isBlank(val) ? undefined : val),
+    z.coerce.number({ error }).int().positive(),
   );
 
 /** Nullable FK ID — empty becomes null, valid becomes number (NULL FK). */
 export const nullableId = () =>
   z.preprocess(
-    (val) => {
-      if (val === "" || val === null || val === undefined) return null;
-      const num = Number(val);
-      return isNaN(num) ? null : num;
-    },
-    z.number().int().positive().nullable(),
+    (val) => (isBlank(val) ? null : val),
+    z.coerce.number().int().positive().nullable(),
   );
 
 // --- Number helpers ---
@@ -42,19 +43,15 @@ export const nullableId = () =>
 /** Required integer (NOT NULL INT). */
 export const requiredInt = (error = "Required") =>
   z.preprocess(
-    (val) => (val === "" || val === undefined ? undefined : Number(val)),
-    z.number({ error }).int(),
+    (val) => (isBlank(val) ? undefined : val),
+    z.coerce.number({ error }).int(),
   );
 
 /** Nullable integer — empty becomes null (NULL INT). */
 export const nullableInt = () =>
   z.preprocess(
-    (val) => {
-      if (val === "" || val === null || val === undefined) return null;
-      const num = Number(val);
-      return isNaN(num) ? null : num;
-    },
-    z.number().int().nullable(),
+    (val) => (isBlank(val) ? null : val),
+    z.coerce.number().int().nullable(),
   );
 
 // --- Boolean helpers ---
@@ -66,7 +63,7 @@ export const booleanWithDefault = (defaultValue = false) =>
 /** Nullable boolean — three-state: true/false/null (NULL BOOLEAN). */
 export const nullableBoolean = () =>
   z.preprocess((val) => {
-    if (val === "" || val === null || val === undefined) return null;
+    if (isBlank(val)) return null;
     if (val === "true" || val === true) return true;
     if (val === "false" || val === false) return false;
     return null;
@@ -120,17 +117,16 @@ export const nullableTime = () =>
 
 /** Required ID array — must select at least one. */
 export const requiredIdArray = (error = "Select at least one") =>
-  z.array(z.number().int().positive()).min(1, { error });
+  z.preprocess(
+    (val) =>
+      Array.isArray(val) ? val.map(Number).filter((n) => !isNaN(n)) : [],
+    z.array(z.number().int().positive()).min(1, { error }),
+  );
 
 /** Optional ID array — can be empty. */
 export const optionalIdArray = () =>
-  z.array(z.number().int().positive()).default([]);
-
-// --- Utility ---
-
-/** Check if a value is blank (null, undefined, empty string, whitespace-only). */
-export function isBlank(val: unknown): val is null | undefined | "" {
-  if (val === null || val === undefined) return true;
-  if (typeof val === "string") return val.trim() === "";
-  return false;
-}
+  z.preprocess(
+    (val) =>
+      Array.isArray(val) ? val.map(Number).filter((n) => !isNaN(n)) : [],
+    z.array(z.number().int().positive()),
+  );
