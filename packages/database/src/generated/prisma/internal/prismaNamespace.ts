@@ -2718,6 +2718,8 @@ export const TeacherScalarFieldEnum = {
   canTeachRussian: 'canTeachRussian',
   canTeachEnglishOnly: 'canTeachEnglishOnly',
   isActive: 'isActive',
+  deactivatedAt: 'deactivatedAt',
+  deactivatedById: 'deactivatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3151,6 +3153,10 @@ export const SmsHistoryScalarFieldEnum = {
   message: 'message',
   sentAt: 'sentAt',
   sentById: 'sentById',
+  status: 'status',
+  deliveredAt: 'deliveredAt',
+  failureReason: 'failureReason',
+  providerMessageId: 'providerMessageId',
   createdAt: 'createdAt'
 } as const
 
@@ -3494,6 +3500,20 @@ export type EnumReferralStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'ReferralStatus[]'
  */
 export type ListEnumReferralStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReferralStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SmsStatus'
+ */
+export type EnumSmsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SmsStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SmsStatus[]'
+ */
+export type ListEnumSmsStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SmsStatus[]'>
     
 
 

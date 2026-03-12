@@ -44,6 +44,8 @@ export type TeacherMinAggregateOutputType = {
   canTeachRussian: boolean | null
   canTeachEnglishOnly: boolean | null
   isActive: boolean | null
+  deactivatedAt: Date | null
+  deactivatedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -58,6 +60,8 @@ export type TeacherMaxAggregateOutputType = {
   canTeachRussian: boolean | null
   canTeachEnglishOnly: boolean | null
   isActive: boolean | null
+  deactivatedAt: Date | null
+  deactivatedById: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -73,6 +77,8 @@ export type TeacherCountAggregateOutputType = {
   canTeachRussian: number
   canTeachEnglishOnly: number
   isActive: number
+  deactivatedAt: number
+  deactivatedById: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -97,6 +103,8 @@ export type TeacherMinAggregateInputType = {
   canTeachRussian?: true
   canTeachEnglishOnly?: true
   isActive?: true
+  deactivatedAt?: true
+  deactivatedById?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -111,6 +119,8 @@ export type TeacherMaxAggregateInputType = {
   canTeachRussian?: true
   canTeachEnglishOnly?: true
   isActive?: true
+  deactivatedAt?: true
+  deactivatedById?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -126,6 +136,8 @@ export type TeacherCountAggregateInputType = {
   canTeachRussian?: true
   canTeachEnglishOnly?: true
   isActive?: true
+  deactivatedAt?: true
+  deactivatedById?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -228,6 +240,8 @@ export type TeacherGroupByOutputType = {
   canTeachRussian: boolean
   canTeachEnglishOnly: boolean
   isActive: boolean
+  deactivatedAt: Date | null
+  deactivatedById: string | null
   createdAt: Date
   updatedAt: Date
   _count: TeacherCountAggregateOutputType | null
@@ -266,8 +280,11 @@ export type TeacherWhereInput = {
   canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
   canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
   isActive?: Prisma.BoolFilter<"Teacher"> | boolean
+  deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
+  deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
+  deactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   availability?: Prisma.TeacherAvailabilityListRelationFilter
   unavailability?: Prisma.TeacherUnavailabilityListRelationFilter
   groups?: Prisma.GroupListRelationFilter
@@ -290,8 +307,11 @@ export type TeacherOrderByWithRelationInput = {
   canTeachRussian?: Prisma.SortOrder
   canTeachEnglishOnly?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deactivatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deactivatedBy?: Prisma.AdminUserOrderByWithRelationInput
   availability?: Prisma.TeacherAvailabilityOrderByRelationAggregateInput
   unavailability?: Prisma.TeacherUnavailabilityOrderByRelationAggregateInput
   groups?: Prisma.GroupOrderByRelationAggregateInput
@@ -317,8 +337,11 @@ export type TeacherWhereUniqueInput = Prisma.AtLeast<{
   canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
   canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
   isActive?: Prisma.BoolFilter<"Teacher"> | boolean
+  deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
+  deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
+  deactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   availability?: Prisma.TeacherAvailabilityListRelationFilter
   unavailability?: Prisma.TeacherUnavailabilityListRelationFilter
   groups?: Prisma.GroupListRelationFilter
@@ -341,6 +364,8 @@ export type TeacherOrderByWithAggregationInput = {
   canTeachRussian?: Prisma.SortOrder
   canTeachEnglishOnly?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deactivatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TeacherCountOrderByAggregateInput
@@ -364,6 +389,8 @@ export type TeacherScalarWhereWithAggregatesInput = {
   canTeachRussian?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
   canTeachEnglishOnly?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
   isActive?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
+  deactivatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Teacher"> | Date | string | null
+  deactivatedById?: Prisma.StringNullableWithAggregatesFilter<"Teacher"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Teacher"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Teacher"> | Date | string
 }
@@ -379,8 +406,10 @@ export type TeacherCreateInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -403,6 +432,8 @@ export type TeacherUncheckedCreateInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -427,8 +458,10 @@ export type TeacherUpdateInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -451,6 +484,8 @@ export type TeacherUncheckedUpdateInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -475,6 +510,8 @@ export type TeacherCreateManyInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -490,6 +527,7 @@ export type TeacherUpdateManyMutationInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -505,8 +543,20 @@ export type TeacherUncheckedUpdateManyInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type TeacherListRelationFilter = {
+  every?: Prisma.TeacherWhereInput
+  some?: Prisma.TeacherWhereInput
+  none?: Prisma.TeacherWhereInput
+}
+
+export type TeacherOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type EnumLevelNullableListFilter<$PrismaModel = never> = {
@@ -528,6 +578,8 @@ export type TeacherCountOrderByAggregateInput = {
   canTeachRussian?: Prisma.SortOrder
   canTeachEnglishOnly?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deactivatedAt?: Prisma.SortOrder
+  deactivatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -546,6 +598,8 @@ export type TeacherMaxOrderByAggregateInput = {
   canTeachRussian?: Prisma.SortOrder
   canTeachEnglishOnly?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deactivatedAt?: Prisma.SortOrder
+  deactivatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -560,6 +614,8 @@ export type TeacherMinOrderByAggregateInput = {
   canTeachRussian?: Prisma.SortOrder
   canTeachEnglishOnly?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deactivatedAt?: Prisma.SortOrder
+  deactivatedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -571,6 +627,48 @@ export type TeacherSumOrderByAggregateInput = {
 export type TeacherScalarRelationFilter = {
   is?: Prisma.TeacherWhereInput
   isNot?: Prisma.TeacherWhereInput
+}
+
+export type TeacherCreateNestedManyWithoutDeactivatedByInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput> | Prisma.TeacherCreateWithoutDeactivatedByInput[] | Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput[]
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput | Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput[]
+  createMany?: Prisma.TeacherCreateManyDeactivatedByInputEnvelope
+  connect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+}
+
+export type TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput> | Prisma.TeacherCreateWithoutDeactivatedByInput[] | Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput[]
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput | Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput[]
+  createMany?: Prisma.TeacherCreateManyDeactivatedByInputEnvelope
+  connect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+}
+
+export type TeacherUpdateManyWithoutDeactivatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput> | Prisma.TeacherCreateWithoutDeactivatedByInput[] | Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput[]
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput | Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput[]
+  upsert?: Prisma.TeacherUpsertWithWhereUniqueWithoutDeactivatedByInput | Prisma.TeacherUpsertWithWhereUniqueWithoutDeactivatedByInput[]
+  createMany?: Prisma.TeacherCreateManyDeactivatedByInputEnvelope
+  set?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  disconnect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  delete?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  connect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  update?: Prisma.TeacherUpdateWithWhereUniqueWithoutDeactivatedByInput | Prisma.TeacherUpdateWithWhereUniqueWithoutDeactivatedByInput[]
+  updateMany?: Prisma.TeacherUpdateManyWithWhereWithoutDeactivatedByInput | Prisma.TeacherUpdateManyWithWhereWithoutDeactivatedByInput[]
+  deleteMany?: Prisma.TeacherScalarWhereInput | Prisma.TeacherScalarWhereInput[]
+}
+
+export type TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput> | Prisma.TeacherCreateWithoutDeactivatedByInput[] | Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput[]
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput | Prisma.TeacherCreateOrConnectWithoutDeactivatedByInput[]
+  upsert?: Prisma.TeacherUpsertWithWhereUniqueWithoutDeactivatedByInput | Prisma.TeacherUpsertWithWhereUniqueWithoutDeactivatedByInput[]
+  createMany?: Prisma.TeacherCreateManyDeactivatedByInputEnvelope
+  set?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  disconnect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  delete?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  connect?: Prisma.TeacherWhereUniqueInput | Prisma.TeacherWhereUniqueInput[]
+  update?: Prisma.TeacherUpdateWithWhereUniqueWithoutDeactivatedByInput | Prisma.TeacherUpdateWithWhereUniqueWithoutDeactivatedByInput[]
+  updateMany?: Prisma.TeacherUpdateManyWithWhereWithoutDeactivatedByInput | Prisma.TeacherUpdateManyWithWhereWithoutDeactivatedByInput[]
+  deleteMany?: Prisma.TeacherScalarWhereInput | Prisma.TeacherScalarWhereInput[]
 }
 
 export type TeacherCreatelevelsInput = {
@@ -588,6 +686,10 @@ export type NullableBigIntFieldUpdateOperationsInput = {
 export type TeacherUpdatelevelsInput = {
   set?: $Enums.Level[]
   push?: $Enums.Level | $Enums.Level[]
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type TeacherCreateNestedOneWithoutAvailabilityInput = {
@@ -716,6 +818,102 @@ export type TeacherUpdateOneRequiredWithoutRateChangesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutRateChangesInput, Prisma.TeacherUpdateWithoutRateChangesInput>, Prisma.TeacherUncheckedUpdateWithoutRateChangesInput>
 }
 
+export type TeacherCreateWithoutDeactivatedByInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: boolean
+  canTeachRussian?: boolean
+  canTeachEnglishOnly?: boolean
+  isActive?: boolean
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+  unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
+  groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutTeacherInput
+  lessons?: Prisma.LessonCreateNestedManyWithoutTeacherInput
+  originalLessons?: Prisma.LessonCreateNestedManyWithoutOriginalTeacherInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutTeacherInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
+  rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutDeactivatedByInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: boolean
+  canTeachRussian?: boolean
+  canTeachEnglishOnly?: boolean
+  isActive?: boolean
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  unavailability?: Prisma.TeacherUnavailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutTeacherInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutTeacherInput
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutTeacherInput
+  originalLessons?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalTeacherInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutTeacherInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
+  rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutDeactivatedByInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput>
+}
+
+export type TeacherCreateManyDeactivatedByInputEnvelope = {
+  data: Prisma.TeacherCreateManyDeactivatedByInput | Prisma.TeacherCreateManyDeactivatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type TeacherUpsertWithWhereUniqueWithoutDeactivatedByInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutDeactivatedByInput, Prisma.TeacherUncheckedUpdateWithoutDeactivatedByInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutDeactivatedByInput, Prisma.TeacherUncheckedCreateWithoutDeactivatedByInput>
+}
+
+export type TeacherUpdateWithWhereUniqueWithoutDeactivatedByInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutDeactivatedByInput, Prisma.TeacherUncheckedUpdateWithoutDeactivatedByInput>
+}
+
+export type TeacherUpdateManyWithWhereWithoutDeactivatedByInput = {
+  where: Prisma.TeacherScalarWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateManyMutationInput, Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByInput>
+}
+
+export type TeacherScalarWhereInput = {
+  AND?: Prisma.TeacherScalarWhereInput | Prisma.TeacherScalarWhereInput[]
+  OR?: Prisma.TeacherScalarWhereInput[]
+  NOT?: Prisma.TeacherScalarWhereInput | Prisma.TeacherScalarWhereInput[]
+  id?: Prisma.StringFilter<"Teacher"> | string
+  firstName?: Prisma.StringFilter<"Teacher"> | string
+  lastName?: Prisma.StringFilter<"Teacher"> | string
+  phone?: Prisma.StringFilter<"Teacher"> | string
+  telegramId?: Prisma.BigIntNullableFilter<"Teacher"> | bigint | number | null
+  levels?: Prisma.EnumLevelNullableListFilter<"Teacher">
+  canTeachUzbek?: Prisma.BoolFilter<"Teacher"> | boolean
+  canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
+  canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
+  isActive?: Prisma.BoolFilter<"Teacher"> | boolean
+  deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
+  deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Teacher"> | Date | string
+}
+
 export type TeacherCreateWithoutAvailabilityInput = {
   id?: string
   firstName: string
@@ -727,8 +925,10 @@ export type TeacherCreateWithoutAvailabilityInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutTeacherInput
@@ -750,6 +950,8 @@ export type TeacherUncheckedCreateWithoutAvailabilityInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   unavailability?: Prisma.TeacherUnavailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -789,8 +991,10 @@ export type TeacherUpdateWithoutAvailabilityInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutTeacherNestedInput
@@ -812,6 +1016,8 @@ export type TeacherUncheckedUpdateWithoutAvailabilityInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unavailability?: Prisma.TeacherUnavailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -835,8 +1041,10 @@ export type TeacherCreateWithoutUnavailabilityInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutTeacherInput
@@ -858,6 +1066,8 @@ export type TeacherUncheckedCreateWithoutUnavailabilityInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -897,8 +1107,10 @@ export type TeacherUpdateWithoutUnavailabilityInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutTeacherNestedInput
@@ -920,6 +1132,8 @@ export type TeacherUncheckedUpdateWithoutUnavailabilityInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -943,8 +1157,10 @@ export type TeacherCreateWithoutScheduleSlotsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -966,6 +1182,8 @@ export type TeacherUncheckedCreateWithoutScheduleSlotsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1005,8 +1223,10 @@ export type TeacherUpdateWithoutScheduleSlotsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1028,6 +1248,8 @@ export type TeacherUncheckedUpdateWithoutScheduleSlotsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1051,8 +1273,10 @@ export type TeacherCreateWithoutGroupsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutTeacherInput
@@ -1074,6 +1298,8 @@ export type TeacherUncheckedCreateWithoutGroupsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1113,8 +1339,10 @@ export type TeacherUpdateWithoutGroupsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutTeacherNestedInput
@@ -1136,6 +1364,8 @@ export type TeacherUncheckedUpdateWithoutGroupsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1159,8 +1389,10 @@ export type TeacherCreateWithoutGroupTeacherHistoryInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -1182,6 +1414,8 @@ export type TeacherUncheckedCreateWithoutGroupTeacherHistoryInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1221,8 +1455,10 @@ export type TeacherUpdateWithoutGroupTeacherHistoryInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1244,6 +1480,8 @@ export type TeacherUncheckedUpdateWithoutGroupTeacherHistoryInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1267,8 +1505,10 @@ export type TeacherCreateWithoutLessonsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -1290,6 +1530,8 @@ export type TeacherUncheckedCreateWithoutLessonsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1318,8 +1560,10 @@ export type TeacherCreateWithoutOriginalLessonsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -1341,6 +1585,8 @@ export type TeacherUncheckedCreateWithoutOriginalLessonsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1380,8 +1626,10 @@ export type TeacherUpdateWithoutLessonsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1403,6 +1651,8 @@ export type TeacherUncheckedUpdateWithoutLessonsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1437,8 +1687,10 @@ export type TeacherUpdateWithoutOriginalLessonsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1460,6 +1712,8 @@ export type TeacherUncheckedUpdateWithoutOriginalLessonsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1483,8 +1737,10 @@ export type TeacherCreateWithoutPaymentPeriodsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -1506,6 +1762,8 @@ export type TeacherUncheckedCreateWithoutPaymentPeriodsInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1545,8 +1803,10 @@ export type TeacherUpdateWithoutPaymentPeriodsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1568,6 +1828,8 @@ export type TeacherUncheckedUpdateWithoutPaymentPeriodsInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1591,8 +1853,10 @@ export type TeacherCreateWithoutRateChangesInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
   availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
   unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
   groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
@@ -1614,6 +1878,8 @@ export type TeacherUncheckedCreateWithoutRateChangesInput = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
@@ -1653,8 +1919,10 @@ export type TeacherUpdateWithoutRateChangesInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
   availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
   unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
   groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
@@ -1676,6 +1944,8 @@ export type TeacherUncheckedUpdateWithoutRateChangesInput = {
   canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
   canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
@@ -1686,6 +1956,88 @@ export type TeacherUncheckedUpdateWithoutRateChangesInput = {
   originalLessons?: Prisma.LessonUncheckedUpdateManyWithoutOriginalTeacherNestedInput
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherCreateManyDeactivatedByInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: boolean
+  canTeachRussian?: boolean
+  canTeachEnglishOnly?: boolean
+  isActive?: boolean
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type TeacherUpdateWithoutDeactivatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+  unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutTeacherNestedInput
+  lessons?: Prisma.LessonUpdateManyWithoutTeacherNestedInput
+  originalLessons?: Prisma.LessonUpdateManyWithoutOriginalTeacherNestedInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutTeacherNestedInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
+  rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutDeactivatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+  unavailability?: Prisma.TeacherUnavailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutTeacherNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutTeacherNestedInput
+  originalLessons?: Prisma.LessonUncheckedUpdateManyWithoutOriginalTeacherNestedInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
+  rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateManyWithoutDeactivatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
+  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -1802,8 +2154,11 @@ export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: boolean
+  deactivatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
   availability?: boolean | Prisma.Teacher$availabilityArgs<ExtArgs>
   unavailability?: boolean | Prisma.Teacher$unavailabilityArgs<ExtArgs>
   groups?: boolean | Prisma.Teacher$groupsArgs<ExtArgs>
@@ -1827,8 +2182,11 @@ export type TeacherSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: boolean
+  deactivatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
 }, ExtArgs["result"]["teacher"]>
 
 export type TeacherSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1842,8 +2200,11 @@ export type TeacherSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: boolean
+  deactivatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
 }, ExtArgs["result"]["teacher"]>
 
 export type TeacherSelectScalar = {
@@ -1857,12 +2218,15 @@ export type TeacherSelectScalar = {
   canTeachRussian?: boolean
   canTeachEnglishOnly?: boolean
   isActive?: boolean
+  deactivatedAt?: boolean
+  deactivatedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TeacherOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "telegramId" | "levels" | "canTeachUzbek" | "canTeachRussian" | "canTeachEnglishOnly" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["teacher"]>
+export type TeacherOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "telegramId" | "levels" | "canTeachUzbek" | "canTeachRussian" | "canTeachEnglishOnly" | "isActive" | "deactivatedAt" | "deactivatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["teacher"]>
 export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
   availability?: boolean | Prisma.Teacher$availabilityArgs<ExtArgs>
   unavailability?: boolean | Prisma.Teacher$unavailabilityArgs<ExtArgs>
   groups?: boolean | Prisma.Teacher$groupsArgs<ExtArgs>
@@ -1874,12 +2238,17 @@ export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   rateChanges?: boolean | Prisma.Teacher$rateChangesArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type TeacherIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type TeacherIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type TeacherIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
+}
+export type TeacherIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
+}
 
 export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Teacher"
   objects: {
+    deactivatedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     availability: Prisma.$TeacherAvailabilityPayload<ExtArgs>[]
     unavailability: Prisma.$TeacherUnavailabilityPayload<ExtArgs>[]
     groups: Prisma.$GroupPayload<ExtArgs>[]
@@ -1901,6 +2270,8 @@ export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     canTeachRussian: boolean
     canTeachEnglishOnly: boolean
     isActive: boolean
+    deactivatedAt: Date | null
+    deactivatedById: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["teacher"]>
@@ -2297,6 +2668,7 @@ readonly fields: TeacherFieldRefs;
  */
 export interface Prisma__TeacherClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  deactivatedBy<T extends Prisma.Teacher$deactivatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$deactivatedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   availability<T extends Prisma.Teacher$availabilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$availabilityArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   unavailability<T extends Prisma.Teacher$unavailabilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$unavailabilityArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherUnavailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groups<T extends Prisma.Teacher$groupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$groupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2345,6 +2717,8 @@ export interface TeacherFieldRefs {
   readonly canTeachRussian: Prisma.FieldRef<"Teacher", 'Boolean'>
   readonly canTeachEnglishOnly: Prisma.FieldRef<"Teacher", 'Boolean'>
   readonly isActive: Prisma.FieldRef<"Teacher", 'Boolean'>
+  readonly deactivatedAt: Prisma.FieldRef<"Teacher", 'DateTime'>
+  readonly deactivatedById: Prisma.FieldRef<"Teacher", 'String'>
   readonly createdAt: Prisma.FieldRef<"Teacher", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Teacher", 'DateTime'>
 }
@@ -2596,6 +2970,10 @@ export type TeacherCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.TeacherCreateManyInput | Prisma.TeacherCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -2666,6 +3044,10 @@ export type TeacherUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many Teachers to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -2732,6 +3114,25 @@ export type TeacherDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Teachers to delete.
    */
   limit?: number
+}
+
+/**
+ * Teacher.deactivatedBy
+ */
+export type Teacher$deactivatedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdminUser
+   */
+  select?: Prisma.AdminUserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AdminUser
+   */
+  omit?: Prisma.AdminUserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminUserInclude<ExtArgs> | null
+  where?: Prisma.AdminUserWhereInput
 }
 
 /**

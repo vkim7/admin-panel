@@ -61,6 +61,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
   - `src/lib/queries/*.ts` — Read-only database operations. NO `'use server'` directive. Called directly from Server Components (same process, no overhead).
   - `src/lib/actions/*.ts` — Mutations only. MUST have `'use server'` directive. Called from Client Components. Server Actions are queued sequentially — never use them for reads.
 
+- **Server Action auth:** Every server action that mutates data must call `requireAdmin()` or `requireRole()` at the top. Middleware and layout protect page views, but server actions are independently callable and need their own auth check.
+
 - **Server Action error handling:** Return validation errors and known business errors (duplicate phone, group full) as `{ error }` so forms can show inline messages. Don't try/catch unexpected errors — let them throw so Next.js `error.tsx` boundaries handle them. If you catch a specific error (e.g. Prisma P2002), re-throw anything you don't recognize.
 
 - **Validation:** All type coercion (string→number, empty→null) happens in Zod schemas (`src/schemas/`), never in react-hook-form or Server Actions. Use helpers from `src/schemas/helpers.ts` (e.g. `requiredString()`, `nullableId()`, `requiredTime()`) — they handle DB column semantics (NULL vs NOT NULL, empty→null transforms). Read `tech/database-first-validation-guide.md` for the decision flowchart on which helper to use for each column type.

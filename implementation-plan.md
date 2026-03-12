@@ -67,41 +67,48 @@ Established once, reused in every phase.
 
 Already implemented in `packages/database/prisma/seed.ts`. Verify these exist in the live DB:
 
-- [ ] Holidays — Uzbekistan 2026 public holidays
-- [ ] TransferReason — 6 entries (Teacher dissatisfaction, Classmates dissatisfaction, Level too low, Level too advanced, Failed mid exam, Other)
-- [ ] LostReason — 4 entries (Taking a break, Too expensive, Didn't like online format, Other)
-- [ ] CancellationReason — 6 entries (Teacher absence, Low attendance, Student request, Scheduling conflict, Administrative, Other)
-- [ ] PriceSetting — 4 rows: (GENERAL|IELTS) × (GROUP|INDIVIDUAL), all multiples of 1,000 UZS **(C#6)**
-- [ ] AdminUser — initial super admin
+- [x] Holidays — Uzbekistan 2026 public holidays
+- [x] TransferReason — 6 entries (Teacher dissatisfaction, Classmates dissatisfaction, Level too low, Level too advanced, Failed mid exam, Other)
+- [x] LostReason — 4 entries (Taking a break, Too expensive, Didn't like online format, Other)
+- [x] CancellationReason — 6 entries (Teacher absence, Low attendance, Student request, Scheduling conflict, Administrative, Other)
+- [x] PriceSetting — 4 rows: (GENERAL|IELTS) × (GROUP|INDIVIDUAL), all multiples of 1,000 UZS **(C#6)**
+- [x] AdminUser — super admin (Vladimir) + admin (Laziz)
 
 ### Auth
 
-- [ ] Telegram Login Widget on login page
-- [ ] Session management (cookie-based)
-- [ ] Auth middleware: check AdminUser exists + isActive, attach to request context
-- [ ] Role guard (SUPER_ADMIN vs ADMIN) for destructive actions
-- [ ] Dev-mode bypass for local development (skip Telegram auth, use seeded admin)
+- [x] Telegram Login Widget on login page
+- [x] Session management (JWT cookie via `jose`, 7-day expiry)
+- [x] Auth middleware: verify JWT in Edge, redirect to /login if invalid
+- [x] `requireAdmin()` in admin layout: DB-level check (admin exists + isActive)
+- [x] Role guard (`requireRole("SUPER_ADMIN")`) for destructive actions
+- [ ] ~~Dev-mode bypass~~ — removed; using real Telegram auth in all environments
 
 ### Shared UI Components
 
 These are used across every feature — build once before Phase 1.
 
-- [ ] Data table component (TanStack Table wrapper — sortable, filterable, pagination)
-- [ ] Form pattern (react-hook-form + zod resolver + server action submission)
-- [ ] Confirmation dialog (for destructive actions)
-- [ ] Toast notifications (success/error feedback)
-- [ ] Status badge component (student status, payment status, lesson status)
-- [ ] Sheet/drawer component (for side panels — detail views, forms)
+- [x] Data table component (TanStack Table wrapper — sortable, filterable, pagination)
+- [x] Form pattern (shadcn/ui form — react-hook-form + zod resolver)
+- [x] Confirmation dialog (for destructive actions)
+- [x] Toast notifications (Sonner, added to root layout)
+- [x] Status badge component (student, payment, lesson, group, teacherPay statuses)
+- [x] Sheet/drawer component (shadcn/ui sheet — for side panels)
 
 ### Files
 
 ```
+# Auth (done)
+src/lib/auth-edge.ts                    ← Edge-compatible JWT (createSessionToken, verifySessionToken)
+src/lib/auth.ts                         ← Node-only session/auth helpers (getCurrentAdmin, requireAdmin, validateTelegramAuth)
+src/lib/actions/auth.ts                 ← Server actions (loginWithTelegram, logout)
+src/app/login/page.tsx                  ← Telegram Login Widget page
+src/components/auth/login-form.tsx      ← Login form client component
+src/middleware.ts                        ← Edge auth check on all routes
+
+# Shared UI (todo)
 src/components/ui/data-table.tsx        ← TanStack Table wrapper
 src/components/ui/confirmation-dialog.tsx
 src/components/ui/status-badge.tsx
-src/lib/auth.ts                         ← session helpers, getCurrentAdmin()
-src/app/login/page.tsx                  ← Telegram Login Widget
-src/middleware.ts                        ← auth check on all (admin) routes
 ```
 
 ---

@@ -77,9 +77,9 @@ async function main() {
   await prisma.teacherPaymentPeriod.deleteMany();
   await prisma.studentPaymentPeriod.deleteMany();
   await prisma.attendance.deleteMany();
+  await prisma.teacherScheduleSlot.deleteMany();
   await prisma.lesson.deleteMany();
   await prisma.groupMembership.deleteMany();
-  await prisma.teacherScheduleSlot.deleteMany();
   await prisma.groupTeacherHistory.deleteMany();
   await prisma.priceSetting.deleteMany();
   await prisma.group.deleteMany();
@@ -169,14 +169,23 @@ async function main() {
   // ─── Admin User ───────────────────────────────────────────────────────────
   const admin = await prisma.adminUser.create({
     data: {
-      telegramId: 123456789n,
-      firstName: "Vlad",
+      telegramId: 511001n,
+      firstName: "Vladimir",
       lastName: "Kim",
-      username: "vladadmin",
       role: "SUPER_ADMIN",
     },
   });
-  console.log(`Created admin: ${admin.firstName} (${admin.role})`);
+
+  const admin2 = await prisma.adminUser.create({
+    data: {
+      telegramId: 990254932n,
+      firstName: "Laziz",
+      lastName: "Islomkhujaev",
+      role: "ADMIN",
+    },
+  });
+
+  console.log(`Created admins: ${admin.firstName} (${admin.role}), ${admin2.firstName} (${admin2.role})`);
 
   // ─── Family ─────────────────────────────────────────────────────────────
   const leeFamily = await prisma.family.create({

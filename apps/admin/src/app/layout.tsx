@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Admin Panel",
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en" className={geist.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
+        <Toaster />
       </body>
     </html>
   );

@@ -160,3 +160,12 @@ export const AdjustmentType = {
 } as const
 
 export type AdjustmentType = (typeof AdjustmentType)[keyof typeof AdjustmentType]
+
+
+export const SmsStatus = {
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED'
+} as const
+
+export type SmsStatus = (typeof SmsStatus)[keyof typeof SmsStatus]

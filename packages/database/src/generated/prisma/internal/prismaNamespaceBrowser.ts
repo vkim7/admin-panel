@@ -125,6 +125,8 @@ export const TeacherScalarFieldEnum = {
   canTeachRussian: 'canTeachRussian',
   canTeachEnglishOnly: 'canTeachEnglishOnly',
   isActive: 'isActive',
+  deactivatedAt: 'deactivatedAt',
+  deactivatedById: 'deactivatedById',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -558,6 +560,10 @@ export const SmsHistoryScalarFieldEnum = {
   message: 'message',
   sentAt: 'sentAt',
   sentById: 'sentById',
+  status: 'status',
+  deliveredAt: 'deliveredAt',
+  failureReason: 'failureReason',
+  providerMessageId: 'providerMessageId',
   createdAt: 'createdAt'
 } as const
 
