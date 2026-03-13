@@ -50,3 +50,26 @@ export async function getLostReasons() {
     orderBy: { sortOrder: "asc" },
   });
 }
+
+/** Students available for group assignment — excludes inactive and those already active in the given group */
+export async function getStudentsForGroupAssignment(groupId: string) {
+  return prisma.student.findMany({
+    where: {
+      status: { not: "INACTIVE" },
+      groupMemberships: {
+        none: {
+          groupId,
+          leaveDate: null,
+        },
+      },
+    },
+    select: {
+      id: true,
+      crmCode: true,
+      firstName: true,
+      lastName: true,
+      status: true,
+    },
+    orderBy: { crmCode: "asc" },
+  });
+}

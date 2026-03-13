@@ -132,6 +132,22 @@ export async function deactivateStudent(id: string, data: unknown) {
   return { success: true };
 }
 
+export async function toggleUncertain(studentId: string, isUncertain: boolean) {
+  await requireAdmin();
+
+  await prisma.student.update({
+    where: { id: studentId },
+    data: {
+      isUncertain,
+      uncertainFlaggedBy: isUncertain ? "ADMIN" : null,
+      uncertainComment: isUncertain ? undefined : null,
+    },
+  });
+
+  revalidatePath("/groups");
+  return { success: true };
+}
+
 export async function reactivateStudent(id: string) {
   await requireAdmin();
 

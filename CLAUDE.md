@@ -19,8 +19,9 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 | File | Contains | Use When |
 |------|----------|----------|
-| `master-product-plan.md` | Master product plan — all three apps, business context, content structure, architectural constraints | Understanding overall product scope, data model requirements, or how apps relate to each other |
+| `implementation-plan.md` | **Start here.** Internal progress tracker — phased breakdown with checkboxes, constraints, file lists, and implementation details per feature | **Read this first when implementing any feature.** It tracks what's done, what's next, and has phase-specific guidance that points to other docs. |
 | `admin-panel-plan.md` | Detailed admin panel spec — tabs, tables, fields, workflows, billing model | Implementing any admin panel feature. This is the primary requirements doc. |
+| `master-product-plan.md` | Master product plan — all three apps, business context, content structure, architectural constraints | Understanding overall product scope, data model requirements, or how apps relate to each other |
 | `ISSUES.md` | Known pain points from current operations | Prioritizing what to solve first |
 | `packages/database/DATA_MODEL.md` | Human-readable data model reference — entity relationships, field purposes, constraints, lifecycle flows, business rules | Understanding how entities relate, what constraints exist, and edge cases. **Read this before making data model or query decisions.** |
 

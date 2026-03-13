@@ -10,6 +10,7 @@ import {
   CreditCard,
   GraduationCap,
   Users,
+  Layers,
   LogOut,
 } from "lucide-react";
 
@@ -18,6 +19,7 @@ const navItems = [
   { label: "Reception", href: "/reception", icon: UserPlus },
   { label: "Payments", href: "/payments", icon: CreditCard },
   { label: "Students", href: "/students", icon: GraduationCap },
+  { label: "Groups", href: "/groups", icon: Layers },
   { label: "Teachers", href: "/teachers", icon: Users },
 ];
 
