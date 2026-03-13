@@ -1,0 +1,369 @@
+"use client";
+
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+import { studentBaseSchema, type StudentFormValues } from "@/schemas/student";
+import { createStudent, updateStudent } from "@/lib/actions/students";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
+import { FamilySearch, type SelectedFamily } from "@/components/families/family-search";
+import { FamilyForm } from "@/components/families/family-form";
+
+const LEVELS = [
+  { value: "BEGINNER", label: "Beginner" },
+  { value: "ELEMENTARY", label: "Elementary" },
+  { value: "PRE_INTERMEDIATE", label: "Pre-Intermediate" },
+  { value: "INTERMEDIATE", label: "Intermediate" },
+  { value: "UPPER_INTERMEDIATE", label: "Upper-Intermediate" },
+  { value: "IELTS", label: "IELTS" },
+] as const;
+
+const DAY_OPTIONS = [
+  { value: [1, 3, 5], label: "Mon / Wed / Fri" },
+  { value: [2, 4, 6], label: "Tue / Thu / Sat" },
+] as const;
+
+const LANGUAGES = [
+  { value: "UZBEK", label: "Uzbek" },
+  { value: "RUSSIAN", label: "Russian" },
+] as const;
+
+interface StudentFormProps {
+  defaultValues?: StudentFormValues;
+  studentId?: string;
+  initialFamily?: {
+    id: string;
+    parentFirstName: string;
+    parentLastName: string;
+    parentPhone: string;
+  } | null;
+}
+
+export function StudentForm({
+  defaultValues,
+  studentId,
+  initialFamily,
+}: StudentFormProps) {
+  const [isPending, startTransition] = useTransition();
+  const [showFamilyForm, setShowFamilyForm] = useState(false);
+  const [selectedFamily, setSelectedFamily] = useState<SelectedFamily | null>(
+    initialFamily ?? null,
+  );
+
+  const isEdit = !!studentId;
+
+  const form = useForm<StudentFormValues>({
+    resolver: zodResolver(studentBaseSchema),
+    defaultValues: defaultValues ?? {
+      firstName: "",
+      lastName: "",
+      phone: "",
+      dateOfBirth: "",
+      level: "BEGINNER",
+      preferredDays: [],
+      preferredStartTime: null,
+      preferredLanguage: null,
+      familyId: null,
+      comment: null,
+    },
+  });
+
+  function onSubmit(values: StudentFormValues) {
+    startTransition(async () => {
+      const result = isEdit
+        ? await updateStudent(studentId!, values)
+        : await createStudent(values);
+      if (result?.error) {
+        toast.error(result.error);
+      }
+    });
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Name */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Phone */}
+        <FormField
+          control={form.control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone</FormLabel>
+              <FormControl>
+                <PhoneInput {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Date of Birth & Level */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="dateOfBirth"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Date of Birth</FormLabel>
+                <FormControl>
+                  <Input {...field} type="date" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="level"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Level</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {LEVELS.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>
+                        {l.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Preferred Days */}
+        <FormField
+          control={form.control}
+          name="preferredDays"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Preferred Days</FormLabel>
+              <div className="flex gap-2">
+                {DAY_OPTIONS.map((opt) => {
+                  const selected =
+                    JSON.stringify(field.value) ===
+                    JSON.stringify(opt.value);
+                  return (
+                    <button
+                      key={opt.label}
+                      type="button"
+                      onClick={() => {
+                        field.onChange(
+                          selected ? [] : [...opt.value],
+                        );
+                      }}
+                      className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input hover:bg-accent"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Preferred Time & Language */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="preferredStartTime"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preferred Start Time</FormLabel>
+                <FormControl>
+                  <Input
+                    type="time"
+                    value={field.value ?? ""}
+                    onChange={(e) =>
+                      field.onChange(e.target.value || null)
+                    }
+                  />
+                </FormControl>
+                <FormDescription>Optional</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="preferredLanguage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Preferred Language</FormLabel>
+                <Select
+                  onValueChange={(v) =>
+                    field.onChange(v === "__none__" ? null : v)
+                  }
+                  value={field.value ?? "__none__"}
+                >
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="__none__">No preference</SelectItem>
+                    {LANGUAGES.map((l) => (
+                      <SelectItem key={l.value} value={l.value}>
+                        {l.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>Optional</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Family */}
+        <FormField
+          control={form.control}
+          name="familyId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Family (required for minors under 18)</FormLabel>
+              <div className="space-y-2">
+                <FamilySearch
+                  selectedFamily={selectedFamily}
+                  onSelect={(family) => {
+                    field.onChange(family.id);
+                    setSelectedFamily(family);
+                    setShowFamilyForm(false);
+                  }}
+                  onClear={() => {
+                    field.onChange(null);
+                    setSelectedFamily(null);
+                  }}
+                />
+                {!selectedFamily && !showFamilyForm && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowFamilyForm(true)}
+                  >
+                    + Create New Family
+                  </Button>
+                )}
+                {showFamilyForm && (
+                  <FamilyForm
+                    onCreated={(family) => {
+                      field.onChange(family.id);
+                      setSelectedFamily(family);
+                      setShowFamilyForm(false);
+                    }}
+                    onCancel={() => setShowFamilyForm(false)}
+                  />
+                )}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Comment */}
+        <FormField
+          control={form.control}
+          name="comment"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Comment</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="Optional notes about this student..."
+                  rows={3}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Actions */}
+        <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.history.back()}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending
+              ? "Saving..."
+              : isEdit
+                ? "Update Student"
+                : "Create Student"}
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}

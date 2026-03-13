@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredString, requiredTime, requiredInt } from "./helpers";
+import { requiredString, requiredPhone, requiredTime, requiredInt } from "./helpers";
 
 const LEVELS = [
   "BEGINNER",
@@ -13,7 +13,7 @@ const LEVELS = [
 export const teacherSchema = z.object({
   firstName: requiredString("First name is required"),
   lastName: requiredString("Last name is required"),
-  phone: requiredString("Phone is required"),
+  phone: requiredPhone(),
   levels: z.array(z.enum(LEVELS)).min(1, "Select at least one level"),
   canTeachUzbek: z.boolean(),
   canTeachRussian: z.boolean(),

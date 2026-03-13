@@ -1,0 +1,52 @@
+import { prisma } from "@/server/db";
+
+export async function getStudents() {
+  return prisma.student.findMany({
+    include: {
+      family: { select: { id: true, parentFirstName: true, parentLastName: true, parentPhone: true } },
+      groupMemberships: {
+        where: { leaveDate: null },
+        select: {
+          id: true,
+          group: { select: { id: true, publicId: true, type: true, level: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getStudentById(id: string) {
+  return prisma.student.findUnique({
+    where: { id },
+    include: {
+      family: true,
+      lostReason: true,
+      activatedBy: { select: { firstName: true, lastName: true } },
+      inactivatedBy: { select: { firstName: true, lastName: true } },
+      groupMemberships: {
+        orderBy: { joinDate: "desc" },
+        include: {
+          group: {
+            select: {
+              id: true,
+              publicId: true,
+              type: true,
+              level: true,
+              days: true,
+              startTime: true,
+              isActive: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+export async function getLostReasons() {
+  return prisma.lostReason.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}

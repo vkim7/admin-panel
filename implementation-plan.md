@@ -123,7 +123,6 @@ src/components/ui/status-badge.tsx
   - Sort by name, filter by level and active status
 - [ ] **Create teacher**
   - Fields: firstName, lastName, phone, levels[], canTeachUzbek, canTeachRussian, canTeachEnglishOnly
-  - On create: also create initial `TeacherRateChange` with effectiveFrom = today, changedById = null **(C#14)**
   - Validation: phone unique (DB @unique), at least one level selected
 - [ ] **Edit teacher** — same fields as create, phone uniqueness re-check
 - [ ] **Teacher detail page** — profile info, availability grid, rate history, groups taught
@@ -220,6 +219,7 @@ This is the most complex phase — group creation triggers Lessons, TeacherSched
 
 - [ ] **Create group form**
   - Fields: type (GROUP/INDIVIDUAL), teacherId, days[], startTime, durationMinutes, level, startDate, maxStudents, zoomLink
+  - **Teacher rate guard**: reject group creation if the selected teacher has no rate history (must add rates before assigning to a group)
   - Days validation **(C#12)**: only [1,3,5] or [2,4,6]
   - Duration validation **(C#12a)**: only 60 or 80
   - endDate auto-calculated **(C#19)**: day < 15 → end of startMonth+2; day >= 15 → end of startMonth+3

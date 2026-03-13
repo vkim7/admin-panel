@@ -1,0 +1,71 @@
+import { z } from "zod";
+import { requiredString, requiredPhone, nullableString, nullableTime, requiredIsoDate } from "./helpers";
+
+const LEVELS = [
+  "BEGINNER",
+  "ELEMENTARY",
+  "PRE_INTERMEDIATE",
+  "INTERMEDIATE",
+  "UPPER_INTERMEDIATE",
+  "IELTS",
+] as const;
+
+const PREFERRED_LANGUAGES = ["UZBEK", "RUSSIAN"] as const;
+
+// Base schema — used by react-hook-form resolver (no transforms/preprocess)
+export const studentBaseSchema = z.object({
+  firstName: requiredString("First name is required"),
+  lastName: requiredString("Last name is required"),
+  phone: requiredPhone(),
+  dateOfBirth: requiredIsoDate("Date of birth is required"),
+  level: z.enum(LEVELS, { error: "Level is required" }),
+  preferredDays: z.array(z.number().int().min(1).max(7)),
+  preferredStartTime: z.string().nullable(),
+  preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
+  familyId: z.string().nullable(),
+  comment: z.string().nullable(),
+});
+
+export type StudentFormValues = z.infer<typeof studentBaseSchema>;
+
+// Full schema with transforms + C#7 refine — used in server actions
+export const studentSchema = z
+  .object({
+    firstName: requiredString("First name is required"),
+    lastName: requiredString("Last name is required"),
+    phone: requiredPhone(),
+    dateOfBirth: requiredIsoDate("Date of birth is required"),
+    level: z.enum(LEVELS, { error: "Level is required" }),
+    preferredDays: z.array(z.number().int().min(1).max(7)),
+    preferredStartTime: nullableTime(),
+    preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
+    familyId: nullableString(),
+    comment: nullableString(500),
+  })
+  .refine(
+    (data) => {
+      // C#7: Minor enrollment requires familyId
+      const dob = new Date(data.dateOfBirth);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      if (age < 18 && !data.familyId) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Students under 18 must be linked to a family",
+      path: ["familyId"],
+    },
+  );
+
+export const deactivateStudentSchema = z.object({
+  lostReasonId: requiredString("Lost reason is required"),
+  otherLostReason: z.string().nullable(),
+});
+
+export type DeactivateStudentValues = z.infer<typeof deactivateStudentSchema>;

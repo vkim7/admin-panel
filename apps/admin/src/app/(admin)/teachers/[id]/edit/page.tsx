@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTeacherById } from "@/lib/queries/teachers";
 import { TeacherForm } from "@/components/teachers/teacher-form";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function EditTeacherPage({
   params,
@@ -13,9 +14,14 @@ export default async function EditTeacherPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <h1 className="text-2xl font-semibold">
-        Edit {teacher.firstName} {teacher.lastName}
-      </h1>
+      <PageHeader
+        title={`Edit ${teacher.firstName} ${teacher.lastName}`}
+        breadcrumbs={[
+          { label: "Teachers", href: "/teachers" },
+          { label: `${teacher.firstName} ${teacher.lastName}`, href: `/teachers/${id}` },
+          { label: "Edit" },
+        ]}
+      />
       <TeacherForm
         teacherId={id}
         defaultValues={{

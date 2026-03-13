@@ -1,5 +1,6 @@
 "use server";
 
+import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/server/db";
@@ -22,17 +23,6 @@ export async function createTeacher(data: unknown) {
   try {
     const teacher = await prisma.teacher.create({
       data: { ...rest, phone },
-    });
-
-    // Create initial rate entry (C#14)
-    await prisma.teacherRateChange.create({
-      data: {
-        teacherId: teacher.id,
-        groupLessonRate: 0,
-        individualLessonRate: 0,
-        effectiveFrom: new Date(),
-        changedById: null,
-      },
     });
 
     redirect(`/teachers/${teacher.id}`);
@@ -116,43 +106,46 @@ export async function deactivateTeacher(id: string) {
 
 // ─── Availability ─────────────────────────────────────────────────────────────
 
-export async function addAvailabilityBlock(teacherId: string, data: unknown) {
+export async function setAvailability(teacherId: string, data: unknown) {
   await requireAdmin();
-  const parsed = availabilityBlockSchema.safeParse(data);
+
+  const parsed = z.array(availabilityBlockSchema).safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  // C#34: Check for overlapping blocks on same day
-  const existing = await prisma.teacherAvailability.findMany({
-    where: { teacherId, dayOfWeek: parsed.data.dayOfWeek },
-  });
-
-  const newStart = parsed.data.startTime;
-  const newEnd = parsed.data.endTime;
-
-  for (const block of existing) {
-    if (newStart < block.endTime && newEnd > block.startTime) {
-      return {
-        error: `Overlaps with existing block ${block.startTime}–${block.endTime}`,
-      };
+  // Check for overlapping ranges within the same day
+  const byDay = new Map<number, typeof parsed.data>();
+  for (const block of parsed.data) {
+    const list = byDay.get(block.dayOfWeek) ?? [];
+    list.push(block);
+    byDay.set(block.dayOfWeek, list);
+  }
+  for (const [, dayBlocks] of byDay) {
+    for (let i = 0; i < dayBlocks.length; i++) {
+      for (let j = i + 1; j < dayBlocks.length; j++) {
+        const a = dayBlocks[i]!;
+        const b = dayBlocks[j]!;
+        if (a.startTime < b.endTime && a.endTime > b.startTime) {
+          return {
+            error: `Overlapping ranges: ${a.startTime}–${a.endTime} and ${b.startTime}–${b.endTime}`,
+          };
+        }
+      }
     }
   }
 
-  await prisma.teacherAvailability.create({
-    data: { teacherId, ...parsed.data },
-  });
+  await prisma.$transaction([
+    prisma.teacherAvailability.deleteMany({ where: { teacherId } }),
+    ...(parsed.data.length > 0
+      ? [
+          prisma.teacherAvailability.createMany({
+            data: parsed.data.map((block) => ({ teacherId, ...block })),
+          }),
+        ]
+      : []),
+  ]);
 
-  revalidatePath(`/teachers/${teacherId}`);
-  return { success: true };
-}
-
-export async function removeAvailabilityBlock(
-  teacherId: string,
-  blockId: string,
-) {
-  await requireAdmin();
-  await prisma.teacherAvailability.delete({ where: { id: blockId } });
   revalidatePath(`/teachers/${teacherId}`);
   return { success: true };
 }

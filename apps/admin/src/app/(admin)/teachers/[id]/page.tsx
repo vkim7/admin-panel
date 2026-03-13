@@ -4,6 +4,7 @@ import { getTeacherById } from "@/lib/queries/teachers";
 import { AvailabilityEditor } from "@/components/teachers/availability-editor";
 import { RateHistory } from "@/components/teachers/rate-history";
 import { TeacherActions } from "@/components/teachers/teacher-actions";
+import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -39,30 +40,28 @@ export default async function TeacherDetailPage({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-semibold">
-              {teacher.firstName} {teacher.lastName}
-            </h1>
-            {!teacher.isActive && (
-              <Badge variant="destructive">Inactive</Badge>
-            )}
-          </div>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {teacher.phone}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/teachers/${id}/edit`}>
-              <Pencil className="mr-1 size-4" />
-              Edit
-            </Link>
-          </Button>
-          {teacher.isActive && <TeacherActions teacherId={id} />}
-        </div>
-      </div>
+      <PageHeader
+        title={`${teacher.firstName} ${teacher.lastName}`}
+        breadcrumbs={[
+          { label: "Teachers", href: "/teachers" },
+          { label: `${teacher.firstName} ${teacher.lastName}` },
+        ]}
+        actions={
+          <>
+            <Button variant="outline" size="sm" asChild>
+              <Link href={`/teachers/${id}/edit`}>
+                <Pencil className="mr-1 size-4" />
+                Edit
+              </Link>
+            </Button>
+            {teacher.isActive && <TeacherActions teacherId={id} />}
+          </>
+        }
+      />
+      {!teacher.isActive && (
+        <Badge variant="destructive">Inactive</Badge>
+      )}
+      <p className="text-sm text-muted-foreground">{teacher.phone}</p>
 
       {/* Profile Info */}
       <div className="grid grid-cols-2 gap-6 md:grid-cols-3">

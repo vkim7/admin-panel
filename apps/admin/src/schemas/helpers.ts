@@ -22,6 +22,16 @@ export const nullableString = (maxLength?: number) => {
   return base.transform((val) => (val === "" ? null : val)).nullable();
 };
 
+// --- Phone helpers ---
+
+/** Required phone number: +998 followed by 9 digits (NOT NULL). */
+export const requiredPhone = (error = "Phone number is required") =>
+  z
+    .string()
+    .trim()
+    .min(1, { error })
+    .regex(/^\+998\d{9}$/, { error: "Must be a valid phone number" });
+
 // --- ID helpers (handle string→number from form selects) ---
 
 /** Required FK ID — rejects empty, converts string to number (NOT NULL FK). */

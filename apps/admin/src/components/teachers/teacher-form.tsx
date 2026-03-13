@@ -11,6 +11,7 @@ import {
 import { createTeacher, updateTeacher } from "@/lib/actions/teachers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import {
   Form,
@@ -46,9 +47,9 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
       lastName: "",
       phone: "",
       levels: [],
-      canTeachUzbek: false,
-      canTeachRussian: false,
-      canTeachEnglishOnly: true,
+      canTeachUzbek: true,
+      canTeachRussian: true,
+      canTeachEnglishOnly: false,
     },
   });
 
@@ -102,7 +103,7 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="+998..." />
+                <PhoneInput {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -199,6 +200,13 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
         </div>
 
         <div className="flex gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => window.history.back()}
+          >
+            Cancel
+          </Button>
           <Button type="submit" disabled={isPending}>
             {isPending ? "Saving..." : isEdit ? "Update Teacher" : "Create Teacher"}
           </Button>

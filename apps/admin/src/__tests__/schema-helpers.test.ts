@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   isBlank,
   requiredString,
+  requiredPhone,
   nullableString,
   requiredId,
   nullableId,
@@ -106,6 +107,97 @@ describe("requiredString", () => {
       if (!result.success) {
         const messages = result.error.issues.map((i) => i.message);
         expect(messages.some((m) => m.includes("Required"))).toBe(true);
+      }
+    });
+  });
+});
+
+// =============================================================================
+// requiredPhone
+// =============================================================================
+describe("requiredPhone", () => {
+  const schema = requiredPhone();
+
+  describe("valid inputs", () => {
+    it("accepts valid phone number", () => {
+      expect(schema.parse("+998901234567")).toBe("+998901234567");
+    });
+
+    it("accepts different operator codes", () => {
+      expect(schema.parse("+998331234567")).toBe("+998331234567");
+      expect(schema.parse("+998711234567")).toBe("+998711234567");
+      expect(schema.parse("+998991234567")).toBe("+998991234567");
+    });
+
+    it("trims whitespace", () => {
+      expect(schema.parse("  +998901234567  ")).toBe("+998901234567");
+    });
+  });
+
+  describe("invalid inputs", () => {
+    it("rejects empty string", () => {
+      expect(() => schema.parse("")).toThrow();
+    });
+
+    it("rejects whitespace-only string", () => {
+      expect(() => schema.parse("   ")).toThrow();
+    });
+
+    it("rejects phone without country code", () => {
+      expect(() => schema.parse("901234567")).toThrow();
+    });
+
+    it("rejects phone with wrong country code", () => {
+      expect(() => schema.parse("+1901234567")).toThrow();
+      expect(() => schema.parse("+7901234567")).toThrow();
+    });
+
+    it("rejects phone with too few digits after +998", () => {
+      expect(() => schema.parse("+99890123456")).toThrow(); // 8 digits
+    });
+
+    it("rejects phone with too many digits after +998", () => {
+      expect(() => schema.parse("+9989012345678")).toThrow(); // 10 digits
+    });
+
+    it("rejects phone with non-digit characters", () => {
+      expect(() => schema.parse("+998-90-123-45-67")).toThrow();
+      expect(() => schema.parse("+998 90 123 45 67")).toThrow();
+      expect(() => schema.parse("+998(90)1234567")).toThrow();
+    });
+
+    it("rejects non-phone strings", () => {
+      expect(() => schema.parse("not-a-phone")).toThrow();
+    });
+  });
+
+  describe("custom error message", () => {
+    it("uses custom error for empty input", () => {
+      const result = requiredPhone("Enter phone").safeParse("");
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const messages = result.error.issues.map((i) => i.message);
+        expect(messages.some((m) => m.includes("Enter phone"))).toBe(true);
+      }
+    });
+
+    it("uses format error for invalid format", () => {
+      const result = schema.safeParse("12345");
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const messages = result.error.issues.map((i) => i.message);
+        expect(messages.some((m) => m.includes("valid phone number"))).toBe(true);
+      }
+    });
+  });
+
+  describe("default error message", () => {
+    it("uses 'Phone number is required' as default error", () => {
+      const result = requiredPhone().safeParse("");
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        const messages = result.error.issues.map((i) => i.message);
+        expect(messages.some((m) => m.includes("Phone number is required"))).toBe(true);
       }
     });
   });
