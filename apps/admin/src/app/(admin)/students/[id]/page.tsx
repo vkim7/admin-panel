@@ -114,9 +114,20 @@ export default async function StudentDetailPage({
         </div>
         <div>
           <p className="text-xs font-medium text-muted-foreground">
-            Preferred Time
+            Preferred Time Slots
           </p>
-          <p className="mt-1 text-sm">{student.preferredStartTime ?? "—"}</p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {student.preferredTimeSlots.length > 0
+              ? student.preferredTimeSlots.map((slot) => (
+                  <span
+                    key={slot}
+                    className="rounded-md border bg-muted px-2 py-0.5 text-xs"
+                  >
+                    {slot}
+                  </span>
+                ))
+              : <span className="text-sm">—</span>}
+          </div>
         </div>
         <div>
           <p className="text-xs font-medium text-muted-foreground">

@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/form";
 import { FamilySearch, type SelectedFamily } from "@/components/families/family-search";
 import { FamilyForm } from "@/components/families/family-form";
+import { TIME_SLOTS } from "@/lib/constants";
 
 const LEVELS = [
   { value: "BEGINNER", label: "Beginner" },
@@ -81,7 +82,7 @@ export function StudentForm({
       dateOfBirth: "",
       level: "BEGINNER",
       preferredDays: [],
-      preferredStartTime: null,
+      preferredTimeSlots: [],
       preferredLanguage: null,
       familyId: null,
       comment: null,
@@ -225,60 +226,76 @@ export function StudentForm({
           )}
         />
 
-        {/* Preferred Time & Language */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="preferredStartTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preferred Start Time</FormLabel>
+        {/* Preferred Time Slots */}
+        <FormField
+          control={form.control}
+          name="preferredTimeSlots"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Preferred Time Slots</FormLabel>
+              <div className="flex flex-wrap gap-1.5">
+                {TIME_SLOTS.map((slot) => {
+                  const selected = field.value.includes(slot);
+                  return (
+                    <button
+                      key={slot}
+                      type="button"
+                      onClick={() => {
+                        field.onChange(
+                          selected
+                            ? field.value.filter((s: string) => s !== slot)
+                            : [...field.value, slot],
+                        );
+                      }}
+                      className={`rounded-md border px-2.5 py-1 text-sm transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input hover:bg-accent"
+                      }`}
+                    >
+                      {slot}
+                    </button>
+                  );
+                })}
+              </div>
+              <FormDescription>Optional — select one or more</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Preferred Language */}
+        <FormField
+          control={form.control}
+          name="preferredLanguage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Preferred Language</FormLabel>
+              <Select
+                onValueChange={(v) =>
+                  field.onChange(v === "__none__" ? null : v)
+                }
+                value={field.value ?? "__none__"}
+              >
                 <FormControl>
-                  <Input
-                    type="time"
-                    value={field.value ?? ""}
-                    onChange={(e) =>
-                      field.onChange(e.target.value || null)
-                    }
-                  />
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
                 </FormControl>
-                <FormDescription>Optional</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="preferredLanguage"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Preferred Language</FormLabel>
-                <Select
-                  onValueChange={(v) =>
-                    field.onChange(v === "__none__" ? null : v)
-                  }
-                  value={field.value ?? "__none__"}
-                >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="__none__">No preference</SelectItem>
-                    {LANGUAGES.map((l) => (
-                      <SelectItem key={l.value} value={l.value}>
-                        {l.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>Optional</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                <SelectContent>
+                  <SelectItem value="__none__">No preference</SelectItem>
+                  {LANGUAGES.map((l) => (
+                    <SelectItem key={l.value} value={l.value}>
+                      {l.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormDescription>Optional</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Family */}
         <FormField

@@ -1,0 +1,52 @@
+// Fixed time slots for group scheduling (90-minute spacing)
+export const TIME_SLOTS = [
+  "07:00",
+  "08:30",
+  "10:00",
+  "11:30",
+  "13:00",
+  "14:30",
+  "16:00",
+  "17:30",
+  "19:00",
+  "20:30",
+  "22:00",
+] as const;
+
+export type TimeSlot = (typeof TIME_SLOTS)[number];
+
+// Short level labels for compact displays (tables, schedule cells)
+export const LEVEL_SHORT: Record<string, string> = {
+  BEGINNER: "BEG",
+  ELEMENTARY: "ELEM",
+  PRE_INTERMEDIATE: "PRE",
+  INTERMEDIATE: "INT",
+  UPPER_INTERMEDIATE: "UPPER",
+  IELTS: "IELTS",
+};
+
+// Full level labels for detail pages
+export const LEVEL_LABEL: Record<string, string> = {
+  BEGINNER: "Beginner",
+  ELEMENTARY: "Elementary",
+  PRE_INTERMEDIATE: "Pre-Intermediate",
+  INTERMEDIATE: "Intermediate",
+  UPPER_INTERMEDIATE: "Upper-Intermediate",
+  IELTS: "IELTS",
+};
+
+// Day pattern labels
+export const DAYS_LABEL: Record<string, string> = {
+  "1,3,5": "MWF",
+  "2,4,6": "TTS",
+};
+
+export const DAY_SHORT: Record<number, string> = {
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat",
+  7: "Sun",
+};

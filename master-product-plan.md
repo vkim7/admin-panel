@@ -34,7 +34,7 @@ Lessons happen on **Zoom (paid)**, 80 minutes each (group and individual). No in
 - Once placement test passed, student record is created in our system via amoCRM API integration (status: awaiting_assignment)
 - Student appears in admin's Reception tab for group assignment
 - Admin assigns to group → student status becomes "active" → student notified via Telegram
-- Student data includes: name, phone, level, preferred day pattern (1,3,5 or 2,4,6), preferred time slot (14:00 / 15:30 / 17:00 / 18:30 / 20:00)
+- Student data includes: name, phone, level, preferred day pattern (1,3,5 or 2,4,6), preferred time slot (7:00 / 8:30 / 10:00 / 11:30 / 13:00 / 14:30 / 16:00 / 17:30 / 19:00 / 20:30 / 22:00)
 - **Later:** in-app placement test in Telegram Mini App, students enter our system at application stage
 
 ### Homework
@@ -176,7 +176,7 @@ Exercises are assigned per level by default. Data model supports overriding at t
 - **Exercise customization**: fixed per level now, per-student overrides later — model both from the start
 - **Payment integration**: not built now but the student model should have payment-related fields ready (status, expiry, package type)
 - **Schedule view**: not in student app now but the data exists (lesson times, Zoom links) so adding a calendar view later is trivial
-- **Fixed scheduling constraints**: 5 time slots × 2 day patterns. Keeps scheduling manageable at scale. All lessons are 80 minutes.
+- **Fixed scheduling constraints**: 11 time slots × 2 day patterns. Keeps scheduling manageable at scale. All lessons are 80 minutes.
 - **amoCRM (Kommo) integration**: leads managed in amoCRM up to placement test. Student record created in our DB after placement passed (API polling at launch, webhooks later). Student entity supports full lifecycle: awaiting_assignment → active → inactive
 - **CRM codes**: every student gets a unique CRM code (plain sequence number, e.g. "1", "42") used as identifier across all surfaces
 - **Single student entity**: one record per student, surfaced in multiple views (Reception, Student Management, Group Details, No Payment List) via status/filter — not separate tables

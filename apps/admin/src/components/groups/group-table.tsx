@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { LEVEL_SHORT, DAYS_LABEL } from "@/lib/constants";
 
 type GroupRow = {
   id: string;
@@ -20,19 +21,6 @@ type GroupRow = {
   memberships: { id: string }[];
 };
 
-const LEVEL_SHORT: Record<string, string> = {
-  BEGINNER: "Beg",
-  ELEMENTARY: "Elem",
-  PRE_INTERMEDIATE: "Pre-Int",
-  INTERMEDIATE: "Int",
-  UPPER_INTERMEDIATE: "Upper-Int",
-  IELTS: "IELTS",
-};
-
-const DAYS_LABEL: Record<string, string> = {
-  "1,3,5": "MWF",
-  "2,4,6": "TTS",
-};
 
 const columns: ColumnDef<GroupRow>[] = [
   {

@@ -13,7 +13,7 @@ export async function createStudent(data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { dateOfBirth, preferredDays, ...rest } = parsed.data;
+  const { dateOfBirth, preferredDays, preferredTimeSlots, ...rest } = parsed.data;
 
   try {
     const student = await prisma.student.create({
@@ -21,6 +21,7 @@ export async function createStudent(data: unknown) {
         ...rest,
         dateOfBirth: new Date(dateOfBirth),
         preferredDays,
+        preferredTimeSlots,
       },
     });
     redirect(`/students/${student.id}`);
@@ -44,7 +45,7 @@ export async function updateStudent(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { dateOfBirth, preferredDays, ...rest } = parsed.data;
+  const { dateOfBirth, preferredDays, preferredTimeSlots, ...rest } = parsed.data;
 
   try {
     await prisma.student.update({
@@ -53,6 +54,7 @@ export async function updateStudent(id: string, data: unknown) {
         ...rest,
         dateOfBirth: new Date(dateOfBirth),
         preferredDays,
+        preferredTimeSlots,
       },
     });
     revalidatePath(`/students/${id}`);

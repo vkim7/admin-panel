@@ -35,7 +35,7 @@ export default async function EditStudentPage({
           dateOfBirth,
           level: student.level,
           preferredDays: student.preferredDays,
-          preferredStartTime: student.preferredStartTime,
+          preferredTimeSlots: student.preferredTimeSlots,
           preferredLanguage: student.preferredLanguage,
           familyId: student.familyId,
           comment: student.comment,

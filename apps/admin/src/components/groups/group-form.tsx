@@ -25,6 +25,7 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { AlertTriangle } from "lucide-react";
+import { TIME_SLOTS } from "@/lib/constants";
 
 const LEVELS = [
   { value: "BEGINNER", label: "Beginner" },
@@ -56,9 +57,14 @@ interface GroupFormProps {
   defaultValues?: GroupFormValues;
   groupId?: string;
   teachers: TeacherOption[];
+  prefill?: {
+    teacherId?: string;
+    days?: number[];
+    startTime?: string;
+  };
 }
 
-export function GroupForm({ defaultValues, groupId, teachers }: GroupFormProps) {
+export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFormProps) {
   const [isPending, startTransition] = useTransition();
   const isEdit = !!groupId;
 
@@ -66,9 +72,9 @@ export function GroupForm({ defaultValues, groupId, teachers }: GroupFormProps) 
     resolver: zodResolver(groupBaseSchema),
     defaultValues: defaultValues ?? {
       type: "GROUP",
-      teacherId: "",
-      days: [],
-      startTime: "",
+      teacherId: prefill?.teacherId ?? "",
+      days: prefill?.days ?? [],
+      startTime: prefill?.startTime ?? "",
       level: "BEGINNER",
       durationMinutes: 80,
       maxStudents: 6,
@@ -213,9 +219,20 @@ export function GroupForm({ defaultValues, groupId, teachers }: GroupFormProps) 
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Start Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} />
-                </FormControl>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select time..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {TIME_SLOTS.map((slot) => (
+                      <SelectItem key={slot} value={slot}>
+                        {slot}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

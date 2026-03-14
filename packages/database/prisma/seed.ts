@@ -210,12 +210,12 @@ async function main() {
       canTeachEnglishOnly: false,
       availability: {
         create: [
-          { dayOfWeek: 1, startTime: "14:00", endTime: "22:00" },
-          { dayOfWeek: 3, startTime: "14:00", endTime: "22:00" },
-          { dayOfWeek: 5, startTime: "14:00", endTime: "22:00" },
-          { dayOfWeek: 2, startTime: "17:00", endTime: "22:00" },
-          { dayOfWeek: 4, startTime: "17:00", endTime: "22:00" },
-          { dayOfWeek: 6, startTime: "17:00", endTime: "22:00" },
+          { dayOfWeek: 1, startTime: "14:30", endTime: "22:00" },
+          { dayOfWeek: 3, startTime: "14:30", endTime: "22:00" },
+          { dayOfWeek: 5, startTime: "14:30", endTime: "22:00" },
+          { dayOfWeek: 2, startTime: "17:30", endTime: "22:00" },
+          { dayOfWeek: 4, startTime: "17:30", endTime: "22:00" },
+          { dayOfWeek: 6, startTime: "17:30", endTime: "22:00" },
         ],
       },
     },
@@ -232,12 +232,12 @@ async function main() {
       canTeachEnglishOnly: true,
       availability: {
         create: [
-          { dayOfWeek: 1, startTime: "17:00", endTime: "22:00" },
-          { dayOfWeek: 3, startTime: "17:00", endTime: "22:00" },
-          { dayOfWeek: 5, startTime: "17:00", endTime: "22:00" },
-          { dayOfWeek: 2, startTime: "14:00", endTime: "22:00" },
-          { dayOfWeek: 4, startTime: "14:00", endTime: "22:00" },
-          { dayOfWeek: 6, startTime: "14:00", endTime: "22:00" },
+          { dayOfWeek: 1, startTime: "17:30", endTime: "22:00" },
+          { dayOfWeek: 3, startTime: "17:30", endTime: "22:00" },
+          { dayOfWeek: 5, startTime: "17:30", endTime: "22:00" },
+          { dayOfWeek: 2, startTime: "14:30", endTime: "22:00" },
+          { dayOfWeek: 4, startTime: "14:30", endTime: "22:00" },
+          { dayOfWeek: 6, startTime: "14:30", endTime: "22:00" },
         ],
       },
     },
@@ -282,7 +282,7 @@ async function main() {
       type: "GROUP",
       teacherId: teacher1.id,
       days: [1, 3, 5],
-      startTime: "14:00",
+      startTime: "14:30",
       level: "BEGINNER",
       progressStage: "MID",
       maxStudents: 6,
@@ -299,7 +299,7 @@ async function main() {
       type: "GROUP",
       teacherId: teacher1.id,
       days: [1, 3, 5],
-      startTime: "15:30",
+      startTime: "16:00",
       level: "ELEMENTARY",
       progressStage: "BEGINNING",
       maxStudents: 6,
@@ -316,7 +316,7 @@ async function main() {
       type: "GROUP",
       teacherId: teacher2.id,
       days: [1, 3, 5],
-      startTime: "17:00",
+      startTime: "17:30",
       level: "INTERMEDIATE",
       progressStage: "FINAL",
       maxStudents: 6,
@@ -352,7 +352,7 @@ async function main() {
       type: "INDIVIDUAL",
       teacherId: teacher2.id,
       days: [2, 4, 6],
-      startTime: "14:00",
+      startTime: "14:30",
       level: "UPPER_INTERMEDIATE",
       progressStage: "BEGINNING",
       maxStudents: 1,
@@ -481,7 +481,7 @@ async function main() {
       level: "PRE_INTERMEDIATE",
       status: "AWAITING_ASSIGNMENT",
       preferredDays: [1, 3, 5],
-      preferredStartTime: "17:00",
+      preferredTimeSlots: ["16:00", "17:30"],
       preferredLanguage: "RUSSIAN",
     },
   });
@@ -546,7 +546,7 @@ async function main() {
   const gr1Lessons = await createLessonsAndSlots({
     groupId: group1.id,
     teacherId: teacher1.id,
-    startTime: "14:00",
+    startTime: "14:30",
     dates: gr1Dates,
     activeStudentCount: 3,
   });
@@ -557,7 +557,7 @@ async function main() {
   const gr2Lessons = await createLessonsAndSlots({
     groupId: group2.id,
     teacherId: teacher1.id,
-    startTime: "15:30",
+    startTime: "16:00",
     dates: gr2Dates,
     activeStudentCount: 2,
   });
@@ -568,7 +568,7 @@ async function main() {
   const gr3Lessons = await createLessonsAndSlots({
     groupId: group3.id,
     teacherId: teacher2.id,
-    startTime: "17:00",
+    startTime: "17:30",
     dates: gr3Dates,
     activeStudentCount: 3,
   });
@@ -579,7 +579,7 @@ async function main() {
   const indLessons = await createLessonsAndSlots({
     groupId: indGroup.id,
     teacherId: teacher2.id,
-    startTime: "14:00",
+    startTime: "14:30",
     dates: indDates,
     activeStudentCount: 1,
   });
@@ -643,7 +643,7 @@ async function main() {
         originalTeacherId: teacher1.id,
         lessonNumber: gr1Lessons.length + 1,
         lessonDate: replacementDate,
-        startTime: "14:00",
+        startTime: "14:30",
         status: "SCHEDULED",
         rescheduledFromId: nextScheduledGr1.id,
         originalLessonId: nextScheduledGr1.id,
@@ -655,7 +655,7 @@ async function main() {
       data: {
         teacherId: teacher1.id,
         date: replacementDate,
-        startTime: "14:00",
+        startTime: "14:30",
         groupId: group1.id,
         lessonId: replacementLesson.id,
       },
@@ -698,7 +698,7 @@ async function main() {
       data: {
         teacherId: teacher2.id,
         date: nextAfterCancelled.lessonDate,
-        startTime: "14:00",
+        startTime: "14:30",
         groupId: group1.id,
         lessonId: nextAfterCancelled.id,
       },

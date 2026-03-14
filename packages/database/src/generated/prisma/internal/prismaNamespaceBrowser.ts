@@ -160,7 +160,7 @@ export const StudentScalarFieldEnum = {
   status: 'status',
   familyId: 'familyId',
   preferredDays: 'preferredDays',
-  preferredStartTime: 'preferredStartTime',
+  preferredTimeSlots: 'preferredTimeSlots',
   preferredLanguage: 'preferredLanguage',
   referralCode: 'referralCode',
   isUncertain: 'isUncertain',

@@ -6,6 +6,7 @@ import {
   requiredInt,
   nullableString,
 } from "./helpers";
+import { TIME_SLOTS } from "@/lib/constants";
 
 const LEVELS = [
   "BEGINNER",
@@ -68,14 +69,27 @@ export const groupCreateSchema = z
       return data.durationMinutes === 60 || data.durationMinutes === 80;
     },
     { message: "Duration must be 60 or 80 minutes", path: ["durationMinutes"] },
+  )
+  .refine(
+    (data) => {
+      return (TIME_SLOTS as readonly string[]).includes(data.startTime);
+    },
+    { message: "Start time must be a valid time slot", path: ["startTime"] },
   );
 
 // Edit schema — level/progressStage/days/type/startDate not editable
-export const groupEditSchema = z.object({
-  maxStudents: requiredInt("Max students is required"),
-  startTime: requiredTime("Start time is required"),
-  zoomLink: nullableString(),
-  skipAutoGraduation: z.boolean().default(false),
-});
+export const groupEditSchema = z
+  .object({
+    maxStudents: requiredInt("Max students is required"),
+    startTime: requiredTime("Start time is required"),
+    zoomLink: nullableString(),
+    skipAutoGraduation: z.boolean().default(false),
+  })
+  .refine(
+    (data) => {
+      return (TIME_SLOTS as readonly string[]).includes(data.startTime);
+    },
+    { message: "Start time must be a valid time slot", path: ["startTime"] },
+  );
 
 export type GroupEditValues = z.infer<typeof groupEditSchema>;

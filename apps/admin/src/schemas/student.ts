@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { requiredString, requiredPhone, nullableString, nullableTime, requiredIsoDate } from "./helpers";
+import { requiredString, requiredPhone, nullableString, requiredIsoDate } from "./helpers";
+import { TIME_SLOTS } from "@/lib/constants";
 
 const LEVELS = [
   "BEGINNER",
@@ -20,7 +21,7 @@ export const studentBaseSchema = z.object({
   dateOfBirth: requiredIsoDate("Date of birth is required"),
   level: z.enum(LEVELS, { error: "Level is required" }),
   preferredDays: z.array(z.number().int().min(1).max(7)),
-  preferredStartTime: z.string().nullable(),
+  preferredTimeSlots: z.array(z.string()),
   preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
   familyId: z.string().nullable(),
   comment: z.string().nullable(),
@@ -37,7 +38,7 @@ export const studentSchema = z
     dateOfBirth: requiredIsoDate("Date of birth is required"),
     level: z.enum(LEVELS, { error: "Level is required" }),
     preferredDays: z.array(z.number().int().min(1).max(7)),
-    preferredStartTime: nullableTime(),
+    preferredTimeSlots: z.array(z.enum(TIME_SLOTS)),
     preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
     familyId: nullableString(),
     comment: nullableString(500),

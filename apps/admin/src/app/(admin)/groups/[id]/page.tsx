@@ -11,25 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil, AlertTriangle } from "lucide-react";
-
-const DAY_SHORT: Record<number, string> = {
-  1: "Mon",
-  2: "Tue",
-  3: "Wed",
-  4: "Thu",
-  5: "Fri",
-  6: "Sat",
-  7: "Sun",
-};
-
-const LEVEL_LABEL: Record<string, string> = {
-  BEGINNER: "Beginner",
-  ELEMENTARY: "Elementary",
-  PRE_INTERMEDIATE: "Pre-Intermediate",
-  INTERMEDIATE: "Intermediate",
-  UPPER_INTERMEDIATE: "Upper-Intermediate",
-  IELTS: "IELTS",
-};
+import { DAY_SHORT, LEVEL_LABEL } from "@/lib/constants";
 
 export default async function GroupDetailPage({
   params,

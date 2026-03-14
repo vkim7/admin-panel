@@ -9,7 +9,7 @@ Admin's primary tool for managing day-to-day operations. Co-founder (experienced
 All lessons follow fixed constraints that keep operations manageable at scale:
 
 - **Day patterns:** 1,3,5 (Mon/Wed/Fri) or 2,4,6 (Tue/Thu/Sat)
-- **Fixed time slots:** 14:00 / 15:30 / 17:00 / 18:30 / 20:00
+- **Fixed time slots:** 7:00 / 8:30 / 10:00 / 11:30 / 13:00 / 14:30 / 16:00 / 17:30 / 19:00 / 20:30 / 22:00
 - **Lesson duration:** 80 minutes (group and individual)
 - **New groups ideally start on the 1st of the month.** Groups starting later must catch up — the missed lessons' workload is spread evenly across the remaining program timeline (e.g. group starts on the 15th → 15 days behind, curriculum compressed to catch up with other groups at the same level)
 - Groups can be merged if necessary (e.g. two small groups at the same level)
@@ -31,10 +31,10 @@ Each cell shows:
 
 **Example: 1,3,5 grid**
 
-|  | 14:00 | 15:30 | 17:00 | 18:30 | 20:00 |
-|---|---|---|---|---|---|
-| Teacher A | GR-1 Beginner beg 5/5 | | GR-3 Pre-int mid 4/6 | | IND-1 Intermediate |
-| Teacher B | | GR-2 Beginner fin 3/5 | | GR-4 Elementary beg 6/6 | |
+|  | 7:00 | 8:30 | 10:00 | 11:30 | 13:00 | 14:30 | 16:00 | 17:30 | 19:00 | 20:30 | 22:00 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Teacher A | | | | | | GR-1 Beginner beg 5/5 | | GR-3 Pre-int mid 4/6 | | IND-1 Intermediate | |
+| Teacher B | | | | | | | GR-2 Beginner fin 3/5 | | GR-4 Elementary beg 6/6 | | |
 
 **What admin can do from this view:**
 - See at a glance: which teachers are busy, which slots are open, which groups have seats available, which groups have unpaid students
@@ -102,7 +102,7 @@ Our DB: student created (status: awaiting_assignment)
 
 **Fields explained:**
 - **Timetable:** student's preferred day pattern (1,3,5 or 2,4,6)
-- **Timeslot:** preferred time from fixed slots (14:00 / 15:30 / 17:00 / 18:30 / 20:00)
+- **Timeslot:** preferred time from fixed slots (7:00 / 8:30 / 10:00 / 11:30 / 13:00 / 14:30 / 16:00 / 17:30 / 19:00 / 20:30 / 22:00)
 - **Transfer button:** when admin finds a suitable group, clicking Transfer opens a group selection popup to assign the student. Student status changes to "active", disappears from Reception.
 
 **Workflow:** amoCRM pipeline → placement test passed → student record created in our DB (status: awaiting_assignment) → appears in Reception → admin assigns to group → status becomes "active" → student notified via Telegram
