@@ -10,14 +10,14 @@ const LEVELS = [
   "IELTS",
 ] as const;
 
+const TEACHING_LANGUAGES = ["UZBEK", "RUSSIAN", "ANY"] as const;
+
 export const teacherSchema = z.object({
   firstName: requiredString("First name is required"),
   lastName: requiredString("Last name is required"),
   phone: requiredPhone(),
   levels: z.array(z.enum(LEVELS)).min(1, "Select at least one level"),
-  canTeachUzbek: z.boolean(),
-  canTeachRussian: z.boolean(),
-  canTeachEnglishOnly: z.boolean(),
+  teachingLanguage: z.enum(TEACHING_LANGUAGES, { error: "Teaching language is required" }),
 });
 
 export type TeacherFormValues = z.infer<typeof teacherSchema>;

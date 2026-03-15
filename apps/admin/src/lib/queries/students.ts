@@ -51,6 +51,31 @@ export async function getLostReasons() {
   });
 }
 
+export async function getUncertainStudents() {
+  return prisma.student.findMany({
+    where: {
+      isUncertain: true,
+      status: "ACTIVE",
+    },
+    include: {
+      groupMemberships: {
+        where: { leaveDate: null },
+        select: {
+          id: true,
+          group: { select: { id: true, publicId: true, type: true, level: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function getUncertainCount() {
+  return prisma.student.count({
+    where: { isUncertain: true, status: "ACTIVE" },
+  });
+}
+
 /** Students available for group assignment — excludes inactive and those already active in the given group */
 export async function getStudentsForGroupAssignment(groupId: string) {
   return prisma.student.findMany({

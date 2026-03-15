@@ -66,6 +66,10 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 - **Server Action error handling:** Return validation errors and known business errors (duplicate phone, group full) as `{ error }` so forms can show inline messages. Don't try/catch unexpected errors — let them throw so Next.js `error.tsx` boundaries handle them. If you catch a specific error (e.g. Prisma P2002), re-throw anything you don't recognize.
 
+- **Documentation upkeep:** After completing a phase, update `implementation-plan.md` (mark checkboxes, add implementation notes) and `packages/database/DATA_MODEL.md` (if schema changed). Keep docs in sync with code as you go — don't defer updates.
+
+- **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) live in a separate `prisma/migrations/data_integrity_constraints.sql` and must be applied separately after migrations: `npx prisma db execute --file prisma/migrations/data_integrity_constraints.sql`
+
 - **Validation:** All type coercion (string→number, empty→null) happens in Zod schemas (`src/schemas/`), never in react-hook-form or Server Actions. Use helpers from `src/schemas/helpers.ts` (e.g. `requiredString()`, `nullableId()`, `requiredTime()`) — they handle DB column semantics (NULL vs NOT NULL, empty→null transforms). Read `tech/database-first-validation-guide.md` for the decision flowchart on which helper to use for each column type.
 
 ## Key Domain Concepts

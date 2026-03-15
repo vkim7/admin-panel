@@ -27,7 +27,12 @@ export function ScheduleCell({ cell }: { cell: ScheduleCellData }) {
       href={`/groups/${cell.groupId}`}
       className={`flex flex-col gap-0.5 rounded-md border p-2 text-xs transition-colors hover:opacity-80 ${borderColor}`}
     >
-      <div className="font-semibold">{cell.publicId}</div>
+      <div className="flex items-center justify-between">
+        <span className="font-semibold">{cell.publicId}</span>
+        {cell.language && (
+          <span className="font-medium text-muted-foreground">{cell.language}</span>
+        )}
+      </div>
       <div className="font-medium text-foreground/70">
         {levelLabel}
         {stageLabel && ` · ${stageLabel}`}

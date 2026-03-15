@@ -2,10 +2,14 @@
 -- Only things here: race-condition-sensitive constraints and computed-field triggers.
 -- Everything else (CHECK constraints, field validation) is enforced via Zod at the app level.
 --
--- These are embedded in the init migration. If you used `prisma migrate dev`
--- or `prisma migrate reset`, these are already applied — no action needed.
--- If you used `prisma db push` (which skips migrations), apply this file
--- manually: psql $DATABASE_URL -f prisma/migrations/data_integrity_constraints.sql
+-- This file is NOT embedded in the Prisma init migration (to avoid drift issues
+-- with partial indexes and triggers that Prisma doesn't track).
+-- Run this AFTER `prisma migrate deploy` / `prisma migrate reset`:
+--   psql $DATABASE_URL -f prisma/migrations/data_integrity_constraints.sql
+--
+-- IMPORTANT: The auto-computed ID triggers (crmCode, publicId) must be applied
+-- BEFORE seeding — the seed relies on explicit values being preserved by the
+-- trigger's "skip if non-empty" logic.
 
 -- ─── Partial Unique Index ──────────────────────────────────────────────────
 

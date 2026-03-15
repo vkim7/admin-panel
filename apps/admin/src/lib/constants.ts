@@ -50,3 +50,20 @@ export const DAY_SHORT: Record<number, string> = {
   6: "Sat",
   7: "Sun",
 };
+
+// Short stage labels for compact displays
+export const STAGE_SHORT: Record<string, string> = {
+  BEGINNING: "BEG",
+  MID: "MID",
+  FINAL: "FIN",
+};
+
+// Linear ordering of level+stage positions for assignment distance calculations
+export const LEVEL_STAGE_ORDER: string[] = [
+  "BEGINNER:BEGINNING", "BEGINNER:MID", "BEGINNER:FINAL",
+  "ELEMENTARY:BEGINNING", "ELEMENTARY:MID", "ELEMENTARY:FINAL",
+  "PRE_INTERMEDIATE:BEGINNING", "PRE_INTERMEDIATE:MID", "PRE_INTERMEDIATE:FINAL",
+  "INTERMEDIATE:BEGINNING", "INTERMEDIATE:MID", "INTERMEDIATE:FINAL",
+  "UPPER_INTERMEDIATE:BEGINNING", "UPPER_INTERMEDIATE:MID", "UPPER_INTERMEDIATE:FINAL",
+  "IELTS:BEGINNING", "IELTS:MID", "IELTS:FINAL",
+];

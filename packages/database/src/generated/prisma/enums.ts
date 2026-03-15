@@ -20,7 +20,8 @@ export type StudentStatus = (typeof StudentStatus)[keyof typeof StudentStatus]
 
 export const PreferredLanguage = {
   UZBEK: 'UZBEK',
-  RUSSIAN: 'RUSSIAN'
+  RUSSIAN: 'RUSSIAN',
+  ANY: 'ANY'
 } as const
 
 export type PreferredLanguage = (typeof PreferredLanguage)[keyof typeof PreferredLanguage]

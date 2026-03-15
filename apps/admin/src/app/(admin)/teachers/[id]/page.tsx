@@ -32,10 +32,8 @@ export default async function TeacherDetailPage({
   const teacher = await getTeacherById(id);
   if (!teacher) notFound();
 
-  const languages: string[] = [];
-  if (teacher.canTeachUzbek) languages.push("Uzbek");
-  if (teacher.canTeachRussian) languages.push("Russian");
-  if (teacher.canTeachEnglishOnly) languages.push("English Only");
+  const LANG_LABEL: Record<string, string> = { UZBEK: "Uzbek", RUSSIAN: "Russian", ANY: "Both" };
+  const languages = [LANG_LABEL[teacher.teachingLanguage] ?? "Both"];
 
   return (
     <div className="space-y-8">

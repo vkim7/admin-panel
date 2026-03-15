@@ -2,7 +2,7 @@
 CREATE TYPE "StudentStatus" AS ENUM ('AWAITING_ASSIGNMENT', 'ACTIVE', 'INACTIVE');
 
 -- CreateEnum
-CREATE TYPE "PreferredLanguage" AS ENUM ('UZBEK', 'RUSSIAN');
+CREATE TYPE "PreferredLanguage" AS ENUM ('UZBEK', 'RUSSIAN', 'ANY');
 
 -- CreateEnum
 CREATE TYPE "Level" AS ENUM ('BEGINNER', 'ELEMENTARY', 'PRE_INTERMEDIATE', 'INTERMEDIATE', 'UPPER_INTERMEDIATE', 'IELTS');
@@ -75,9 +75,7 @@ CREATE TABLE "Teacher" (
     "phone" TEXT NOT NULL,
     "telegramId" BIGINT,
     "levels" "Level"[],
-    "canTeachUzbek" BOOLEAN NOT NULL DEFAULT false,
-    "canTeachRussian" BOOLEAN NOT NULL DEFAULT false,
-    "canTeachEnglishOnly" BOOLEAN NOT NULL DEFAULT true,
+    "teachingLanguage" "PreferredLanguage" NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "deactivatedAt" TIMESTAMP(3),
     "deactivatedById" TEXT,
@@ -111,11 +109,12 @@ CREATE TABLE "Student" (
     "telegramId" BIGINT,
     "dateOfBirth" DATE NOT NULL,
     "level" "Level" NOT NULL,
+    "progressStage" "ProgressStage" NOT NULL DEFAULT 'BEGINNING',
     "status" "StudentStatus" NOT NULL DEFAULT 'AWAITING_ASSIGNMENT',
     "familyId" TEXT,
     "preferredDays" INTEGER[],
-    "preferredStartTime" TEXT,
-    "preferredLanguage" "PreferredLanguage",
+    "preferredTimeSlots" TEXT[],
+    "preferredLanguage" "PreferredLanguage" NOT NULL,
     "referralCode" TEXT,
     "isUncertain" BOOLEAN NOT NULL DEFAULT false,
     "uncertainFlaggedBy" "UncertainFlagSource",

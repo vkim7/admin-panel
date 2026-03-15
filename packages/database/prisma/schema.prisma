@@ -296,6 +296,7 @@ enum StudentStatus {
 enum PreferredLanguage {
   UZBEK
   RUSSIAN
+  ANY
 }
 
 enum Level {
@@ -436,10 +437,8 @@ model Teacher {
   // Levels this teacher can teach (PostgreSQL array, queryable via `has` filter)
   levels Level[]
 
-  // Language capabilities
-  canTeachUzbek       Boolean @default(false)
-  canTeachRussian     Boolean @default(false)
-  canTeachEnglishOnly Boolean @default(true)
+  // Teaching language: UZBEK, RUSSIAN, or ANY (both)
+  teachingLanguage PreferredLanguage
 
   // Pay rates are tracked in TeacherRateChange (history table with effectiveFrom dates).
   // No rate fields on Teacher — query the most recent TeacherRateChange where
@@ -489,8 +488,9 @@ model Student {
   phone       String        @unique // Student's own Telegram-linked phone (required for Mini App invite)
   telegramId  BigInt?       @unique // For future student Mini App auth via Telegram initData
   dateOfBirth DateTime      @db.Date
-  level       Level
-  status      StudentStatus @default(AWAITING_ASSIGNMENT)
+  level         Level
+  progressStage ProgressStage @default(BEGINNING)
+  status        StudentStatus @default(AWAITING_ASSIGNMENT)
 
   // Family — null for adults, set on creation for minors
   familyId String?
@@ -498,7 +498,7 @@ model Student {
   // Reception placement preferences (flexible scheduling)
   preferredDays      Int[] // e.g. [1, 3, 5] for Mon/Wed/Fri. 1=Mon, 7=Sun (ISO 8601)
   preferredTimeSlots String[] // e.g. ["14:30", "16:00"] — subset of fixed TIME_SLOTS
-  preferredLanguage  PreferredLanguage? // Null = no preference (typically advanced students)
+  preferredLanguage  PreferredLanguage // UZBEK, RUSSIAN, or ANY
 
   // Referral code — unique, auto-generated, for referral tracking
   referralCode String? @unique

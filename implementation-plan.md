@@ -13,7 +13,7 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | 0 | Foundation (seed, auth, shared UI) | — | C#6 |
 | 1 | Teacher Management | 0 | C#11, C#14, C#20, C#34 |
 | 2 | Student Management (basic) | 0 | C#1, C#7, C#17, C#34, C#35 |
-| 3 | Groups & Group Details | 0, 1, 2 | C#2–4, C#8, C#12, C#12a–b, C#13, C#14, C#19, C#32, C#34, C#36 |
+| 3 | Groups & Group Details | 0, 1, 2 | C#2–4, C#8, C#12, C#12a–b, C#13, C#14, C#19, C#32, C#34, C#36, C#40 |
 | 4 | Main Schedule | 3 | — |
 | 5 | Reception | 3, 4 | — |
 | 6 | Payments & No Payment List | 3 | C#15, C#16 |
@@ -24,6 +24,10 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | 11 | Group Lifecycle (merge, graduation) | 3, 9 | C#10, C#22–24, C#33 |
 | 12 | Promotions & Referrals | 6 | C#36 |
 | 13 | Communication (SMS, calls) | 6 | — |
+| 14 | Trial Tracking & Enforcement | 7, 8, 12 | C#38 |
+| 15 | Reassignment & Orphan Detection | 11 | C#39 |
+| 16 | Lost List & Win-Back | 2 | — |
+| 17 | Scenario Testing | All | All |
 
 ```
 Phase 0 ─── Phase 1 (Teachers) ───┐
@@ -33,13 +37,18 @@ Phase 0 ─── Phase 1 (Teachers) ───┐
    │                          Phase 3 (Groups) ──── Phase 4 (Schedule) ──── Phase 5 (Reception)
    │                               │
    │                               ├── Phase 6 (Payments) ──── Phase 9 (Transfers) ──── Phase 11 (Merge/Graduation)
-   │                               │        │
-   │                               │        ├── Phase 12 (Promotions)
-   │                               │        └── Phase 13 (Communication)
-   │                               │
-   │                               └── Phase 7 (Lessons) ──── Phase 8 (Attendance)
+   │                               │        │                                                │
+   │                               │        ├── Phase 12 (Promotions) ──┐                    └── Phase 15 (Reassignment)
+   │                               │        │                           ├── Phase 14 (Trial Tracking)
+   │                               │        └── Phase 13 (Communication)│
+   │                               │                                    │
+   │                               └── Phase 7 (Lessons) ──── Phase 8 (Attendance) ──┘
    │                                        │
    │                                        └── Phase 10 (Teacher Pay)
+
+                                   Phase 2 ──── Phase 16 (Lost List & Win-Back)
+
+                                   All phases ──── Phase 17 (Scenario Testing)
 ```
 
 ---
@@ -122,10 +131,12 @@ src/components/ui/status-badge.tsx
 - [x] **Teacher list** — table with: name, phone, levels, language capabilities, active status, group count
   - Sort by name, filter by level and active status
 - [x] **Create teacher**
-  - Fields: firstName, lastName, phone, levels[], canTeachUzbek, canTeachRussian, canTeachEnglishOnly
-  - Validation: phone unique (DB @unique), at least one level selected
+  - Fields: firstName, lastName, phone, levels[], teachingLanguage (UZBEK / RUSSIAN / ANY)
+  - teachingLanguage is a radio group: "Both" (ANY), "Uzbek", "Russian" — no default, admin must explicitly select
+  - Validation: phone unique (DB @unique), at least one level selected, teachingLanguage required
 - [x] **Edit teacher** — same fields as create, phone uniqueness re-check
-- [x] **Teacher detail page** — profile info, availability grid, rate history, groups taught
+- [x] **Teacher detail page** — profile info (teachingLanguage shown as "Both" / "Uzbek" / "Russian"), availability grid, rate history, groups taught. Trial tracking deferred to Phase 14.
+- [x] **Teacher list table** — language column shows: ANY → "Both", UZBEK → "UZ", RUSSIAN → "RU"
 - [x] **TeacherAvailability management**
   - Add/remove availability blocks per day
   - Overlap validation **(C#20)**: blocks for the same dayOfWeek must not overlap in time
@@ -171,13 +182,15 @@ src/components/teachers/rate-history.tsx
   - Search by: name, CRM code, phone
   - Filter by: level, status (AWAITING_ASSIGNMENT / ACTIVE / INACTIVE)
 - [x] **Create student**
-  - Fields: firstName, lastName, phone, dateOfBirth, level, preferredDays[], preferredTimeSlots[] (multi-select pills from TIME_SLOTS), preferredLanguage, familyId, comment
+  - Fields: firstName, lastName, phone, dateOfBirth, level, progressStage (BEGINNING / MID / FINAL), preferredDays[], preferredTimeSlots[] (multi-select pills from TIME_SLOTS), preferredLanguage (UZBEK / RUSSIAN / ANY — required, no default), familyId, comment
+  - progressStage set during placement alongside level — determines position on the linear level+stage scale (18 positions from BEGINNER:BEGINNING to IELTS:FINAL)
+  - preferredLanguage is required for all students — no default value, admin must explicitly select. Hard enforcement at BEGINNER/ELEMENTARY (blocks assignment to incompatible teachers), soft preference at PRE_INTERMEDIATE+.
   - Phone uniqueness **(C#1)**: DB @unique, show friendly error
   - Minor enrollment **(C#7)**: if dateOfBirth makes student under 18 at creation → familyId required (Zod refine)
   - CRM code auto-generated by DB trigger (from sequenceNumber)
   - Status defaults to AWAITING_ASSIGNMENT
 - [x] **Edit student** — same fields, phone uniqueness re-check
-- [x] **Student detail page** — personal info, level, status, family info
+- [x] **Student detail page** — personal info, level + progressStage (shown as "Level · Stage" badge, e.g. "Elementary · MID"), status, family info
   - Tabs for group history, payments, communication added in later phases
 - [x] **Deactivate student**
   - Requires lostReasonId **(C#17)** — show LostReason selector
@@ -217,13 +230,15 @@ This is the most complex phase — group creation triggers Lessons, TeacherSched
 ### Group CRUD
 
 - [x] **Create group form**
-  - Fields: type (GROUP/INDIVIDUAL), teacherId, days[], startTime, durationMinutes, level, startDate, maxStudents, zoomLink
-  - **Teacher rate guard**: reject group creation if the selected teacher has no rate history (must add rates before assigning to a group)
+  - Fields: type (GROUP/INDIVIDUAL), teacherId, days[], startTime, durationMinutes, level (no default preselection — user must explicitly choose), startDate, maxStudents, zoomLink
+  - **Teacher rate guard**: reject group creation if the selected teacher has no rate history (must add rates before assigning to a group). Warning shown inline below teacher select.
   - Days validation **(C#12)**: only [1,3,5] or [2,4,6]
   - Duration validation **(C#12a)**: only 60 or 80
   - endDate auto-calculated **(C#19)**: day < 15 → end of startMonth+2; day >= 15 → end of startMonth+3
   - Time format **(C#34)**: startTime in HH:mm
   - maxStudents default: 6 for GROUP, 1 for INDIVIDUAL
+  - **Time slot filtering by teacher availability**: start time dropdown only shows slots where the selected teacher has availability for the selected days. If teacher has no availability on selected days, dropdown is disabled with red message "No available slots for this teacher on selected days". Start time select is also disabled until both teacher and days are selected.
+  - **Schedule pre-fill mode**: when created from `/schedule` page "+" button, teacher/days/startTime/type are pre-filled and disabled (non-editable) to prevent accidental changes. "Prefilled from schedule" description shown under days field.
 - [x] **On group create — single transaction (C#4, C#8):**
   1. Create Group record (endDate auto-calculated)
   2. Pre-create all Lesson records from startDate through endDate, matching day pattern, skipping Holidays
@@ -256,7 +271,8 @@ This is the most complex phase — group creation triggers Lessons, TeacherSched
   - Commit (set isTrial=false): trigger billing period pre-creation from original joinDate
   - Remove (set leaveDate): student leaves without committing
   - **Stale trial alert**: persistent visual indicator for isTrial=true AND joinDate < today — this is urgent
-- [x] **Student activation**: when first non-trial membership created → set Student.status=ACTIVE, activatedAt, activatedById
+- [x] **Student activation**: when assigned to any group (trial or non-trial) → set Student.status=ACTIVE, activatedAt, activatedById. Student disappears from Reception immediately on assignment regardless of trial status.
+- [x] **Multiple simultaneous groups**: a student can be in both a GROUP and INDIVIDUAL lesson at the same time (or multiple groups). Each membership has independent billing periods. The `active_membership_unique` constraint is per student+group, not per student globally. To add a student to a second group, use "Add student" from Group Details — no status change needed (student is already ACTIVE). **Schedule conflict detection (C#40):** when adding a student, check all their other active memberships for overlapping schedule (same days AND overlapping time window based on group duration). Block with error if conflict found.
 - [x] **Group Details student table** (from admin-panel-plan.md):
   - Columns: #, CRM code, start date, name, surname, phone, uncertain (manual toggle), lessons start, lessons paid, status, comment
   - "Lessons paid" derived from StudentPaymentPeriod data for current month
@@ -300,17 +316,17 @@ src/components/groups/trial-resolution-dialog.tsx
   - Rows = active teachers, sorted by name
   - Columns = 11 fixed time slots: 7:00, 8:30, 10:00, 11:30, 13:00, 14:30, 16:00, 17:30, 19:00, 20:30, 22:00
 - [x] **Each cell shows**:
-  - publicId (e.g., GR-1, IND-3) — type inferred from prefix
-  - Level badge (full label; short form only for Pre-Int and Upper-Int)
-  - Progress stage: BEG / MID / FIN
-  - Paid count / total (e.g., "3/5", "4+1T/6" for trials)
+  - Row 1: publicId (e.g., GR-1, IND-3) on the left, **teacher language** on the right (top-right corner)
+    - Language display: "UZ" if teacher speaks only Uzbek, "RU" if only Russian, **nothing** if teacher speaks both (ANY) — "both" is the assumed default
+  - Row 2: Level badge (short form: BEG, ELEM, Pre-Int, INT, Upper-Int, IELTS) + progress stage (BEG / MID / FIN) when not BEGINNING (BEGINNING is implied, omitted)
+  - Row 3: Paid count / total (e.g., "3/5", "4+1T/6" for trials). Unpaid count shown in red if > 0.
 - [x] **Cell color coding**: green border/bg when full (activeCount >= maxStudents), red border/bg when has open spots
 - [x] **Click cell** → navigate to Group Details page (Phase 3)
 - [x] **Visual indicator** for groups with unpaid students (red text on paid count)
 - [x] **Empty cell states** based on TeacherAvailability:
   - Available slot: "+" button (dashed border, hover highlight) → links to `/groups/new?teacherId=X&days=1,3,5&startTime=14:30`
   - Unavailable slot: plain muted background (no interaction)
-- [x] **Schedule → Group creation pre-fill**: clicking "+" passes teacherId, days, startTime as query params; GroupForm accepts `prefill` prop and sets defaultValues accordingly
+- [x] **Schedule → Group creation pre-fill**: clicking "+" passes teacherId, days, startTime as query params; GroupForm accepts `prefill` prop and pre-fills + disables those fields (teacher, days, start time, type) to prevent accidental changes
 
 ### Query
 
@@ -332,7 +348,7 @@ src/components/schedule/schedule-grid.tsx
 src/components/schedule/schedule-cell.tsx
 ```
 
-Also modified: `schemas/group.ts` (startTime validation against TIME_SLOTS), `components/groups/group-form.tsx` (time input → select dropdown, added `prefill` prop for schedule pre-fill), `groups/new/page.tsx` (parses searchParams for pre-fill), `components/groups/group-table.tsx` and `groups/[id]/page.tsx` (import constants), `packages/database/prisma/seed.ts` (updated times to valid slots).
+Also modified: `schemas/group.ts` (startTime validation against TIME_SLOTS), `components/groups/group-form.tsx` (time input → select dropdown, `prefill` prop for schedule pre-fill with disabled fields, time slot filtering by teacher availability), `queries/groups.ts` (teacher availability included in form query), `groups/new/page.tsx` (parses searchParams for pre-fill), `components/groups/group-table.tsx` and `groups/[id]/page.tsx` (import constants), `packages/database/prisma/seed.ts` (updated times to valid slots).
 
 ---
 
@@ -342,26 +358,42 @@ Also modified: `schemas/group.ts` (startTime validation against TIME_SLOTS), `co
 
 ### Features
 
-- [ ] **Reception table** (from admin-panel-plan.md):
+- [x] **Reception table** (from admin-panel-plan.md):
   - Filter: students WHERE status = AWAITING_ASSIGNMENT
-  - Columns: #, CRM code, name, surname, phone, level, created date, comment, preferred days, preferred time
-  - Sort by creation date (oldest first)
-- [ ] **Assign-to-group workflow**:
-  - "Assign" button opens group selection dialog
-  - Show compatible groups: matching level (recommended), open seats, grouped by day pattern
-  - On assign: create GroupMembership → triggers billing (Phase 3 logic) → set Student.status=ACTIVE, activatedAt, activatedById
-  - Student disappears from Reception
-- [ ] **Count badge**: total awaiting students shown prominently (sidebar badge + page header)
+  - Columns: CRM code, name (links to student detail), phone, level (shown as "LEVEL · STAGE" badge), created date, preferred days, preferred time slots (as pills), comment, Assign button
+  - Sort by creation date (oldest first), search by name
+- [x] **Assign-to-group workflow**:
+  - "Assign" button opens group selection dialog per student
+  - **Student info bar**: level + progressStage badge, preferred days, preferred time slots, language preference (shown only for BEGINNER/ELEMENTARY students — at higher levels language isn't displayed since lessons are mainly in English)
+  - Linear level+stage scale (`LEVEL_STAGE_ORDER` in constants.ts) — 18 positions from BEGINNER:BEGINNING to IELTS:FINAL
+  - 3-tier group suggestions based on distance (only groups with available seats, within 3 stages):
+    1. **Best match**: exact level+stage (distance 0) + matching days + time + language → sorted by seats DESC
+    2. **Above**: groups 1–3 stages above student → sorted by distance ASC then seats DESC
+    3. **Below**: groups 1–3 stages below student → sorted by distance ASC (closest first) then seats DESC
+  - **Language hard-enforcement** at BEGINNER/ELEMENTARY: groups where teacher can't teach in student's preferred language are excluded entirely from suggestions AND blocked in the `addStudentsToGroup` server action. PRE_INTERMEDIATE+ is soft preference (sorting only, no blocking).
+  - **Group row layout** (each suggestion):
+    - Top line: publicId + language indicator (left, e.g. "GR-1 UZ") | level · stage (right, e.g. "ELEM · MID")
+    - Bottom line: teacher name · seats (left, e.g. "Sarah Lee · 4/6") | days + time (right, e.g. "MWF 14:30")
+    - Language indicator: "UZ" / "RU" shown next to publicId only when teacher speaks a single language; not shown for ANY (both)
+    - Seats displayed as active/max (e.g. "4/6"), same format as schedule cells
+  - Selected group highlighted with primary border + checkmark icon
+  - Join date (date picker, defaults to today) + trial toggle on assignment
+  - Trial description: "Trial students occupy a seat but no billing is created until committed."
+  - On assign: reuses `addStudentsToGroup` → activates student (AWAITING_ASSIGNMENT → ACTIVE) regardless of trial status → triggers billing for non-trial only
+  - Student disappears from Reception immediately, revalidates /reception path
+- [x] **Count badge**: total awaiting students shown in sidebar badge (amber pill) + page header count
+- [x] **Sidebar "Eng Admin" title**: clicking redirects to /schedule (the primary operational view)
 
 ### Files
 
 ```
-src/lib/queries/reception.ts
-src/lib/actions/reception.ts
-src/app/(admin)/reception/page.tsx             ← rewrite existing placeholder
+src/lib/queries/reception.ts                   ← getReceptionStudents, getReceptionCount, getGroupsForAssignment
+src/app/(admin)/reception/page.tsx             ← rewritten from placeholder
 src/components/reception/reception-table.tsx
 src/components/reception/assign-dialog.tsx
 ```
+
+Also modified: `app-sidebar.tsx` (badge prop, "Eng Admin" links to /schedule), `layout.tsx` (fetches reception count), `actions/group-memberships.ts` (revalidate /reception, language hard-enforcement, trial student activation), `actions/students.ts` (revalidate /reception on status changes). No separate `actions/reception.ts` needed — reuses existing `addStudentsToGroup`.
 
 ---
 
@@ -604,9 +636,12 @@ src/components/teacher-payments/pay-table.tsx
   7. Auto-update Student.level for continuing students **(C#33)**
   8. Close old group: isActive=false, graduatedIntoGroupId set, leaveDate on ALL active memberships (record-keeping only — billing periods already finalized, does NOT trigger leave billing C#31)
 - [ ] **Edge cases:**
-  - Students who don't continue: leaveDate set, no new membership, status stays ACTIVE unless separately deactivated
+  - Students who don't continue: admin must pick one of two outcomes per student (no one left in limbo):
+    - **"Send to reassignment"** → status set to `AWAITING_REASSIGNMENT` → appears on Reassignment page for re-placement (Phase 15)
+    - **"Deactivate"** → status set to `INACTIVE` with lostReason → appears in lost list
+  - Students who fail mid or final exam: removed from group → status set to `AWAITING_REASSIGNMENT` → their level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final", student does NOT restart the level) → admin assigns to a new group at the same level+stage from Reassignment page
   - mergedIntoGroupId and graduatedIntoGroupId are mutually exclusive (Zod validation)
-- [ ] **Graduation UI**: show student selection (continuing vs leaving), preview new group details, confirm
+- [ ] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
 
 ### Files
 
@@ -686,13 +721,209 @@ src/components/communication/call-log.tsx
 
 ---
 
+## Phase 14: Trial Tracking & Enforcement
+
+**Goal:** Full trial lifecycle tracking per teacher — who had trials, when, in which group, what was the outcome. Enforce one trial per student. Accurate teacher attribution including substitutions.
+
+**Depends on:** Phase 7 (substitution tracking), Phase 8 (attendance — who actually taught the trial student), Phase 12 (promotions — first-lesson discount on trial commit).
+
+### Schema Changes
+
+- [ ] **Add `wasTrialOriginally Boolean @default(false)` to GroupMembership**
+  - Set `true` when `isTrial=true` at creation time. Never changes after that.
+  - Enables querying committed trials (wasTrialOriginally=true, isTrial=false) which are currently indistinguishable from non-trial memberships.
+
+- [ ] **Add `trialTeacherId` (optional FK → Teacher) to GroupMembership**
+  - Snapshot of `group.teacherId` at the time of trial join. Preserved even if the group's teacher changes later.
+  - For accurate attribution after Phase 7 substitutions: cross-reference with `Lesson.teacherId` + attendance records to determine who actually taught the trial lesson. `trialTeacherId` is the fallback/default.
+
+- [ ] **One-trial-per-student constraint (C#38)**
+  - **Reception assignments are always trials** — every student assigned from Reception is a new student who has never been in a group, so their first assignment is inherently a trial. No checkbox needed; `isTrial=true` is set automatically.
+  - **Reassignment page assignments are never trials** — students on the Reassignment page have already been in a group (and likely already had their trial). `isTrial` is not offered.
+  - **Add-student from Group Details**: disable trial checkbox if student has an **attended** trial (see no-show handling below). Tooltip: "Student has already used their trial lesson".
+  - Application-level: in `addStudentsToGroup`, if `isTrial=true`, check if student has any existing membership where `wasTrialOriginally=true` AND has at least one attendance record → reject with "Student has already used their trial lesson"
+  - DB-level: no partial unique index (multiple trial memberships are valid for no-shows). Constraint enforced at application level only.
+
+- [ ] **Trial no-show handling**
+  - A trial with zero attendance records = no-show. The student didn't actually take a trial lesson.
+  - No-show trials do NOT count toward the one-trial limit — student can be re-assigned from Reception for another trial.
+  - The constraint checks: "student has a trial membership (`wasTrialOriginally=true`) **with at least one attendance record**" — not just "trial membership exists".
+  - Multiple no-show trial memberships may exist for the same student (each is a separate GroupMembership record, possibly even in the same group).
+  - Admin can view no-show history on student detail page and decide whether to give another chance or deactivate the student.
+
+### Trial Status Derivation
+
+From `GroupMembership` fields + attendance records, derive trial status:
+- **Pending**: `isTrial=true AND leaveDate IS NULL` — student is currently in trial
+- **Committed**: `wasTrialOriginally=true AND isTrial=false AND leaveDate IS NULL` — trial student who committed to the group
+- **Didn't continue**: `wasTrialOriginally=true AND isTrial=true AND leaveDate IS NOT NULL AND has attendance records` — trial student who attended but left without committing
+- **No-show**: `wasTrialOriginally=true AND leaveDate IS NOT NULL AND zero attendance records` — trial student who never showed up (does NOT count toward one-trial limit)
+
+### Teacher Detail — Trial History
+
+- [ ] **Trial stats summary**: "X committed · Y pending · Z didn't continue"
+- [ ] **Trial history table**: student name, group (publicId), trial date (joinDate), status (pending/committed/didn't continue), actual teaching teacher (from attendance records if available, fallback to trialTeacherId)
+- [ ] **Accurate teacher attribution**: after Phase 8, use attendance records to determine if a substitute taught the trial lesson. Display substitute name if different from group teacher.
+
+### Trial Billing
+
+Two billing paths depending on trial outcome:
+
+- [ ] **Student commits** (trial → regular):
+  - Billing periods created from original joinDate (existing Phase 3 logic)
+  - Promotions system (Phase 12) applies a 50% discount on the first lesson's billing period
+  - Phase 14 ensures the trial data (`wasTrialOriginally`, commit date) is available for the promotion to reference
+
+- [ ] **Student doesn't commit** (trial → removed):
+  - On trial removal (`resolveTrialMembership` with action="remove"): create a single `StudentPaymentPeriod` for the trial lesson(s) attended
+  - amountDue = number of lessons attended during trial × pricePerLesson (full price, no discount)
+  - paymentStatus = UNPAID → student appears in **No Payment List** (Phase 6) so admin can collect payment
+  - This ensures no trial lesson goes unbilled — the student owes for the lesson(s) they attended regardless of whether they continue
+
+- [ ] **No-show** (trial → removed, zero attendance):
+  - No billing created — student didn't attend any lessons, nothing to charge
+  - Trial does NOT count toward one-trial limit — student can be re-assigned from Reception for another trial
+  - Multiple no-shows are tracked as separate GroupMembership records (visible on student detail page)
+
+### Files
+
+```
+packages/database/prisma/schema.prisma              — wasTrialOriginally, trialTeacherId on GroupMembership
+packages/database/prisma/migrations/data_integrity_constraints.sql — one-trial-per-student partial unique index
+apps/admin/src/lib/queries/teachers.ts               — trial history query with student/group details
+apps/admin/src/lib/actions/group-memberships.ts      — one-trial check, set wasTrialOriginally + trialTeacherId
+apps/admin/src/app/(admin)/teachers/[id]/page.tsx    — trial history section
+```
+
+---
+
+## Phase 15: Reassignment & Orphan Detection
+
+**Goal:** A dedicated holding area for students who were previously in a group and need re-placement — separate from Reception (which is for brand-new students from amoCRM). Handles exam failures, graduation non-continuation, returning inactive students, and orphaned students.
+
+**Depends on:** Phase 11 (graduation is a key trigger), but the schema change (`AWAITING_REASSIGNMENT` status) and basic page can be implemented earlier.
+
+### Key Decisions
+
+- **Reception = new students only.** Every student assigned from Reception is taking a trial lesson (implicit, no checkbox). They've never been in a group before.
+- **Reassignment = returning students only.** Students who were previously in a group and need a new one. No trial option — they've already had one (or had the chance).
+- **Two separate lists, same assign dialog.** Both pages reuse the assign dialog for group assignment, but Reception auto-sets `isTrial=true` and Reassignment does not.
+
+### Schema Change
+
+- [ ] **Add `AWAITING_REASSIGNMENT` to `StudentStatus` enum**
+  - New lifecycle: `ACTIVE` → `AWAITING_REASSIGNMENT` → `ACTIVE` (re-assigned to new group)
+  - Also: `INACTIVE` → `AWAITING_REASSIGNMENT` (returning students)
+  - Student's level+stage is preserved — admin knows exactly where to place them
+
+### Triggers (how students enter reassignment)
+
+- [ ] **Exam failure** — student fails mid or final exam → removed from group → status set to `AWAITING_REASSIGNMENT`. Level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final" — student does NOT restart the level).
+- [ ] **Graduation without continuation** — during Phase 11 graduation workflow, admin picks "Send to reassignment" for non-continuing students → `AWAITING_REASSIGNMENT`.
+- [ ] **"Send to reassignment" action** — available on any ACTIVE or INACTIVE student detail page. Sets status to `AWAITING_REASSIGNMENT`. Covers:
+  - Returning students (INACTIVE → AWAITING_REASSIGNMENT)
+  - Orphaned students (ACTIVE with no active membership → AWAITING_REASSIGNMENT)
+  - Manual removals from groups
+
+### Orphan Detection (safety net)
+
+- [ ] **Detect ACTIVE students with zero active memberships** (leaveDate IS NULL on all memberships, or no memberships at all). These are students who slipped through — removed manually, edge cases, etc.
+  - Show as a warning section at the top of the Reassignment page (or as a sidebar badge)
+  - Admin can review and either send to reassignment or deactivate
+
+### Reassignment Page (`/reassignment`)
+
+- [ ] **Sidebar nav item** — between Reception and Uncertain, with count badge
+- [ ] **Table columns:** CRM, name, phone, level+stage, previous group (last active membership's group), reason (exam failure / graduation / returning / manual), date entered reassignment
+- [ ] **Assign action** — reuses the same assign dialog as Reception, but without trial option
+- [ ] **Deactivate action** — if student is no longer interested, deactivate with lostReason → student moves to **Lost List** (Phase 16) for win-back follow-up
+
+### Cross-references with Lost List (Phase 16)
+
+- **Reassignment → Lost List:** "Deactivate" action on Reassignment page sets student to INACTIVE with lostReason → appears in Lost List for win-back scripts.
+- **Lost List → Reassignment:** "Send to reassignment" action on Lost List (or student detail page) sets INACTIVE → AWAITING_REASSIGNMENT → appears on Reassignment page.
+- **Graduation → Lost List:** "Deactivate" option during graduation (Phase 11) sends student directly to Lost List.
+- Students can move between Lost List and Reassignment multiple times (e.g., won back from Lost List → reassigned → leaves again → Lost List).
+
+### Files
+
+```
+packages/database/prisma/schema.prisma              — add AWAITING_REASSIGNMENT to StudentStatus
+apps/admin/src/lib/queries/reassignment.ts           — query AWAITING_REASSIGNMENT students
+apps/admin/src/lib/actions/students.ts               — sendToReassignment action
+apps/admin/src/app/(admin)/reassignment/page.tsx     — server component page
+apps/admin/src/components/reassignment/reassignment-table.tsx — client component table
+apps/admin/src/components/app-sidebar.tsx             — add Reassignment nav item
+apps/admin/src/app/(admin)/layout.tsx                — fetch reassignment count
+```
+
+---
+
+## Phase 16: Lost List & Win-Back
+
+**Goal:** A dedicated page for INACTIVE students — students who left the school. Admins follow specific scripts to win these students back. Separate from Reassignment (which is for students who need re-placement but haven't left).
+
+**Depends on:** Phase 2 (student deactivation already exists). Independent of most other phases — can be implemented early.
+
+### Lost Page (`/lost`)
+
+- [ ] **Sidebar nav item** — with count badge showing total inactive students
+- [ ] **Table columns:** CRM, name, phone, level+stage, lost reason, deactivation date, deactivated by, last group (from most recent membership), time since deactivation
+- [ ] **Search/filter:** by name, phone, lost reason, level
+- [ ] **"Assign to group" action** — opens the assign dialog directly from the Lost List. Student goes INACTIVE → ACTIVE (no trial). For when admin knows which group to place the student in right away.
+- [ ] **"Send to reassignment" action** — INACTIVE → AWAITING_REASSIGNMENT → student appears on Reassignment page (Phase 15). For when the student wants to return but the group hasn't been decided yet.
+- [ ] **Contact info:** phone prominently displayed for admin to call/message as part of win-back scripts
+- [ ] **Notes/history:** admin can view student detail (existing page) for full history — groups attended, duration, comments
+
+### Win-Back Flow
+
+```
+Student deactivated (lostReason set)
+  → Appears in Lost List
+  → Admin follows win-back script (call/message)
+  → Student wants to return:
+    Option A: Admin knows the group → "Assign to group" → INACTIVE → ACTIVE (direct)
+    Option B: Group TBD → "Send to reassignment" → AWAITING_REASSIGNMENT → Reassignment page (Phase 15) → assign → ACTIVE
+```
+
+### Files
+
+```
+apps/admin/src/lib/queries/lost.ts                  — query INACTIVE students with last group info
+apps/admin/src/app/(admin)/lost/page.tsx             — server component page
+apps/admin/src/components/lost/lost-table.tsx         — client component table
+apps/admin/src/components/app-sidebar.tsx             — add Lost nav item
+apps/admin/src/app/(admin)/layout.tsx                — fetch lost count
+```
+
+---
+
+## Phase 17: Scenario Testing
+
+**Goal:** Validate the entire system end-to-end by walking through realistic operational scenarios in the live admin panel, catching edge cases that unit tests and per-phase development miss.
+
+### Approach
+
+Claude generates real-life scenarios based on the business rules, constraints, and domain knowledge from `DATA_MODEL.md`, `admin-panel-plan.md`, and `ISSUES.md`. We execute each scenario manually in the admin panel. If something breaks or behaves unexpectedly, we fix it before moving on.
+
+### Scenario categories
+
+- [ ] **Happy paths** — a full student lifecycle from reception to graduation (enroll, assign to group, pay, attend, transfer, graduate)
+- [ ] **Billing edge cases** — mid-month joins, transfers with overpayment credit, partial periods, price changes between months
+- [ ] **Scheduling conflicts** — teacher unavailability on a lesson day, double-booking attempts, holiday collisions, cancel+append chains
+- [ ] **Group lifecycle** — merge two groups with overlapping students, graduate a group where some students don't continue, merge then graduate
+- [ ] **Constraint enforcement** — try to violate each of the 37 constraints and verify the system blocks it with a clear message
+- [ ] **Concurrent operations** — transfer a student while recording a payment for them, deactivate a teacher who has a pending resolution lesson
+- [ ] **Data integrity** — after each scenario, verify DB state is consistent (no orphaned billing periods, no dangling schedule slots, correct payment statuses)
+
+---
+
 ## Later Scope
 
 Not in the initial build. Tracked here so nothing is forgotten.
 
-- [ ] **Uncertain List** — auto-criteria (3+ absences or 3+ incomplete homework) + manual isUncertain flag. Query-based view.
+- [x] **Uncertain List** — `/uncertain` page showing ACTIVE students with `isUncertain=true`. Table with CRM, name, phone, level, group, flaggedBy, comment. Sidebar badge shows count. Auto-criteria (3+ absences, 3+ incomplete homework) deferred until attendance tracking (Phase 8).
 - [ ] **Exam List** — Exam model exists, needs management UI per group
-- [ ] **Lost List** — inactive students with reasons, phone for reactivation campaigns
 - [ ] **Payment List** — financial reporting: filter by year/month/teacher/group, teacher salary overview
 - [ ] **amoCRM integration** — API polling for leads in "Ready for Group" stage → auto-create student records
 - [ ] **Zoom integration** — auto-create meetings per group (see `tech/zoom-integration-plan.md`)
@@ -700,12 +931,14 @@ Not in the initial build. Tracked here so nothing is forgotten.
 - [ ] **Bulk student actions** — mass payment recording, mass SMS, mass transfer
 - [ ] **Content management** — deferred, teachers use physical textbooks
 - [ ] **Payment gateway integration** — Click, Payme (currently manual recording only)
+- [ ] **Teacher file uploads** — contract and passport document storage per teacher. Requires file storage infrastructure (S3/Cloudflare R2), upload API endpoints, file management UI on teacher detail page. Add `TeacherDocument` model (teacherId, type: CONTRACT/PASSPORT/OTHER, fileName, fileUrl, uploadedAt, uploadedById). Display as a list on teacher detail page with upload/download/delete actions.
+
 
 ---
 
 ## Constraint Coverage
 
-Every one of DATA_MODEL.md's 37 application-level constraints, mapped to a phase.
+Every one of DATA_MODEL.md's 40 application-level constraints, mapped to a phase.
 
 | # | Constraint | Phase | Done |
 |---|-----------|-------|------|
@@ -749,6 +982,9 @@ Every one of DATA_MODEL.md's 37 application-level constraints, mapped to a phase
 | 35 | Family.parentPhone dedup warning | 2 | [ ] |
 | 36 | Discount cap (discountAmount ≤ amountDue) | 3, 12 | [ ] |
 | 37 | activeStudentCount snapshot timing | 7 | [ ] |
+| 38 | One trial per student (attended trial, not just membership) | 14 | [ ] |
+| 39 | No student left in limbo (graduation forces decision for every non-continuing student) | 15 | [ ] |
+| 40 | Student schedule conflict detection (block overlapping group times on add) | 3 | [x] |
 
 ### DB-Level Constraints (already applied via migration)
 

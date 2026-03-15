@@ -48,6 +48,7 @@ export type StudentMinAggregateOutputType = {
   telegramId: bigint | null
   dateOfBirth: Date | null
   level: $Enums.Level | null
+  progressStage: $Enums.ProgressStage | null
   status: $Enums.StudentStatus | null
   familyId: string | null
   preferredLanguage: $Enums.PreferredLanguage | null
@@ -77,6 +78,7 @@ export type StudentMaxAggregateOutputType = {
   telegramId: bigint | null
   dateOfBirth: Date | null
   level: $Enums.Level | null
+  progressStage: $Enums.ProgressStage | null
   status: $Enums.StudentStatus | null
   familyId: string | null
   preferredLanguage: $Enums.PreferredLanguage | null
@@ -106,6 +108,7 @@ export type StudentCountAggregateOutputType = {
   telegramId: number
   dateOfBirth: number
   level: number
+  progressStage: number
   status: number
   familyId: number
   preferredDays: number
@@ -151,6 +154,7 @@ export type StudentMinAggregateInputType = {
   telegramId?: true
   dateOfBirth?: true
   level?: true
+  progressStage?: true
   status?: true
   familyId?: true
   preferredLanguage?: true
@@ -180,6 +184,7 @@ export type StudentMaxAggregateInputType = {
   telegramId?: true
   dateOfBirth?: true
   level?: true
+  progressStage?: true
   status?: true
   familyId?: true
   preferredLanguage?: true
@@ -209,6 +214,7 @@ export type StudentCountAggregateInputType = {
   telegramId?: true
   dateOfBirth?: true
   level?: true
+  progressStage?: true
   status?: true
   familyId?: true
   preferredDays?: true
@@ -327,11 +333,12 @@ export type StudentGroupByOutputType = {
   telegramId: bigint | null
   dateOfBirth: Date
   level: $Enums.Level
+  progressStage: $Enums.ProgressStage
   status: $Enums.StudentStatus
   familyId: string | null
   preferredDays: number[]
   preferredTimeSlots: string[]
-  preferredLanguage: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode: string | null
   isUncertain: boolean
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -381,11 +388,12 @@ export type StudentWhereInput = {
   telegramId?: Prisma.BigIntNullableFilter<"Student"> | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFilter<"Student"> | Date | string
   level?: Prisma.EnumLevelFilter<"Student"> | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFilter<"Student"> | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
   familyId?: Prisma.StringNullableFilter<"Student"> | string | null
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
-  preferredLanguage?: Prisma.EnumPreferredLanguageNullableFilter<"Student"> | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -426,11 +434,12 @@ export type StudentOrderByWithRelationInput = {
   telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   level?: Prisma.SortOrder
+  progressStage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrderInput | Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
-  preferredLanguage?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -476,11 +485,12 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   lastName?: Prisma.StringFilter<"Student"> | string
   dateOfBirth?: Prisma.DateTimeFilter<"Student"> | Date | string
   level?: Prisma.EnumLevelFilter<"Student"> | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFilter<"Student"> | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
   familyId?: Prisma.StringNullableFilter<"Student"> | string | null
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
-  preferredLanguage?: Prisma.EnumPreferredLanguageNullableFilter<"Student"> | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
@@ -519,11 +529,12 @@ export type StudentOrderByWithAggregationInput = {
   telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   level?: Prisma.SortOrder
+  progressStage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrderInput | Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
-  preferredLanguage?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -558,11 +569,12 @@ export type StudentScalarWhereWithAggregatesInput = {
   telegramId?: Prisma.BigIntNullableWithAggregatesFilter<"Student"> | bigint | number | null
   dateOfBirth?: Prisma.DateTimeWithAggregatesFilter<"Student"> | Date | string
   level?: Prisma.EnumLevelWithAggregatesFilter<"Student"> | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageWithAggregatesFilter<"Student"> | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusWithAggregatesFilter<"Student"> | $Enums.StudentStatus
   familyId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
-  preferredLanguage?: Prisma.EnumPreferredLanguageNullableWithAggregatesFilter<"Student"> | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageWithAggregatesFilter<"Student"> | $Enums.PreferredLanguage
   referralCode?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolWithAggregatesFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableWithAggregatesFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -589,10 +601,11 @@ export type StudentCreateInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -630,11 +643,12 @@ export type StudentUncheckedCreateInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -670,10 +684,11 @@ export type StudentUpdateInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -711,11 +726,12 @@ export type StudentUncheckedUpdateInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -752,11 +768,12 @@ export type StudentCreateManyInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -782,10 +799,11 @@ export type StudentUpdateManyMutationInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -809,11 +827,12 @@ export type StudentUncheckedUpdateManyInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -866,6 +885,7 @@ export type StudentCountOrderByAggregateInput = {
   telegramId?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   level?: Prisma.SortOrder
+  progressStage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
@@ -903,6 +923,7 @@ export type StudentMaxOrderByAggregateInput = {
   telegramId?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   level?: Prisma.SortOrder
+  progressStage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
@@ -932,6 +953,7 @@ export type StudentMinOrderByAggregateInput = {
   telegramId?: Prisma.SortOrder
   dateOfBirth?: Prisma.SortOrder
   level?: Prisma.SortOrder
+  progressStage?: Prisma.SortOrder
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
@@ -1100,6 +1122,10 @@ export type EnumLevelFieldUpdateOperationsInput = {
   set?: $Enums.Level
 }
 
+export type EnumProgressStageFieldUpdateOperationsInput = {
+  set?: $Enums.ProgressStage
+}
+
 export type EnumStudentStatusFieldUpdateOperationsInput = {
   set?: $Enums.StudentStatus
 }
@@ -1112,10 +1138,6 @@ export type StudentUpdatepreferredDaysInput = {
 export type StudentUpdatepreferredTimeSlotsInput = {
   set?: string[]
   push?: string | string[]
-}
-
-export type NullableEnumPreferredLanguageFieldUpdateOperationsInput = {
-  set?: $Enums.PreferredLanguage | null
 }
 
 export type NullableEnumUncertainFlagSourceFieldUpdateOperationsInput = {
@@ -1322,10 +1344,11 @@ export type StudentCreateWithoutActivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1362,11 +1385,12 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1412,10 +1436,11 @@ export type StudentCreateWithoutInactivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1452,11 +1477,12 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1521,11 +1547,12 @@ export type StudentScalarWhereInput = {
   telegramId?: Prisma.BigIntNullableFilter<"Student"> | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFilter<"Student"> | Date | string
   level?: Prisma.EnumLevelFilter<"Student"> | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFilter<"Student"> | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFilter<"Student"> | $Enums.StudentStatus
   familyId?: Prisma.StringNullableFilter<"Student"> | string | null
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
-  preferredLanguage?: Prisma.EnumPreferredLanguageNullableFilter<"Student"> | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -1568,10 +1595,11 @@ export type StudentCreateWithoutFamilyInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1608,10 +1636,11 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1674,10 +1703,11 @@ export type StudentCreateWithoutLostReasonInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1714,11 +1744,12 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1780,10 +1811,11 @@ export type StudentCreateWithoutGroupMembershipsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1820,11 +1852,12 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1875,10 +1908,11 @@ export type StudentUpdateWithoutGroupMembershipsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -1915,11 +1949,12 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -1955,10 +1990,11 @@ export type StudentCreateWithoutAttendanceRecordsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1995,11 +2031,12 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2050,10 +2087,11 @@ export type StudentUpdateWithoutAttendanceRecordsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2090,11 +2128,12 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2130,10 +2169,11 @@ export type StudentCreateWithoutPaymentPeriodsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2170,11 +2210,12 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2225,10 +2266,11 @@ export type StudentUpdateWithoutPaymentPeriodsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2265,11 +2307,12 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2305,10 +2348,11 @@ export type StudentCreateWithoutPaymentsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2345,11 +2389,12 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2400,10 +2445,11 @@ export type StudentUpdateWithoutPaymentsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2440,11 +2486,12 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2480,10 +2527,11 @@ export type StudentCreateWithoutRefundsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2520,11 +2568,12 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2575,10 +2624,11 @@ export type StudentUpdateWithoutRefundsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2615,11 +2665,12 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2655,10 +2706,11 @@ export type StudentCreateWithoutStudentPromotionsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2695,11 +2747,12 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2750,10 +2803,11 @@ export type StudentUpdateWithoutStudentPromotionsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2790,11 +2844,12 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2830,10 +2885,11 @@ export type StudentCreateWithoutReferralsMadeInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2870,11 +2926,12 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2915,10 +2972,11 @@ export type StudentCreateWithoutReferralReceivedInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2955,11 +3013,12 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3010,10 +3069,11 @@ export type StudentUpdateWithoutReferralsMadeInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3050,11 +3110,12 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3100,10 +3161,11 @@ export type StudentUpdateWithoutReferralReceivedInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3140,11 +3202,12 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3180,10 +3243,11 @@ export type StudentCreateWithoutCallHistoryInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3220,11 +3284,12 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3275,10 +3340,11 @@ export type StudentUpdateWithoutCallHistoryInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3315,11 +3381,12 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3355,10 +3422,11 @@ export type StudentCreateWithoutSmsHistoryInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3395,11 +3463,12 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3450,10 +3519,11 @@ export type StudentUpdateWithoutSmsHistoryInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3490,11 +3560,12 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3530,11 +3601,12 @@ export type StudentCreateManyActivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3560,11 +3632,12 @@ export type StudentCreateManyInactivatedByInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3589,10 +3662,11 @@ export type StudentUpdateWithoutActivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3629,11 +3703,12 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3669,11 +3744,12 @@ export type StudentUncheckedUpdateManyWithoutActivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3698,10 +3774,11 @@ export type StudentUpdateWithoutInactivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3738,11 +3815,12 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3778,11 +3856,12 @@ export type StudentUncheckedUpdateManyWithoutInactivatedByInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3808,10 +3887,11 @@ export type StudentCreateManyFamilyInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3837,10 +3917,11 @@ export type StudentUpdateWithoutFamilyInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3877,10 +3958,11 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3917,10 +3999,11 @@ export type StudentUncheckedUpdateManyWithoutFamilyInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3947,11 +4030,12 @@ export type StudentCreateManyLostReasonInput = {
   telegramId?: bigint | number | null
   dateOfBirth: Date | string
   level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
   status?: $Enums.StudentStatus
   familyId?: string | null
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: $Enums.PreferredLanguage | null
+  preferredLanguage: $Enums.PreferredLanguage
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3976,10 +4060,11 @@ export type StudentUpdateWithoutLostReasonInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4016,11 +4101,12 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4056,11 +4142,12 @@ export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
   status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
   familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
-  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4189,6 +4276,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   telegramId?: boolean
   dateOfBirth?: boolean
   level?: boolean
+  progressStage?: boolean
   status?: boolean
   familyId?: boolean
   preferredDays?: boolean
@@ -4235,6 +4323,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   telegramId?: boolean
   dateOfBirth?: boolean
   level?: boolean
+  progressStage?: boolean
   status?: boolean
   familyId?: boolean
   preferredDays?: boolean
@@ -4270,6 +4359,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   telegramId?: boolean
   dateOfBirth?: boolean
   level?: boolean
+  progressStage?: boolean
   status?: boolean
   familyId?: boolean
   preferredDays?: boolean
@@ -4305,6 +4395,7 @@ export type StudentSelectScalar = {
   telegramId?: boolean
   dateOfBirth?: boolean
   level?: boolean
+  progressStage?: boolean
   status?: boolean
   familyId?: boolean
   preferredDays?: boolean
@@ -4326,7 +4417,7 @@ export type StudentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainComment" | "comment" | "amoCrmLeadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "progressStage" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainComment" | "comment" | "amoCrmLeadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.Student$familyArgs<ExtArgs>
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
@@ -4385,11 +4476,12 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     telegramId: bigint | null
     dateOfBirth: Date
     level: $Enums.Level
+    progressStage: $Enums.ProgressStage
     status: $Enums.StudentStatus
     familyId: string | null
     preferredDays: number[]
     preferredTimeSlots: string[]
-    preferredLanguage: $Enums.PreferredLanguage | null
+    preferredLanguage: $Enums.PreferredLanguage
     referralCode: string | null
     isUncertain: boolean
     uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -4850,6 +4942,7 @@ export interface StudentFieldRefs {
   readonly telegramId: Prisma.FieldRef<"Student", 'BigInt'>
   readonly dateOfBirth: Prisma.FieldRef<"Student", 'DateTime'>
   readonly level: Prisma.FieldRef<"Student", 'Level'>
+  readonly progressStage: Prisma.FieldRef<"Student", 'ProgressStage'>
   readonly status: Prisma.FieldRef<"Student", 'StudentStatus'>
   readonly familyId: Prisma.FieldRef<"Student", 'String'>
   readonly preferredDays: Prisma.FieldRef<"Student", 'Int[]'>

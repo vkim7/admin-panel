@@ -205,9 +205,7 @@ async function main() {
       lastName: "Karimova",
       phone: "+998901234567",
       levels: ["BEGINNER", "ELEMENTARY", "PRE_INTERMEDIATE"],
-      canTeachUzbek: true,
-      canTeachRussian: true,
-      canTeachEnglishOnly: false,
+      teachingLanguage: "ANY",
       availability: {
         create: [
           { dayOfWeek: 1, startTime: "14:30", endTime: "22:00" },
@@ -227,9 +225,7 @@ async function main() {
       lastName: "Wilson",
       phone: "+998907654321",
       levels: ["INTERMEDIATE", "UPPER_INTERMEDIATE", "IELTS"],
-      canTeachUzbek: false,
-      canTeachRussian: false,
-      canTeachEnglishOnly: true,
+      teachingLanguage: "RUSSIAN",
       availability: {
         create: [
           { dayOfWeek: 1, startTime: "17:30", endTime: "22:00" },
@@ -340,7 +336,9 @@ async function main() {
       phone: "+998901111111",
       dateOfBirth: new Date("1998-05-15"),
       level: "UPPER_INTERMEDIATE",
+      progressStage: "BEGINNING",
       status: "ACTIVE",
+      preferredLanguage: "ANY",
     },
   });
 
@@ -412,14 +410,14 @@ async function main() {
   // ─── Active students (in groups) ────────────────────────────────────────
   const activeStudents = await Promise.all(
     [
-      { crmCode: "2", firstName: "Malika", lastName: "Usmanova", phone: "+998902222222", dateOfBirth: new Date("2010-03-22"), level: "BEGINNER" as const, familyId: leeFamily.id, preferredLanguage: "UZBEK" as const },
-      { crmCode: "3", firstName: "Bobur", lastName: "Tashpulatov", phone: "+998903333333", dateOfBirth: new Date("2000-11-08"), level: "BEGINNER" as const, preferredLanguage: "UZBEK" as const },
-      { crmCode: "4", firstName: "Nilufar", lastName: "Rahimova", phone: "+998904444444", dateOfBirth: new Date("2001-07-14"), level: "BEGINNER" as const, preferredLanguage: "RUSSIAN" as const },
-      { crmCode: "5", firstName: "Jamshid", lastName: "Kamolov", phone: "+998905555555", dateOfBirth: new Date("1999-01-30"), level: "ELEMENTARY" as const, preferredLanguage: "UZBEK" as const },
-      { crmCode: "6", firstName: "Dilorom", lastName: "Saidova", phone: "+998906666666", dateOfBirth: new Date("2002-09-05"), level: "ELEMENTARY" as const, preferredLanguage: "RUSSIAN" as const },
-      { crmCode: "7", firstName: "Rustam", lastName: "Mirzaev", phone: "+998907777777", dateOfBirth: new Date("1997-12-18"), level: "INTERMEDIATE" as const },
-      { crmCode: "8", firstName: "Gulnora", lastName: "Abdullaeva", phone: "+998908888888", dateOfBirth: new Date("2003-06-25"), level: "INTERMEDIATE" as const },
-      { crmCode: "9", firstName: "Otabek", lastName: "Nazarov", phone: "+998909999999", dateOfBirth: new Date("1995-04-10"), level: "INTERMEDIATE" as const },
+      { crmCode: "2", firstName: "Malika", lastName: "Usmanova", phone: "+998902222222", dateOfBirth: new Date("2010-03-22"), level: "BEGINNER" as const, progressStage: "MID" as const, familyId: leeFamily.id, preferredLanguage: "UZBEK" as const },
+      { crmCode: "3", firstName: "Bobur", lastName: "Tashpulatov", phone: "+998903333333", dateOfBirth: new Date("2000-11-08"), level: "BEGINNER" as const, progressStage: "MID" as const, preferredLanguage: "UZBEK" as const },
+      { crmCode: "4", firstName: "Nilufar", lastName: "Rahimova", phone: "+998904444444", dateOfBirth: new Date("2001-07-14"), level: "BEGINNER" as const, progressStage: "MID" as const, preferredLanguage: "RUSSIAN" as const },
+      { crmCode: "5", firstName: "Jamshid", lastName: "Kamolov", phone: "+998905555555", dateOfBirth: new Date("1999-01-30"), level: "ELEMENTARY" as const, progressStage: "BEGINNING" as const, preferredLanguage: "UZBEK" as const },
+      { crmCode: "6", firstName: "Dilorom", lastName: "Saidova", phone: "+998906666666", dateOfBirth: new Date("2002-09-05"), level: "ELEMENTARY" as const, progressStage: "BEGINNING" as const, preferredLanguage: "RUSSIAN" as const },
+      { crmCode: "7", firstName: "Rustam", lastName: "Mirzaev", phone: "+998907777777", dateOfBirth: new Date("1997-12-18"), level: "INTERMEDIATE" as const, progressStage: "FINAL" as const, preferredLanguage: "ANY" as const },
+      { crmCode: "8", firstName: "Gulnora", lastName: "Abdullaeva", phone: "+998908888888", dateOfBirth: new Date("2003-06-25"), level: "INTERMEDIATE" as const, progressStage: "FINAL" as const, preferredLanguage: "ANY" as const },
+      { crmCode: "9", firstName: "Otabek", lastName: "Nazarov", phone: "+998909999999", dateOfBirth: new Date("1995-04-10"), level: "INTERMEDIATE" as const, progressStage: "FINAL" as const, preferredLanguage: "ANY" as const },
     ].map((s) =>
       prisma.student.create({
         data: { ...s, status: "ACTIVE" },
@@ -479,6 +477,7 @@ async function main() {
       phone: "+998900000001",
       dateOfBirth: new Date("2004-08-12"),
       level: "PRE_INTERMEDIATE",
+      progressStage: "BEGINNING",
       status: "AWAITING_ASSIGNMENT",
       preferredDays: [1, 3, 5],
       preferredTimeSlots: ["16:00", "17:30"],

@@ -11,7 +11,9 @@ const LEVELS = [
   "IELTS",
 ] as const;
 
-const PREFERRED_LANGUAGES = ["UZBEK", "RUSSIAN"] as const;
+const PREFERRED_LANGUAGES = ["UZBEK", "RUSSIAN", "ANY"] as const;
+
+const PROGRESS_STAGES = ["BEGINNING", "MID", "FINAL"] as const;
 
 // Base schema — used by react-hook-form resolver (no transforms/preprocess)
 export const studentBaseSchema = z.object({
@@ -20,9 +22,10 @@ export const studentBaseSchema = z.object({
   phone: requiredPhone(),
   dateOfBirth: requiredIsoDate("Date of birth is required"),
   level: z.enum(LEVELS, { error: "Level is required" }),
+  progressStage: z.enum(PROGRESS_STAGES, { error: "Progress stage is required" }),
   preferredDays: z.array(z.number().int().min(1).max(7)),
   preferredTimeSlots: z.array(z.string()),
-  preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
+  preferredLanguage: z.enum(PREFERRED_LANGUAGES, { error: "Language preference is required" }),
   familyId: z.string().nullable(),
   comment: z.string().nullable(),
 });
@@ -37,9 +40,10 @@ export const studentSchema = z
     phone: requiredPhone(),
     dateOfBirth: requiredIsoDate("Date of birth is required"),
     level: z.enum(LEVELS, { error: "Level is required" }),
+    progressStage: z.enum(PROGRESS_STAGES, { error: "Progress stage is required" }),
     preferredDays: z.array(z.number().int().min(1).max(7)),
     preferredTimeSlots: z.array(z.enum(TIME_SLOTS)),
-    preferredLanguage: z.enum(PREFERRED_LANGUAGES).nullable(),
+    preferredLanguage: z.enum(PREFERRED_LANGUAGES, { error: "Language preference is required" }),
     familyId: nullableString(),
     comment: nullableString(500),
   })

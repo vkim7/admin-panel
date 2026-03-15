@@ -31,6 +31,13 @@ const DAY_SHORT: Record<number, string> = {
 const LANGUAGE_LABEL: Record<string, string> = {
   UZBEK: "Uzbek",
   RUSSIAN: "Russian",
+  ANY: "Any",
+};
+
+const STAGE_LABEL: Record<string, string> = {
+  BEGINNING: "Beginning",
+  MID: "Mid",
+  FINAL: "Final",
 };
 
 export default async function StudentDetailPage({
@@ -89,7 +96,7 @@ export default async function StudentDetailPage({
         <div>
           <p className="text-xs font-medium text-muted-foreground">Level</p>
           <Badge variant="secondary" className="mt-1">
-            {LEVEL_LABEL[student.level] ?? student.level}
+            {LEVEL_LABEL[student.level] ?? student.level} · {STAGE_LABEL[student.progressStage] ?? student.progressStage}
           </Badge>
         </div>
         <div>
@@ -134,9 +141,7 @@ export default async function StudentDetailPage({
             Preferred Language
           </p>
           <p className="mt-1 text-sm">
-            {student.preferredLanguage
-              ? LANGUAGE_LABEL[student.preferredLanguage]
-              : "No preference"}
+            {LANGUAGE_LABEL[student.preferredLanguage] ?? student.preferredLanguage}
           </p>
         </div>
         <div>

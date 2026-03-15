@@ -74,6 +74,9 @@ export async function getTeachersForGroupForm() {
         select: { id: true },
         take: 1,
       },
+      availability: {
+        select: { dayOfWeek: true, startTime: true, endTime: true },
+      },
     },
     orderBy: { firstName: "asc" },
   });

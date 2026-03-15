@@ -12,18 +12,26 @@ import {
   Users,
   Layers,
   LogOut,
+  AlertTriangle,
 } from "lucide-react";
 
 const navItems = [
   { label: "Schedule", href: "/schedule", icon: CalendarDays },
   { label: "Reception", href: "/reception", icon: UserPlus },
+  { label: "Uncertain", href: "/uncertain", icon: AlertTriangle },
   { label: "Payments", href: "/payments", icon: CreditCard },
   { label: "Students", href: "/students", icon: GraduationCap },
   { label: "Groups", href: "/groups", icon: Layers },
   { label: "Teachers", href: "/teachers", icon: Users },
 ];
 
-export function AppSidebar({ adminName }: { adminName: string }) {
+interface AppSidebarProps {
+  adminName: string;
+  receptionCount?: number;
+  uncertainCount?: number;
+}
+
+export function AppSidebar({ adminName, receptionCount, uncertainCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
@@ -33,9 +41,9 @@ export function AppSidebar({ adminName }: { adminName: string }) {
 
   return (
     <aside className="flex w-56 shrink-0 flex-col border-r bg-muted/40 p-4">
-      <div className="mb-6 px-2 text-lg font-semibold tracking-tight">
+      <Link href="/schedule" className="mb-6 block px-2 text-lg font-semibold tracking-tight">
         Eng Admin
-      </div>
+      </Link>
       <nav className="flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
           const isActive =
@@ -53,6 +61,16 @@ export function AppSidebar({ adminName }: { adminName: string }) {
             >
               <Icon className="size-4" />
               {item.label}
+              {item.href === "/reception" && receptionCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {receptionCount}
+                </span>
+              ) : null}
+              {item.href === "/uncertain" && uncertainCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {uncertainCount}
+                </span>
+              ) : null}
             </Link>
           );
         })}

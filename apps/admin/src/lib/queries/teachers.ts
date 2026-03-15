@@ -21,7 +21,7 @@ export async function getAllTeachers(includeInactive = false) {
 }
 
 export async function getTeacherById(id: string) {
-  return prisma.teacher.findUnique({
+  const teacher = await prisma.teacher.findUnique({
     where: { id },
     include: {
       availability: { orderBy: [{ dayOfWeek: "asc" }, { startTime: "asc" }] },
@@ -41,4 +41,6 @@ export async function getTeacherById(id: string) {
       deactivatedBy: { select: { firstName: true, lastName: true } },
     },
   });
+
+  return teacher;
 }

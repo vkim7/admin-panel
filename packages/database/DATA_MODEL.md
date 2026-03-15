@@ -77,7 +77,7 @@ Teachers who conduct lessons via Zoom.
 | phone | Teacher's phone number |
 | telegramId | Optional — for future teacher app auth |
 | levels[] | Which levels they can teach (Postgres array) |
-| canTeachUzbek/Russian/EnglishOnly | Language capabilities |
+| teachingLanguage | Teaching language capability: UZBEK, RUSSIAN, or ANY (both). Reuses the PreferredLanguage enum. Used for hard enforcement at BEGINNER/ELEMENTARY — student can't be assigned to a group whose teacher doesn't speak their preferred language. |
 | isActive | Soft-delete flag |
 | deactivatedAt | When isActive was set to false (audit trail) |
 | deactivatedById | Which admin deactivated this teacher |
@@ -118,11 +118,12 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 | telegramId | Optional Telegram ID for future student Mini App auth via Telegram initData. DB-unique. |
 | dateOfBirth | Date only (no time). Used to determine minor status at enrollment — minors must have a Family link (application constraint). |
 | level | Current English level (BEGINNER through IELTS) |
-| status | Lifecycle: AWAITING_ASSIGNMENT → ACTIVE → INACTIVE |
+| progressStage | Where the student is within their level: BEGINNING, MID, or FINAL. Set during placement and used for group matching (groups within 3 stages on the linear scale are shown as suggestions). Defaults to BEGINNING. |
+| status | Lifecycle: AWAITING_ASSIGNMENT → ACTIVE → INACTIVE (also AWAITING_REASSIGNMENT for returning/failed students) |
 | familyId | Links to Family for minors (under 18 at enrollment). Null for adults. |
 | preferredDays[] | Scheduling preference, e.g., [1, 3, 5] for Mon/Wed/Fri |
 | preferredTimeSlots[] | Time slot preferences, e.g., ["14:30", "16:00"] — subset of fixed TIME_SLOTS |
-| preferredLanguage | UZBEK or RUSSIAN. Null = no preference (typically intermediate+ students comfortable with English-only instruction). Used to match students to teachers with the right language capability. |
+| preferredLanguage | UZBEK, RUSSIAN, or ANY. Defaults to ANY for new students. **Hard enforcement** at BEGINNER and ELEMENTARY: student cannot be assigned to a group whose teacher can't teach in the selected language (blocked at server action level and excluded from assign dialog suggestions). **Soft preference** at PRE_INTERMEDIATE+: used for sorting/boosting in suggestions but doesn't block assignment. |
 | referralCode | Unique code for referral tracking |
 | isUncertain | Manual flag — teacher/admin gut feeling that student may leave |
 | uncertainFlaggedBy | Who flagged: TEACHER or ADMIN |
@@ -141,13 +142,30 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 amoCRM placement test passed
   → Student created (status: AWAITING_ASSIGNMENT)
   → Visible in Reception
-  → Admin assigns to group
+  → Admin assigns to group (always a trial for new students)
   → status: ACTIVE
   → Visible in Group Details, Student Management, No Payment List
-  → Student leaves
+
+Path A — Student leaves school:
   → status: INACTIVE, lostReasonId set
-  → Visible in Lost List, Student Management
+  → Visible in Lost List (dedicated win-back page), Student Management
+  → Admin follows win-back script (call/message)
+  → If student wants to return → Path C
+
+Path B — Student needs reassignment (exam failure, graduation without continuation):
+  → status: AWAITING_REASSIGNMENT
+  → Visible in Reassignment page
+  → Admin assigns to new group (no trial — already had one)
+  → status: ACTIVE
+
+Path C — Inactive student returns (won back from Lost List):
+  → Option A: "Assign to group" directly from Lost List → INACTIVE → ACTIVE (no trial)
+  → Option B: "Send to reassignment" → INACTIVE → AWAITING_REASSIGNMENT → Path B
+
+Students can cycle between Lost List and Reassignment multiple times.
 ```
+
+**Multiple simultaneous groups:** A student can be in both a GROUP and INDIVIDUAL lesson at the same time (or multiple groups). Each is a separate GroupMembership with independent billing. The `active_membership_unique` constraint only prevents duplicate active memberships for the same student+group pair, not across different groups. Admin adds the student to additional groups via Group Details "Add student" — no status change needed since the student is already ACTIVE. **Schedule conflict detection (C#40):** when adding a student to a group, check if the student has any other active membership in a group with overlapping schedule (same days AND overlapping time based on duration). Block with error: "Student is already in group {publicId} at this time."
 
 **Uncertain List (auto-criteria):** Computed at query time — students with 3+ absences or 3+ incomplete homework. The `isUncertain` flag is for manual gut-feel flagging, separate from auto-criteria. Thresholds are hardcoded in application logic.
 
@@ -312,6 +330,8 @@ Tracks which students are in which groups (both GROUP and INDIVIDUAL types), inc
 | previousMembershipId | Links to the membership this continues from (group merge or transfer). Null for initial group assignments. |
 
 **A student can rejoin a group** — no unique constraint on `[studentId, groupId]`. But a partial unique index prevents two SIMULTANEOUS active memberships for the same student+group (see `data_integrity_constraints.sql`).
+
+**A student can be in multiple groups at once** — e.g., a GROUP lesson and an INDIVIDUAL lesson simultaneously. Each is a separate membership with independent billing periods. The unique constraint is scoped to `(studentId, groupId)` not `(studentId)` globally. Schedule conflict detection prevents overlapping time slots (see C#40).
 
 **`leaveDate` is set for ALL membership endings** — transfers, dropouts, merges, graduations, and program completion. It always means "student is no longer active in this group." The reason for leaving is inferred from context:
 - `transferReasonId` set → **Transfer** (student moved to another group)

@@ -40,9 +40,7 @@ export type TeacherMinAggregateOutputType = {
   lastName: string | null
   phone: string | null
   telegramId: bigint | null
-  canTeachUzbek: boolean | null
-  canTeachRussian: boolean | null
-  canTeachEnglishOnly: boolean | null
+  teachingLanguage: $Enums.PreferredLanguage | null
   isActive: boolean | null
   deactivatedAt: Date | null
   deactivatedById: string | null
@@ -56,9 +54,7 @@ export type TeacherMaxAggregateOutputType = {
   lastName: string | null
   phone: string | null
   telegramId: bigint | null
-  canTeachUzbek: boolean | null
-  canTeachRussian: boolean | null
-  canTeachEnglishOnly: boolean | null
+  teachingLanguage: $Enums.PreferredLanguage | null
   isActive: boolean | null
   deactivatedAt: Date | null
   deactivatedById: string | null
@@ -73,9 +69,7 @@ export type TeacherCountAggregateOutputType = {
   phone: number
   telegramId: number
   levels: number
-  canTeachUzbek: number
-  canTeachRussian: number
-  canTeachEnglishOnly: number
+  teachingLanguage: number
   isActive: number
   deactivatedAt: number
   deactivatedById: number
@@ -99,9 +93,7 @@ export type TeacherMinAggregateInputType = {
   lastName?: true
   phone?: true
   telegramId?: true
-  canTeachUzbek?: true
-  canTeachRussian?: true
-  canTeachEnglishOnly?: true
+  teachingLanguage?: true
   isActive?: true
   deactivatedAt?: true
   deactivatedById?: true
@@ -115,9 +107,7 @@ export type TeacherMaxAggregateInputType = {
   lastName?: true
   phone?: true
   telegramId?: true
-  canTeachUzbek?: true
-  canTeachRussian?: true
-  canTeachEnglishOnly?: true
+  teachingLanguage?: true
   isActive?: true
   deactivatedAt?: true
   deactivatedById?: true
@@ -132,9 +122,7 @@ export type TeacherCountAggregateInputType = {
   phone?: true
   telegramId?: true
   levels?: true
-  canTeachUzbek?: true
-  canTeachRussian?: true
-  canTeachEnglishOnly?: true
+  teachingLanguage?: true
   isActive?: true
   deactivatedAt?: true
   deactivatedById?: true
@@ -236,9 +224,7 @@ export type TeacherGroupByOutputType = {
   phone: string
   telegramId: bigint | null
   levels: $Enums.Level[]
-  canTeachUzbek: boolean
-  canTeachRussian: boolean
-  canTeachEnglishOnly: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive: boolean
   deactivatedAt: Date | null
   deactivatedById: string | null
@@ -276,9 +262,7 @@ export type TeacherWhereInput = {
   phone?: Prisma.StringFilter<"Teacher"> | string
   telegramId?: Prisma.BigIntNullableFilter<"Teacher"> | bigint | number | null
   levels?: Prisma.EnumLevelNullableListFilter<"Teacher">
-  canTeachUzbek?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFilter<"Teacher"> | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFilter<"Teacher"> | boolean
   deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
   deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
@@ -303,9 +287,7 @@ export type TeacherOrderByWithRelationInput = {
   phone?: Prisma.SortOrder
   telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   levels?: Prisma.SortOrder
-  canTeachUzbek?: Prisma.SortOrder
-  canTeachRussian?: Prisma.SortOrder
-  canTeachEnglishOnly?: Prisma.SortOrder
+  teachingLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   deactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deactivatedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -333,9 +315,7 @@ export type TeacherWhereUniqueInput = Prisma.AtLeast<{
   firstName?: Prisma.StringFilter<"Teacher"> | string
   lastName?: Prisma.StringFilter<"Teacher"> | string
   levels?: Prisma.EnumLevelNullableListFilter<"Teacher">
-  canTeachUzbek?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFilter<"Teacher"> | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFilter<"Teacher"> | boolean
   deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
   deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
@@ -360,9 +340,7 @@ export type TeacherOrderByWithAggregationInput = {
   phone?: Prisma.SortOrder
   telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   levels?: Prisma.SortOrder
-  canTeachUzbek?: Prisma.SortOrder
-  canTeachRussian?: Prisma.SortOrder
-  canTeachEnglishOnly?: Prisma.SortOrder
+  teachingLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   deactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deactivatedById?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -385,9 +363,7 @@ export type TeacherScalarWhereWithAggregatesInput = {
   phone?: Prisma.StringWithAggregatesFilter<"Teacher"> | string
   telegramId?: Prisma.BigIntNullableWithAggregatesFilter<"Teacher"> | bigint | number | null
   levels?: Prisma.EnumLevelNullableListFilter<"Teacher">
-  canTeachUzbek?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
-  canTeachRussian?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
-  canTeachEnglishOnly?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageWithAggregatesFilter<"Teacher"> | $Enums.PreferredLanguage
   isActive?: Prisma.BoolWithAggregatesFilter<"Teacher"> | boolean
   deactivatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Teacher"> | Date | string | null
   deactivatedById?: Prisma.StringNullableWithAggregatesFilter<"Teacher"> | string | null
@@ -402,9 +378,7 @@ export type TeacherCreateInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -428,9 +402,7 @@ export type TeacherUncheckedCreateInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -454,9 +426,7 @@ export type TeacherUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -480,9 +450,7 @@ export type TeacherUncheckedUpdateInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -506,9 +474,7 @@ export type TeacherCreateManyInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -523,9 +489,7 @@ export type TeacherUpdateManyMutationInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -539,9 +503,7 @@ export type TeacherUncheckedUpdateManyInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -574,9 +536,7 @@ export type TeacherCountOrderByAggregateInput = {
   phone?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
   levels?: Prisma.SortOrder
-  canTeachUzbek?: Prisma.SortOrder
-  canTeachRussian?: Prisma.SortOrder
-  canTeachEnglishOnly?: Prisma.SortOrder
+  teachingLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   deactivatedAt?: Prisma.SortOrder
   deactivatedById?: Prisma.SortOrder
@@ -594,9 +554,7 @@ export type TeacherMaxOrderByAggregateInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
-  canTeachUzbek?: Prisma.SortOrder
-  canTeachRussian?: Prisma.SortOrder
-  canTeachEnglishOnly?: Prisma.SortOrder
+  teachingLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   deactivatedAt?: Prisma.SortOrder
   deactivatedById?: Prisma.SortOrder
@@ -610,9 +568,7 @@ export type TeacherMinOrderByAggregateInput = {
   lastName?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
-  canTeachUzbek?: Prisma.SortOrder
-  canTeachRussian?: Prisma.SortOrder
-  canTeachEnglishOnly?: Prisma.SortOrder
+  teachingLanguage?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   deactivatedAt?: Prisma.SortOrder
   deactivatedById?: Prisma.SortOrder
@@ -686,6 +642,10 @@ export type NullableBigIntFieldUpdateOperationsInput = {
 export type TeacherUpdatelevelsInput = {
   set?: $Enums.Level[]
   push?: $Enums.Level | $Enums.Level[]
+}
+
+export type EnumPreferredLanguageFieldUpdateOperationsInput = {
+  set?: $Enums.PreferredLanguage
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -825,9 +785,7 @@ export type TeacherCreateWithoutDeactivatedByInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -850,9 +808,7 @@ export type TeacherUncheckedCreateWithoutDeactivatedByInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -904,9 +860,7 @@ export type TeacherScalarWhereInput = {
   phone?: Prisma.StringFilter<"Teacher"> | string
   telegramId?: Prisma.BigIntNullableFilter<"Teacher"> | bigint | number | null
   levels?: Prisma.EnumLevelNullableListFilter<"Teacher">
-  canTeachUzbek?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachRussian?: Prisma.BoolFilter<"Teacher"> | boolean
-  canTeachEnglishOnly?: Prisma.BoolFilter<"Teacher"> | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFilter<"Teacher"> | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFilter<"Teacher"> | boolean
   deactivatedAt?: Prisma.DateTimeNullableFilter<"Teacher"> | Date | string | null
   deactivatedById?: Prisma.StringNullableFilter<"Teacher"> | string | null
@@ -921,9 +875,7 @@ export type TeacherCreateWithoutAvailabilityInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -946,9 +898,7 @@ export type TeacherUncheckedCreateWithoutAvailabilityInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -987,9 +937,7 @@ export type TeacherUpdateWithoutAvailabilityInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1012,9 +960,7 @@ export type TeacherUncheckedUpdateWithoutAvailabilityInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1037,9 +983,7 @@ export type TeacherCreateWithoutUnavailabilityInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1062,9 +1006,7 @@ export type TeacherUncheckedCreateWithoutUnavailabilityInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1103,9 +1045,7 @@ export type TeacherUpdateWithoutUnavailabilityInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1128,9 +1068,7 @@ export type TeacherUncheckedUpdateWithoutUnavailabilityInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1153,9 +1091,7 @@ export type TeacherCreateWithoutScheduleSlotsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1178,9 +1114,7 @@ export type TeacherUncheckedCreateWithoutScheduleSlotsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1219,9 +1153,7 @@ export type TeacherUpdateWithoutScheduleSlotsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1244,9 +1176,7 @@ export type TeacherUncheckedUpdateWithoutScheduleSlotsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1269,9 +1199,7 @@ export type TeacherCreateWithoutGroupsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1294,9 +1222,7 @@ export type TeacherUncheckedCreateWithoutGroupsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1335,9 +1261,7 @@ export type TeacherUpdateWithoutGroupsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1360,9 +1284,7 @@ export type TeacherUncheckedUpdateWithoutGroupsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1385,9 +1307,7 @@ export type TeacherCreateWithoutGroupTeacherHistoryInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1410,9 +1330,7 @@ export type TeacherUncheckedCreateWithoutGroupTeacherHistoryInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1451,9 +1369,7 @@ export type TeacherUpdateWithoutGroupTeacherHistoryInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1476,9 +1392,7 @@ export type TeacherUncheckedUpdateWithoutGroupTeacherHistoryInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1501,9 +1415,7 @@ export type TeacherCreateWithoutLessonsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1526,9 +1438,7 @@ export type TeacherUncheckedCreateWithoutLessonsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1556,9 +1466,7 @@ export type TeacherCreateWithoutOriginalLessonsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1581,9 +1489,7 @@ export type TeacherUncheckedCreateWithoutOriginalLessonsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1622,9 +1528,7 @@ export type TeacherUpdateWithoutLessonsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1647,9 +1551,7 @@ export type TeacherUncheckedUpdateWithoutLessonsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1683,9 +1585,7 @@ export type TeacherUpdateWithoutOriginalLessonsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1708,9 +1608,7 @@ export type TeacherUncheckedUpdateWithoutOriginalLessonsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1733,9 +1631,7 @@ export type TeacherCreateWithoutPaymentPeriodsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1758,9 +1654,7 @@ export type TeacherUncheckedCreateWithoutPaymentPeriodsInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1799,9 +1693,7 @@ export type TeacherUpdateWithoutPaymentPeriodsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1824,9 +1716,7 @@ export type TeacherUncheckedUpdateWithoutPaymentPeriodsInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1849,9 +1739,7 @@ export type TeacherCreateWithoutRateChangesInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1874,9 +1762,7 @@ export type TeacherUncheckedCreateWithoutRateChangesInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   deactivatedById?: string | null
@@ -1915,9 +1801,7 @@ export type TeacherUpdateWithoutRateChangesInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1940,9 +1824,7 @@ export type TeacherUncheckedUpdateWithoutRateChangesInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1965,9 +1847,7 @@ export type TeacherCreateManyDeactivatedByInput = {
   phone: string
   telegramId?: bigint | number | null
   levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage: $Enums.PreferredLanguage
   isActive?: boolean
   deactivatedAt?: Date | string | null
   createdAt?: Date | string
@@ -1981,9 +1861,7 @@ export type TeacherUpdateWithoutDeactivatedByInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2006,9 +1884,7 @@ export type TeacherUncheckedUpdateWithoutDeactivatedByInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2031,9 +1907,7 @@ export type TeacherUncheckedUpdateManyWithoutDeactivatedByInput = {
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
-  canTeachUzbek?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachRussian?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  canTeachEnglishOnly?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2150,9 +2024,7 @@ export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   phone?: boolean
   telegramId?: boolean
   levels?: boolean
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage?: boolean
   isActive?: boolean
   deactivatedAt?: boolean
   deactivatedById?: boolean
@@ -2178,9 +2050,7 @@ export type TeacherSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   phone?: boolean
   telegramId?: boolean
   levels?: boolean
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage?: boolean
   isActive?: boolean
   deactivatedAt?: boolean
   deactivatedById?: boolean
@@ -2196,9 +2066,7 @@ export type TeacherSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   phone?: boolean
   telegramId?: boolean
   levels?: boolean
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage?: boolean
   isActive?: boolean
   deactivatedAt?: boolean
   deactivatedById?: boolean
@@ -2214,9 +2082,7 @@ export type TeacherSelectScalar = {
   phone?: boolean
   telegramId?: boolean
   levels?: boolean
-  canTeachUzbek?: boolean
-  canTeachRussian?: boolean
-  canTeachEnglishOnly?: boolean
+  teachingLanguage?: boolean
   isActive?: boolean
   deactivatedAt?: boolean
   deactivatedById?: boolean
@@ -2224,7 +2090,7 @@ export type TeacherSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TeacherOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "telegramId" | "levels" | "canTeachUzbek" | "canTeachRussian" | "canTeachEnglishOnly" | "isActive" | "deactivatedAt" | "deactivatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["teacher"]>
+export type TeacherOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "telegramId" | "levels" | "teachingLanguage" | "isActive" | "deactivatedAt" | "deactivatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["teacher"]>
 export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   deactivatedBy?: boolean | Prisma.Teacher$deactivatedByArgs<ExtArgs>
   availability?: boolean | Prisma.Teacher$availabilityArgs<ExtArgs>
@@ -2266,9 +2132,7 @@ export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     phone: string
     telegramId: bigint | null
     levels: $Enums.Level[]
-    canTeachUzbek: boolean
-    canTeachRussian: boolean
-    canTeachEnglishOnly: boolean
+    teachingLanguage: $Enums.PreferredLanguage
     isActive: boolean
     deactivatedAt: Date | null
     deactivatedById: string | null
@@ -2713,9 +2577,7 @@ export interface TeacherFieldRefs {
   readonly phone: Prisma.FieldRef<"Teacher", 'String'>
   readonly telegramId: Prisma.FieldRef<"Teacher", 'BigInt'>
   readonly levels: Prisma.FieldRef<"Teacher", 'Level[]'>
-  readonly canTeachUzbek: Prisma.FieldRef<"Teacher", 'Boolean'>
-  readonly canTeachRussian: Prisma.FieldRef<"Teacher", 'Boolean'>
-  readonly canTeachEnglishOnly: Prisma.FieldRef<"Teacher", 'Boolean'>
+  readonly teachingLanguage: Prisma.FieldRef<"Teacher", 'PreferredLanguage'>
   readonly isActive: Prisma.FieldRef<"Teacher", 'Boolean'>
   readonly deactivatedAt: Prisma.FieldRef<"Teacher", 'DateTime'>
   readonly deactivatedById: Prisma.FieldRef<"Teacher", 'String'>

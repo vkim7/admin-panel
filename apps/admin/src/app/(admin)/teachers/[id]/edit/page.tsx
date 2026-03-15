@@ -29,9 +29,7 @@ export default async function EditTeacherPage({
           lastName: teacher.lastName,
           phone: teacher.phone,
           levels: teacher.levels as any,
-          canTeachUzbek: teacher.canTeachUzbek,
-          canTeachRussian: teacher.canTeachRussian,
-          canTeachEnglishOnly: teacher.canTeachEnglishOnly,
+          teachingLanguage: teacher.teachingLanguage,
         }}
       />
     </div>

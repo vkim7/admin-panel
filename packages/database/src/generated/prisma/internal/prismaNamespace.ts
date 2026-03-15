@@ -2714,9 +2714,7 @@ export const TeacherScalarFieldEnum = {
   phone: 'phone',
   telegramId: 'telegramId',
   levels: 'levels',
-  canTeachUzbek: 'canTeachUzbek',
-  canTeachRussian: 'canTeachRussian',
-  canTeachEnglishOnly: 'canTeachEnglishOnly',
+  teachingLanguage: 'teachingLanguage',
   isActive: 'isActive',
   deactivatedAt: 'deactivatedAt',
   deactivatedById: 'deactivatedById',
@@ -2750,6 +2748,7 @@ export const StudentScalarFieldEnum = {
   telegramId: 'telegramId',
   dateOfBirth: 'dateOfBirth',
   level: 'level',
+  progressStage: 'progressStage',
   status: 'status',
   familyId: 'familyId',
   preferredDays: 'preferredDays',
@@ -3294,6 +3293,20 @@ export type EnumLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
+ * Reference to a field of type 'PreferredLanguage'
+ */
+export type EnumPreferredLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreferredLanguage'>
+    
+
+
+/**
+ * Reference to a field of type 'PreferredLanguage[]'
+ */
+export type ListEnumPreferredLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreferredLanguage[]'>
+    
+
+
+/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -3308,6 +3321,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'ProgressStage'
+ */
+export type EnumProgressStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgressStage'>
+    
+
+
+/**
+ * Reference to a field of type 'ProgressStage[]'
+ */
+export type ListEnumProgressStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgressStage[]'>
+    
+
+
+/**
  * Reference to a field of type 'StudentStatus'
  */
 export type EnumStudentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudentStatus'>
@@ -3318,20 +3345,6 @@ export type EnumStudentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'StudentStatus[]'
  */
 export type ListEnumStudentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StudentStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'PreferredLanguage'
- */
-export type EnumPreferredLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreferredLanguage'>
-    
-
-
-/**
- * Reference to a field of type 'PreferredLanguage[]'
- */
-export type ListEnumPreferredLanguageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PreferredLanguage[]'>
     
 
 
@@ -3360,20 +3373,6 @@ export type EnumGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'GroupType[]'
  */
 export type ListEnumGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupType[]'>
-    
-
-
-/**
- * Reference to a field of type 'ProgressStage'
- */
-export type EnumProgressStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgressStage'>
-    
-
-
-/**
- * Reference to a field of type 'ProgressStage[]'
- */
-export type ListEnumProgressStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProgressStage[]'>
     
 
 

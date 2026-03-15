@@ -12,7 +12,6 @@ import { createTeacher, updateTeacher } from "@/lib/actions/teachers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -47,9 +46,7 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
       lastName: "",
       phone: "",
       levels: [],
-      canTeachUzbek: true,
-      canTeachRussian: true,
-      canTeachEnglishOnly: false,
+      teachingLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
     },
   });
 
@@ -148,56 +145,36 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
           )}
         />
 
-        <div className="space-y-3">
-          <Label>Language Capabilities</Label>
-          <div className="flex flex-wrap gap-4">
-            <FormField
-              control={form.control}
-              name="canTeachUzbek"
-              render={({ field }) => (
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    className="rounded border-input"
-                  />
-                  Uzbek
-                </label>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="canTeachRussian"
-              render={({ field }) => (
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    className="rounded border-input"
-                  />
-                  Russian
-                </label>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="canTeachEnglishOnly"
-              render={({ field }) => (
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={field.value}
-                    onChange={field.onChange}
-                    className="rounded border-input"
-                  />
-                  English Only
-                </label>
-              )}
-            />
-          </div>
-        </div>
+        <FormField
+          control={form.control}
+          name="teachingLanguage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Teaching Language</FormLabel>
+              <div className="flex flex-wrap gap-4">
+                {(
+                  [
+                    { value: "ANY", label: "Both" },
+                    { value: "UZBEK", label: "Uzbek" },
+                    { value: "RUSSIAN", label: "Russian" },
+                  ] as const
+                ).map((opt) => (
+                  <label key={opt.value} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="radio"
+                      name="teachingLanguage"
+                      checked={field.value === opt.value}
+                      onChange={() => field.onChange(opt.value)}
+                      className="border-input"
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="flex gap-3">
           <Button

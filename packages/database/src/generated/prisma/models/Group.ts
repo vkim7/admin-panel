@@ -894,10 +894,6 @@ export type GroupUpdatedaysInput = {
   push?: number | number[]
 }
 
-export type EnumProgressStageFieldUpdateOperationsInput = {
-  set?: $Enums.ProgressStage
-}
-
 export type GroupUpdateOneWithoutMergedFromGroupsNestedInput = {
   create?: Prisma.XOR<Prisma.GroupCreateWithoutMergedFromGroupsInput, Prisma.GroupUncheckedCreateWithoutMergedFromGroupsInput>
   connectOrCreate?: Prisma.GroupCreateOrConnectWithoutMergedFromGroupsInput

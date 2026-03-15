@@ -50,7 +50,7 @@ export function ScheduleGrid({
                 </TableCell>
                 {TIME_SLOTS.map((slot) => {
                   const cell = teacher.slots[slot];
-                  const isAvailable = teacher.availableSlots.has(slot);
+                  const isAvailable = teacher.availableSlots.includes(slot);
                   return (
                     <TableCell key={slot}>
                       {cell ? (
@@ -58,12 +58,12 @@ export function ScheduleGrid({
                       ) : isAvailable ? (
                         <Link
                           href={`/groups/new?teacherId=${teacher.id}&days=${days}&startTime=${slot}`}
-                          className="flex h-16 items-center justify-center rounded-md border border-dashed bg-muted/10 text-muted-foreground transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary"
+                          className="flex h-[70px] items-center justify-center rounded-md border border-dashed bg-muted/10 text-muted-foreground transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary"
                         >
                           <Plus className="size-4" />
                         </Link>
                       ) : (
-                        <div className="h-16 rounded-md bg-muted/10" />
+                        <div className="h-[70px] rounded-md bg-muted/10" />
                       )}
                     </TableCell>
                   );

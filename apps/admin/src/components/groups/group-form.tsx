@@ -51,6 +51,7 @@ type TeacherOption = {
   firstName: string;
   lastName: string;
   rateChanges: { id: string }[];
+  availability: { dayOfWeek: number; startTime: string; endTime: string }[];
 };
 
 interface GroupFormProps {
@@ -67,6 +68,7 @@ interface GroupFormProps {
 export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFormProps) {
   const [isPending, startTransition] = useTransition();
   const isEdit = !!groupId;
+  const isPrefilled = !!(prefill?.teacherId && prefill?.days?.length && prefill?.startTime);
 
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupBaseSchema),
@@ -75,7 +77,6 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
       teacherId: prefill?.teacherId ?? "",
       days: prefill?.days ?? [],
       startTime: prefill?.startTime ?? "",
-      level: "BEGINNER",
       durationMinutes: 80,
       maxStudents: 6,
       startDate: "",
@@ -94,6 +95,24 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
     });
   }
 
+  // Compute available time slots based on selected teacher's availability and selected days
+  const watchedTeacherId = form.watch("teacherId");
+  const watchedDays = form.watch("days");
+  const selectedTeacher = teachers.find((t) => t.id === watchedTeacherId);
+
+  const availableTimeSlots = (() => {
+    if (!selectedTeacher || watchedDays.length === 0) return TIME_SLOTS;
+    // Find availability entries that match any of the selected days
+    const matchingAvail = selectedTeacher.availability.filter((a) =>
+      watchedDays.includes(a.dayOfWeek),
+    );
+    if (matchingAvail.length === 0) return [];
+    // Only show time slots that fall within at least one availability window
+    return TIME_SLOTS.filter((slot) =>
+      matchingAvail.some((a) => slot >= a.startTime && slot < a.endTime),
+    );
+  })();
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -109,7 +128,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                   <button
                     key={t}
                     type="button"
-                    disabled={isEdit}
+                    disabled={isEdit || isPrefilled}
                     onClick={() => {
                       field.onChange(t);
                       form.setValue(
@@ -121,7 +140,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                       field.value === t
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-input hover:bg-accent"
-                    } ${isEdit ? "cursor-not-allowed opacity-50" : ""}`}
+                    } ${isEdit || isPrefilled ? "cursor-not-allowed opacity-50" : ""}`}
                   >
                     {t === "GROUP" ? "Group" : "Individual"}
                   </button>
@@ -140,12 +159,12 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
           control={form.control}
           name="teacherId"
           render={({ field }) => {
-            const selectedTeacher = teachers.find((t) => t.id === field.value);
-            const hasNoRates = selectedTeacher && selectedTeacher.rateChanges.length === 0;
+            const fieldTeacher = teachers.find((t) => t.id === field.value);
+            const hasNoRates = fieldTeacher && fieldTeacher.rateChanges.length === 0;
             return (
               <FormItem>
                 <FormLabel>Teacher</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} disabled={isPrefilled}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select teacher..." />
@@ -188,7 +207,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                     <button
                       key={opt.label}
                       type="button"
-                      disabled={isEdit}
+                      disabled={isEdit || isPrefilled}
                       onClick={() => {
                         field.onChange(selected ? [] : [...opt.value]);
                       }}
@@ -196,15 +215,15 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                         selected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-input hover:bg-accent"
-                      } ${isEdit ? "cursor-not-allowed opacity-50" : ""}`}
+                      } ${isEdit || isPrefilled ? "cursor-not-allowed opacity-50" : ""}`}
                     >
                       {opt.label}
                     </button>
                   );
                 })}
               </div>
-              {isEdit && (
-                <FormDescription>Days cannot be changed after creation</FormDescription>
+              {(isEdit || isPrefilled) && (
+                <FormDescription>{isEdit ? "Days cannot be changed after creation" : "Prefilled from schedule"}</FormDescription>
               )}
               <FormMessage />
             </FormItem>
@@ -212,27 +231,32 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
         />
 
         {/* Time & Duration */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 items-start gap-4">
           <FormField
             control={form.control}
             name="startTime"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Start Time</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} disabled={isPrefilled || !watchedTeacherId || watchedDays.length === 0 || availableTimeSlots.length === 0}>
                   <FormControl>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select time..." />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {TIME_SLOTS.map((slot) => (
+                    {availableTimeSlots.map((slot) => (
                       <SelectItem key={slot} value={slot}>
                         {slot}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {watchedTeacherId && watchedDays.length > 0 && availableTimeSlots.length === 0 && (
+                  <p className="text-sm text-destructive">
+                    No available slots for this teacher on selected days
+                  </p>
+                )}
                 <FormMessage />
               </FormItem>
             )}
@@ -277,7 +301,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="w-full">
-                      <SelectValue />
+                      <SelectValue placeholder="Select level..." />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>

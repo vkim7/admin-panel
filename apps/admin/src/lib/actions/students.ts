@@ -131,6 +131,7 @@ export async function deactivateStudent(id: string, data: unknown) {
 
   revalidatePath(`/students/${id}`);
   revalidatePath("/students");
+  revalidatePath("/reception");
   return { success: true };
 }
 
@@ -176,5 +177,6 @@ export async function reactivateStudent(id: string) {
 
   revalidatePath(`/students/${id}`);
   revalidatePath("/students");
+  revalidatePath("/reception");
   return { success: true };
 }

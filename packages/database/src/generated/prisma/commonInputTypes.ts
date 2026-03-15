@@ -178,6 +178,13 @@ export type BigIntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
 }
 
+export type EnumPreferredLanguageFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel> | $Enums.PreferredLanguage
+}
+
 export type DateTimeNullableFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel> | null
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -203,6 +210,16 @@ export type BigIntNullableWithAggregatesFilter<$PrismaModel = never> = {
   _sum?: Prisma.NestedBigIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedBigIntNullableFilter<$PrismaModel>
   _max?: Prisma.NestedBigIntNullableFilter<$PrismaModel>
+}
+
+export type EnumPreferredLanguageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPreferredLanguageWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel>
 }
 
 export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -237,18 +254,18 @@ export type EnumLevelFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumLevelFilter<$PrismaModel> | $Enums.Level
 }
 
+export type EnumProgressStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
+  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProgressStageFilter<$PrismaModel> | $Enums.ProgressStage
+}
+
 export type EnumStudentStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.StudentStatus | Prisma.EnumStudentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel> | $Enums.StudentStatus
-}
-
-export type EnumPreferredLanguageNullableFilter<$PrismaModel = never> = {
-  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel> | $Enums.PreferredLanguage | null
 }
 
 export type EnumUncertainFlagSourceNullableFilter<$PrismaModel = never> = {
@@ -284,6 +301,16 @@ export type EnumLevelWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumLevelFilter<$PrismaModel>
 }
 
+export type EnumProgressStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
+  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProgressStageWithAggregatesFilter<$PrismaModel> | $Enums.ProgressStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
+}
+
 export type EnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.StudentStatus | Prisma.EnumStudentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
@@ -292,16 +319,6 @@ export type EnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
-}
-
-export type EnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
 }
 
 export type EnumUncertainFlagSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -321,13 +338,6 @@ export type EnumGroupTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
 }
 
-export type EnumProgressStageFilter<$PrismaModel = never> = {
-  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
-  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumProgressStageFilter<$PrismaModel> | $Enums.ProgressStage
-}
-
 export type EnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GroupType | Prisma.EnumGroupTypeFieldRefInput<$PrismaModel>
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
@@ -336,16 +346,6 @@ export type EnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
-}
-
-export type EnumProgressStageWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
-  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumProgressStageWithAggregatesFilter<$PrismaModel> | $Enums.ProgressStage
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
 }
 
 export type IntNullableFilter<$PrismaModel = never> = {
@@ -750,6 +750,13 @@ export type NestedBigIntNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedBigIntNullableFilter<$PrismaModel> | bigint | number | null
 }
 
+export type NestedEnumPreferredLanguageFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel> | $Enums.PreferredLanguage
+}
+
 export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel> | null
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -788,6 +795,16 @@ export type NestedFloatNullableFilter<$PrismaModel = never> = {
   not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
 }
 
+export type NestedEnumPreferredLanguageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel>
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPreferredLanguageWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPreferredLanguageFilter<$PrismaModel>
+}
+
 export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: Date | string | Prisma.DateTimeFieldRefInput<$PrismaModel> | null
   in?: Date[] | string[] | Prisma.ListDateTimeFieldRefInput<$PrismaModel> | null
@@ -809,18 +826,18 @@ export type NestedEnumLevelFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumLevelFilter<$PrismaModel> | $Enums.Level
 }
 
+export type NestedEnumProgressStageFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
+  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProgressStageFilter<$PrismaModel> | $Enums.ProgressStage
+}
+
 export type NestedEnumStudentStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.StudentStatus | Prisma.EnumStudentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
   notIn?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
   not?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel> | $Enums.StudentStatus
-}
-
-export type NestedEnumPreferredLanguageNullableFilter<$PrismaModel = never> = {
-  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel> | $Enums.PreferredLanguage | null
 }
 
 export type NestedEnumUncertainFlagSourceNullableFilter<$PrismaModel = never> = {
@@ -856,6 +873,16 @@ export type NestedEnumLevelWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumLevelFilter<$PrismaModel>
 }
 
+export type NestedEnumProgressStageWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
+  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumProgressStageWithAggregatesFilter<$PrismaModel> | $Enums.ProgressStage
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
+}
+
 export type NestedEnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.StudentStatus | Prisma.EnumStudentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.StudentStatus[] | Prisma.ListEnumStudentStatusFieldRefInput<$PrismaModel>
@@ -864,16 +891,6 @@ export type NestedEnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
-}
-
-export type NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
-  not?: Prisma.NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage | null
-  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumUncertainFlagSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -893,13 +910,6 @@ export type NestedEnumGroupTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
 }
 
-export type NestedEnumProgressStageFilter<$PrismaModel = never> = {
-  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
-  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumProgressStageFilter<$PrismaModel> | $Enums.ProgressStage
-}
-
 export type NestedEnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GroupType | Prisma.EnumGroupTypeFieldRefInput<$PrismaModel>
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
@@ -908,16 +918,6 @@ export type NestedEnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
-}
-
-export type NestedEnumProgressStageWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.ProgressStage | Prisma.EnumProgressStageFieldRefInput<$PrismaModel>
-  in?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  notIn?: $Enums.ProgressStage[] | Prisma.ListEnumProgressStageFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumProgressStageWithAggregatesFilter<$PrismaModel> | $Enums.ProgressStage
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumProgressStageFilter<$PrismaModel>
 }
 
 export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {

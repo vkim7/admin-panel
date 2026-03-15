@@ -44,7 +44,14 @@ const DAY_OPTIONS = [
   { value: [2, 4, 6], label: "Tue / Thu / Sat" },
 ] as const;
 
+const PROGRESS_STAGES = [
+  { value: "BEGINNING", label: "Beginning" },
+  { value: "MID", label: "Mid" },
+  { value: "FINAL", label: "Final" },
+] as const;
+
 const LANGUAGES = [
+  { value: "ANY", label: "Any" },
   { value: "UZBEK", label: "Uzbek" },
   { value: "RUSSIAN", label: "Russian" },
 ] as const;
@@ -81,9 +88,10 @@ export function StudentForm({
       phone: "",
       dateOfBirth: "",
       level: "BEGINNER",
+      progressStage: "BEGINNING",
       preferredDays: [],
       preferredTimeSlots: [],
-      preferredLanguage: null,
+      preferredLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
       familyId: null,
       comment: null,
     },
@@ -148,8 +156,8 @@ export function StudentForm({
           )}
         />
 
-        {/* Date of Birth & Level */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Date of Birth, Level & Progress Stage */}
+        <div className="grid grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="dateOfBirth"
@@ -179,6 +187,30 @@ export function StudentForm({
                     {LEVELS.map((l) => (
                       <SelectItem key={l.value} value={l.value}>
                         {l.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="progressStage"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Stage</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {PROGRESS_STAGES.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -233,7 +265,7 @@ export function StudentForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Preferred Time Slots</FormLabel>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-wrap gap-1">
                 {TIME_SLOTS.map((slot) => {
                   const selected = field.value.includes(slot);
                   return (
@@ -247,7 +279,7 @@ export function StudentForm({
                             : [...field.value, slot],
                         );
                       }}
-                      className={`rounded-md border px-2.5 py-1 text-sm transition-colors ${
+                      className={`rounded-md border px-2 py-1 text-xs tabular-nums transition-colors ${
                         selected
                           ? "border-primary bg-primary text-primary-foreground"
                           : "border-input hover:bg-accent"
@@ -272,18 +304,15 @@ export function StudentForm({
             <FormItem>
               <FormLabel>Preferred Language</FormLabel>
               <Select
-                onValueChange={(v) =>
-                  field.onChange(v === "__none__" ? null : v)
-                }
-                value={field.value ?? "__none__"}
+                onValueChange={field.onChange}
+                value={field.value}
               >
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue />
+                    <SelectValue placeholder="Select language..." />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="__none__">No preference</SelectItem>
                   {LANGUAGES.map((l) => (
                     <SelectItem key={l.value} value={l.value}>
                       {l.label}
@@ -291,7 +320,6 @@ export function StudentForm({
                   ))}
                 </SelectContent>
               </Select>
-              <FormDescription>Optional</FormDescription>
               <FormMessage />
             </FormItem>
           )}

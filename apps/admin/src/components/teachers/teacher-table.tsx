@@ -11,9 +11,7 @@ type TeacherRow = {
   lastName: string;
   phone: string;
   levels: string[];
-  canTeachUzbek: boolean;
-  canTeachRussian: boolean;
-  canTeachEnglishOnly: boolean;
+  teachingLanguage: string;
   groups: { id: string; type: string }[];
 };
 
@@ -60,13 +58,10 @@ const columns: ColumnDef<TeacherRow>[] = [
   },
   {
     id: "languages",
-    header: "Languages",
+    header: "Language",
     cell: ({ row }) => {
-      const langs: string[] = [];
-      if (row.original.canTeachUzbek) langs.push("UZ");
-      if (row.original.canTeachRussian) langs.push("RU");
-      if (row.original.canTeachEnglishOnly) langs.push("EN-only");
-      return <span className="text-sm text-muted-foreground">{langs.join(", ")}</span>;
+      const lang = row.original.teachingLanguage === "ANY" ? "Both" : row.original.teachingLanguage === "UZBEK" ? "UZ" : "RU";
+      return <span className="text-sm text-muted-foreground">{lang}</span>;
     },
     enableSorting: false,
   },
