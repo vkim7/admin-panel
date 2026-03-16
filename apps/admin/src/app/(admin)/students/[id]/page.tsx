@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getStudentById, getLostReasons } from "@/lib/queries/students";
+import { getStudentPaymentPeriods } from "@/lib/queries/payments";
 import { StudentActions } from "@/components/students/student-actions";
+import { PaymentHistory } from "@/components/payments/payment-history";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -46,9 +48,10 @@ export default async function StudentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [student, lostReasons] = await Promise.all([
+  const [student, lostReasons, paymentPeriods] = await Promise.all([
     getStudentById(id),
     getLostReasons(),
+    getStudentPaymentPeriods(id),
   ]);
 
   if (!student) notFound();
@@ -291,6 +294,20 @@ export default async function StudentDetailPage({
                 </tbody>
               </table>
             </div>
+          </div>
+        </>
+      )}
+
+      {/* Payments */}
+      {paymentPeriods.length > 0 && (
+        <>
+          <Separator />
+          <div className="space-y-3">
+            <h3 className="text-lg font-medium">Payments</h3>
+            <PaymentHistory
+              periods={paymentPeriods}
+              studentName={`${student.firstName} ${student.lastName}`}
+            />
           </div>
         </>
       )}

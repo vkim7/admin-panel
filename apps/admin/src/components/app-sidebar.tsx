@@ -19,7 +19,7 @@ const navItems = [
   { label: "Schedule", href: "/schedule", icon: CalendarDays },
   { label: "Reception", href: "/reception", icon: UserPlus },
   { label: "Uncertain", href: "/uncertain", icon: AlertTriangle },
-  { label: "Payments", href: "/payments", icon: CreditCard },
+  { label: "No Payment", href: "/payments", icon: CreditCard },
   { label: "Students", href: "/students", icon: GraduationCap },
   { label: "Groups", href: "/groups", icon: Layers },
   { label: "Teachers", href: "/teachers", icon: Users },

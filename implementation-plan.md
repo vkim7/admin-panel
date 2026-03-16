@@ -403,24 +403,26 @@ Also modified: `app-sidebar.tsx` (badge prop, "Eng Admin" links to /schedule), `
 
 ### Features
 
-- [ ] **No Payment List** (from admin-panel-plan.md):
-  - Prominent unpaid count at top (e.g., "35 unpaid")
-  - Table: CRM code, name, surname, level, group, payment amount due, phone
+- [x] **No Payment List** (from admin-panel-plan.md):
+  - Red "N unpaid" badge next to page title. No status column (all records are unpaid — redundant). Sidebar tab renamed to "No Payment".
+  - Table: CRM code, name, level, group, due amount (with discount strikethrough), paid, phone (student + parent phone below). "Record →" button per row (matches Reception "Assign →" style). No inline edit button (adjustments done from student detail).
   - Query: `StudentPaymentPeriod WHERE paymentStatus != PAID AND periodYear = current year AND periodMonth = current month`
-  - Search by Student.phone AND Family.parentPhone (parent sends payment receipt via Telegram, admin searches by phone to find the right student)
-- [ ] **Record payment**
-  - Fields: amount, paymentMethod (click/payme/cash), note
+  - Search by Student.phone AND Family.parentPhone (parent sends payment receipt via Telegram, admin searches by phone to find the right student) — custom filter on client side, searches name + phone + parentPhone
+- [x] **Record payment**
+  - Fields: amount (prefilled with remaining balance), paymentMethod (click/payme/cash), note (optional, description below input)
+  - Dialog shows: amount due, discount, paid so far, remaining
   - On record: create Payment, update StudentPaymentPeriod.amountPaid, recalculate paymentStatus **(C#16)**
-- [ ] **Payment status helper (C#16)** — single function, used everywhere:
+- [x] **Payment status helper (C#16)** — `src/lib/helpers/payment-status.ts`, single function:
   - `amountPaid >= (amountDue - discountAmount)` → PAID
   - `amountPaid > 0` → PARTIALLY_PAID
   - else → UNPAID
-  - Never update amountPaid or paymentStatus independently
-- [ ] **Payment history per student** — list of Payment records with date, amount, method, who recorded
-- [ ] **Manual period adjustment (C#15)**
+  - Used by both `recordPayment` and `adjustPeriod` actions
+- [x] **Payment history per student** — split into unpaid (always visible, sorted chronologically ascending: closest month first) and paid (collapsed under "Paid (N)" `<details>` summary, sorted newest first). Each period card shows: lessons, due, discount, paid, remaining. `+` icon button to record payment, pencil icon to adjust. Expandable sections for individual payments (amount, method, date, who recorded, transfer credit badge) and adjustment history (before/after snapshots, reason, who adjusted).
+- [x] **Manual period adjustment (C#15)**
   - Admin can edit: amountDue, totalLessons, discountAmount (error correction, dispute resolution)
+  - Reason required for manual adjustments
   - On save: create PaymentPeriodAdjustment (audit trail with before/after snapshots), recalculate paymentStatus
-- [ ] **Student profile enhancement**: add payments tab showing billing periods + payment history
+- [x] **Student profile enhancement**: Payments section on student detail page showing all billing periods with payment history and adjustment trail. Record payment and adjust period actions available inline.
 
 ### Files
 
@@ -958,8 +960,8 @@ Every one of DATA_MODEL.md's 40 application-level constraints, mapped to a phase
 | 12b | Group.days immutability after creation | 3 | [ ] |
 | 13 | Group.startTime change cascades to lessons | 3 | [ ] |
 | 14 | Rate/price effectiveFrom lookup | 1 (rates), 3 (prices) | [ ] |
-| 15 | StudentPaymentPeriod manual editing | 6 | [ ] |
-| 16 | paymentStatus sync helper | 6 | [ ] |
+| 15 | StudentPaymentPeriod manual editing | 6 | [x] |
+| 16 | paymentStatus sync helper | 6 | [x] |
 | 17 | lostReasonId ↔ Student.status coupling | 2 | [ ] |
 | 18 | Attendance pre-creation | 8 | [ ] |
 | 19 | Group.endDate > startDate + auto-calculation | 3 | [ ] |
