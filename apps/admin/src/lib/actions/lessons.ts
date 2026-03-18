@@ -46,6 +46,14 @@ export async function completeLesson(data: unknown) {
     return { error: "Cannot complete a future lesson" };
   }
 
+  // Attendance must be taken before completing
+  const attendanceCount = await prisma.attendance.count({
+    where: { lessonId: lesson.id },
+  });
+  if (attendanceCount === 0) {
+    return { error: "Attendance must be taken before completing a lesson" };
+  }
+
   // C#37: Snapshot activeStudentCount as of lesson date
   const activeStudentCount = await prisma.groupMembership.count({
     where: {

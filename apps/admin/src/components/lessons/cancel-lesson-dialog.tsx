@@ -21,19 +21,21 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cancelLesson } from "@/lib/actions/lessons";
-import { X } from "lucide-react";
 import type { CancellationReasonOption } from "@/lib/queries/lessons";
 
 interface CancelLessonDialogProps {
   lessonId: string;
   cancellationReasons: CancellationReasonOption[];
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function CancelLessonDialog({
   lessonId,
   cancellationReasons,
+  open,
+  onOpenChange,
 }: CancelLessonDialogProps) {
-  const [open, setOpen] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -41,90 +43,78 @@ export function CancelLessonDialog({
   const selectedReason = cancellationReasons.find((r) => r.id === selectedReasonId);
 
   function handleClose() {
-    setOpen(false);
+    onOpenChange(false);
     setSelectedReasonId("");
     setOtherReason("");
   }
 
   return (
-    <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="text-destructive hover:text-destructive"
-        onClick={() => setOpen(true)}
-      >
-        <X className="mr-1 size-3.5" />
-        Cancel
-      </Button>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); else onOpenChange(true); }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel Lesson</DialogTitle>
+          <DialogDescription>
+            This will cancel the lesson and create a replacement at the end of the program.
+          </DialogDescription>
+        </DialogHeader>
 
-      <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); else setOpen(true); }}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cancel Lesson</DialogTitle>
-            <DialogDescription>
-              This will cancel the lesson and create a replacement at the end of the program.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <Label>Cancellation reason</Label>
-              <Select onValueChange={setSelectedReasonId} value={selectedReasonId}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a reason..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {cancellationReasons.map((r) => (
-                    <SelectItem key={r.id} value={r.id}>
-                      {r.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {selectedReason?.isOther && (
-              <div className="space-y-2">
-                <Label>Please specify</Label>
-                <Textarea
-                  value={otherReason}
-                  onChange={(e) => setOtherReason(e.target.value)}
-                  placeholder="Why is this lesson being cancelled?"
-                  rows={2}
-                />
-              </div>
-            )}
+        <div className="space-y-4 py-2">
+          <div className="space-y-2">
+            <Label>Cancellation reason</Label>
+            <Select onValueChange={setSelectedReasonId} value={selectedReasonId}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select a reason..." />
+              </SelectTrigger>
+              <SelectContent>
+                {cancellationReasons.map((r) => (
+                  <SelectItem key={r.id} value={r.id}>
+                    {r.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={handleClose}>
-              Close
-            </Button>
-            <Button
-              variant="destructive"
-              disabled={!selectedReasonId || isPending}
-              onClick={() => {
-                startTransition(async () => {
-                  const result = await cancelLesson({
-                    lessonId,
-                    cancellationReasonId: selectedReasonId,
-                    otherCancellationReason: otherReason || null,
-                  });
-                  if (result?.error) {
-                    toast.error(result.error);
-                  } else {
-                    toast.success("Lesson cancelled, replacement created");
-                    handleClose();
-                  }
+          {selectedReason?.isOther && (
+            <div className="space-y-2">
+              <Label>Please specify</Label>
+              <Textarea
+                value={otherReason}
+                onChange={(e) => setOtherReason(e.target.value)}
+                placeholder="Why is this lesson being cancelled?"
+                rows={2}
+              />
+            </div>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>
+            Close
+          </Button>
+          <Button
+            variant="destructive"
+            disabled={!selectedReasonId || isPending}
+            onClick={() => {
+              startTransition(async () => {
+                const result = await cancelLesson({
+                  lessonId,
+                  cancellationReasonId: selectedReasonId,
+                  otherCancellationReason: otherReason || null,
                 });
-              }}
-            >
-              {isPending ? "Cancelling..." : "Cancel Lesson"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+                if (result?.error) {
+                  toast.error(result.error);
+                } else {
+                  toast.success("Lesson cancelled, replacement created");
+                  handleClose();
+                }
+              });
+            }}
+          >
+            {isPending ? "Cancelling..." : "Cancel Lesson"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

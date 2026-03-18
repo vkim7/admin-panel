@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { SubstitutePicker } from "./substitute-picker";
 import { CancelLessonDialog } from "./cancel-lesson-dialog";
-import { StatusBadge } from "@/components/ui/status-badge";
+import { UserCheck, X } from "lucide-react";
 import type { PendingLesson, CancellationReasonOption } from "@/lib/queries/lessons";
 
 interface PendingResolutionListProps {
@@ -40,48 +42,84 @@ export function PendingResolutionList({
           </tr>
         </thead>
         <tbody>
-          {lessons.map((lesson) => {
-            const subs = substitutesMap[lesson.id] ?? [];
-            return (
-              <tr key={lesson.id} className="border-t">
-                <td className="px-3 py-2 font-medium">
-                  <Link
-                    href={`/groups/${lesson.groupId}`}
-                    className="text-primary hover:underline"
-                  >
-                    {lesson.group.publicId}
-                  </Link>
-                </td>
-                <td className="px-3 py-2 tabular-nums">{lesson.lessonNumber}</td>
-                <td className="px-3 py-2 tabular-nums">
-                  {lesson.lessonDate.toLocaleDateString("en-GB", { timeZone: "UTC" })}
-                </td>
-                <td className="px-3 py-2 tabular-nums">{lesson.startTime}</td>
-                <td className="px-3 py-2">
-                  {lesson.originalTeacher.firstName} {lesson.originalTeacher.lastName}
-                </td>
-                <td className="px-3 py-2 text-muted-foreground">
-                  {lesson.pendingAt
-                    ? new Date(lesson.pendingAt).toLocaleDateString("en-GB")
-                    : "—"}
-                </td>
-                <td className="px-3 py-2 text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <SubstitutePicker
-                      lessonId={lesson.id}
-                      availableSubstitutes={subs}
-                    />
-                    <CancelLessonDialog
-                      lessonId={lesson.id}
-                      cancellationReasons={cancellationReasons}
-                    />
-                  </div>
-                </td>
-              </tr>
-            );
-          })}
+          {lessons.map((lesson) => (
+            <PendingRow
+              key={lesson.id}
+              lesson={lesson}
+              cancellationReasons={cancellationReasons}
+              availableSubstitutes={substitutesMap[lesson.id] ?? []}
+            />
+          ))}
         </tbody>
       </table>
     </div>
+  );
+}
+
+function PendingRow({
+  lesson,
+  cancellationReasons,
+  availableSubstitutes,
+}: {
+  lesson: PendingLesson;
+  cancellationReasons: CancellationReasonOption[];
+  availableSubstitutes: { id: string; firstName: string; lastName: string }[];
+}) {
+  const [subOpen, setSubOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+
+  return (
+    <tr className="border-t">
+      <td className="px-3 py-2 font-medium">
+        <Link
+          href={`/groups/${lesson.groupId}`}
+          className="text-primary hover:underline"
+        >
+          {lesson.group.publicId}
+        </Link>
+      </td>
+      <td className="px-3 py-2 tabular-nums">{lesson.lessonNumber}</td>
+      <td className="px-3 py-2 tabular-nums">
+        {lesson.lessonDate.toLocaleDateString("en-GB", { timeZone: "UTC" })}
+      </td>
+      <td className="px-3 py-2 tabular-nums">{lesson.startTime}</td>
+      <td className="px-3 py-2">
+        {lesson.originalTeacher.firstName} {lesson.originalTeacher.lastName}
+      </td>
+      <td className="px-3 py-2 text-muted-foreground">
+        {lesson.pendingAt
+          ? new Date(lesson.pendingAt).toLocaleDateString("en-GB")
+          : "—"}
+      </td>
+      <td className="px-3 py-2 text-right">
+        <div className="flex items-center justify-end gap-1">
+          <Button variant="outline" size="sm" onClick={() => setSubOpen(true)}>
+            <UserCheck className="mr-1 size-3.5" />
+            Substitute
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setCancelOpen(true)}
+          >
+            <X className="mr-1 size-3.5" />
+            Cancel
+          </Button>
+        </div>
+        <SubstitutePicker
+          lessonId={lesson.id}
+          availableSubstitutes={availableSubstitutes}
+          open={subOpen}
+          onOpenChange={setSubOpen}
+        />
+        <CancelLessonDialog
+          lessonId={lesson.id}
+          cancellationReasons={cancellationReasons}
+          open={cancelOpen}
+          onOpenChange={setCancelOpen}
+        />
+      </td>
+    </tr>
   );
 }

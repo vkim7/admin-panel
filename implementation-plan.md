@@ -564,17 +564,41 @@ src/components/teachers/teacher-change-dialog.tsx
 
 ### Features
 
-- [ ] **Attendance pre-creation (C#18)**: when opening attendance for a lesson, create records for all active members (leaveDate IS NULL) with isAbsent=false
-- [ ] **Mark absences** — toggle isAbsent per student per lesson
-- [ ] **Attendance view** per group — grid: lessons as columns × students as rows, showing present/absent
-- [ ] **Note: absences do NOT affect billing or status (C#30)** — tracking only. No freezes, no free absences for group lessons.
+- [x] **Attendance pre-creation (C#18)**: when opening attendance for a lesson, create records for all active members (leaveDate IS NULL) with isAbsent=false
+- [x] **Mark absences** — toggle isAbsent per student per lesson
+- [x] **Attendance view** per group — grid: lessons as columns × students as rows, showing present/absent
+- [x] **Note: absences do NOT affect billing or status (C#30)** — tracking only. No freezes, no free absences for group lessons.
+
+### Implementation Notes
+
+- **Merged Lessons + Attendance Grid**: single `LessonGrid` component replaces both the old `LessonList` (rows=lessons) and `AttendanceGrid` (rows=students). Columns = ALL lessons, rows = students. Compact by default (just date in column headers), details on demand via click → dialog.
+- Column headers color-coded by status: blue for next upcoming lesson, amber for pending resolution, greyed-out with strikethrough for cancelled, orange for past/today SCHEDULED lessons needing attention (not yet completed).
+- Click column header → `LessonDetailDialog` shows lesson info + context-appropriate actions (Take Attendance, Complete, Cancel, Reschedule, Student Cancel). Sub-dialogs reuse existing controlled dialog components.
+- **Attendance → Complete flow**: attendance must be taken before completing a lesson. `completeLesson` server action checks for attendance records and returns error if none exist. Complete button only appears in dialog when `hasAttendance` is true.
+- On-demand attendance pre-creation: admin clicks "Take Attendance" in lesson detail dialog → creates records for all active members. Idempotent. Works on SCHEDULED (today/past) and COMPLETED lessons.
+- Per-cell toggle using `useTransition` pattern — immediate persistence, no dialog needed. ✓ for present, "A" for absent.
+- Sticky first column (student name) with horizontal scroll for wide grids. Auto-scrolls to next upcoming lesson on mount.
+- Summary row shows absent count per lesson (only for lessons with attendance initialized).
+- All 5 lesson action dialogs refactored to controlled mode (accept `open`/`onOpenChange` props, no built-in trigger buttons).
+- **Serialization**: `getLessonAttendanceStatus` returns `string[]` (not `Set<string>`) since Sets don't survive Next.js server→client serialization. The grid rebuilds a `Set` on the client side. Dates also need `new Date()` wrapping in client components.
 
 ### Files
 
 ```
+src/schemas/attendance.ts
 src/lib/queries/attendance.ts
 src/lib/actions/attendance.ts
-src/components/attendance/attendance-grid.tsx
+src/lib/actions/lessons.ts (added attendance prerequisite check to completeLesson)
+src/components/lessons/lesson-grid.tsx (merged view — replaces LessonList + AttendanceGrid)
+src/components/lessons/lesson-detail-dialog.tsx (lesson info + actions dialog)
+src/components/lessons/cancel-lesson-dialog.tsx (refactored to controlled)
+src/components/lessons/reschedule-dialog.tsx (refactored to controlled)
+src/components/lessons/student-cancel-dialog.tsx (refactored to controlled)
+src/components/lessons/complete-lesson-button.tsx (refactored to controlled, renamed export to CompleteLessonDialog)
+src/components/lessons/substitute-picker.tsx (refactored to controlled)
+src/components/lessons/pending-resolution-list.tsx (updated for controlled dialog APIs)
+src/app/(admin)/groups/[id]/page.tsx (uses LessonGrid, derives activeMembers)
+src/app/(admin)/layout.tsx (added min-w-0 to main for horizontal scroll)
 ```
 
 ---

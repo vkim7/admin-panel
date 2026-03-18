@@ -8,10 +8,14 @@ import {
   getStudentCancellationCount,
   getTeachersForGroupReassignment,
 } from "@/lib/queries/lessons";
+import {
+  getAttendanceForGroup,
+  getLessonAttendanceStatus,
+} from "@/lib/queries/attendance";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
 import { StudentList } from "@/components/groups/student-list";
 import { AddStudentDialog } from "@/components/groups/add-student-dialog";
-import { LessonList } from "@/components/lessons/lesson-list";
+import { LessonGrid } from "@/components/lessons/lesson-grid";
 import { TeacherChangeDialog } from "@/components/lessons/teacher-change-dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -30,10 +34,12 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
-  const [lessons, cancellationReasons, reassignmentTeachers] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
+    getAttendanceForGroup(id),
+    getLessonAttendanceStatus(id),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -64,6 +70,14 @@ export default async function GroupDetailPage({
 
   // Students available for assignment
   const availableStudents = await getStudentsForGroupAssignment(id);
+
+  // Active members for the lesson grid
+  const activeMembers = activeMemberships.map((m) => ({
+    id: m.student.id,
+    crmCode: m.student.crmCode,
+    firstName: m.student.firstName,
+    lastName: m.student.lastName,
+  }));
 
   return (
     <div className="space-y-8">
@@ -189,13 +203,16 @@ export default async function GroupDetailPage({
 
       <Separator />
 
-      {/* Lessons */}
-      <LessonList
+      {/* Lessons + Attendance Grid */}
+      <LessonGrid
         lessons={lessons}
         groupId={id}
         groupType={group.type}
         cancellationReasons={cancellationReasons}
         studentCancellationsThisMonth={studentCancellationsThisMonth}
+        attendanceRecords={attendanceRecords}
+        lessonAttendanceStatus={lessonAttendanceStatus}
+        activeMembers={activeMembers}
       />
 
       <Separator />

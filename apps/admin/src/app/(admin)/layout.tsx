@@ -23,7 +23,7 @@ export default async function AdminLayout({
         uncertainCount={uncertainCount}
         pendingResolutionCount={pendingResolutionCount}
       />
-      <main className="flex-1 p-6">{children}</main>
+      <main className="min-w-0 flex-1 p-6">{children}</main>
     </div>
   );
 }
