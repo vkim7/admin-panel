@@ -13,12 +13,14 @@ import {
   Layers,
   LogOut,
   AlertTriangle,
+  AlertCircle,
 } from "lucide-react";
 
 const navItems = [
   { label: "Schedule", href: "/schedule", icon: CalendarDays },
   { label: "Reception", href: "/reception", icon: UserPlus },
   { label: "Uncertain", href: "/uncertain", icon: AlertTriangle },
+  { label: "Pending", href: "/pending-lessons", icon: AlertCircle },
   { label: "No Payment", href: "/payments", icon: CreditCard },
   { label: "Students", href: "/students", icon: GraduationCap },
   { label: "Groups", href: "/groups", icon: Layers },
@@ -29,9 +31,10 @@ interface AppSidebarProps {
   adminName: string;
   receptionCount?: number;
   uncertainCount?: number;
+  pendingResolutionCount?: number;
 }
 
-export function AppSidebar({ adminName, receptionCount, uncertainCount }: AppSidebarProps) {
+export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingResolutionCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
@@ -40,7 +43,7 @@ export function AppSidebar({ adminName, receptionCount, uncertainCount }: AppSid
   }
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col border-r bg-muted/40 p-4">
+    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r bg-muted/40 p-4">
       <Link href="/schedule" className="mb-6 block px-2 text-lg font-semibold tracking-tight">
         Eng Admin
       </Link>
@@ -69,6 +72,11 @@ export function AppSidebar({ adminName, receptionCount, uncertainCount }: AppSid
               {item.href === "/uncertain" && uncertainCount ? (
                 <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
                   {uncertainCount}
+                </span>
+              ) : null}
+              {item.href === "/pending-lessons" && pendingResolutionCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {pendingResolutionCount}
                 </span>
               ) : null}
             </Link>

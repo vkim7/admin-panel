@@ -6,11 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { addStudentsSchema, trialResolutionSchema } from "@/schemas/group-membership";
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
-
-function timeToMinutes(time: string): number {
-  const parts = time.split(":").map(Number);
-  return (parts[0] ?? 0) * 60 + (parts[1] ?? 0);
-}
+import { timeToMinutes } from "@/lib/helpers/lesson-scheduling";
 
 export async function addStudentsToGroup(groupId: string, data: unknown) {
   const admin = await requireAdmin();

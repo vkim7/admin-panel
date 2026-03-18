@@ -446,29 +446,29 @@ src/components/payments/payment-history.tsx
 
 ### Lesson Completion
 
-- [ ] **Mark lesson COMPLETED**
+- [x] **Mark lesson COMPLETED**
   - Set completedAt = now
   - Snapshot activeStudentCount **(C#37)**: count active members (leaveDate IS NULL) as of lessonDate, **not** as of the moment completion is recorded
   - Status: SCHEDULED → COMPLETED
 
 ### Teacher Unavailability & Pending Resolution
 
-- [ ] **Record TeacherUnavailability** — date, optional startTime/endTime, reason
+- [x] **Record TeacherUnavailability** — date, optional startTime/endTime, reason
   - Overlap validation **(C#20a)**: same date, no overlapping time ranges; whole-day entry conflicts with any other on that date
   - Auto-detection **(C#28)**: find SCHEDULED lessons for that teacher on the affected date (matching time range) → set status=PENDING_RESOLUTION, pendingAt=now
-- [ ] **PENDING_RESOLUTION alert (C#29)**
+- [x] **PENDING_RESOLUTION alert (C#29)**
   - Persistent visual indicator (sidebar badge or header alert, like stale trials)
   - List: lessons WHERE status = PENDING_RESOLUTION, ordered by pendingAt ASC (oldest first)
-- [ ] **Resolve: assign substitute**
+- [x] **Resolve: assign substitute**
   - Select substitute teacher (check their availability + no schedule conflicts)
   - Update lesson.teacherId → substitute
   - Swap TeacherScheduleSlot (delete original teacher's, create substitute's)
   - Status → SCHEDULED, clear pendingAt
-- [ ] **Resolve: cancel + append** — triggers cancellation flow below
+- [x] **Resolve: cancel + append** — triggers cancellation flow below
 
 ### Cancellation & Rescheduling (C#9)
 
-- [ ] **Cancel a lesson:**
+- [x] **Cancel a lesson:**
   1. Set status=CANCELLED, cancelledAt, cancelledById, cancellationReasonId (+ otherCancellationReason if isOther)
   2. Delete TeacherScheduleSlot (frees the time)
   3. Create replacement Lesson at next valid date after endDate (matching day pattern, skip holidays)
@@ -478,12 +478,12 @@ src/components/payments/payment-history.tsx
 
 ### Individual Lesson Operations
 
-- [ ] **Student cancellation (C#26)**
+- [x] **Student cancellation (C#26)**
   - Max 2 per calendar month: count CANCELLED lessons for this individual group where cancellationReasonId = "Student request"
   - Min 24h advance notice: reject if < 24h before lesson
   - Same cancel + append flow as above
   - TeacherScheduleSlot deleted (teacher IS free — student cancelled)
-- [ ] **Offline reschedule (C#27)**
+- [x] **Offline reschedule (C#27)**
   - Set originalDate/originalStartTime → preserve old values
   - Update lessonDate/startTime → new values
   - Swap TeacherScheduleSlot (delete old, create new)
@@ -492,13 +492,13 @@ src/components/payments/payment-history.tsx
 
 ### Permanent Teacher Change (C#21)
 
-- [ ] **Change a group's teacher permanently** (not a one-off substitution):
+- [x] **Change a group's teacher permanently** (not a one-off substitution):
   1. Update Group.teacherId → new teacher
   2. Close current GroupTeacherHistory record (set endDate = today)
   3. Create new GroupTeacherHistory (new teacher, startDate = today, endDate = null)
   4. Update ALL future SCHEDULED lessons: set **both** teacherId AND originalTeacherId → new teacher
   5. Swap TeacherScheduleSlots for those future lessons (delete old teacher's, create new teacher's)
-- [ ] This also completes teacher deactivation **(C#11)**: admin can now reassign each group before deactivating
+- [x] This also completes teacher deactivation **(C#11)**: admin can now reassign each group before deactivating
 
 ### Files
 
@@ -517,6 +517,44 @@ src/components/lessons/reschedule-dialog.tsx
 src/components/teachers/unavailability-form.tsx
 src/components/teachers/teacher-change-dialog.tsx
 ```
+
+### Implementation Notes
+
+**Completed in Phase 7.** All lesson operations are functional.
+
+**New files (18):**
+- `src/lib/helpers/lesson-scheduling.ts` — shared helpers: `timeToMinutes`, `timeRangesOverlap`, `findNextValidDate` (day pattern + holiday skipping)
+- `src/schemas/lesson.ts` — `completeLessonSchema`, `cancelLessonSchema`, `offlineRescheduleSchema`, `assignSubstituteSchema`, `studentCancelLessonSchema`
+- `src/schemas/teacher-unavailability.ts` — schema with refines for whole-day vs partial-day validation
+- `src/schemas/teacher-change.ts` — `permanentTeacherChangeSchema`
+- `src/lib/queries/lessons.ts` — `getLessonsForGroup`, `getPendingResolutionLessons`, `getPendingResolutionCount`, `getCancellationReasons`, `getAvailableSubstitutes`, `getTeacherUnavailability`, `getStudentCancellationCount`, `getTeachersForGroupReassignment`
+- `src/lib/actions/lessons.ts` — `completeLesson`, `cancelLesson` (with internal `performCancellation`), `assignSubstitute`, `studentCancelLesson`, `offlineRescheduleLesson`, `changeGroupTeacher`
+- `src/lib/actions/teacher-unavailability.ts` — `recordTeacherUnavailability` (with C#28 auto-detection), `deleteTeacherUnavailability`
+- `src/app/(admin)/pending-lessons/page.tsx` — server component fetching pending lessons + substitutes
+- `src/components/lessons/lesson-list.tsx` — full lesson list with upcoming/past split
+- `src/components/lessons/complete-lesson-button.tsx`
+- `src/components/lessons/cancel-lesson-dialog.tsx` — with reason select + other text
+- `src/components/lessons/student-cancel-dialog.tsx` — shows monthly usage count
+- `src/components/lessons/reschedule-dialog.tsx` — date+time picker for individual lessons
+- `src/components/lessons/substitute-picker.tsx` — shows available teachers
+- `src/components/lessons/pending-resolution-list.tsx` — table with actions
+- `src/components/lessons/teacher-change-dialog.tsx` — permanent teacher reassignment
+- `src/components/teachers/unavailability-section.tsx` — list + delete
+- `src/components/teachers/unavailability-form.tsx` — whole-day / partial-day form
+
+**Modified files (6):**
+- `src/components/ui/status-badge.tsx` — added PENDING_RESOLUTION status
+- `src/components/app-sidebar.tsx` — added Pending nav item with badge
+- `src/app/(admin)/layout.tsx` — fetches `pendingResolutionCount` for sidebar badge
+- `src/app/(admin)/groups/[id]/page.tsx` — integrated lessons list + teacher change dialog
+- `src/app/(admin)/teachers/[id]/page.tsx` — integrated unavailability section
+- `src/lib/actions/group-memberships.ts` — imports `timeToMinutes` from shared helper instead of local definition
+
+**Key design decisions:**
+- Cancellation uses a shared `performCancellation` internal function reused by both admin cancel and student cancel flows
+- Pending resolution page is a top-level route (`/pending-lessons`) with sidebar badge for visibility (C#29)
+- Teacher unavailability recording auto-detects affected lessons and sets them to PENDING_RESOLUTION in the same transaction (C#28)
+- `findNextValidDate` in `lesson-scheduling.ts` is the single source of truth for computing replacement lesson dates (day pattern matching + holiday skipping)
 
 ---
 
@@ -935,6 +973,15 @@ Not in the initial build. Tracked here so nothing is forgotten.
 - [ ] **Payment gateway integration** — Click, Payme (currently manual recording only)
 - [ ] **Teacher file uploads** — contract and passport document storage per teacher. Requires file storage infrastructure (S3/Cloudflare R2), upload API endpoints, file management UI on teacher detail page. Add `TeacherDocument` model (teacherId, type: CONTRACT/PASSPORT/OTHER, fileName, fileUrl, uploadedAt, uploadedById). Display as a list on teacher detail page with upload/download/delete actions.
 
+
+---
+
+## Revisit
+
+Decisions to revisit with co-founder before finalizing.
+
+- **Offline reschedule (C#27)** — Currently implemented: when student and teacher privately agree to move an individual lesson to a different time, admin records the change in the system (updates date/time, swaps teacher schedule slot). **Question: is this needed?** If admin doesn't record it, the schedule view shows the lesson at the original time and conflict detection doesn't know about the real time — could allow double-booking the teacher. For individual lessons this is low-risk since teachers manage their own schedule. If we decide it's not needed, hide the "Offline Reschedule" button (code stays, just not exposed).
+- **Offline reschedule scope** — C#27 says "Not applicable to group lessons", but in practice offline reschedules happen for both group and individual lessons. Currently the button only shows for individual groups. Revisit whether to allow for both group types.
 
 ---
 

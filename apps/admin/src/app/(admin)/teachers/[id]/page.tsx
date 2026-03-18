@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTeacherById } from "@/lib/queries/teachers";
+import { getTeacherUnavailability } from "@/lib/queries/lessons";
 import { AvailabilityEditor } from "@/components/teachers/availability-editor";
 import { RateHistory } from "@/components/teachers/rate-history";
+import { UnavailabilitySection } from "@/components/teachers/unavailability-section";
 import { TeacherActions } from "@/components/teachers/teacher-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +31,10 @@ export default async function TeacherDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const teacher = await getTeacherById(id);
+  const [teacher, unavailabilities] = await Promise.all([
+    getTeacherById(id),
+    getTeacherUnavailability(id),
+  ]);
   if (!teacher) notFound();
 
   const LANG_LABEL: Record<string, string> = { UZBEK: "Uzbek", RUSSIAN: "Russian", ANY: "Both" };
@@ -123,6 +128,11 @@ export default async function TeacherDetailPage({
 
       {/* Availability */}
       <AvailabilityEditor teacherId={id} blocks={teacher.availability} />
+
+      <Separator />
+
+      {/* Unavailability */}
+      <UnavailabilitySection teacherId={id} unavailabilities={unavailabilities} />
 
       <Separator />
 

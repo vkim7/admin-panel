@@ -2,9 +2,17 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getGroupById } from "@/lib/queries/groups";
 import { getStudentsForGroupAssignment } from "@/lib/queries/students";
+import {
+  getLessonsForGroup,
+  getCancellationReasons,
+  getStudentCancellationCount,
+  getTeachersForGroupReassignment,
+} from "@/lib/queries/lessons";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
 import { StudentList } from "@/components/groups/student-list";
 import { AddStudentDialog } from "@/components/groups/add-student-dialog";
+import { LessonList } from "@/components/lessons/lesson-list";
+import { TeacherChangeDialog } from "@/components/lessons/teacher-change-dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -22,6 +30,19 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
+  const [lessons, cancellationReasons, reassignmentTeachers] = await Promise.all([
+    getLessonsForGroup(id),
+    getCancellationReasons(),
+    getTeachersForGroupReassignment(id),
+  ]);
+
+  // Get student cancellation count for current month (for INDIVIDUAL groups)
+  const now = new Date();
+  const studentCancellationsThisMonth =
+    group.type === "INDIVIDUAL"
+      ? await getStudentCancellationCount(id, now.getUTCFullYear(), now.getUTCMonth() + 1)
+      : 0;
+
   const activeMemberships = group.memberships.filter((m) => !m.leaveDate);
   const hasCapacity = activeMemberships.length < group.maxStudents;
 
@@ -33,10 +54,10 @@ export default async function GroupDetailPage({
   );
 
   // Lesson summary
-  const scheduled = group.lessons.filter((l) => l.status === "SCHEDULED").length;
-  const completed = group.lessons.filter((l) => l.status === "COMPLETED").length;
-  const cancelled = group.lessons.filter((l) => l.status === "CANCELLED").length;
-  const total = group.lessons.length;
+  const scheduled = lessons.filter((l) => l.status === "SCHEDULED").length;
+  const completed = lessons.filter((l) => l.status === "COMPLETED").length;
+  const cancelled = lessons.filter((l) => l.status === "CANCELLED").length;
+  const total = lessons.length;
 
   // Compute progress stage dynamically
   const progressStage = getProgressStage(group.startDate, group.endDate);
@@ -57,6 +78,9 @@ export default async function GroupDetailPage({
           <div className="flex gap-2">
             {group.isActive && hasCapacity && (
               <AddStudentDialog groupId={id} students={availableStudents} />
+            )}
+            {group.isActive && (
+              <TeacherChangeDialog groupId={id} teachers={reassignmentTeachers} />
             )}
             <Button variant="outline" size="sm" asChild>
               <Link href={`/groups/${id}/edit`}>
@@ -162,6 +186,17 @@ export default async function GroupDetailPage({
 
       {/* Students */}
       <StudentList memberships={group.memberships} groupId={id} />
+
+      <Separator />
+
+      {/* Lessons */}
+      <LessonList
+        lessons={lessons}
+        groupId={id}
+        groupType={group.type}
+        cancellationReasons={cancellationReasons}
+        studentCancellationsThisMonth={studentCancellationsThisMonth}
+      />
 
       <Separator />
 
