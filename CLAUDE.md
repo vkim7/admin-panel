@@ -70,6 +70,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 - **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) live in a separate `prisma/migrations/data_integrity_constraints.sql` and must be applied separately after migrations: `npx prisma db execute --file prisma/migrations/data_integrity_constraints.sql`
 
+- **Shared UI components (`src/components/ui/`):** Never modify the internals of shared UI components to achieve a feature-specific layout. These components are used across the app and changes risk visual regressions in untested places. Instead, control layout from the outside — use wrapper elements, className props, or composition. If a shared component genuinely needs a new capability, add it as an opt-in prop with a default that preserves existing behavior.
+
 - **Validation:** All type coercion (string→number, empty→null) happens in Zod schemas (`src/schemas/`), never in react-hook-form or Server Actions. Use helpers from `src/schemas/helpers.ts` (e.g. `requiredString()`, `nullableId()`, `requiredTime()`) — they handle DB column semantics (NULL vs NOT NULL, empty→null transforms). Read `tech/database-first-validation-guide.md` for the decision flowchart on which helper to use for each column type.
 
 ## Key Domain Concepts

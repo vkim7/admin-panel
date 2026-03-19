@@ -5,6 +5,11 @@ import { COOKIE_NAME, verifySessionToken } from "@/lib/auth-edge";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // TODO: remove before prod — DEV ONLY: skip auth checks during local development
+  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_AUTH === "true") {
+    return NextResponse.next();
+  }
+
   if (pathname === "/login") {
     return NextResponse.next();
   }

@@ -876,8 +876,7 @@ async function main() {
           totalStudentLessons: pay.totalStudentLessons,
           rate: TEACHER1_GROUP_RATE,
           amount: pay.amount,
-          status: "PAID",
-          paidAt: new Date(Date.UTC(year, month, 1)), // Paid on 1st of next month
+          status: "UNPAID",
         },
       });
     }
@@ -897,8 +896,7 @@ async function main() {
           totalStudentLessons: pay.totalStudentLessons,
           rate: TEACHER1_GROUP_RATE,
           amount: pay.amount,
-          status: "PAID",
-          paidAt: new Date(Date.UTC(2026, 2, 1)), // Paid Mar 1
+          status: "UNPAID",
         },
       });
     }
@@ -918,8 +916,7 @@ async function main() {
           totalStudentLessons: pay.totalStudentLessons,
           rate: TEACHER2_GROUP_RATE,
           amount: pay.amount,
-          status: "PAID",
-          paidAt: new Date(Date.UTC(year, month, 1)),
+          status: "UNPAID",
         },
       });
     }
@@ -939,8 +936,7 @@ async function main() {
           totalStudentLessons: pay.totalStudentLessons,
           rate: TEACHER2_INDIVIDUAL_RATE,
           amount: pay.amount,
-          status: "PAID",
-          paidAt: new Date(Date.UTC(2026, 2, 1)),
+          status: "UNPAID",
         },
       });
     }

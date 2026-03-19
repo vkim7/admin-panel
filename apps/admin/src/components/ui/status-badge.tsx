@@ -75,8 +75,12 @@ const groupStatusMap: Record<string, StatusConfig> = {
 };
 
 const teacherPayStatusMap: Record<string, StatusConfig> = {
-  PENDING: {
-    label: "Pending",
+  UNPAID: {
+    label: "Unpaid",
+    className: "bg-red-100 text-red-800 border-red-200",
+  },
+  PARTIAL: {
+    label: "Partial",
     className: "bg-amber-100 text-amber-800 border-amber-200",
   },
   PAID: {

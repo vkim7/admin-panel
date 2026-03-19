@@ -669,7 +669,7 @@ src/components/reception/assign-dialog.tsx  — fixed TS narrowing (result?.erro
 
 ### Features
 
-- [ ] **Generate teacher pay for a month:**
+- [x] **Generate teacher pay for a month:**
   - For each teacher, for each group they taught in that month:
     - Count completed lessons WHERE teacherId = teacher AND lessonDate in month
     - Sum activeStudentCount across those lessons → totalStudentLessons
@@ -677,17 +677,33 @@ src/components/reception/assign-dialog.tsx  — fixed TS narrowing (result?.erro
     - amount = totalStudentLessons × rate
   - Create TeacherPaymentPeriod records
   - Substitute handling: counts for whoever actually taught (teacherId, not originalTeacherId)
-- [ ] **Teacher pay list** — table: teacher, group, period, lessons completed, student-lessons, rate, amount, status
-- [ ] **Mark as paid** — set status=PAID, paidAt
-- [ ] **Teacher profile enhancement**: add pay history tab
+- [x] **Teacher pay list** — table: teacher, group, period, lessons completed, student-lessons, rate, amount, status
+- [x] **Mark as paid** — set status=PAID, paidAt (individual + batch mark-all-paid)
+- [x] **Teacher profile enhancement**: add pay history section
+
+### Implementation Notes
+
+- **Month selector**: URL-based navigation via searchParams (`?year=2026&month=2`), defaults to previous month
+- **Bulk generation**: `createMany` with `skipDuplicates: true` — safe to re-run, fills gaps
+- **Rate snapshot**: captured at generation time from `TeacherRateChange` (most recent where `effectiveFrom <= periodStart`), immutable after creation
+- **Skip zero-amount**: teachers with no completed lessons or zero student count are not included
+- **Validation**: cannot generate for months that haven't ended yet
+- **Batch mark-as-paid**: `updateMany` where `periodYear, periodMonth, status = 'UNPAID'`
+- **Summary cards**: total/paid/unpaid amounts and record counts
 
 ### Files
 
 ```
-src/lib/queries/teacher-payments.ts
-src/lib/actions/teacher-payments.ts
-src/components/teacher-payments/generate-dialog.tsx
-src/components/teacher-payments/pay-table.tsx
+src/schemas/teacher-payment.ts                          — Zod schemas
+src/lib/queries/teacher-payments.ts                     — read-only queries
+src/lib/actions/teacher-payments.ts                     — generate + mark-paid actions
+src/app/(admin)/teacher-payments/page.tsx                — Teacher Payments page
+src/components/teacher-payments/teacher-pay-table.tsx    — TanStack data table
+src/components/teacher-payments/generate-pay-dialog.tsx  — generation confirmation dialog
+src/components/teacher-payments/month-selector.tsx       — month navigation
+src/components/teacher-payments/pay-summary-cards.tsx    — summary stats cards
+src/components/app-sidebar.tsx                           — added Teacher Pay nav item
+src/app/(admin)/teachers/[id]/page.tsx                   — added payment history section
 ```
 
 ---

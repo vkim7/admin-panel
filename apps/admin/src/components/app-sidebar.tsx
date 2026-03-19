@@ -14,6 +14,7 @@ import {
   LogOut,
   AlertTriangle,
   AlertCircle,
+  Banknote,
 } from "lucide-react";
 
 const navItems = [
@@ -25,6 +26,7 @@ const navItems = [
   { label: "Students", href: "/students", icon: GraduationCap },
   { label: "Groups", href: "/groups", icon: Layers },
   { label: "Teachers", href: "/teachers", icon: Users },
+  { label: "Teacher Pay", href: "/teacher-payments", icon: Banknote },
 ];
 
 interface AppSidebarProps {
