@@ -6,7 +6,7 @@ import { requireAdmin } from "@/lib/auth";
 import { addStudentsSchema, trialResolutionSchema } from "@/schemas/group-membership";
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
-import { timeToMinutes } from "@/lib/helpers/lesson-scheduling";
+import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 
 export async function addStudentsToGroup(groupId: string, data: unknown) {
   const admin = await requireAdmin();
@@ -54,37 +54,16 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
 
   // C#40: Schedule conflict detection — check if any student is already in a group
   // with overlapping schedule (same days AND overlapping time window)
-  const existingMemberships = await prisma.groupMembership.findMany({
-    where: {
-      studentId: { in: studentIds },
-      leaveDate: null,
-      groupId: { not: groupId },
-    },
-    select: {
-      studentId: true,
-      student: { select: { firstName: true, lastName: true } },
-      group: { select: { publicId: true, days: true, startTime: true, durationMinutes: true } },
-    },
-  });
-
-  if (existingMemberships.length > 0) {
-    const targetStart = timeToMinutes(group.startTime);
-    const targetEnd = targetStart + group.durationMinutes;
-    const targetDays = new Set(group.days);
-
-    for (const m of existingMemberships) {
-      const hasSharedDay = m.group.days.some((d) => targetDays.has(d));
-      if (!hasSharedDay) continue;
-
-      const existingStart = timeToMinutes(m.group.startTime);
-      const existingEnd = existingStart + m.group.durationMinutes;
-
-      if (targetStart < existingEnd && existingStart < targetEnd) {
-        return {
-          error: `Student ${m.student.firstName} ${m.student.lastName} is already in group ${m.group.publicId} at this time.`,
-        };
-      }
-    }
+  for (const studentId of studentIds) {
+    const conflict = await checkScheduleConflicts(
+      studentId,
+      groupId,
+      group.days,
+      group.startTime,
+      group.durationMinutes,
+      prisma,
+    );
+    if (conflict) return conflict;
   }
 
   // Language hard-enforcement: BEGINNER/ELEMENTARY students with specific language preference

@@ -603,40 +603,62 @@ src/app/(admin)/layout.tsx (added min-w-0 to main for horizontal scroll)
 
 ---
 
-## Phase 9: Student Transfers
+## Phase 9: Student Transfers ✅
 
 **Goal:** Move students between groups with correct billing adjustments.
 
 ### Features
 
-- [ ] **Transfer student action — single transaction:**
+- [x] **Transfer student action — single transaction:**
   1. Set leaveDate on source GroupMembership + transferReasonId (+ otherTransferReason if isOther)
   2. **Per-membership leave billing — source group (C#31):**
      - a) Current month: reduce totalLessons to lessons up to leaveDate, recalculate amountDue, create PaymentPeriodAdjustment
      - b) Future months: hard-delete billing periods (they're untouched — UNPAID, no payments/adjustments/promotions)
      - c) Recalculate paymentStatus on current period
   3. Create new GroupMembership in destination group (triggers C#32: billing period pre-creation)
-  4. **Transfer credit (C#25)**: if overpayment on source (amountPaid > amountDue - discountAmount), create Payment with isTransferCredit=true on destination period
+  4. **Transfer credit (C#25)**: if overpayment on source (amountPaid > amountDue - discountAmount), spill credit across destination periods (fill first, carry remainder to next). If credit exceeds all destination periods, auto-create Refund with status=PENDING for the remainder.
   5. Student status stays ACTIVE — transfer ≠ leaving
   6. Set previousMembershipId on new membership → old membership (traceability)
-- [ ] **Transfer UI** — from Group Details or Student profile
-  - Select destination group (same level recommended, show available seats)
+- [x] **Transfer UI** — from Group Details page
+  - Select destination group with search, shows available seats, full groups greyed out
   - Select transfer reason (from TransferReason table)
   - Preview billing impact before confirming (old period adjusted, credit transferred, new periods created)
-- [ ] **Student profile**: show transfer/group history (via previousMembershipId chain and leaveDate/transferReason)
+- [ ] **Student profile**: show transfer/group history (via previousMembershipId chain and leaveDate/transferReason) — deferred to Phase 14
 
 ### Shared Helpers
 
-- [ ] `src/lib/helpers/leave-billing.ts` — per-membership leave billing logic. Reused for merge (Phase 11) and dropout (Phase 2 deactivation enhancement).
+- [x] `src/lib/helpers/leave-billing.ts` — per-membership leave billing logic. Reused for merge (Phase 11) and dropout (Phase 2 deactivation enhancement).
+- [x] `src/lib/helpers/lesson-scheduling.ts` — extracted `checkScheduleConflicts()` from inline code in `addStudentsToGroup`. Used by both add-student and transfer flows.
+
+### Implementation Notes
+
+- Transfer date is always today (no backdating)
+- Billing preview fetched via server action wrapper (`getTransferBillingPreview`) around read-only query
+- Schedule conflict check excludes source group (student is leaving it)
+- Language enforcement applies for BEGINNER/ELEMENTARY level transfers
+- Validations: capacity, duplicate membership, schedule conflict, language, isOther reason text
+- Transfer dialog is a single component (no separate group-picker/billing-preview — kept simple)
+- Transfer credit spills over across destination periods (not dumped on first period). Residual credit beyond all periods creates a PENDING Refund.
+- Leave billing lesson count respects student joinDate (not start of month)
+- Fixed pre-existing TS narrowing issues in `add-student-dialog.tsx` and `assign-dialog.tsx` (changed `result?.error` to `"error" in result`)
 
 ### Files
 
 ```
-src/lib/actions/transfers.ts
-src/lib/helpers/leave-billing.ts
-src/components/transfers/transfer-dialog.tsx
-src/components/transfers/group-picker.tsx
-src/components/transfers/billing-preview.tsx
+New:
+src/lib/helpers/leave-billing.ts          — C#31 leave billing (reused by Phase 11)
+src/lib/actions/transfers.ts              — transferStudent action + billing preview wrapper
+src/schemas/transfer.ts                   — Zod validation
+src/lib/queries/transfers.ts              — transfer reasons, eligible groups, billing preview
+src/components/transfers/transfer-dialog.tsx — full transfer UI (group picker + reason + billing preview)
+
+Modified:
+src/lib/helpers/lesson-scheduling.ts      — extracted checkScheduleConflicts
+src/lib/actions/group-memberships.ts      — uses extracted schedule conflict helper
+src/components/groups/student-list.tsx     — added Transfer button for active non-trial members
+src/app/(admin)/groups/[id]/page.tsx      — fetches transfer data, passes to StudentList
+src/components/groups/add-student-dialog.tsx — fixed TS narrowing (result?.error → "error" in result)
+src/components/reception/assign-dialog.tsx  — fixed TS narrowing (result?.error → "error" in result)
 ```
 
 ---
@@ -705,7 +727,9 @@ src/components/teacher-payments/pay-table.tsx
     - **"Deactivate"** → status set to `INACTIVE` with lostReason → appears in lost list
   - Students who fail mid or final exam: removed from group → status set to `AWAITING_REASSIGNMENT` → their level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final", student does NOT restart the level) → admin assigns to a new group at the same level+stage from Reassignment page
   - mergedIntoGroupId and graduatedIntoGroupId are mutually exclusive (Zod validation)
+  - **Pending refund from prior transfer:** If a student continuing to the new group has a PENDING Refund (from a transfer where credit exceeded destination periods), the refund is NOT auto-carried forward. Admin resolves it manually via refund UI: either "Convert to credit" (cancel refund, apply as transfer credit to new group's billing) or "Process refund" (return the money).
 - [ ] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
+- [ ] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and future dropout flow.
 
 ### Files
 
@@ -979,6 +1003,14 @@ Claude generates real-life scenarios based on the business rules, constraints, a
 - [ ] **Constraint enforcement** — try to violate each of the 37 constraints and verify the system blocks it with a clear message
 - [ ] **Concurrent operations** — transfer a student while recording a payment for them, deactivate a teacher who has a pending resolution lesson
 - [ ] **Data integrity** — after each scenario, verify DB state is consistent (no orphaned billing periods, no dangling schedule slots, correct payment statuses)
+
+---
+
+## Pre-Launch Cleanup
+
+Tasks to complete before deploying to production.
+
+- [ ] **Remove dev auth bypass** — Delete `DEV_BYPASS_AUTH` blocks (marked with `TODO: remove before prod`) from `src/lib/auth.ts`, `src/middleware.ts`, and `apps/admin/.env`. Search for `TODO: remove before prod` to find all locations.
 
 ---
 

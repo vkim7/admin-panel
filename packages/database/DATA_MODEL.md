@@ -550,18 +550,21 @@ Every modification creates a new adjustment record — they are append-only and 
 When a student transfers mid-month with unused paid lessons:
 
 1. **Group A (source):** Adjust the StudentPaymentPeriod — reduce `totalLessons` and `amountDue` to reflect only lessons before transfer. A `PaymentPeriodAdjustment` record captures the before/after snapshot.
-2. **Group B (destination):** Create a `Payment` on the new group's billing period with `isTransferCredit = true` and the credit amount (representing the value of unused lessons from Group A).
-3. **Recalculate `paymentStatus`** on both periods using the standard helper (constraint #16).
+2. **Group B (destination):** Apply the transfer credit across destination billing periods using **spill-over**: fill the first period (up to its `amountDue - discountAmount`), carry any remainder to the next period, and so on. Each application creates a `Payment` with `isTransferCredit = true`.
+3. **Residual credit:** If the transfer credit exceeds the total of all destination periods combined (e.g., destination group is near end-of-program), auto-create a `Refund` with `status = PENDING` for the remainder. This uses the same refund infrastructure as dropout overpayments.
+4. **Recalculate `paymentStatus`** on all affected periods using the standard helper (constraint #16).
 
 This ensures:
 - The student isn't double-charged for lessons they already paid for
+- Credit is distributed accurately — no single period is overpaid while others remain unpaid
+- Excess credit that can't be absorbed is tracked as a pending refund (not silently lost)
 - The credit is visible and queryable (filter by `isTransferCredit`)
-- Full audit trail exists on both sides (adjustment on A, transfer credit payment on B)
+- Full audit trail exists on both sides (adjustment on A, transfer credit payments on B)
 
 ### Per-Membership Leave Billing
 Triggered when `leaveDate` is set on a GroupMembership mid-program (dropout, transfer, or merge). **NOT triggered for graduation** — at graduation all lessons are already COMPLETED/CANCELLED and billing periods are finalized (see Graduation workflow).
 
-1. **Current month's period:** Reduce `totalLessons` to lessons up to `leaveDate`, recalculate `amountDue`. Create `PaymentPeriodAdjustment` for audit trail.
+1. **Current month's period:** Reduce `totalLessons` to lessons between `joinDate` and `leaveDate` (inclusive), recalculate `amountDue`. This mirrors how `buildPaymentPeriods` creates periods (filtering lessons `>= joinDate`), ensuring a mid-month joiner isn't charged for lessons before they joined. Create `PaymentPeriodAdjustment` for audit trail.
 2. **Future months' periods:** Hard-delete — they are untouched (UNPAID, no payments, no adjustments, no applied promotions).
 3. **Recalculate `paymentStatus`** on current period.
 4. **Handle overpayment** based on leave type:
@@ -596,6 +599,12 @@ Refund for unused lessons when a student leaves a group mid-billing-period. Auto
 **Why `amount` and `amountRefunded` are separate:** `amount` is the calculated expected refund. `amountRefunded` is what was actually returned. They may differ (rounding, partial refund if negotiated). `amount` is set at initiation, `amountRefunded` at completion.
 
 **No penalties:** Refund policy is straightforward — unused lessons × pricePerLesson, no deductions.
+
+**Pending refund + student continues to next group:** When a transfer creates a PENDING refund (credit exceeded destination periods) and the student later continues to a new group (e.g., graduation), the refund stays in PENDING state — it is not automatically carried forward. The admin resolves it manually via the refund UI with two options:
+- **Convert to credit:** Cancel the refund and create a transfer credit Payment on the new group's billing period.
+- **Process refund:** Return the money if the student isn't continuing.
+
+This avoids coupling the refund and graduation flows. The PENDING refund acts as a flag that "this student has money owed to them" — the admin decides based on context.
 
 **Links to:** Student, StudentPaymentPeriod, AdminUser (initiator and processor)
 

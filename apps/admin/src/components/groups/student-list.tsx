@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TrialResolutionDialog } from "./trial-resolution-dialog";
+import { TransferDialog } from "@/components/transfers/transfer-dialog";
 import { toggleUncertain } from "@/lib/actions/students";
+import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
 
 type MembershipRow = {
   id: string;
@@ -83,16 +85,22 @@ function UncertainToggle({
 export function StudentList({
   memberships,
   groupId,
+  currentGroupPublicId,
+  transferReasons,
+  availableGroups,
 }: {
   memberships: MembershipRow[];
   groupId: string;
+  currentGroupPublicId?: string;
+  transferReasons?: TransferReason[];
+  availableGroups?: TransferGroup[];
 }) {
   const active = memberships.filter((m) => !m.leaveDate);
   const past = memberships.filter((m) => m.leaveDate);
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium">Students ({active.length})</h3>
+      <h3 className="text-lg font-medium">Students</h3>
 
       {active.length === 0 ? (
         <p className="text-muted-foreground text-sm">
@@ -195,13 +203,27 @@ export function StudentList({
                       {m.comment ?? ""}
                     </td>
                     <td className="px-3 py-2">
-                      {m.isTrial && (
-                        <TrialResolutionDialog
-                          membershipId={m.id}
-                          studentName={`${m.student.firstName} ${m.student.lastName}`}
-                          groupId={groupId}
-                        />
-                      )}
+                      <div className="flex items-center gap-1">
+                        {m.isTrial && (
+                          <TrialResolutionDialog
+                            membershipId={m.id}
+                            studentName={`${m.student.firstName} ${m.student.lastName}`}
+                            groupId={groupId}
+                          />
+                        )}
+                        {!m.isTrial &&
+                          transferReasons &&
+                          availableGroups &&
+                          currentGroupPublicId && (
+                            <TransferDialog
+                              membershipId={m.id}
+                              studentName={`${m.student.firstName} ${m.student.lastName}`}
+                              currentGroupPublicId={currentGroupPublicId}
+                              transferReasons={transferReasons}
+                              availableGroups={availableGroups}
+                            />
+                          )}
+                      </div>
                     </td>
                   </tr>
                 );

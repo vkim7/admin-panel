@@ -202,7 +202,7 @@ export function AssignDialog({
         isTrial: values.isTrial,
         comment: null,
       });
-      if (result?.error) {
+      if ("error" in result) {
         toast.error(result.error);
       } else {
         toast.success(

@@ -32,6 +32,70 @@ export function timeRangesOverlap(
 }
 
 /**
+ * C#40: Check if a student has a schedule conflict with a target group.
+ * Returns an error message string if conflict exists, null otherwise.
+ *
+ * @param excludeGroupId - group to exclude from conflict check (e.g. source group during transfer)
+ */
+export async function checkScheduleConflicts(
+  studentId: string,
+  targetGroupId: string,
+  targetDays: number[],
+  targetStartTime: string,
+  targetDurationMinutes: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tx: any,
+  excludeGroupId?: string,
+): Promise<{ error: string } | null> {
+  const excludeIds = [targetGroupId];
+  if (excludeGroupId) excludeIds.push(excludeGroupId);
+
+  const existingMemberships: {
+    student: { firstName: string; lastName: string };
+    group: { publicId: string; days: number[]; startTime: string; durationMinutes: number };
+  }[] = await tx.groupMembership.findMany({
+    where: {
+      studentId,
+      leaveDate: null,
+      groupId: { notIn: excludeIds },
+    },
+    select: {
+      student: { select: { firstName: true, lastName: true } },
+      group: {
+        select: {
+          publicId: true,
+          days: true,
+          startTime: true,
+          durationMinutes: true,
+        },
+      },
+    },
+  });
+
+  if (existingMemberships.length === 0) return null;
+
+  const targetStart = timeToMinutes(targetStartTime);
+  const targetEnd = targetStart + targetDurationMinutes;
+  const targetDaysSet = new Set(targetDays);
+
+  for (const m of existingMemberships) {
+    const hasSharedDay = m.group.days.some((d: number) => targetDaysSet.has(d));
+    if (!hasSharedDay) continue;
+
+    const existingStart = timeToMinutes(m.group.startTime);
+    const existingEnd = existingStart + m.group.durationMinutes;
+
+    if (targetStart < existingEnd && existingStart < targetEnd) {
+      return {
+        error: `Student ${m.student.firstName} ${m.student.lastName} is already in group ${m.group.publicId} at this time.`,
+      };
+    }
+  }
+
+  return null;
+}
+
+/**
  * Find the next valid date after `afterDate` that matches the day pattern
  * and is not a holiday. Safety limit: 60 days.
  *

@@ -12,6 +12,10 @@ import {
   getAttendanceForGroup,
   getLessonAttendanceStatus,
 } from "@/lib/queries/attendance";
+import {
+  getTransferReasons,
+  getGroupsForTransfer,
+} from "@/lib/queries/transfers";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
 import { StudentList } from "@/components/groups/student-list";
 import { AddStudentDialog } from "@/components/groups/add-student-dialog";
@@ -34,12 +38,14 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
     getAttendanceForGroup(id),
     getLessonAttendanceStatus(id),
+    getTransferReasons(),
+    getGroupsForTransfer(id),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -59,10 +65,6 @@ export default async function GroupDetailPage({
     (m) => m.isTrial && m.joinDate < today,
   );
 
-  // Lesson summary
-  const scheduled = lessons.filter((l) => l.status === "SCHEDULED").length;
-  const completed = lessons.filter((l) => l.status === "COMPLETED").length;
-  const cancelled = lessons.filter((l) => l.status === "CANCELLED").length;
   const total = lessons.length;
 
   // Compute progress stage dynamically
@@ -174,10 +176,7 @@ export default async function GroupDetailPage({
         </div>
         <div>
           <p className="text-xs font-medium text-muted-foreground">Lessons</p>
-          <p className="mt-1 text-sm">
-            {total} total ({scheduled} scheduled, {completed} completed
-            {cancelled > 0 ? `, ${cancelled} cancelled` : ""})
-          </p>
+          <p className="mt-1 text-sm">{total} total</p>
         </div>
         {group.zoomLink && (
           <div>
@@ -199,7 +198,13 @@ export default async function GroupDetailPage({
       <Separator />
 
       {/* Students */}
-      <StudentList memberships={group.memberships} groupId={id} />
+      <StudentList
+        memberships={group.memberships}
+        groupId={id}
+        currentGroupPublicId={group.publicId}
+        transferReasons={transferReasons}
+        availableGroups={transferGroups}
+      />
 
       <Separator />
 

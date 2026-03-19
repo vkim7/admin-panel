@@ -73,7 +73,7 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
   function onSubmit(values: AddStudentsFormValues) {
     startTransition(async () => {
       const result = await addStudentsToGroup(groupId, values);
-      if (result?.error) {
+      if ("error" in result) {
         toast.error(result.error);
       } else {
         const count = values.studentIds.length;

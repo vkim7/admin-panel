@@ -226,7 +226,12 @@ export default async function StudentDetailPage({
                   {activeMemberships.map((m) => (
                     <tr key={m.id} className="border-t">
                       <td className="px-3 py-2 font-medium">
-                        {m.group.publicId}
+                        <Link
+                          href={`/groups/${m.group.id}`}
+                          className="text-primary hover:underline"
+                        >
+                          {m.group.publicId}
+                        </Link>
                       </td>
                       <td className="px-3 py-2">
                         {m.group.type === "INDIVIDUAL"
