@@ -148,6 +148,11 @@ async function main() {
       { name: "Too expensive", sortOrder: 2 },
       { name: "Didn't like online format", sortOrder: 3 },
       { name: "Other", isOther: true, sortOrder: 4 },
+      { name: "Trial no-show (Group)", sortOrder: 10 },
+      { name: "Trial no-show — final attempt (Group)", sortOrder: 11 },
+      { name: "Trial no-show (Individual)", sortOrder: 12 },
+      { name: "Trial — didn't continue (Group)", sortOrder: 13 },
+      { name: "Trial — didn't continue (Individual)", sortOrder: 14 },
     ].map((r) => prisma.lostReason.create({ data: r }))
   );
 
@@ -1286,19 +1291,34 @@ async function main() {
   // ═══════════════════════════════════════════════════════════════════════════
   console.log("\n═══ Phase 12: Seeding Promotions & Referrals ═══\n");
 
-  // System promotion: Trial first-lesson 50% discount
-  const trialPromo = await prisma.promotion.create({
+  // System promotions: Trial discounts (GROUP = 100% free, INDIVIDUAL = 50% off)
+  const trialGroupPromo = await prisma.promotion.create({
     data: {
-      name: "Trial First Lesson 50%",
+      name: "Trial Group Free Lesson",
       type: "TRIAL",
       discountType: "PERCENTAGE",
-      discountPercent: 50,
+      discountPercent: 100,
+      groupTypes: ["GROUP"],
       isRecurring: false,
       maxUsesPerStudent: 1,
       isActive: true,
     },
   });
-  console.log(`Created TRIAL promotion: ${trialPromo.name}`);
+  console.log(`Created TRIAL promotion: ${trialGroupPromo.name}`);
+
+  const trialIndividualPromo = await prisma.promotion.create({
+    data: {
+      name: "Trial Individual 50%",
+      type: "TRIAL",
+      discountType: "PERCENTAGE",
+      discountPercent: 50,
+      groupTypes: ["INDIVIDUAL"],
+      isRecurring: false,
+      maxUsesPerStudent: 1,
+      isActive: true,
+    },
+  });
+  console.log(`Created TRIAL promotion: ${trialIndividualPromo.name}`);
 
   // Referral reward promotions
   const referrerReward = await prisma.promotion.create({
@@ -1368,7 +1388,7 @@ async function main() {
   console.log("Created sample referral: Alisher → Sardor (COMPLETED)");
 
   console.log("\n── Phase 12 Seed Summary ──");
-  console.log("  System promotions: Trial 50%, Referral Reward 100k, Referral Welcome 10%");
+  console.log("  System promotions: Trial Group 100%, Trial Individual 50%, Referral Reward 100k, Referral Welcome 10%");
   console.log("  Sample promotion: Summer 2026 (15%, Beg+Elem, code SUMMER2026)");
   console.log("  Referral codes generated for all active students");
   console.log("  Sample referral: Alisher → Sardor (COMPLETED)");

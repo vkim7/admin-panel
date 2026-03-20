@@ -623,7 +623,7 @@ src/app/(admin)/layout.tsx (added min-w-0 to main for horizontal scroll)
   - Select destination group with search, shows available seats, full groups greyed out
   - Select transfer reason (from TransferReason table)
   - Preview billing impact before confirming (old period adjusted, credit transferred, new periods created)
-- [ ] **Student profile**: show transfer/group history (via previousMembershipId chain and leaveDate/transferReason) — deferred to Phase 14
+- [x] **Student profile**: show transfer/group history (via previousMembershipId chain and leaveDate/transferReason) — implemented in Phase 14
 
 ### Shared Helpers
 
@@ -857,9 +857,11 @@ src/app/(admin)/students/[id]/page.tsx            — added promotions + referra
 
 ---
 
-## Phase 13: Communication
+## Phase 13: Communication ⏳ DEFERRED
 
 **Goal:** SMS payment reminders and call history logging.
+
+> **Deferred:** Blocked on SMS vendor selection. Will be implemented after Phase 17 (or later). Proceed to Phase 14.
 
 ### Features
 
@@ -888,33 +890,30 @@ src/components/communication/call-log.tsx
 
 ## Phase 14: Trial Tracking & Enforcement
 
-**Goal:** Full trial lifecycle tracking per teacher — who had trials, when, in which group, what was the outcome. Enforce one trial per student. Accurate teacher attribution including substitutions.
+**Goal:** Full trial lifecycle tracking per teacher — who had trials, when, in which group, what was the outcome. Differentiated billing by group type. Trial attempt limits. Automatic no-show detection on lesson completion.
 
 **Depends on:** Phase 7 (substitution tracking), Phase 8 (attendance — who actually taught the trial student), Phase 12 (promotions — first-lesson discount on trial commit).
 
 ### Schema Changes
 
-- [ ] **Add `wasTrialOriginally Boolean @default(false)` to GroupMembership**
+- [x] **Add `wasTrialOriginally Boolean @default(false)` to GroupMembership**
   - Set `true` when `isTrial=true` at creation time. Never changes after that.
   - Enables querying committed trials (wasTrialOriginally=true, isTrial=false) which are currently indistinguishable from non-trial memberships.
 
-- [ ] **Add `trialTeacherId` (optional FK → Teacher) to GroupMembership**
+- [x] **Add `trialTeacherId` (optional FK → Teacher) to GroupMembership**
   - Snapshot of `group.teacherId` at the time of trial join. Preserved even if the group's teacher changes later.
   - For accurate attribution after Phase 7 substitutions: cross-reference with `Lesson.teacherId` + attendance records to determine who actually taught the trial lesson. `trialTeacherId` is the fallback/default.
 
-- [ ] **One-trial-per-student constraint (C#38)**
-  - **Reception assignments are always trials** — every student assigned from Reception is a new student who has never been in a group, so their first assignment is inherently a trial. No checkbox needed; `isTrial=true` is set automatically.
-  - **Reassignment page assignments are never trials** — students on the Reassignment page have already been in a group (and likely already had their trial). `isTrial` is not offered.
-  - **Add-student from Group Details**: disable trial checkbox if student has an **attended** trial (see no-show handling below). Tooltip: "Student has already used their trial lesson".
-  - Application-level: in `addStudentsToGroup`, if `isTrial=true`, check if student has any existing membership where `wasTrialOriginally=true` AND has at least one attendance record → reject with "Student has already used their trial lesson"
-  - DB-level: no partial unique index (multiple trial memberships are valid for no-shows). Constraint enforced at application level only.
+- [x] **Trial attempt limits per group type**
+  - GROUP: 2 free trials per student. INDIVIDUAL: 1 free trial per student.
+  - Application-level enforcement in `addStudentsToGroup`: count `wasTrialOriginally=true` memberships per student per group type.
+  - Reception assignments are always trials (`isTrial=true` hardcoded, trial toggle removed).
+  - Add-student dialog shows trial attempts remaining and disables trial checkbox when exhausted.
 
-- [ ] **Trial no-show handling**
-  - A trial with zero attendance records = no-show. The student didn't actually take a trial lesson.
-  - No-show trials do NOT count toward the one-trial limit — student can be re-assigned from Reception for another trial.
-  - The constraint checks: "student has a trial membership (`wasTrialOriginally=true`) **with at least one attendance record**" — not just "trial membership exists".
-  - Multiple no-show trial memberships may exist for the same student (each is a separate GroupMembership record, possibly even in the same group).
-  - Admin can view no-show history on student detail page and decide whether to give another chance or deactivate the student.
+- [x] **Trial no-show auto-detection in `completeLesson`**
+  - After lesson completion, find trial students marked absent → auto-set leaveDate, deactivate with appropriate lost reason.
+  - Lost reasons: "Trial no-show (Group)", "Trial no-show — final attempt (Group)", "Trial no-show (Individual)".
+  - activeStudentCount snapshot happens BEFORE no-show processing for accurate teacher pay.
 
 ### Trial Status Derivation
 
@@ -922,42 +921,78 @@ From `GroupMembership` fields + attendance records, derive trial status:
 - **Pending**: `isTrial=true AND leaveDate IS NULL` — student is currently in trial
 - **Committed**: `wasTrialOriginally=true AND isTrial=false AND leaveDate IS NULL` — trial student who committed to the group
 - **Didn't continue**: `wasTrialOriginally=true AND isTrial=true AND leaveDate IS NOT NULL AND has attendance records` — trial student who attended but left without committing
-- **No-show**: `wasTrialOriginally=true AND leaveDate IS NOT NULL AND zero attendance records` — trial student who never showed up (does NOT count toward one-trial limit)
+- **No-show**: `wasTrialOriginally=true AND leaveDate IS NOT NULL AND zero attendance records` — trial student who never showed up
 
 ### Teacher Detail — Trial History
 
-- [ ] **Trial stats summary**: "X committed · Y pending · Z didn't continue"
-- [ ] **Trial history table**: student name, group (publicId), trial date (joinDate), status (pending/committed/didn't continue), actual teaching teacher (from attendance records if available, fallback to trialTeacherId)
-- [ ] **Accurate teacher attribution**: after Phase 8, use attendance records to determine if a substitute taught the trial lesson. Display substitute name if different from group teacher.
+- [x] **Trial stats summary**: "X committed · Y pending · Z didn't continue · W no-show"
+- [x] **Trial history table**: student name, group (publicId), trial date (joinDate), group type, status badge, actual teaching teacher (from attendance records, fallback to trialTeacherId)
+- [x] **Accurate teacher attribution**: uses attendance records to determine if a substitute taught the trial lesson.
 
 ### Trial Billing
 
-Two billing paths depending on trial outcome:
+Two billing paths depending on trial outcome, differentiated by group type:
 
-- [ ] **Student commits** (trial → regular):
-  - Billing periods created from original joinDate (existing Phase 3 logic)
-  - Promotions system (Phase 12) applies a 50% discount on the first lesson's billing period
-  - Phase 14 ensures the trial data (`wasTrialOriginally`, commit date) is available for the promotion to reference
+- [x] **Student commits** (trial → regular):
+  - Billing periods created from original joinDate (existing logic)
+  - GROUP: TRIAL promotion applies 100% discount on first lesson (free)
+  - INDIVIDUAL: TRIAL promotion applies 50% discount on first lesson
+  - Two separate TRIAL promotions seeded with `groupTypes` filter
 
-- [ ] **Student doesn't commit** (trial → removed):
-  - On trial removal (`resolveTrialMembership` with action="remove"): create a single `StudentPaymentPeriod` for the trial lesson(s) attended
-  - amountDue = number of lessons attended during trial × pricePerLesson (full price, no discount)
-  - paymentStatus = UNPAID → student appears in **No Payment List** (Phase 6) so admin can collect payment
-  - This ensures no trial lesson goes unbilled — the student owes for the lesson(s) they attended regardless of whether they continue
+- [x] **Student doesn't commit** (trial → "didn't continue"):
+  - Resolution action renamed from "remove" to "didnt_continue"
+  - GROUP: no billing — group trials are free
+  - INDIVIDUAL: billing period created for attended lessons at 50% discount, then student deactivated
+  - Lost reasons: "Trial — didn't continue (Group)", "Trial — didn't continue (Individual)"
+  - "Didn't continue" button gated on attendance being recorded
 
-- [ ] **No-show** (trial → removed, zero attendance):
-  - No billing created — student didn't attend any lessons, nothing to charge
-  - Trial does NOT count toward one-trial limit — student can be re-assigned from Reception for another trial
-  - Multiple no-shows are tracked as separate GroupMembership records (visible on student detail page)
+- [x] **No-show** (auto-detected on lesson completion):
+  - No billing created — student didn't attend
+  - Student auto-deactivated with appropriate lost reason
+  - Trial attempt still counts (no-shows DO consume attempts in this implementation)
+
+### UI Changes
+
+- [x] **Trial resolution dialog**: renamed "Remove" → "Didn't continue", billing preview, attendance gate
+- [x] **Add-student dialog**: trial attempts display + enforcement per group type
+- [x] **Reception assign dialog**: trial toggle removed, `isTrial: true` hardcoded
+- [x] **Student list (group detail)**: trial status badges (Committed/Didn't continue/No-show) for past members
+- [x] **Student detail page**: Group History table with trial status badges, transfer reasons, merge/graduation labels, and "Moved to" links (deferred from Phase 9)
+- [x] **Teacher detail page**: trial history section with stats + table
+
+### Implementation Notes
+
+- Migration: `20260320120000_add_trial_tracking` — adds columns + backfill SQL
+- Seed updated: two TRIAL promotions (GROUP 100%, INDIVIDUAL 50%) + 5 trial lost reasons
+- `completeLesson` converted from simple update to `$transaction` for atomic no-show processing
+- Deactivation in trial paths checks for other active memberships before setting INACTIVE
+- `getTrialMembershipAttendance` scopes attendance queries to each membership's joinDate..leaveDate window (prevents misclassification when students re-enroll)
+- Student detail Group History: added Reason column (transfer reason text, or "Merged"/"Graduated" label, or trial status badge) and "Moved to" column (link to destination group via `continuedAsMemberships` or `mergedIntoGroup`/`graduatedIntoGroup`). For "Other" transfer reasons, displays the free-text `otherTransferReason` instead of "Other".
+- Transfer credit notes now use group `publicId` (e.g. "GR-1") instead of raw cuid
+- Payment history: "Partial period" badge renamed to "Prorated" to avoid confusion with "Partially paid" status badge. Transfer credit payments show only the "Transfer credit" badge (no empty payment method badge).
 
 ### Files
 
 ```
-packages/database/prisma/schema.prisma              — wasTrialOriginally, trialTeacherId on GroupMembership
-packages/database/prisma/migrations/data_integrity_constraints.sql — one-trial-per-student partial unique index
-apps/admin/src/lib/queries/teachers.ts               — trial history query with student/group details
-apps/admin/src/lib/actions/group-memberships.ts      — one-trial check, set wasTrialOriginally + trialTeacherId
-apps/admin/src/app/(admin)/teachers/[id]/page.tsx    — trial history section
+packages/database/prisma/schema.prisma                          — wasTrialOriginally, trialTeacherId, TrialTeacher relation
+packages/database/prisma/migrations/20260320120000_add_trial_tracking/ — migration with backfill
+packages/database/prisma/seed.ts                                — two TRIAL promotions + 5 trial lost reasons
+apps/admin/src/schemas/group-membership.ts                      — "remove" → "didnt_continue"
+apps/admin/src/lib/actions/group-memberships.ts                 — trial enforcement, snapshots, updated resolution
+apps/admin/src/lib/actions/lessons.ts                           — no-show auto-detection in completeLesson
+apps/admin/src/lib/queries/teachers.ts                          — getTeacherTrialHistory
+apps/admin/src/lib/queries/students.ts                          — getTrialAttemptsForStudents, getTrialMembershipAttendance
+apps/admin/src/lib/helpers/transfer-credit.ts                   — use publicId in transfer credit notes
+apps/admin/src/components/ui/trial-status-badge.tsx             — NEW: shared TrialStatusBadge + getTrialStatus helper
+apps/admin/src/components/groups/trial-resolution-dialog.tsx    — renamed + billing preview + attendance gate
+apps/admin/src/components/groups/add-student-dialog.tsx         — trial attempts display + enforcement
+apps/admin/src/components/groups/student-list.tsx               — trial status badges for past members
+apps/admin/src/components/reception/assign-dialog.tsx           — trial toggle removed
+apps/admin/src/components/payments/payment-history.tsx          — "Prorated" label, transfer credit badge fix
+apps/admin/src/components/teachers/trial-history.tsx            — NEW: teacher trial history component
+apps/admin/src/app/(admin)/teachers/[id]/page.tsx               — trial history section
+apps/admin/src/app/(admin)/students/[id]/page.tsx               — Group History with reasons, trial status, "Moved to" links
+apps/admin/src/app/(admin)/groups/[id]/page.tsx                 — pass trial attempts + groupType to dialogs
 ```
 
 ---

@@ -96,6 +96,22 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     }
   }
 
+  // Trial attempt enforcement: check per student per group type
+  if (isTrial) {
+    for (const studentId of studentIds) {
+      const trialCount = await prisma.groupMembership.count({
+        where: { studentId, wasTrialOriginally: true, group: { type: group.type } },
+      });
+      const limit = group.type === "GROUP" ? 2 : 1;
+      if (trialCount >= limit) {
+        const student = students.find((s) => s.id === studentId);
+        return {
+          error: `${student?.firstName} ${student?.lastName} has used all free ${group.type.toLowerCase()} trial attempts`,
+        };
+      }
+    }
+  }
+
   // Auto-calculate lessonsStart from joinDate
   const lessonsStart = calculateLessonsStart(group.lessons, joinDate);
 
@@ -107,6 +123,8 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
           groupId,
           joinDate,
           isTrial,
+          wasTrialOriginally: isTrial,
+          trialTeacherId: isTrial ? group.teacherId : null,
           lessonsStart,
           comment,
           assignedById: admin.id,
@@ -240,9 +258,14 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
       if (periods.length > 0) {
         await tx.studentPaymentPeriod.createMany({ data: periods });
 
-        // Auto-assign trial first-lesson discount if a TRIAL promotion exists
+        // Auto-assign trial discount matching group type
         const trialPromo = await tx.promotion.findFirst({
-          where: { type: "TRIAL", isActive: true },
+          where: {
+            type: "TRIAL",
+            isActive: true,
+            groupTypes: { has: membership.group.type },
+          },
+          orderBy: { createdAt: "asc" },
           select: { id: true, validityDays: true },
         });
 
@@ -283,17 +306,140 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
       }
     });
   } else {
-    // Remove: set leaveDate=today
+    // Didn't continue: set leaveDate, handle billing for INDIVIDUAL, deactivate
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
 
-    await prisma.groupMembership.update({
-      where: { id: membershipId },
-      data: { leaveDate: today },
+    await prisma.$transaction(async (tx) => {
+      await tx.groupMembership.update({
+        where: { id: membershipId },
+        data: { leaveDate: today },
+      });
+
+      // INDIVIDUAL trials: bill for attended lessons at 50% discount
+      if (membership.group.type === "INDIVIDUAL") {
+        // Fetch attended lesson dates (not just count) to derive billing period months
+        const attendedRecords = await tx.attendance.findMany({
+          where: {
+            studentId: membership.studentId,
+            groupId: membership.groupId,
+            isAbsent: false,
+          },
+          select: { lesson: { select: { lessonDate: true } } },
+        });
+
+        if (attendedRecords.length > 0) {
+          const levelCategory = getLevelCategory(membership.group.level);
+          const pricePerLesson = await getApplicablePrice(
+            levelCategory,
+            membership.group.type,
+            membership.joinDate,
+            tx,
+          );
+
+          // Group attended lessons by calendar month (consistent with buildPaymentPeriods)
+          const byMonth = new Map<string, number>();
+          for (const a of attendedRecords) {
+            const d = a.lesson.lessonDate;
+            const key = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}`;
+            byMonth.set(key, (byMonth.get(key) ?? 0) + 1);
+          }
+
+          for (const [key, lessonCount] of byMonth) {
+            const [yearStr, monthStr] = key.split("-");
+            const periodYear = parseInt(yearStr!, 10);
+            const periodMonth = parseInt(monthStr!, 10);
+
+            await tx.studentPaymentPeriod.create({
+              data: {
+                studentId: membership.studentId,
+                groupId: membership.groupId,
+                groupMembershipId: membershipId,
+                periodYear,
+                periodMonth,
+                totalLessons: lessonCount,
+                pricePerLesson,
+                amountDue: lessonCount * pricePerLesson,
+                discountAmount: 0,
+                isPartialPeriod: true,
+              },
+            });
+          }
+
+          // Auto-assign TRIAL INDIVIDUAL promotion
+          const trialPromo = await tx.promotion.findFirst({
+            where: {
+              type: "TRIAL",
+              isActive: true,
+              groupTypes: { has: "INDIVIDUAL" },
+            },
+            orderBy: { createdAt: "asc" },
+            select: { id: true, validityDays: true },
+          });
+
+          if (trialPromo) {
+            const expiresAt = trialPromo.validityDays
+              ? new Date(Date.now() + trialPromo.validityDays * 24 * 60 * 60 * 1000)
+              : null;
+
+            await tx.studentPromotion.create({
+              data: {
+                studentId: membership.studentId,
+                promotionId: trialPromo.id,
+                expiresAt,
+              },
+            });
+
+            // Apply promotions to the billing periods
+            await applyPromotionsToPeriods({
+              studentId: membership.studentId,
+              membershipId,
+              groupLevel: membership.group.level,
+              groupType: membership.group.type,
+              tx,
+            });
+          }
+        }
+      }
+      // GROUP trials: no billing (trial was free)
+
+      // Deactivate student with appropriate lost reason
+      const reasonName =
+        membership.group.type === "GROUP"
+          ? "Trial — didn't continue (Group)"
+          : "Trial — didn't continue (Individual)";
+
+      const lostReason = await tx.lostReason.findFirst({
+        where: { name: reasonName },
+      });
+
+      if (lostReason) {
+        // Only deactivate if student has no other active memberships
+        const otherActive = await tx.groupMembership.count({
+          where: {
+            studentId: membership.studentId,
+            leaveDate: null,
+            id: { not: membershipId },
+          },
+        });
+
+        if (otherActive === 0) {
+          await tx.student.update({
+            where: { id: membership.studentId },
+            data: {
+              status: "INACTIVE",
+              inactivatedAt: new Date(),
+              inactivatedById: admin.id,
+              lostReasonId: lostReason.id,
+            },
+          });
+        }
+      }
     });
   }
 
   revalidatePath(`/groups/${membership.groupId}`);
   revalidatePath("/reception");
+  revalidatePath(`/students/${membership.studentId}`);
   return { success: true };
 }

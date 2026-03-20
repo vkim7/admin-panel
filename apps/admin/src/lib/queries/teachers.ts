@@ -1,5 +1,107 @@
 import { prisma } from "@/server/db";
 
+export type TrialHistoryEntry = Awaited<ReturnType<typeof getTeacherTrialHistory>>[number];
+
+export async function getTeacherTrialHistory(teacherId: string) {
+  const memberships = await prisma.groupMembership.findMany({
+    where: { trialTeacherId: teacherId },
+    include: {
+      student: {
+        select: { id: true, crmCode: true, firstName: true, lastName: true },
+      },
+      group: {
+        select: { id: true, publicId: true, type: true },
+      },
+    },
+    orderBy: { joinDate: "desc" },
+  });
+
+  if (memberships.length === 0) return [];
+
+  // Bulk-fetch attendance for all trial memberships
+  const membershipGroupPairs = memberships.map((m) => ({
+    studentId: m.studentId,
+    groupId: m.groupId,
+  }));
+
+  const attendanceRecords = await prisma.attendance.findMany({
+    where: {
+      OR: membershipGroupPairs.map((p) => ({
+        studentId: p.studentId,
+        groupId: p.groupId,
+      })),
+    },
+    select: {
+      studentId: true,
+      groupId: true,
+      lesson: { select: { teacherId: true } },
+    },
+  });
+
+  // Build lookup: "studentId:groupId" → { hasAttendance, actualTeacherId }
+  const attendanceLookup = new Map<
+    string,
+    { hasAttendance: boolean; actualTeacherId: string | null }
+  >();
+  for (const a of attendanceRecords) {
+    const key = `${a.studentId}:${a.groupId}`;
+    if (!attendanceLookup.has(key)) {
+      attendanceLookup.set(key, {
+        hasAttendance: true,
+        actualTeacherId: a.lesson.teacherId,
+      });
+    }
+  }
+
+  // Collect unique teacher IDs for name resolution
+  const teacherIds = new Set<string>();
+  for (const a of attendanceRecords) {
+    teacherIds.add(a.lesson.teacherId);
+  }
+  for (const m of memberships) {
+    if (m.trialTeacherId) teacherIds.add(m.trialTeacherId);
+  }
+
+  const teachers = teacherIds.size > 0
+    ? await prisma.teacher.findMany({
+        where: { id: { in: [...teacherIds] } },
+        select: { id: true, firstName: true, lastName: true },
+      })
+    : [];
+  const teacherNameMap = new Map(
+    teachers.map((t) => [t.id, `${t.firstName} ${t.lastName}`]),
+  );
+
+  return memberships.map((m) => {
+    const key = `${m.studentId}:${m.groupId}`;
+    const att = attendanceLookup.get(key);
+    const hasAttendance = att?.hasAttendance ?? false;
+
+    // Derive trial status
+    let status: "pending" | "committed" | "didnt_continue" | "no_show";
+    if (m.isTrial && !m.leaveDate) {
+      status = "pending";
+    } else if (m.wasTrialOriginally && !m.isTrial && !m.leaveDate) {
+      status = "committed";
+    } else if (m.wasTrialOriginally && m.leaveDate && hasAttendance) {
+      status = "didnt_continue";
+    } else {
+      status = "no_show";
+    }
+
+    const actualTeacherId = att?.actualTeacherId ?? m.trialTeacherId;
+
+    return {
+      id: m.id,
+      student: m.student,
+      group: m.group,
+      joinDate: m.joinDate,
+      status,
+      actualTeacherName: actualTeacherId ? teacherNameMap.get(actualTeacherId) ?? null : null,
+    };
+  });
+}
+
 export async function getTeachers() {
   return prisma.teacher.findMany({
     where: { isActive: true },

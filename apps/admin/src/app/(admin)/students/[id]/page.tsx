@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getStudentById, getLostReasons } from "@/lib/queries/students";
+import { getStudentById, getLostReasons, getTrialMembershipAttendance } from "@/lib/queries/students";
 import { getStudentPaymentPeriods } from "@/lib/queries/payments";
 import { getStudentPromotions, getActivePromotions } from "@/lib/queries/promotions";
 import { getStudentReferrals } from "@/lib/queries/referrals";
 import { StudentActions } from "@/components/students/student-actions";
 import { PaymentHistory } from "@/components/payments/payment-history";
 import { AssignPromotionDialog } from "@/components/promotions/assign-dialog";
+import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -67,6 +68,20 @@ export default async function StudentDetailPage({
   );
   const pastMemberships = student.groupMemberships.filter(
     (m) => m.leaveDate,
+  );
+
+  // Fetch trial attendance scoped to each membership's date window
+  const trialPastMemberships = pastMemberships
+    .filter((m) => m.wasTrialOriginally)
+    .map((m) => ({
+      id: m.id,
+      studentId: id,
+      groupId: m.group.id,
+      joinDate: m.joinDate,
+      leaveDate: m.leaveDate,
+    }));
+  const trialMembershipIdsWithAttendance = await getTrialMembershipAttendance(
+    trialPastMemberships,
   );
 
   return (
@@ -281,27 +296,80 @@ export default async function StudentDetailPage({
                       Joined
                     </th>
                     <th className="px-3 py-2 text-left font-medium">Left</th>
+                    <th className="px-3 py-2 text-left font-medium">Reason</th>
+                    <th className="px-3 py-2 text-left font-medium">Moved to</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {pastMemberships.map((m) => (
-                    <tr key={m.id} className="border-t">
-                      <td className="px-3 py-2 font-medium">
-                        {m.group.publicId}
-                      </td>
-                      <td className="px-3 py-2">
-                        {LEVEL_LABEL[m.group.level] ?? m.group.level}
-                      </td>
-                      <td className="px-3 py-2">
-                        {new Date(m.joinDate).toLocaleDateString("en-GB")}
-                      </td>
-                      <td className="px-3 py-2">
-                        {m.leaveDate
-                          ? new Date(m.leaveDate).toLocaleDateString("en-GB")
-                          : "—"}
-                      </td>
-                    </tr>
-                  ))}
+                  {pastMemberships.map((m) => {
+                    // Derive why the membership ended
+                    const continuedTo = m.continuedAsMemberships[0]?.group;
+                    let reason: string | null = null;
+                    let reasonTarget: { id: string; publicId: string } | null = null;
+
+                    if (m.wasTrialOriginally) {
+                      // Trial status handled by badge below
+                      reason = null;
+                    } else if (m.transferReason) {
+                      reason = m.transferReason.isOther && m.otherTransferReason
+                        ? m.otherTransferReason
+                        : m.transferReason.name;
+                    } else if (m.group.mergedIntoGroupId) {
+                      reason = "Merged";
+                      reasonTarget = m.group.mergedIntoGroup;
+                    } else if (m.group.graduatedIntoGroupId) {
+                      reason = "Graduated";
+                      reasonTarget = m.group.graduatedIntoGroup;
+                    }
+
+                    return (
+                      <tr key={m.id} className="border-t">
+                        <td className="px-3 py-2 font-medium">
+                          <Link
+                            href={`/groups/${m.group.id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {m.group.publicId}
+                          </Link>
+                        </td>
+                        <td className="px-3 py-2">
+                          {LEVEL_LABEL[m.group.level] ?? m.group.level}
+                        </td>
+                        <td className="px-3 py-2">
+                          {new Date(m.joinDate).toLocaleDateString("en-GB")}
+                        </td>
+                        <td className="px-3 py-2">
+                          {m.leaveDate
+                            ? new Date(m.leaveDate).toLocaleDateString("en-GB")
+                            : "—"}
+                        </td>
+                        <td className="px-3 py-2">
+                          {m.wasTrialOriginally ? (
+                            <TrialStatusBadge
+                              status={getTrialStatus(
+                                m.isTrial,
+                                trialMembershipIdsWithAttendance.has(m.id),
+                              )}
+                            />
+                          ) : (
+                            <span className="text-muted-foreground">{reason ?? "—"}</span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2">
+                          {(continuedTo ?? reasonTarget) ? (
+                            <Link
+                              href={`/groups/${(continuedTo ?? reasonTarget)!.id}`}
+                              className="text-primary hover:underline"
+                            >
+                              {(continuedTo ?? reasonTarget)!.publicId}
+                            </Link>
+                          ) : (
+                            "—"
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

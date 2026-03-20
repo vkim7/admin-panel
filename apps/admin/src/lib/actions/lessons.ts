@@ -19,7 +19,7 @@ type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
 // ─── Complete Lesson (C#37) ─────────────────────────────────────────────────
 
 export async function completeLesson(data: unknown) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = completeLessonSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
@@ -54,7 +54,7 @@ export async function completeLesson(data: unknown) {
     return { error: "Attendance must be taken before completing a lesson" };
   }
 
-  // C#37: Snapshot activeStudentCount as of lesson date
+  // C#37: Snapshot activeStudentCount as of lesson date (before any no-show processing)
   const activeStudentCount = await prisma.groupMembership.count({
     where: {
       groupId: lesson.groupId,
@@ -63,13 +63,99 @@ export async function completeLesson(data: unknown) {
     },
   });
 
-  await prisma.lesson.update({
-    where: { id: lesson.id },
-    data: {
-      status: "COMPLETED",
-      completedAt: new Date(),
-      activeStudentCount,
-    },
+  await prisma.$transaction(async (tx) => {
+    // Complete the lesson
+    await tx.lesson.update({
+      where: { id: lesson.id },
+      data: {
+        status: "COMPLETED",
+        completedAt: new Date(),
+        activeStudentCount,
+      },
+    });
+
+    // Trial no-show auto-detection: find trial students who were absent
+    const trialMemberships = await tx.groupMembership.findMany({
+      where: {
+        groupId: lesson.groupId,
+        isTrial: true,
+        leaveDate: null,
+      },
+      include: {
+        student: { select: { id: true, firstName: true, lastName: true } },
+        group: { select: { type: true } },
+      },
+    });
+
+    for (const tm of trialMemberships) {
+      // Check if this student has an attendance record for THIS lesson
+      const attendance = await tx.attendance.findUnique({
+        where: {
+          lessonId_studentId: {
+            lessonId: lesson.id,
+            studentId: tm.studentId,
+          },
+        },
+      });
+
+      // No attendance record → student wasn't expected at this lesson, skip
+      if (!attendance) continue;
+
+      // Present → trial stays pending for admin resolution
+      if (!attendance.isAbsent) continue;
+
+      // No-show: auto-remove trial student
+      await tx.groupMembership.update({
+        where: { id: tm.id },
+        data: { leaveDate: lesson.lessonDate },
+      });
+
+      // Count total trial attempts for this group type (including current)
+      const trialCount = await tx.groupMembership.count({
+        where: {
+          studentId: tm.studentId,
+          wasTrialOriginally: true,
+          group: { type: tm.group.type },
+        },
+      });
+
+      // Determine lost reason
+      let reasonName: string;
+      if (tm.group.type === "INDIVIDUAL") {
+        reasonName = "Trial no-show (Individual)";
+      } else if (trialCount >= 2) {
+        reasonName = "Trial no-show — final attempt (Group)";
+      } else {
+        reasonName = "Trial no-show (Group)";
+      }
+
+      const lostReason = await tx.lostReason.findFirst({
+        where: { name: reasonName },
+      });
+
+      if (lostReason) {
+        // Only deactivate if no other active memberships
+        const otherActive = await tx.groupMembership.count({
+          where: {
+            studentId: tm.studentId,
+            leaveDate: null,
+            id: { not: tm.id },
+          },
+        });
+
+        if (otherActive === 0) {
+          await tx.student.update({
+            where: { id: tm.studentId },
+            data: {
+              status: "INACTIVE",
+              inactivatedAt: new Date(),
+              inactivatedById: admin.id,
+              lostReasonId: lostReason.id,
+            },
+          });
+        }
+      }
+    }
   });
 
   revalidatePath(`/groups/${lesson.groupId}`);

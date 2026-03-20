@@ -43,6 +43,8 @@ export type GroupMembershipMinAggregateOutputType = {
   joinDate: Date | null
   leaveDate: Date | null
   isTrial: boolean | null
+  wasTrialOriginally: boolean | null
+  trialTeacherId: string | null
   transferReasonId: string | null
   otherTransferReason: string | null
   comment: string | null
@@ -61,6 +63,8 @@ export type GroupMembershipMaxAggregateOutputType = {
   joinDate: Date | null
   leaveDate: Date | null
   isTrial: boolean | null
+  wasTrialOriginally: boolean | null
+  trialTeacherId: string | null
   transferReasonId: string | null
   otherTransferReason: string | null
   comment: string | null
@@ -79,6 +83,8 @@ export type GroupMembershipCountAggregateOutputType = {
   joinDate: number
   leaveDate: number
   isTrial: number
+  wasTrialOriginally: number
+  trialTeacherId: number
   transferReasonId: number
   otherTransferReason: number
   comment: number
@@ -109,6 +115,8 @@ export type GroupMembershipMinAggregateInputType = {
   joinDate?: true
   leaveDate?: true
   isTrial?: true
+  wasTrialOriginally?: true
+  trialTeacherId?: true
   transferReasonId?: true
   otherTransferReason?: true
   comment?: true
@@ -127,6 +135,8 @@ export type GroupMembershipMaxAggregateInputType = {
   joinDate?: true
   leaveDate?: true
   isTrial?: true
+  wasTrialOriginally?: true
+  trialTeacherId?: true
   transferReasonId?: true
   otherTransferReason?: true
   comment?: true
@@ -145,6 +155,8 @@ export type GroupMembershipCountAggregateInputType = {
   joinDate?: true
   leaveDate?: true
   isTrial?: true
+  wasTrialOriginally?: true
+  trialTeacherId?: true
   transferReasonId?: true
   otherTransferReason?: true
   comment?: true
@@ -250,6 +262,8 @@ export type GroupMembershipGroupByOutputType = {
   joinDate: Date
   leaveDate: Date | null
   isTrial: boolean
+  wasTrialOriginally: boolean
+  trialTeacherId: string | null
   transferReasonId: string | null
   otherTransferReason: string | null
   comment: string | null
@@ -291,6 +305,8 @@ export type GroupMembershipWhereInput = {
   joinDate?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   leaveDate?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   isTrial?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  wasTrialOriginally?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  trialTeacherId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   transferReasonId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   otherTransferReason?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   comment?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
@@ -302,6 +318,7 @@ export type GroupMembershipWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  trialTeacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   transferReason?: Prisma.XOR<Prisma.TransferReasonNullableScalarRelationFilter, Prisma.TransferReasonWhereInput> | null
   assignedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   previousMembership?: Prisma.XOR<Prisma.GroupMembershipNullableScalarRelationFilter, Prisma.GroupMembershipWhereInput> | null
@@ -316,6 +333,8 @@ export type GroupMembershipOrderByWithRelationInput = {
   joinDate?: Prisma.SortOrder
   leaveDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isTrial?: Prisma.SortOrder
+  wasTrialOriginally?: Prisma.SortOrder
+  trialTeacherId?: Prisma.SortOrderInput | Prisma.SortOrder
   transferReasonId?: Prisma.SortOrderInput | Prisma.SortOrder
   otherTransferReason?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -327,6 +346,7 @@ export type GroupMembershipOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
   group?: Prisma.GroupOrderByWithRelationInput
+  trialTeacher?: Prisma.TeacherOrderByWithRelationInput
   transferReason?: Prisma.TransferReasonOrderByWithRelationInput
   assignedBy?: Prisma.AdminUserOrderByWithRelationInput
   previousMembership?: Prisma.GroupMembershipOrderByWithRelationInput
@@ -344,6 +364,8 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   joinDate?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   leaveDate?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   isTrial?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  wasTrialOriginally?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  trialTeacherId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   transferReasonId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   otherTransferReason?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   comment?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
@@ -355,6 +377,7 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  trialTeacher?: Prisma.XOR<Prisma.TeacherNullableScalarRelationFilter, Prisma.TeacherWhereInput> | null
   transferReason?: Prisma.XOR<Prisma.TransferReasonNullableScalarRelationFilter, Prisma.TransferReasonWhereInput> | null
   assignedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   previousMembership?: Prisma.XOR<Prisma.GroupMembershipNullableScalarRelationFilter, Prisma.GroupMembershipWhereInput> | null
@@ -369,6 +392,8 @@ export type GroupMembershipOrderByWithAggregationInput = {
   joinDate?: Prisma.SortOrder
   leaveDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isTrial?: Prisma.SortOrder
+  wasTrialOriginally?: Prisma.SortOrder
+  trialTeacherId?: Prisma.SortOrderInput | Prisma.SortOrder
   transferReasonId?: Prisma.SortOrderInput | Prisma.SortOrder
   otherTransferReason?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -395,6 +420,8 @@ export type GroupMembershipScalarWhereWithAggregatesInput = {
   joinDate?: Prisma.DateTimeWithAggregatesFilter<"GroupMembership"> | Date | string
   leaveDate?: Prisma.DateTimeNullableWithAggregatesFilter<"GroupMembership"> | Date | string | null
   isTrial?: Prisma.BoolWithAggregatesFilter<"GroupMembership"> | boolean
+  wasTrialOriginally?: Prisma.BoolWithAggregatesFilter<"GroupMembership"> | boolean
+  trialTeacherId?: Prisma.StringNullableWithAggregatesFilter<"GroupMembership"> | string | null
   transferReasonId?: Prisma.StringNullableWithAggregatesFilter<"GroupMembership"> | string | null
   otherTransferReason?: Prisma.StringNullableWithAggregatesFilter<"GroupMembership"> | string | null
   comment?: Prisma.StringNullableWithAggregatesFilter<"GroupMembership"> | string | null
@@ -411,6 +438,7 @@ export type GroupMembershipCreateInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -419,6 +447,7 @@ export type GroupMembershipCreateInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
@@ -433,6 +462,8 @@ export type GroupMembershipUncheckedCreateInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -451,6 +482,7 @@ export type GroupMembershipUpdateInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -459,6 +491,7 @@ export type GroupMembershipUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
@@ -473,6 +506,8 @@ export type GroupMembershipUncheckedUpdateInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -493,6 +528,8 @@ export type GroupMembershipCreateManyInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -509,6 +546,7 @@ export type GroupMembershipUpdateManyMutationInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -524,6 +562,8 @@ export type GroupMembershipUncheckedUpdateManyInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -557,6 +597,8 @@ export type GroupMembershipCountOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   leaveDate?: Prisma.SortOrder
   isTrial?: Prisma.SortOrder
+  wasTrialOriginally?: Prisma.SortOrder
+  trialTeacherId?: Prisma.SortOrder
   transferReasonId?: Prisma.SortOrder
   otherTransferReason?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -580,6 +622,8 @@ export type GroupMembershipMaxOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   leaveDate?: Prisma.SortOrder
   isTrial?: Prisma.SortOrder
+  wasTrialOriginally?: Prisma.SortOrder
+  trialTeacherId?: Prisma.SortOrder
   transferReasonId?: Prisma.SortOrder
   otherTransferReason?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -598,6 +642,8 @@ export type GroupMembershipMinOrderByAggregateInput = {
   joinDate?: Prisma.SortOrder
   leaveDate?: Prisma.SortOrder
   isTrial?: Prisma.SortOrder
+  wasTrialOriginally?: Prisma.SortOrder
+  trialTeacherId?: Prisma.SortOrder
   transferReasonId?: Prisma.SortOrder
   otherTransferReason?: Prisma.SortOrder
   comment?: Prisma.SortOrder
@@ -658,6 +704,48 @@ export type GroupMembershipUncheckedUpdateManyWithoutAssignedByNestedInput = {
   connect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
   update?: Prisma.GroupMembershipUpdateWithWhereUniqueWithoutAssignedByInput | Prisma.GroupMembershipUpdateWithWhereUniqueWithoutAssignedByInput[]
   updateMany?: Prisma.GroupMembershipUpdateManyWithWhereWithoutAssignedByInput | Prisma.GroupMembershipUpdateManyWithWhereWithoutAssignedByInput[]
+  deleteMany?: Prisma.GroupMembershipScalarWhereInput | Prisma.GroupMembershipScalarWhereInput[]
+}
+
+export type GroupMembershipCreateNestedManyWithoutTrialTeacherInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput> | Prisma.GroupMembershipCreateWithoutTrialTeacherInput[] | Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput[]
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput | Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput[]
+  createMany?: Prisma.GroupMembershipCreateManyTrialTeacherInputEnvelope
+  connect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+}
+
+export type GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput> | Prisma.GroupMembershipCreateWithoutTrialTeacherInput[] | Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput[]
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput | Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput[]
+  createMany?: Prisma.GroupMembershipCreateManyTrialTeacherInputEnvelope
+  connect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+}
+
+export type GroupMembershipUpdateManyWithoutTrialTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput> | Prisma.GroupMembershipCreateWithoutTrialTeacherInput[] | Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput[]
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput | Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput[]
+  upsert?: Prisma.GroupMembershipUpsertWithWhereUniqueWithoutTrialTeacherInput | Prisma.GroupMembershipUpsertWithWhereUniqueWithoutTrialTeacherInput[]
+  createMany?: Prisma.GroupMembershipCreateManyTrialTeacherInputEnvelope
+  set?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  disconnect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  delete?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  connect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  update?: Prisma.GroupMembershipUpdateWithWhereUniqueWithoutTrialTeacherInput | Prisma.GroupMembershipUpdateWithWhereUniqueWithoutTrialTeacherInput[]
+  updateMany?: Prisma.GroupMembershipUpdateManyWithWhereWithoutTrialTeacherInput | Prisma.GroupMembershipUpdateManyWithWhereWithoutTrialTeacherInput[]
+  deleteMany?: Prisma.GroupMembershipScalarWhereInput | Prisma.GroupMembershipScalarWhereInput[]
+}
+
+export type GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput> | Prisma.GroupMembershipCreateWithoutTrialTeacherInput[] | Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput[]
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput | Prisma.GroupMembershipCreateOrConnectWithoutTrialTeacherInput[]
+  upsert?: Prisma.GroupMembershipUpsertWithWhereUniqueWithoutTrialTeacherInput | Prisma.GroupMembershipUpsertWithWhereUniqueWithoutTrialTeacherInput[]
+  createMany?: Prisma.GroupMembershipCreateManyTrialTeacherInputEnvelope
+  set?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  disconnect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  delete?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  connect?: Prisma.GroupMembershipWhereUniqueInput | Prisma.GroupMembershipWhereUniqueInput[]
+  update?: Prisma.GroupMembershipUpdateWithWhereUniqueWithoutTrialTeacherInput | Prisma.GroupMembershipUpdateWithWhereUniqueWithoutTrialTeacherInput[]
+  updateMany?: Prisma.GroupMembershipUpdateManyWithWhereWithoutTrialTeacherInput | Prisma.GroupMembershipUpdateManyWithWhereWithoutTrialTeacherInput[]
   deleteMany?: Prisma.GroupMembershipScalarWhereInput | Prisma.GroupMembershipScalarWhereInput[]
 }
 
@@ -872,6 +960,7 @@ export type GroupMembershipCreateWithoutAssignedByInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -880,6 +969,7 @@ export type GroupMembershipCreateWithoutAssignedByInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
@@ -893,6 +983,8 @@ export type GroupMembershipUncheckedCreateWithoutAssignedByInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -941,6 +1033,8 @@ export type GroupMembershipScalarWhereInput = {
   joinDate?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
   leaveDate?: Prisma.DateTimeNullableFilter<"GroupMembership"> | Date | string | null
   isTrial?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  wasTrialOriginally?: Prisma.BoolFilter<"GroupMembership"> | boolean
+  trialTeacherId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   transferReasonId?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   otherTransferReason?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
   comment?: Prisma.StringNullableFilter<"GroupMembership"> | string | null
@@ -952,11 +1046,80 @@ export type GroupMembershipScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"GroupMembership"> | Date | string
 }
 
+export type GroupMembershipCreateWithoutTrialTeacherInput = {
+  id?: string
+  joinDate: Date | string
+  leaveDate?: Date | string | null
+  isTrial?: boolean
+  wasTrialOriginally?: boolean
+  otherTransferReason?: string | null
+  comment?: string | null
+  lessonsStart?: number | null
+  lessonsCompleted?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
+  group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
+  assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
+  previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
+  continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+}
+
+export type GroupMembershipUncheckedCreateWithoutTrialTeacherInput = {
+  id?: string
+  studentId: string
+  groupId: string
+  joinDate: Date | string
+  leaveDate?: Date | string | null
+  isTrial?: boolean
+  wasTrialOriginally?: boolean
+  transferReasonId?: string | null
+  otherTransferReason?: string | null
+  comment?: string | null
+  lessonsStart?: number | null
+  lessonsCompleted?: number | null
+  assignedById?: string | null
+  previousMembershipId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+}
+
+export type GroupMembershipCreateOrConnectWithoutTrialTeacherInput = {
+  where: Prisma.GroupMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput>
+}
+
+export type GroupMembershipCreateManyTrialTeacherInputEnvelope = {
+  data: Prisma.GroupMembershipCreateManyTrialTeacherInput | Prisma.GroupMembershipCreateManyTrialTeacherInput[]
+  skipDuplicates?: boolean
+}
+
+export type GroupMembershipUpsertWithWhereUniqueWithoutTrialTeacherInput = {
+  where: Prisma.GroupMembershipWhereUniqueInput
+  update: Prisma.XOR<Prisma.GroupMembershipUpdateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedUpdateWithoutTrialTeacherInput>
+  create: Prisma.XOR<Prisma.GroupMembershipCreateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedCreateWithoutTrialTeacherInput>
+}
+
+export type GroupMembershipUpdateWithWhereUniqueWithoutTrialTeacherInput = {
+  where: Prisma.GroupMembershipWhereUniqueInput
+  data: Prisma.XOR<Prisma.GroupMembershipUpdateWithoutTrialTeacherInput, Prisma.GroupMembershipUncheckedUpdateWithoutTrialTeacherInput>
+}
+
+export type GroupMembershipUpdateManyWithWhereWithoutTrialTeacherInput = {
+  where: Prisma.GroupMembershipScalarWhereInput
+  data: Prisma.XOR<Prisma.GroupMembershipUpdateManyMutationInput, Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherInput>
+}
+
 export type GroupMembershipCreateWithoutStudentInput = {
   id?: string
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -964,6 +1127,7 @@ export type GroupMembershipCreateWithoutStudentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
@@ -977,6 +1141,8 @@ export type GroupMembershipUncheckedCreateWithoutStudentInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1021,6 +1187,7 @@ export type GroupMembershipCreateWithoutGroupInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1028,6 +1195,7 @@ export type GroupMembershipCreateWithoutGroupInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
@@ -1041,6 +1209,8 @@ export type GroupMembershipUncheckedCreateWithoutGroupInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1085,6 +1255,7 @@ export type GroupMembershipCreateWithoutTransferReasonInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1093,6 +1264,7 @@ export type GroupMembershipCreateWithoutTransferReasonInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
@@ -1106,6 +1278,8 @@ export type GroupMembershipUncheckedCreateWithoutTransferReasonInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1149,6 +1323,7 @@ export type GroupMembershipCreateWithoutContinuedAsMembershipsInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1157,6 +1332,7 @@ export type GroupMembershipCreateWithoutContinuedAsMembershipsInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
@@ -1170,6 +1346,8 @@ export type GroupMembershipUncheckedCreateWithoutContinuedAsMembershipsInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1192,6 +1370,7 @@ export type GroupMembershipCreateWithoutPreviousMembershipInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1200,6 +1379,7 @@ export type GroupMembershipCreateWithoutPreviousMembershipInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
@@ -1213,6 +1393,8 @@ export type GroupMembershipUncheckedCreateWithoutPreviousMembershipInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1251,6 +1433,7 @@ export type GroupMembershipUpdateWithoutContinuedAsMembershipsInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1259,6 +1442,7 @@ export type GroupMembershipUpdateWithoutContinuedAsMembershipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
@@ -1272,6 +1456,8 @@ export type GroupMembershipUncheckedUpdateWithoutContinuedAsMembershipsInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1305,6 +1491,7 @@ export type GroupMembershipCreateWithoutPaymentPeriodsInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1313,6 +1500,7 @@ export type GroupMembershipCreateWithoutPaymentPeriodsInput = {
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
   group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
   transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
@@ -1326,6 +1514,8 @@ export type GroupMembershipUncheckedCreateWithoutPaymentPeriodsInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1359,6 +1549,7 @@ export type GroupMembershipUpdateWithoutPaymentPeriodsInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1367,6 +1558,7 @@ export type GroupMembershipUpdateWithoutPaymentPeriodsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
@@ -1380,6 +1572,8 @@ export type GroupMembershipUncheckedUpdateWithoutPaymentPeriodsInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1399,6 +1593,8 @@ export type GroupMembershipCreateManyAssignedByInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1414,6 +1610,7 @@ export type GroupMembershipUpdateWithoutAssignedByInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1422,6 +1619,7 @@ export type GroupMembershipUpdateWithoutAssignedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
@@ -1435,6 +1633,8 @@ export type GroupMembershipUncheckedUpdateWithoutAssignedByInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1454,11 +1654,93 @@ export type GroupMembershipUncheckedUpdateManyWithoutAssignedByInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  previousMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type GroupMembershipCreateManyTrialTeacherInput = {
+  id?: string
+  studentId: string
+  groupId: string
+  joinDate: Date | string
+  leaveDate?: Date | string | null
+  isTrial?: boolean
+  wasTrialOriginally?: boolean
+  transferReasonId?: string | null
+  otherTransferReason?: string | null
+  comment?: string | null
+  lessonsStart?: number | null
+  lessonsCompleted?: number | null
+  assignedById?: string | null
+  previousMembershipId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type GroupMembershipUpdateWithoutTrialTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
+  group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
+  assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
+  previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
+  continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+}
+
+export type GroupMembershipUncheckedUpdateWithoutTrialTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+}
+
+export type GroupMembershipUncheckedUpdateManyWithoutTrialTeacherInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   previousMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1470,6 +1752,8 @@ export type GroupMembershipCreateManyStudentInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1486,6 +1770,7 @@ export type GroupMembershipUpdateWithoutStudentInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1493,6 +1778,7 @@ export type GroupMembershipUpdateWithoutStudentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
@@ -1506,6 +1792,8 @@ export type GroupMembershipUncheckedUpdateWithoutStudentInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1525,6 +1813,8 @@ export type GroupMembershipUncheckedUpdateManyWithoutStudentInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1542,6 +1832,8 @@ export type GroupMembershipCreateManyGroupInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1558,6 +1850,7 @@ export type GroupMembershipUpdateWithoutGroupInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1565,6 +1858,7 @@ export type GroupMembershipUpdateWithoutGroupInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
@@ -1578,6 +1872,8 @@ export type GroupMembershipUncheckedUpdateWithoutGroupInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1597,6 +1893,8 @@ export type GroupMembershipUncheckedUpdateManyWithoutGroupInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1615,6 +1913,8 @@ export type GroupMembershipCreateManyTransferReasonInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
   lessonsStart?: number | null
@@ -1630,6 +1930,7 @@ export type GroupMembershipUpdateWithoutTransferReasonInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1638,6 +1939,7 @@ export type GroupMembershipUpdateWithoutTransferReasonInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
@@ -1651,6 +1953,8 @@ export type GroupMembershipUncheckedUpdateWithoutTransferReasonInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1670,6 +1974,8 @@ export type GroupMembershipUncheckedUpdateManyWithoutTransferReasonInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1687,6 +1993,8 @@ export type GroupMembershipCreateManyPreviousMembershipInput = {
   joinDate: Date | string
   leaveDate?: Date | string | null
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
   transferReasonId?: string | null
   otherTransferReason?: string | null
   comment?: string | null
@@ -1702,6 +2010,7 @@ export type GroupMembershipUpdateWithoutPreviousMembershipInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1710,6 +2019,7 @@ export type GroupMembershipUpdateWithoutPreviousMembershipInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
   group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
   transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
@@ -1723,6 +2033,8 @@ export type GroupMembershipUncheckedUpdateWithoutPreviousMembershipInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1742,6 +2054,8 @@ export type GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipInput = {
   joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1799,6 +2113,8 @@ export type GroupMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   joinDate?: boolean
   leaveDate?: boolean
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: boolean
   transferReasonId?: boolean
   otherTransferReason?: boolean
   comment?: boolean
@@ -1810,6 +2126,7 @@ export type GroupMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1825,6 +2142,8 @@ export type GroupMembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   joinDate?: boolean
   leaveDate?: boolean
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: boolean
   transferReasonId?: boolean
   otherTransferReason?: boolean
   comment?: boolean
@@ -1836,6 +2155,7 @@ export type GroupMembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1848,6 +2168,8 @@ export type GroupMembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   joinDate?: boolean
   leaveDate?: boolean
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: boolean
   transferReasonId?: boolean
   otherTransferReason?: boolean
   comment?: boolean
@@ -1859,6 +2181,7 @@ export type GroupMembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1871,6 +2194,8 @@ export type GroupMembershipSelectScalar = {
   joinDate?: boolean
   leaveDate?: boolean
   isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: boolean
   transferReasonId?: boolean
   otherTransferReason?: boolean
   comment?: boolean
@@ -1882,10 +2207,11 @@ export type GroupMembershipSelectScalar = {
   updatedAt?: boolean
 }
 
-export type GroupMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "groupId" | "joinDate" | "leaveDate" | "isTrial" | "transferReasonId" | "otherTransferReason" | "comment" | "lessonsStart" | "lessonsCompleted" | "assignedById" | "previousMembershipId" | "createdAt" | "updatedAt", ExtArgs["result"]["groupMembership"]>
+export type GroupMembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "groupId" | "joinDate" | "leaveDate" | "isTrial" | "wasTrialOriginally" | "trialTeacherId" | "transferReasonId" | "otherTransferReason" | "comment" | "lessonsStart" | "lessonsCompleted" | "assignedById" | "previousMembershipId" | "createdAt" | "updatedAt", ExtArgs["result"]["groupMembership"]>
 export type GroupMembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1896,6 +2222,7 @@ export type GroupMembershipInclude<ExtArgs extends runtime.Types.Extensions.Inte
 export type GroupMembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1903,6 +2230,7 @@ export type GroupMembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Ty
 export type GroupMembershipIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  trialTeacher?: boolean | Prisma.GroupMembership$trialTeacherArgs<ExtArgs>
   transferReason?: boolean | Prisma.GroupMembership$transferReasonArgs<ExtArgs>
   assignedBy?: boolean | Prisma.GroupMembership$assignedByArgs<ExtArgs>
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
@@ -1913,6 +2241,7 @@ export type $GroupMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
   objects: {
     student: Prisma.$StudentPayload<ExtArgs>
     group: Prisma.$GroupPayload<ExtArgs>
+    trialTeacher: Prisma.$TeacherPayload<ExtArgs> | null
     transferReason: Prisma.$TransferReasonPayload<ExtArgs> | null
     assignedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     previousMembership: Prisma.$GroupMembershipPayload<ExtArgs> | null
@@ -1926,6 +2255,8 @@ export type $GroupMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
     joinDate: Date
     leaveDate: Date | null
     isTrial: boolean
+    wasTrialOriginally: boolean
+    trialTeacherId: string | null
     transferReasonId: string | null
     otherTransferReason: string | null
     comment: string | null
@@ -2331,6 +2662,7 @@ export interface Prisma__GroupMembershipClient<T, Null = never, ExtArgs extends 
   readonly [Symbol.toStringTag]: "PrismaPromise"
   student<T extends Prisma.StudentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentDefaultArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   group<T extends Prisma.GroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupDefaultArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  trialTeacher<T extends Prisma.GroupMembership$trialTeacherArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$trialTeacherArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   transferReason<T extends Prisma.GroupMembership$transferReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$transferReasonArgs<ExtArgs>>): Prisma.Prisma__TransferReasonClient<runtime.Types.Result.GetResult<Prisma.$TransferReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   assignedBy<T extends Prisma.GroupMembership$assignedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$assignedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   previousMembership<T extends Prisma.GroupMembership$previousMembershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$previousMembershipArgs<ExtArgs>>): Prisma.Prisma__GroupMembershipClient<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2371,6 +2703,8 @@ export interface GroupMembershipFieldRefs {
   readonly joinDate: Prisma.FieldRef<"GroupMembership", 'DateTime'>
   readonly leaveDate: Prisma.FieldRef<"GroupMembership", 'DateTime'>
   readonly isTrial: Prisma.FieldRef<"GroupMembership", 'Boolean'>
+  readonly wasTrialOriginally: Prisma.FieldRef<"GroupMembership", 'Boolean'>
+  readonly trialTeacherId: Prisma.FieldRef<"GroupMembership", 'String'>
   readonly transferReasonId: Prisma.FieldRef<"GroupMembership", 'String'>
   readonly otherTransferReason: Prisma.FieldRef<"GroupMembership", 'String'>
   readonly comment: Prisma.FieldRef<"GroupMembership", 'String'>
@@ -2773,6 +3107,25 @@ export type GroupMembershipDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many GroupMemberships to delete.
    */
   limit?: number
+}
+
+/**
+ * GroupMembership.trialTeacher
+ */
+export type GroupMembership$trialTeacherArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Teacher
+   */
+  select?: Prisma.TeacherSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Teacher
+   */
+  omit?: Prisma.TeacherOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherInclude<ExtArgs> | null
+  where?: Prisma.TeacherWhereInput
 }
 
 /**

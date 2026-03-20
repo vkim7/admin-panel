@@ -21,7 +21,7 @@ export const addStudentsBaseSchema = z.object({
 export type AddStudentsFormValues = z.infer<typeof addStudentsBaseSchema>;
 
 export const trialResolutionSchema = z.object({
-  action: z.enum(["commit", "remove"]),
+  action: z.enum(["commit", "didnt_continue"]),
 });
 
 export type TrialResolutionValues = z.infer<typeof trialResolutionSchema>;

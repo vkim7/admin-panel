@@ -37,6 +37,13 @@ export async function applyTransferCredit({
     return { creditApplied: 0, remainingCredit: 0, refundCreated: false };
   }
 
+  // Resolve publicId for human-readable notes
+  const sourceGroup = await tx.group.findUnique({
+    where: { id: sourceGroupId },
+    select: { publicId: true },
+  });
+  const sourceLabel = sourceGroup?.publicId ?? sourceGroupId;
+
   let remainingCredit = credit;
   let creditApplied = 0;
 
@@ -62,7 +69,7 @@ export async function applyTransferCredit({
           studentPaymentPeriodId: period.id,
           amount: creditToApply,
           isTransferCredit: true,
-          note: `Transfer credit from group ${sourceGroupId}`,
+          note: `Transfer credit from ${sourceLabel}`,
           recordedById: adminId,
         },
       });
@@ -97,7 +104,7 @@ export async function applyTransferCredit({
           amount: remainingCredit,
           status: "PENDING",
           initiatedById: adminId,
-          note: `Residual transfer credit from group ${sourceGroupId} — exceeded destination billing`,
+          note: `Residual transfer credit from ${sourceLabel} — exceeded destination billing`,
         },
       });
 
@@ -116,7 +123,7 @@ export async function applyTransferCredit({
           amount: remainingCredit,
           status: "PENDING",
           initiatedById: adminId,
-          note: `Transfer credit from group ${sourceGroupId} — no destination billing periods`,
+          note: `Transfer credit from ${sourceLabel} — no destination billing periods`,
         },
       });
 

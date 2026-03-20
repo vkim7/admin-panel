@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getTeacherById } from "@/lib/queries/teachers";
+import { getTeacherById, getTeacherTrialHistory } from "@/lib/queries/teachers";
 import { getTeacherUnavailability } from "@/lib/queries/lessons";
 import { getTeacherPaymentHistory } from "@/lib/queries/teacher-payments";
 import { AvailabilityEditor } from "@/components/teachers/availability-editor";
 import { RateHistory } from "@/components/teachers/rate-history";
+import { TrialHistory } from "@/components/teachers/trial-history";
 import { UnavailabilitySection } from "@/components/teachers/unavailability-section";
 import { TeacherActions } from "@/components/teachers/teacher-actions";
 import { PageHeader } from "@/components/ui/page-header";
@@ -33,10 +34,11 @@ export default async function TeacherDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [teacher, unavailabilities, paymentHistory] = await Promise.all([
+  const [teacher, unavailabilities, paymentHistory, trialHistory] = await Promise.all([
     getTeacherById(id),
     getTeacherUnavailability(id),
     getTeacherPaymentHistory(id),
+    getTeacherTrialHistory(id),
   ]);
   if (!teacher) notFound();
 
@@ -124,6 +126,13 @@ export default async function TeacherDetailPage({
               </table>
             </div>
           </div>
+        </>
+      )}
+
+      {trialHistory.length > 0 && (
+        <>
+          <Separator />
+          <TrialHistory trials={trialHistory} />
         </>
       )}
 

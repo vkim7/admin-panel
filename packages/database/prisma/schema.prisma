@@ -462,6 +462,7 @@ model Teacher {
   paymentPeriods      TeacherPaymentPeriod[]
   groupTeacherHistory GroupTeacherHistory[]
   rateChanges         TeacherRateChange[]
+  trialMemberships    GroupMembership[]       @relation("TrialTeacher")
 }
 
 model Family {
@@ -750,7 +751,9 @@ model GroupMembership {
 
   joinDate  DateTime  @db.Date
   leaveDate DateTime? @db.Date // null = currently in group
-  isTrial   Boolean   @default(false) // Trial student — occupies a seat but may not commit
+  isTrial            Boolean  @default(false) // Trial student — occupies a seat but may not commit
+  wasTrialOriginally Boolean  @default(false) // Snapshot: was this membership created as a trial?
+  trialTeacherId     String? // Snapshot: who was the group's teacher at trial time?
 
   // Why the membership ended — inferred from context:
   // - transferReasonId set → transfer
@@ -776,6 +779,7 @@ model GroupMembership {
 
   student                Student                @relation(fields: [studentId], references: [id], onDelete: Restrict)
   group                  Group                  @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  trialTeacher           Teacher?               @relation("TrialTeacher", fields: [trialTeacherId], references: [id], onDelete: Restrict)
   transferReason         TransferReason?        @relation(fields: [transferReasonId], references: [id], onDelete: Restrict)
   assignedBy             AdminUser?             @relation("AssignedByAdmin", fields: [assignedById], references: [id], onDelete: Restrict)
   previousMembership     GroupMembership?       @relation("MembershipContinuation", fields: [previousMembershipId], references: [id], onDelete: Restrict)

@@ -18,7 +18,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -58,7 +57,6 @@ const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
 const assignFormSchema = z.object({
   groupId: z.string().min(1, "Select a group"),
   joinDate: z.string().min(1, "Join date is required"),
-  isTrial: z.boolean(),
 });
 
 type AssignFormValues = z.infer<typeof assignFormSchema>;
@@ -83,7 +81,6 @@ export function AssignDialog({
     defaultValues: {
       groupId: "",
       joinDate: new Date().toISOString().split("T")[0]!,
-      isTrial: true,
     },
   });
 
@@ -199,7 +196,7 @@ export function AssignDialog({
       const result = await addStudentsToGroup(values.groupId, {
         studentIds: [student.id],
         joinDate: values.joinDate,
-        isTrial: values.isTrial,
+        isTrial: true,
         comment: null,
       });
       if ("error" in result) {
@@ -365,29 +362,6 @@ export function AssignDialog({
                     <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Trial Toggle */}
-            <FormField
-              control={form.control}
-              name="isTrial"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={field.onChange}
-                      className="rounded border-input"
-                    />
-                    <FormLabel className="!mt-0">Trial lesson</FormLabel>
-                  </div>
-                  <FormDescription>
-                    Trial students occupy a seat but no billing is created until
-                    committed.
-                  </FormDescription>
                 </FormItem>
               )}
             />

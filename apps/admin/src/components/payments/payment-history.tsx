@@ -50,7 +50,7 @@ function PeriodCard({
             {period.group.publicId}
           </Link>
           {period.isPartialPeriod && (
-            <Badge variant="outline" className="text-xs">Partial</Badge>
+            <Badge variant="outline" className="text-xs">Prorated</Badge>
           )}
           {period.paymentStatus === "PARTIALLY_PAID" && (
             <PaymentStatusBadge status={period.paymentStatus} />
@@ -118,11 +118,12 @@ function PeriodCard({
               <div key={payment.id} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <span>{formatUZS(payment.amount)} UZS</span>
-                  <Badge variant="outline" className="text-xs">
-                    {METHOD_LABEL[payment.paymentMethod ?? ""] ?? payment.paymentMethod}
-                  </Badge>
-                  {payment.isTransferCredit && (
+                  {payment.isTransferCredit ? (
                     <Badge variant="secondary" className="text-xs">Transfer credit</Badge>
+                  ) : payment.paymentMethod && (
+                    <Badge variant="outline" className="text-xs">
+                      {METHOD_LABEL[payment.paymentMethod] ?? payment.paymentMethod}
+                    </Badge>
                   )}
                   {payment.note && (
                     <span className="text-xs text-muted-foreground">{payment.note}</span>

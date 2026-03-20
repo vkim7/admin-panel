@@ -18,16 +18,20 @@ interface TrialResolutionDialogProps {
   membershipId: string;
   studentName: string;
   groupId: string;
+  groupType: string;
+  hasAttendance: boolean;
 }
 
 export function TrialResolutionDialog({
   membershipId,
   studentName,
+  groupType,
+  hasAttendance,
 }: TrialResolutionDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  function handleAction(action: "commit" | "remove") {
+  function handleAction(action: "commit" | "didnt_continue") {
     startTransition(async () => {
       const result = await resolveTrialMembership(membershipId, { action });
       if (result?.error) {
@@ -36,12 +40,14 @@ export function TrialResolutionDialog({
         toast.success(
           action === "commit"
             ? `${studentName} committed to the group`
-            : `${studentName} removed from the group`,
+            : `${studentName} — trial ended`,
         );
         setOpen(false);
       }
     });
   }
+
+  const isGroup = groupType === "GROUP";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -54,17 +60,41 @@ export function TrialResolutionDialog({
         <DialogHeader>
           <DialogTitle>Resolve Trial — {studentName}</DialogTitle>
           <DialogDescription>
-            Choose whether this student will commit to the group or be removed.
-            Committing will create billing periods from the original join date.
+            Choose whether this student will commit to the group or didn&apos;t
+            continue.
           </DialogDescription>
         </DialogHeader>
+
+        <div className="space-y-2 rounded-md border bg-muted/40 p-3 text-sm">
+          <p className="font-medium">Billing preview:</p>
+          <ul className="space-y-1 text-muted-foreground">
+            <li>
+              Commit:{" "}
+              {isGroup
+                ? "First lesson is free (100% discount)"
+                : "First lesson at 50% discount"}
+            </li>
+            <li>
+              Didn&apos;t continue:{" "}
+              {isGroup
+                ? "No billing — group trials are free"
+                : "Billing will be created for attended lessons at 50% discount"}
+            </li>
+          </ul>
+        </div>
+
         <DialogFooter>
           <Button
             variant="destructive"
-            onClick={() => handleAction("remove")}
-            disabled={isPending}
+            onClick={() => handleAction("didnt_continue")}
+            disabled={isPending || !hasAttendance}
+            title={
+              !hasAttendance
+                ? "Attendance must be recorded before marking as didn't continue"
+                : undefined
+            }
           >
-            {isPending ? "..." : "Remove"}
+            {isPending ? "..." : "Didn't continue"}
           </Button>
           <Button
             onClick={() => handleAction("commit")}

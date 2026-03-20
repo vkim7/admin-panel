@@ -2892,6 +2892,8 @@ export const GroupMembershipScalarFieldEnum = {
   joinDate: 'joinDate',
   leaveDate: 'leaveDate',
   isTrial: 'isTrial',
+  wasTrialOriginally: 'wasTrialOriginally',
+  trialTeacherId: 'trialTeacherId',
   transferReasonId: 'transferReasonId',
   otherTransferReason: 'otherTransferReason',
   comment: 'comment',

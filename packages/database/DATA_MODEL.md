@@ -321,6 +321,8 @@ Tracks which students are in which groups (both GROUP and INDIVIDUAL types), inc
 | joinDate | When the student joined this group |
 | leaveDate | When they left (null = currently active) |
 | isTrial | Trial student — occupies a seat but may not commit after first lesson |
+| wasTrialOriginally | Snapshot: was this membership created as a trial? Set once at creation, never changes. Enables querying committed trials. |
+| trialTeacherId | Snapshot: who was the group's teacher at trial time? FK → Teacher. Preserved even if group teacher changes later. |
 | transferReasonId | Why they transferred (links to TransferReason table) |
 | otherTransferReason | Free text for "other" transfer reason |
 | comment | Per-group notes (e.g., "struggling with grammar", "catching up from lesson 5") |
@@ -344,9 +346,18 @@ Tracks which students are in which groups (both GROUP and INDIVIDUAL types), inc
 - `isTrial = true` → student is taking a trial lesson, occupies a seat
 - Counted toward `maxStudents` (a group with 5 + 1T is full)
 - Displayed separately on Main Schedule: "4+1T/6"
-- After trial: admin manually commits (set `isTrial = false`) or removes (set `leaveDate`)
-- No automatic trigger — attendance does not change trial status. The commitment decision is a human conversation.
-- **Stale trial alert:** Persistent visual alert for any unresolved trials. Query: `isTrial = true AND joinDate < today`. Admin must confirm whether the student is staying immediately after the trial class — this is urgent, not a 7-day reminder.
+- **Trial attempt limits:** GROUP = 2 free trials, INDIVIDUAL = 1 free trial per student. Enforced in `addStudentsToGroup` by counting `wasTrialOriginally=true` memberships per group type.
+- **Differentiated billing:** GROUP trials are 100% free, INDIVIDUAL trials are 50% off. Two separate TRIAL promotions with `groupTypes` filter.
+- **Resolution paths:**
+  - **Commit**: set `isTrial = false`, create billing with appropriate TRIAL promotion discount
+  - **Didn't continue**: set `leaveDate`, GROUP = no billing (free), INDIVIDUAL = bill attended lessons at 50% discount, deactivate student
+- **Auto no-show detection:** On lesson completion, trial students marked absent are auto-removed (leaveDate set) and deactivated with appropriate lost reason
+- **Trial status derivation** (from `wasTrialOriginally` + `isTrial` + `leaveDate` + attendance):
+  - Pending: `isTrial=true AND leaveDate IS NULL`
+  - Committed: `wasTrialOriginally=true AND isTrial=false`
+  - Didn't continue: `wasTrialOriginally=true AND isTrial=true AND leaveDate IS NOT NULL AND has attendance`
+  - No-show: `wasTrialOriginally=true AND leaveDate IS NOT NULL AND no attendance`
+- **Stale trial alert:** Persistent visual alert for any unresolved trials. Query: `isTrial = true AND joinDate < today`.
 
 ---
 
@@ -360,7 +371,7 @@ Seeded with: Teacher dissatisfaction, Classmates dissatisfaction, Level too low,
 ### LostReason (Reference Table)
 Admin-manageable list of reasons a student leaves the school.
 
-Seeded with: Taking a break, Too expensive, Didn't like online format, Other.
+Seeded with: Taking a break, Too expensive, Didn't like online format, Other, Trial no-show (Group), Trial no-show — final attempt (Group), Trial no-show (Individual), Trial — didn't continue (Group), Trial — didn't continue (Individual).
 
 ### CancellationReason (Reference Table)
 Admin-manageable list of reasons a lesson is cancelled.

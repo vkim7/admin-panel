@@ -40,10 +40,12 @@ type StudentOption = {
 
 interface AddStudentDialogProps {
   groupId: string;
+  groupType: string;
   students: StudentOption[];
+  trialAttempts: Record<string, { group: number; individual: number }>;
 }
 
-export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
+export function AddStudentDialog({ groupId, groupType, students, trialAttempts }: AddStudentDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
@@ -59,6 +61,20 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
   });
 
   const selectedIds = form.watch("studentIds");
+  const isTrial = form.watch("isTrial");
+
+  // Trial attempts enforcement
+  const isGroupType = groupType === "GROUP";
+  const trialLimit = isGroupType ? 2 : 1;
+  const trialTypeKey = isGroupType ? "group" : "individual";
+
+  const exhaustedStudents = selectedIds.filter((id) => {
+    const attempts = trialAttempts[id];
+    if (!attempts) return false;
+    return attempts[trialTypeKey] >= trialLimit;
+  });
+
+  const trialBlocked = exhaustedStudents.length > 0;
 
   const filteredStudents = students.filter((s) => {
     if (selectedIds.includes(s.id)) return false;
@@ -224,15 +240,42 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
                     <input
                       type="checkbox"
                       checked={field.value}
-                      onChange={field.onChange}
+                      onChange={(e) => {
+                        if (trialBlocked && e.target.checked) return;
+                        field.onChange(e);
+                      }}
+                      disabled={trialBlocked && !field.value}
                       className="rounded border-input"
                     />
                     <FormLabel className="!mt-0">Trial lesson</FormLabel>
                   </div>
-                  <FormDescription>
-                    Trial students occupy a seat but no billing is created until
-                    committed.
-                  </FormDescription>
+                  {trialBlocked && isTrial ? (
+                    <p className="text-sm text-destructive">
+                      {exhaustedStudents
+                        .map((id) => {
+                          const s = students.find((st) => st.id === id);
+                          return s ? `${s.firstName} ${s.lastName}` : id;
+                        })
+                        .join(", ")}{" "}
+                      — used all free {groupType.toLowerCase()} trial attempts
+                    </p>
+                  ) : (
+                    <FormDescription>
+                      {isTrial && selectedIds.length > 0
+                        ? (() => {
+                            // Show attempts remaining for selected students
+                            const maxUsed = Math.max(
+                              ...selectedIds.map(
+                                (id) => trialAttempts[id]?.[trialTypeKey] ?? 0,
+                              ),
+                              0,
+                            );
+                            const remaining = trialLimit - maxUsed;
+                            return `Trial (${remaining} of ${trialLimit} attempt${trialLimit > 1 ? "s" : ""} remaining)`;
+                          })()
+                        : "Trial students occupy a seat but no billing is created until committed."}
+                    </FormDescription>
+                  )}
                 </FormItem>
               )}
             />

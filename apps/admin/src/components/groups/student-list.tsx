@@ -4,6 +4,7 @@ import { useTransition } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
 import { TrialResolutionDialog } from "./trial-resolution-dialog";
 import { TransferDialog } from "@/components/transfers/transfer-dialog";
 import { toggleUncertain } from "@/lib/actions/students";
@@ -14,6 +15,7 @@ type MembershipRow = {
   joinDate: Date;
   leaveDate: Date | null;
   isTrial: boolean;
+  wasTrialOriginally: boolean;
   lessonsStart: number | null;
   comment: string | null;
   student: {
@@ -85,15 +87,21 @@ function UncertainToggle({
 export function StudentList({
   memberships,
   groupId,
+  groupType,
   currentGroupPublicId,
   transferReasons,
   availableGroups,
+  trialMembershipIdsWithAttendance,
+  activeTrialStudentIdsWithAttendance,
 }: {
   memberships: MembershipRow[];
   groupId: string;
+  groupType: string;
   currentGroupPublicId?: string;
   transferReasons?: TransferReason[];
   availableGroups?: TransferGroup[];
+  trialMembershipIdsWithAttendance?: Set<string>;
+  activeTrialStudentIdsWithAttendance?: Set<string>;
 }) {
   const active = memberships.filter((m) => !m.leaveDate);
   const past = memberships.filter((m) => m.leaveDate);
@@ -209,6 +217,8 @@ export function StudentList({
                             membershipId={m.id}
                             studentName={`${m.student.firstName} ${m.student.lastName}`}
                             groupId={groupId}
+                            groupType={groupType}
+                            hasAttendance={activeTrialStudentIdsWithAttendance?.has(m.student.id) ?? false}
                           />
                         )}
                         {!m.isTrial &&
@@ -247,6 +257,7 @@ export function StudentList({
                   <th className="px-3 py-2 text-left font-medium">Name</th>
                   <th className="px-3 py-2 text-left font-medium">Joined</th>
                   <th className="px-3 py-2 text-left font-medium">Left</th>
+                  <th className="px-3 py-2 text-left font-medium">Trial</th>
                 </tr>
               </thead>
               <tbody>
@@ -268,6 +279,16 @@ export function StudentList({
                       {m.leaveDate
                         ? new Date(m.leaveDate).toLocaleDateString("en-GB")
                         : "—"}
+                    </td>
+                    <td className="px-3 py-2">
+                      {m.wasTrialOriginally && (
+                        <TrialStatusBadge
+                          status={getTrialStatus(
+                            m.isTrial,
+                            trialMembershipIdsWithAttendance?.has(m.id) ?? false,
+                          )}
+                        />
+                      )}
                     </td>
                   </tr>
                 ))}
