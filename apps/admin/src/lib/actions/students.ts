@@ -15,6 +15,10 @@ export async function createStudent(data: unknown) {
 
   const { dateOfBirth, preferredDays, preferredTimeSlots, ...rest } = parsed.data;
 
+  // Auto-generate a unique referral code (8 chars, alphanumeric uppercase)
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no ambiguous chars (0/O, 1/I)
+  const referralCode = Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+
   try {
     const student = await prisma.student.create({
       data: {
@@ -22,6 +26,7 @@ export async function createStudent(data: unknown) {
         dateOfBirth: new Date(dateOfBirth),
         preferredDays,
         preferredTimeSlots,
+        referralCode,
       },
     });
     redirect(`/students/${student.id}`);

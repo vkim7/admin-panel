@@ -361,10 +361,10 @@ async function main() {
 
   // ─── Global Price Settings ──────────────────────────────────────────────────
   // 4 price points: (GENERAL|IELTS) × (GROUP|INDIVIDUAL)
-  const GENERAL_GROUP_PRICE = 25000;
-  const GENERAL_INDIVIDUAL_PRICE = 50000;
-  const IELTS_GROUP_PRICE = 35000;
-  const IELTS_INDIVIDUAL_PRICE = 70000;
+  const GENERAL_GROUP_PRICE = 100000;
+  const GENERAL_INDIVIDUAL_PRICE = 200000;
+  const IELTS_GROUP_PRICE = 100000;
+  const IELTS_INDIVIDUAL_PRICE = 200000;
 
   await prisma.priceSetting.createMany({
     data: [
@@ -780,7 +780,7 @@ async function main() {
     }
   }
 
-  // GR-3: Rustam partially paid for last month (Nov 2025)
+  // GR-3: Rustam fully paid for last month (Nov 2025)
   const gr3NovLessons = countLessonsInMonth(gr3Dates, 2025, 11);
   const partialPeriod = await prisma.studentPaymentPeriod.create({
     data: {
@@ -792,8 +792,8 @@ async function main() {
       totalLessons: gr3NovLessons,
       pricePerLesson: GENERAL_GROUP_PRICE,
       amountDue: gr3NovLessons * GENERAL_GROUP_PRICE,
-      amountPaid: Math.floor(gr3NovLessons / 2) * GENERAL_GROUP_PRICE,
-      paymentStatus: "PARTIALLY_PAID",
+      amountPaid: gr3NovLessons * GENERAL_GROUP_PRICE,
+      paymentStatus: "PAID",
       isPartialPeriod: false,
     },
   });
@@ -802,10 +802,10 @@ async function main() {
     data: {
       studentId: activeStudents[5].id,
       studentPaymentPeriodId: partialPeriod.id,
-      amount: Math.floor(gr3NovLessons / 2) * GENERAL_GROUP_PRICE,
+      amount: gr3NovLessons * GENERAL_GROUP_PRICE,
       paymentMethod: "click",
       recordedById: admin.id,
-      note: "First half of November payment",
+      note: "November payment",
     },
   });
 
@@ -965,6 +965,413 @@ async function main() {
     },
   });
   console.log("Created final exam for GR-3");
+
+  // ─── Phase 11: Additional seed data for merge, graduation, and refund testing ──
+
+  // --- GR-4: Small Beginner group (same level as GR-1, for merge testing) ---
+  const gr4Students = await Promise.all(
+    [
+      { crmCode: "11", firstName: "Zarina", lastName: "Ergasheva", phone: "+998901100011", dateOfBirth: new Date("2001-04-20"), level: "BEGINNER" as const, progressStage: "MID" as const, preferredLanguage: "UZBEK" as const },
+      { crmCode: "12", firstName: "Davron", lastName: "Khamidov", phone: "+998901200012", dateOfBirth: new Date("2003-10-05"), level: "BEGINNER" as const, progressStage: "MID" as const, preferredLanguage: "ANY" as const },
+    ].map((s) => prisma.student.create({ data: { ...s, status: "ACTIVE" } }))
+  );
+
+  const gr4Start = new Date("2026-01-19"); // Mon, slightly after GR-1
+  const gr4End = calculateEndDate(gr4Start); // Jan 19 → after 15th → end of May
+  const group4 = await prisma.group.create({
+    data: {
+      publicId: "GR-4",
+      type: "GROUP",
+      teacherId: teacher1.id,
+      days: [2, 4, 6], // TTS — different days from GR-1 (MWF) so no schedule conflicts on merge
+      startTime: "14:30",
+      level: "BEGINNER",
+      progressStage: "MID",
+      maxStudents: 6,
+      startDate: gr4Start,
+      endDate: gr4End,
+    },
+  });
+
+  await prisma.groupTeacherHistory.create({
+    data: { groupId: group4.id, teacherId: teacher1.id, startDate: gr4Start },
+  });
+
+  // Create lessons + slots for GR-4
+  const gr4Dates = generateLessonDates(gr4Start, gr4End, [2, 4, 6], holidaySet);
+  const gr4Lessons = await createLessonsAndSlots({
+    groupId: group4.id,
+    teacherId: teacher1.id,
+    startTime: "14:30",
+    dates: gr4Dates,
+    activeStudentCount: 2,
+  });
+  console.log(`Created ${gr4Lessons.length} lessons + slots for GR-4`);
+
+  // Memberships for GR-4
+  const gr4Memberships = [];
+  for (const student of gr4Students) {
+    const m = await prisma.groupMembership.create({
+      data: { studentId: student.id, groupId: group4.id, joinDate: gr4Start },
+    });
+    gr4Memberships.push(m);
+  }
+
+  // Payment periods for GR-4 students
+  for (let si = 0; si < 2; si++) {
+    const student = gr4Students[si];
+    const membership = gr4Memberships[si];
+
+    const months = new Map<string, number>();
+    for (const d of gr4Dates) {
+      const key = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}`;
+      months.set(key, (months.get(key) || 0) + 1);
+    }
+
+    for (const [key, count] of months) {
+      const [year, month] = key.split("-").map(Number);
+      const isFirstMonth = year === gr4Start.getUTCFullYear() && month === gr4Start.getUTCMonth() + 1;
+      const isPastMonth = new Date(Date.UTC(year, month - 1, 1)) < today;
+
+      await prisma.studentPaymentPeriod.create({
+        data: {
+          studentId: student.id,
+          groupId: group4.id,
+          groupMembershipId: membership.id,
+          periodYear: year,
+          periodMonth: month,
+          totalLessons: count,
+          pricePerLesson: GENERAL_GROUP_PRICE,
+          amountDue: count * GENERAL_GROUP_PRICE,
+          amountPaid: isPastMonth ? count * GENERAL_GROUP_PRICE : 0,
+          paymentStatus: isPastMonth ? "PAID" : "UNPAID",
+          isPartialPeriod: isFirstMonth && gr4Start.getUTCDate() > 1,
+        },
+      });
+    }
+  }
+
+  // Attendance for GR-4 completed lessons
+  const completedGr4 = gr4Lessons.filter(l => l.status === "COMPLETED");
+  for (const lesson of completedGr4) {
+    for (const student of gr4Students) {
+      await prisma.attendance.create({
+        data: {
+          lessonId: lesson.id,
+          studentId: student.id,
+          groupId: group4.id,
+          isAbsent: false,
+        },
+      });
+    }
+  }
+
+  console.log(`Created GR-4 (Beginner TTS) with ${gr4Students.length} students — merge candidate for GR-1`);
+
+  // --- GR-5: Another small Beginner group (1 student, for merge testing edge case) ---
+  const gr5Student = await prisma.student.create({
+    data: {
+      crmCode: "13",
+      firstName: "Kamola",
+      lastName: "Rakhimova",
+      phone: "+998901300013",
+      dateOfBirth: new Date("2000-07-18"),
+      level: "BEGINNER",
+      progressStage: "MID",
+      status: "ACTIVE",
+      preferredLanguage: "ANY",
+    },
+  });
+
+  const gr5Start = new Date("2026-02-02"); // Mon
+  const gr5End = calculateEndDate(gr5Start);
+  const group5 = await prisma.group.create({
+    data: {
+      publicId: "GR-5",
+      type: "GROUP",
+      teacherId: teacher1.id,
+      days: [1, 3, 5], // MWF — same days as GR-1 but different time
+      startTime: "17:30",
+      level: "BEGINNER",
+      progressStage: "BEGINNING",
+      maxStudents: 6,
+      startDate: gr5Start,
+      endDate: gr5End,
+    },
+  });
+
+  await prisma.groupTeacherHistory.create({
+    data: { groupId: group5.id, teacherId: teacher1.id, startDate: gr5Start },
+  });
+
+  const gr5Dates = generateLessonDates(gr5Start, gr5End, [1, 3, 5], holidaySet);
+  const gr5Lessons = await createLessonsAndSlots({
+    groupId: group5.id,
+    teacherId: teacher1.id,
+    startTime: "17:30",
+    dates: gr5Dates,
+    activeStudentCount: 1,
+  });
+
+  const gr5Membership = await prisma.groupMembership.create({
+    data: { studentId: gr5Student.id, groupId: group5.id, joinDate: gr5Start },
+  });
+
+  // Payment periods for GR-5
+  const gr5Months = new Map<string, number>();
+  for (const d of gr5Dates) {
+    const key = `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}`;
+    gr5Months.set(key, (gr5Months.get(key) || 0) + 1);
+  }
+  for (const [key, count] of gr5Months) {
+    const [year, month] = key.split("-").map(Number);
+    const isPastMonth = new Date(Date.UTC(year, month - 1, 1)) < today;
+    await prisma.studentPaymentPeriod.create({
+      data: {
+        studentId: gr5Student.id,
+        groupId: group5.id,
+        groupMembershipId: gr5Membership.id,
+        periodYear: year,
+        periodMonth: month,
+        totalLessons: count,
+        pricePerLesson: GENERAL_GROUP_PRICE,
+        amountDue: count * GENERAL_GROUP_PRICE,
+        amountPaid: isPastMonth ? count * GENERAL_GROUP_PRICE : 0,
+        paymentStatus: isPastMonth ? "PAID" : "UNPAID",
+        isPartialPeriod: false,
+      },
+    });
+  }
+
+  console.log(`Created GR-5 (Beginner MWF 17:30) with 1 student — another merge candidate`);
+
+  // --- Complete GR-3 billing data (for graduation testing) ---
+  // GR-3 has 3 students (Rustam, Gulnora, Otabek) from Sep-Nov 2025.
+  // Rustam already has Nov data. Add Sep+Oct for Rustam, and all months for Gulnora+Otabek.
+  for (const [year, month] of [[2025, 9], [2025, 10]] as [number, number][]) {
+    const lessonsInMonth = countLessonsInMonth(gr3Dates, year, month);
+    if (lessonsInMonth === 0) continue;
+    await prisma.studentPaymentPeriod.create({
+      data: {
+        studentId: activeStudents[5].id, // Rustam
+        groupId: group3.id,
+        groupMembershipId: gr3Memberships[0].id,
+        periodYear: year,
+        periodMonth: month,
+        totalLessons: lessonsInMonth,
+        pricePerLesson: GENERAL_GROUP_PRICE,
+        amountDue: lessonsInMonth * GENERAL_GROUP_PRICE,
+        amountPaid: lessonsInMonth * GENERAL_GROUP_PRICE,
+        paymentStatus: "PAID",
+        isPartialPeriod: false,
+      },
+    });
+  }
+
+  // Gulnora (index 6) and Otabek (index 7) — all 3 months
+  for (const si of [1, 2]) {
+    const student = activeStudents[5 + si];
+    const membership = gr3Memberships[si];
+    for (const [year, month] of [[2025, 9], [2025, 10], [2025, 11]] as [number, number][]) {
+      const lessonsInMonth = countLessonsInMonth(gr3Dates, year, month);
+      if (lessonsInMonth === 0) continue;
+      await prisma.studentPaymentPeriod.create({
+        data: {
+          studentId: student.id,
+          groupId: group3.id,
+          groupMembershipId: membership.id,
+          periodYear: year,
+          periodMonth: month,
+          totalLessons: lessonsInMonth,
+          pricePerLesson: GENERAL_GROUP_PRICE,
+          amountDue: lessonsInMonth * GENERAL_GROUP_PRICE,
+          amountPaid: lessonsInMonth * GENERAL_GROUP_PRICE,
+          paymentStatus: "PAID",
+          isPartialPeriod: false,
+        },
+      });
+    }
+  }
+
+  // GR-3 attendance (all completed lessons)
+  const completedGr3 = gr3Lessons.filter(l => l.status === "COMPLETED");
+  for (const lesson of completedGr3) {
+    for (const student of activeStudents.slice(5, 8)) {
+      await prisma.attendance.create({
+        data: {
+          lessonId: lesson.id,
+          studentId: student.id,
+          groupId: group3.id,
+          isAbsent: false,
+        },
+      });
+    }
+  }
+
+  console.log("Completed GR-3 billing and attendance data (graduation-ready)");
+
+  // --- Pending Refund (for refund management testing) ---
+  // Simulate a residual transfer credit refund for Otabek (he was previously in GR-1 before GR-3)
+  const otabekGr3Period = await prisma.studentPaymentPeriod.findFirst({
+    where: { studentId: activeStudents[7].id, groupId: group3.id },
+    orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
+  });
+
+  if (otabekGr3Period) {
+    await prisma.refund.create({
+      data: {
+        studentId: activeStudents[7].id,
+        studentPaymentPeriodId: otabekGr3Period.id,
+        amount: 75000, // 3 lessons worth of credit that couldn't be absorbed
+        status: "PENDING",
+        initiatedById: admin.id,
+        note: "Residual transfer credit from GR-1 — exceeded destination billing",
+      },
+    });
+    console.log("Created pending refund for Otabek (75,000 UZS)");
+  }
+
+  // --- Another pending refund for Zarina (GR-4) ---
+  const zarinaGr4Period = await prisma.studentPaymentPeriod.findFirst({
+    where: { studentId: gr4Students[0].id, groupId: group4.id },
+    orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
+  });
+
+  if (zarinaGr4Period) {
+    await prisma.refund.create({
+      data: {
+        studentId: gr4Students[0].id,
+        studentPaymentPeriodId: zarinaGr4Period.id,
+        amount: 50000, // 2 lessons worth
+        status: "PENDING",
+        initiatedById: admin.id,
+        note: "Overpayment from schedule change adjustment",
+      },
+    });
+    console.log("Created pending refund for Zarina (50,000 UZS)");
+  }
+
+  // --- A completed refund (for display testing) ---
+  const rustamGr3Period = await prisma.studentPaymentPeriod.findFirst({
+    where: { studentId: activeStudents[5].id, groupId: group3.id },
+    orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
+  });
+
+  if (rustamGr3Period) {
+    await prisma.refund.create({
+      data: {
+        studentId: activeStudents[5].id,
+        studentPaymentPeriodId: rustamGr3Period.id,
+        amount: 25000,
+        amountRefunded: 25000,
+        status: "COMPLETED",
+        paymentMethod: "cash",
+        initiatedById: admin.id,
+        processedById: admin2.id,
+        processedAt: new Date("2025-12-15"),
+        note: "Processed refund from earlier transfer",
+      },
+    });
+    console.log("Created completed refund for Rustam (25,000 UZS)");
+  }
+
+  console.log("\n── Phase 11 Seed Summary ──");
+  console.log("  GR-3: Graduation-ready (Intermediate → Upper-Intermediate, all lessons COMPLETED)");
+  console.log("  GR-4: Merge candidate (Beginner TTS, 2 students → can merge into GR-1 MWF)");
+  console.log("  GR-5: Merge candidate (Beginner MWF 17:30, 1 student)");
+  console.log("  Refunds: 2 PENDING + 1 COMPLETED");
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // PHASE 12: Promotions & Referrals — System Promotions
+  // ═══════════════════════════════════════════════════════════════════════════
+  console.log("\n═══ Phase 12: Seeding Promotions & Referrals ═══\n");
+
+  // System promotion: Trial first-lesson 50% discount
+  const trialPromo = await prisma.promotion.create({
+    data: {
+      name: "Trial First Lesson 50%",
+      type: "TRIAL",
+      discountType: "PERCENTAGE",
+      discountPercent: 50,
+      isRecurring: false,
+      maxUsesPerStudent: 1,
+      isActive: true,
+    },
+  });
+  console.log(`Created TRIAL promotion: ${trialPromo.name}`);
+
+  // Referral reward promotions
+  const referrerReward = await prisma.promotion.create({
+    data: {
+      name: "Referral Reward",
+      type: "LOYALTY",
+      discountType: "FIXED_AMOUNT",
+      discountAmount: 100000,
+      isRecurring: false,
+      maxUsesPerStudent: 1,
+      isActive: true,
+    },
+  });
+  console.log(`Created referral reward promotion: ${referrerReward.name} (100,000 UZS)`);
+
+  const referredReward = await prisma.promotion.create({
+    data: {
+      name: "Referral Welcome",
+      type: "LOYALTY",
+      discountType: "PERCENTAGE",
+      discountPercent: 10,
+      isRecurring: false,
+      maxUsesPerStudent: 1,
+      isActive: true,
+    },
+  });
+  console.log(`Created referred welcome promotion: ${referredReward.name} (10%)`);
+
+  // Sample seasonal promotion for testing
+  await prisma.promotion.create({
+    data: {
+      name: "Summer 2026 Campaign",
+      type: "SEASONAL",
+      discountType: "PERCENTAGE",
+      discountPercent: 15,
+      levels: ["BEGINNER", "ELEMENTARY"],
+      isRecurring: true,
+      recurringMonths: 3,
+      validFrom: new Date("2026-06-01T00:00:00Z"),
+      validTo: new Date("2026-08-31T23:59:59Z"),
+      code: "SUMMER2026",
+      isActive: true,
+    },
+  });
+  console.log("Created seasonal promotion: Summer 2026 Campaign (15%, Beg+Elem, 3 months)");
+
+  // Generate referral codes for existing students
+  for (const s of activeStudents) {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    const code = Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+    await prisma.student.update({
+      where: { id: s.id },
+      data: { referralCode: code },
+    });
+  }
+  console.log(`Generated referral codes for ${activeStudents.length} students`);
+
+  // Sample referral: Alisher referred Sardor
+  await prisma.referral.create({
+    data: {
+      referrerStudentId: activeStudents[0]!.id, // Alisher
+      referredStudentId: activeStudents[1]!.id, // Sardor
+      status: "COMPLETED",
+      completedAt: new Date("2026-02-15"),
+    },
+  });
+  console.log("Created sample referral: Alisher → Sardor (COMPLETED)");
+
+  console.log("\n── Phase 12 Seed Summary ──");
+  console.log("  System promotions: Trial 50%, Referral Reward 100k, Referral Welcome 10%");
+  console.log("  Sample promotion: Summer 2026 (15%, Beg+Elem, code SUMMER2026)");
+  console.log("  Referral codes generated for all active students");
+  console.log("  Sample referral: Alisher → Sardor (COMPLETED)");
 
   // ═══════════════════════════════════════════════════════════════════════════
   // VERIFICATION

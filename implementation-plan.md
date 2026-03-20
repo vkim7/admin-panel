@@ -249,7 +249,7 @@ This is the most complex phase — group creation triggers Lessons, TeacherSched
 - [x] **Edit group**
   - days[] immutable after creation **(C#12b)** — field disabled, tooltip explains why
   - startTime change **(C#13)**: cascade update all future SCHEDULED lessons' startTime + swap TeacherScheduleSlots — same transaction
-  - Editable: maxStudents, startTime, zoomLink (level/progressStage non-editable per TODO_CH.md; skipAutoGraduation deferred to Phase 11)
+  - Editable: maxStudents, startTime, zoomLink, skipAutoGraduation (level/progressStage non-editable per TODO_CH.md)
 - [x] **Group detail page** — header with publicId, type, level, progressStage, teacher, days, time, startDate–endDate
 
 ### Group Membership
@@ -714,17 +714,17 @@ src/app/(admin)/teachers/[id]/page.tsx                   — added payment histo
 
 ### Group Merge (C#10, C#22)
 
-- [ ] **Merge group A into group B:**
+- [x] **Merge group A into group B:**
   1. Validate: A and B are compatible (same level, B has capacity for A's students)
   2. Set A.mergedIntoGroupId = B.id, A.isActive = false
   3. Set leaveDate on all A's active memberships → triggers per-membership leave billing **(C#31)**: overpayment becomes transfer credit on B (not a refund)
   4. Create new memberships in B with previousMembershipId → triggers billing period pre-creation **(C#32)**
   5. Works for both GROUP and INDIVIDUAL types **(C#22)**
-- [ ] **Merge UI**: select surviving group, preview student movements and billing impact, confirm
+- [x] **Merge UI**: select surviving group, preview student movements and billing impact, confirm
 
 ### Group Graduation (C#23, C#24, C#33)
 
-- [ ] **Graduation workflow:**
+- [x] **Graduation workflow:**
   1. Validate: no SCHEDULED or PENDING_RESOLUTION lessons remain (all COMPLETED or CANCELLED)
   2. Skip if skipAutoGraduation = true or level = IELTS (no next level per C#24)
   3. Create new group at next level **(C#24)**: BEGINNER→ELEMENTARY→PRE_INTERMEDIATE→INTERMEDIATE→UPPER_INTERMEDIATE→IELTS
@@ -737,23 +737,60 @@ src/app/(admin)/teachers/[id]/page.tsx                   — added payment histo
   6. Create memberships with previousMembershipId → billing period pre-creation **(C#32)**
   7. Auto-update Student.level for continuing students **(C#33)**
   8. Close old group: isActive=false, graduatedIntoGroupId set, leaveDate on ALL active memberships (record-keeping only — billing periods already finalized, does NOT trigger leave billing C#31)
-- [ ] **Edge cases:**
+- [x] **Edge cases:**
   - Students who don't continue: admin must pick one of two outcomes per student (no one left in limbo):
     - **"Send to reassignment"** → status set to `AWAITING_REASSIGNMENT` → appears on Reassignment page for re-placement (Phase 15)
     - **"Deactivate"** → status set to `INACTIVE` with lostReason → appears in lost list
   - Students who fail mid or final exam: removed from group → status set to `AWAITING_REASSIGNMENT` → their level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final", student does NOT restart the level) → admin assigns to a new group at the same level+stage from Reassignment page
   - mergedIntoGroupId and graduatedIntoGroupId are mutually exclusive (Zod validation)
   - **Pending refund from prior transfer:** If a student continuing to the new group has a PENDING Refund (from a transfer where credit exceeded destination periods), the refund is NOT auto-carried forward. Admin resolves it manually via refund UI: either "Convert to credit" (cancel refund, apply as transfer credit to new group's billing) or "Process refund" (return the money).
-- [ ] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
-- [ ] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and future dropout flow.
+- [x] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
+- [x] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and future dropout flow.
+
+### Shared Helpers
+
+- [x] `src/lib/helpers/transfer-credit.ts` — extracted credit spillover logic from `transfers.ts` into reusable `applyTransferCredit()`. Used by merge and refund-conversion.
+- [x] `src/lib/helpers/level-progression.ts` — `getNextLevel()` and `canGraduate()` eligibility check.
+- [x] Refactored `src/lib/actions/transfers.ts` to use `applyTransferCredit()` helper.
+
+### Implementation Notes
+
+- **Schema migration:** added `AWAITING_REASSIGNMENT` to `StudentStatus` enum (between `AWAITING_ASSIGNMENT` and `ACTIVE`). Migration: `20260319120000_add_awaiting_reassignment_status`.
+- **Merge dialog:** modeled on transfer dialog pattern. Searchable group picker (same-level only), async billing preview per student, destructive confirmation with checkbox.
+- **Graduation dialog:** `max-w-2xl` with async preview. Sections: new group preview, student decision table (Continue/Reassign/Deactivate per student), pending refund warning, summary footer.
+- **Graduation does NOT call `performLeaveBilling`:** all lessons are already COMPLETED/CANCELLED, billing periods are finalized. `leaveDate` is set purely for record-keeping.
+- **Refund management:** standalone `/refunds` page with DataTable. Two actions per pending refund: Process (record payment) and Convert to Credit (apply to unpaid period). Sidebar badge shows pending count.
 
 ### Files
 
 ```
-src/lib/actions/group-merge.ts
-src/lib/actions/group-graduation.ts
-src/components/groups/merge-dialog.tsx
-src/components/groups/graduation-dialog.tsx
+New:
+src/lib/helpers/transfer-credit.ts          — shared credit spillover logic
+src/lib/helpers/level-progression.ts        — level ordering + graduation eligibility
+src/lib/queries/group-merge.ts              — merge groups query + billing preview
+src/lib/queries/group-graduation.ts         — graduation preview data
+src/lib/queries/refunds.ts                  — refund queries + count
+src/schemas/group-merge.ts                  — merge validation
+src/schemas/group-graduation.ts             — graduation validation with student decisions
+src/schemas/refund.ts                       — refund processing schemas
+src/lib/actions/group-merge.ts              — merge action
+src/lib/actions/group-graduation.ts         — graduation action
+src/lib/actions/refunds.ts                  — process/convert refund actions
+src/components/groups/merge-dialog.tsx       — merge dialog
+src/components/groups/graduation-dialog.tsx  — graduation dialog
+src/components/refunds/refund-table.tsx      — refund TanStack table
+src/components/refunds/process-refund-dialog.tsx  — process refund dialog
+src/components/refunds/convert-to-credit-dialog.tsx — convert to credit dialog
+src/app/(admin)/refunds/page.tsx             — refunds page
+
+Modified:
+packages/database/prisma/schema.prisma       — added AWAITING_REASSIGNMENT
+src/lib/actions/transfers.ts                 — refactored to use applyTransferCredit helper
+src/components/ui/status-badge.tsx           — added AWAITING_REASSIGNMENT + refund status maps
+src/app/(admin)/groups/[id]/page.tsx         — added Merge + Graduation dialogs + data fetching
+src/components/app-sidebar.tsx               — added Refunds nav item with badge
+src/app/(admin)/layout.tsx                   — fetch pending refund count
+src/lib/queries/students.ts                  — added LostReason type export
 ```
 
 ---
@@ -764,34 +801,58 @@ src/components/groups/graduation-dialog.tsx
 
 ### Promotions
 
-- [ ] **Promotion CRUD**
+- [x] **Promotion CRUD**
   - Fields: name, type, discountType, discountPercent or discountAmount (exactly one — Zod XOR), levels[], groupTypes[], isRecurring, recurringMonths, maxUsesPerStudent, maxUsesTotal, validityDays, validFrom/validTo, code, isActive
-- [ ] **Assign promotion to student** — create StudentPromotion, calculate expiresAt from validityDays
-- [ ] **Apply promotions during billing** (enhance Phase 3 billing helper):
+- [x] **Assign promotion to student** — create StudentPromotion, calculate expiresAt from validityDays
+- [x] **Apply promotions during billing** (new `applyPromotionsToPeriods` helper):
   - Query active StudentPromotions
   - Calculate discount per period, create AppliedPromotion records
   - Clamp total discountAmount to amountDue **(C#36)** — a student never pays less than zero
   - For recurring: increment monthsUsed, check recurringMonths / expiresAt
-- [ ] **First-lesson discount for trial commits** — when a trial student commits, apply a 50% discount on the first lesson's billing. Wire into `buildPaymentPeriods` or apply as a promotion at commit time.
-- [ ] **Promotion list** — usage count, active/inactive toggle
+- [x] **First-lesson discount for trial commits** — when a trial student commits, auto-create a TRIAL StudentPromotion, then `applyPromotionsToPeriods()` applies 50% to first billing period.
+- [x] **Promotion list** — usage count, active/inactive toggle
 
 ### Referrals
 
-- [ ] **Record referral**: referrer → referred student, using referralCode
+- [x] **Record referral**: referrer → referred student, using referralCode
   - Validate: no self-referral (Zod), each student can only be referred once (referredStudentId @unique)
-- [ ] **Referral completion**: when referred student makes first payment → status=COMPLETED, completedAt
+- [x] **Referral completion**: when referred student makes first payment → status=COMPLETED, completedAt
   - Create StudentPromotions for both referrer (billing credit) and referred (first-month discount)
+
+### Implementation Notes
+
+- **Billing integration pattern**: `buildPaymentPeriods()` unchanged (still sets `discountAmount: 0`). New `applyPromotionsToPeriods()` helper runs after `createMany` within the same transaction — queries eligible StudentPromotions, calculates discounts, creates `AppliedPromotion` records, updates `discountAmount` + `paymentStatus` on each period.
+- **Wired into all period-creation flows**: `addStudentsToGroup`, `resolveTrialMembership` (trial commit), `transferStudent`, `mergeGroup`, `graduateGroup`.
+- **Referral completion**: `recordPayment` converted from batched to interactive transaction. After recording payment, checks if student has a PENDING referral and this is their first real (non-transfer-credit) payment.
+- **Referral codes**: Auto-generated (8 char alphanumeric) on student creation.
+- **Form schema pattern**: `promotionBaseSchema` (no refine/preprocess) for react-hook-form, `promotionSchema` (with XOR refine) for server actions — avoids zodResolver type issues with `z.preprocess`.
 
 ### Files
 
 ```
-src/schemas/promotion.ts
-src/lib/queries/promotions.ts
-src/lib/actions/promotions.ts
-src/lib/actions/referrals.ts
-src/components/promotions/promotion-table.tsx
-src/components/promotions/promotion-form.tsx
-src/components/promotions/assign-dialog.tsx
+New:
+src/schemas/promotion.ts                          — promotion + assign + referral schemas
+src/lib/helpers/promotions.ts                     — applyPromotionsToPeriods() core discount logic
+src/lib/queries/promotions.ts                     — promotion + student promotion queries
+src/lib/queries/referrals.ts                      — student referral queries
+src/lib/actions/promotions.ts                     — promotion CRUD + assign actions
+src/lib/actions/referrals.ts                      — record referral action
+src/app/(admin)/promotions/page.tsx               — promotions list page
+src/app/(admin)/promotions/new/page.tsx           — create promotion page
+src/app/(admin)/promotions/[id]/edit/page.tsx     — edit promotion page
+src/components/promotions/promotion-table.tsx      — TanStack DataTable for promotions
+src/components/promotions/promotion-form.tsx       — promotion create/edit form
+src/components/promotions/assign-dialog.tsx        — assign promotion to student dialog
+
+Modified:
+src/components/app-sidebar.tsx                     — added Promotions nav item (Tag icon)
+src/lib/actions/group-memberships.ts              — wired applyPromotionsToPeriods + trial discount
+src/lib/actions/transfers.ts                       — wired applyPromotionsToPeriods
+src/lib/actions/group-merge.ts                    — wired applyPromotionsToPeriods
+src/lib/actions/group-graduation.ts               — wired applyPromotionsToPeriods
+src/lib/actions/payments.ts                       — referral completion in recordPayment
+src/lib/actions/students.ts                       — auto-generate referralCode on create
+src/app/(admin)/students/[id]/page.tsx            — added promotions + referrals sections
 ```
 
 ---
@@ -1022,6 +1083,28 @@ Claude generates real-life scenarios based on the business rules, constraints, a
 
 ---
 
+## Phase 18: Promotion Auto-Detection & Application Rules
+
+**Goal:** Define and implement auto-detection logic for each promotion type, specifying when promotions are automatically assigned to students and which payment periods they apply to. Currently all promotions except TRIAL are manually assigned.
+
+### Scope
+
+- [ ] **FAMILY** — auto-detect when 2+ students share a `Family`, auto-assign to all family members
+- [ ] **LOYALTY** — define criteria (e.g., N consecutive months paid on time), auto-assign
+- [ ] **WIN_BACK** — auto-assign when a previously inactive student is reactivated
+- [ ] **EARLY_PAYMENT** — auto-detect when payment is recorded before period start date
+- [ ] **SEASONAL / PARTNER / OTHER** — remain manual (admin-assigned campaigns)
+- [ ] **Application timing** — define exactly which payment periods each promotion type targets (current period only, next period, all future periods, etc.)
+- [ ] **Stacking rules** — clarify how multiple auto-detected promotions interact (additive vs best-one-wins)
+
+### Notes
+
+- Phase 12 built the promotion infrastructure (CRUD, `applyPromotionsToPeriods()`, `StudentPromotion`, `AppliedPromotion`). This phase adds the trigger logic.
+- TRIAL auto-detection already works (created on trial commit in `resolveTrialMembership`).
+- Referral reward auto-detection already works (created on first payment in `recordPayment`).
+
+---
+
 ## Pre-Launch Cleanup
 
 Tasks to complete before deploying to production.
@@ -1101,7 +1184,7 @@ Every one of DATA_MODEL.md's 40 application-level constraints, mapped to a phase
 | 33 | Student.level auto-update on graduation | 11 | [ ] |
 | 34 | Time format HH:mm validation | 1, 2, 3 | [ ] |
 | 35 | Family.parentPhone dedup warning | 2 | [ ] |
-| 36 | Discount cap (discountAmount ≤ amountDue) | 3, 12 | [ ] |
+| 36 | Discount cap (discountAmount ≤ amountDue) | 3, 12 | [x] |
 | 37 | activeStudentCount snapshot timing | 7 | [ ] |
 | 38 | One trial per student (attended trial, not just membership) | 14 | [ ] |
 | 39 | No student left in limbo (graduation forces decision for every non-continuing student) | 15 | [ ] |

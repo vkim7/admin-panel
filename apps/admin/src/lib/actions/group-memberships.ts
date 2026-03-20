@@ -7,6 +7,7 @@ import { addStudentsSchema, trialResolutionSchema } from "@/schemas/group-member
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
+import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
 
 export async function addStudentsToGroup(groupId: string, data: unknown) {
   const admin = await requireAdmin();
@@ -137,6 +138,15 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
 
         if (periods.length > 0) {
           await tx.studentPaymentPeriod.createMany({ data: periods });
+
+          // Apply any active promotions to the newly created billing periods
+          await applyPromotionsToPeriods({
+            studentId,
+            membershipId: membership.id,
+            groupLevel: group.level,
+            groupType: group.type,
+            tx,
+          });
         }
       }
 
@@ -229,6 +239,35 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
 
       if (periods.length > 0) {
         await tx.studentPaymentPeriod.createMany({ data: periods });
+
+        // Auto-assign trial first-lesson discount if a TRIAL promotion exists
+        const trialPromo = await tx.promotion.findFirst({
+          where: { type: "TRIAL", isActive: true },
+          select: { id: true, validityDays: true },
+        });
+
+        if (trialPromo) {
+          const expiresAt = trialPromo.validityDays
+            ? new Date(Date.now() + trialPromo.validityDays * 24 * 60 * 60 * 1000)
+            : null;
+
+          await tx.studentPromotion.create({
+            data: {
+              studentId: membership.studentId,
+              promotionId: trialPromo.id,
+              expiresAt,
+            },
+          });
+        }
+
+        // Apply promotions (including the trial discount) to billing periods
+        await applyPromotionsToPeriods({
+          studentId: membership.studentId,
+          membershipId,
+          groupLevel: membership.group.level,
+          groupType: membership.group.type,
+          tx,
+        });
       }
 
       // Activate student if awaiting assignment

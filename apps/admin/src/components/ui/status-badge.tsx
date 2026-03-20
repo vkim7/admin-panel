@@ -11,6 +11,10 @@ const studentStatusMap: Record<string, StatusConfig> = {
     label: "Awaiting",
     className: "bg-amber-100 text-amber-800 border-amber-200",
   },
+  AWAITING_REASSIGNMENT: {
+    label: "Reassignment",
+    className: "bg-amber-100 text-amber-800 border-amber-200",
+  },
   ACTIVE: {
     label: "Active",
     className: "bg-green-100 text-green-800 border-green-200",
@@ -89,12 +93,24 @@ const teacherPayStatusMap: Record<string, StatusConfig> = {
   },
 };
 
+const refundStatusMap: Record<string, StatusConfig> = {
+  PENDING: {
+    label: "Pending",
+    className: "bg-amber-100 text-amber-800 border-amber-200",
+  },
+  COMPLETED: {
+    label: "Completed",
+    className: "bg-green-100 text-green-800 border-green-200",
+  },
+};
+
 const statusMaps = {
   student: studentStatusMap,
   payment: paymentStatusMap,
   lesson: lessonStatusMap,
   group: groupStatusMap,
   teacherPay: teacherPayStatusMap,
+  refund: refundStatusMap,
 } as const;
 
 interface StatusBadgeProps {

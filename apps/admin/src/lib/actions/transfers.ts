@@ -8,7 +8,8 @@ import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-ge
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
-import { calculatePaymentStatus } from "@/lib/helpers/payment-status";
+import { applyTransferCredit } from "@/lib/helpers/transfer-credit";
+import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
 import { previewTransferBilling } from "@/lib/queries/transfers";
 
 /**
@@ -202,103 +203,47 @@ export async function transferStudent(data: unknown) {
 
     if (periods.length > 0) {
       await tx.studentPaymentPeriod.createMany({ data: periods });
+
+      // Apply promotions to newly created billing periods
+      await applyPromotionsToPeriods({
+        studentId: membership.studentId,
+        membershipId: newMembership.id,
+        groupLevel: destGroup.level,
+        groupType: destGroup.type,
+        tx,
+      });
     }
 
     // (e) Transfer credit: spill over across destination periods, refund any remainder
     let transferCredit = 0;
-    let remainingCredit = leaveBilling.overpayment;
 
-    if (remainingCredit > 0 && periods.length > 0) {
-      transferCredit = remainingCredit;
-
-      // Fetch all destination periods in chronological order
-      const destPeriods = await tx.studentPaymentPeriod.findMany({
-        where: { groupMembershipId: newMembership.id },
-        orderBy: [{ periodYear: "asc" }, { periodMonth: "asc" }],
-      });
-
-      for (const period of destPeriods) {
-        if (remainingCredit <= 0) break;
-
-        const effectiveDue = period.amountDue - period.discountAmount;
-        const canAbsorb = Math.max(0, effectiveDue - period.amountPaid);
-        const creditToApply = Math.min(remainingCredit, canAbsorb);
-
-        if (creditToApply <= 0) continue;
-
-        await tx.payment.create({
-          data: {
-            studentId: membership.studentId,
-            studentPaymentPeriodId: period.id,
-            amount: creditToApply,
-            isTransferCredit: true,
-            note: `Transfer credit from group ${membership.group.id}`,
-            recordedById: admin.id,
-          },
-        });
-
-        const newAmountPaid = period.amountPaid + creditToApply;
-        const newStatus = calculatePaymentStatus(
-          period.amountDue,
-          period.discountAmount,
-          newAmountPaid,
-        );
-
-        await tx.studentPaymentPeriod.update({
-          where: { id: period.id },
-          data: {
-            amountPaid: newAmountPaid,
-            paymentStatus: newStatus,
-          },
-        });
-
-        remainingCredit -= creditToApply;
-      }
-
-      // Residual credit exceeds all destination periods — create pending refund
-      if (remainingCredit > 0) {
-        // Attach refund to the last destination period for traceability
-        const lastPeriod = destPeriods[destPeriods.length - 1]!;
-
-        await tx.refund.create({
-          data: {
-            studentId: membership.studentId,
-            studentPaymentPeriodId: lastPeriod.id,
-            amount: remainingCredit,
-            status: "PENDING",
-            initiatedById: admin.id,
-            note: `Residual transfer credit from group ${membership.group.id} — exceeded destination billing`,
-          },
-        });
-      }
-    }
-
-    // Also handle case where there are no destination periods at all but there's an overpayment
-    if (leaveBilling.overpayment > 0 && periods.length === 0) {
+    if (leaveBilling.overpayment > 0) {
       transferCredit = leaveBilling.overpayment;
 
-      // No destination periods to absorb credit — full refund
-      // Use the last source period for traceability
-      const sourcePeriod = await tx.studentPaymentPeriod.findFirst({
-        where: { groupMembershipId: membershipId },
-        orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
+      // Find fallback period for refund if no destination periods
+      let fallbackPeriodId: string | null = null;
+      if (periods.length === 0) {
+        const sourcePeriod = await tx.studentPaymentPeriod.findFirst({
+          where: { groupMembershipId: membershipId },
+          orderBy: [{ periodYear: "desc" }, { periodMonth: "desc" }],
+        });
+        fallbackPeriodId = sourcePeriod?.id ?? null;
+      }
+
+      const creditResult = await applyTransferCredit({
+        studentId: membership.studentId,
+        membershipId: periods.length > 0 ? newMembership.id : null,
+        credit: leaveBilling.overpayment,
+        sourceGroupId: membership.group.id,
+        adminId: admin.id,
+        tx,
+        fallbackPeriodId,
       });
 
-      if (sourcePeriod) {
-        await tx.refund.create({
-          data: {
-            studentId: membership.studentId,
-            studentPaymentPeriodId: sourcePeriod.id,
-            amount: leaveBilling.overpayment,
-            status: "PENDING",
-            initiatedById: admin.id,
-            note: `Transfer credit from group ${membership.group.id} — no destination billing periods`,
-          },
-        });
-      }
+      return { transferCredit, refundAmount: creditResult.remainingCredit };
     }
 
-    return { transferCredit, refundAmount: remainingCredit > 0 ? remainingCredit : 0 };
+    return { transferCredit: 0, refundAmount: 0 };
   });
 
   // Revalidate affected pages

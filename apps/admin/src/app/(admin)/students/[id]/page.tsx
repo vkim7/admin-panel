@@ -2,8 +2,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getStudentById, getLostReasons } from "@/lib/queries/students";
 import { getStudentPaymentPeriods } from "@/lib/queries/payments";
+import { getStudentPromotions, getActivePromotions } from "@/lib/queries/promotions";
+import { getStudentReferrals } from "@/lib/queries/referrals";
 import { StudentActions } from "@/components/students/student-actions";
 import { PaymentHistory } from "@/components/payments/payment-history";
+import { AssignPromotionDialog } from "@/components/promotions/assign-dialog";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
@@ -48,10 +51,13 @@ export default async function StudentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [student, lostReasons, paymentPeriods] = await Promise.all([
+  const [student, lostReasons, paymentPeriods, studentPromotions, activePromotions, referrals] = await Promise.all([
     getStudentById(id),
     getLostReasons(),
     getStudentPaymentPeriods(id),
+    getStudentPromotions(id),
+    getActivePromotions(),
+    getStudentReferrals(id),
   ]);
 
   if (!student) notFound();
@@ -316,6 +322,127 @@ export default async function StudentDetailPage({
           </div>
         </>
       )}
+
+      {/* Promotions */}
+      <Separator />
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium">Promotions</h3>
+          <AssignPromotionDialog studentId={id} promotions={activePromotions} />
+        </div>
+        {studentPromotions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No promotions assigned.</p>
+        ) : (
+          <div className="rounded-md border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-3 py-2 text-left font-medium">Promotion</th>
+                  <th className="px-3 py-2 text-left font-medium">Type</th>
+                  <th className="px-3 py-2 text-left font-medium">Discount</th>
+                  <th className="px-3 py-2 text-left font-medium">Applied</th>
+                  <th className="px-3 py-2 text-left font-medium">Expires</th>
+                  <th className="px-3 py-2 text-left font-medium">Used</th>
+                </tr>
+              </thead>
+              <tbody>
+                {studentPromotions.map((sp) => (
+                  <tr key={sp.id} className="border-t">
+                    <td className="px-3 py-2 font-medium">{sp.promotion.name}</td>
+                    <td className="px-3 py-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {sp.promotion.type}
+                      </Badge>
+                    </td>
+                    <td className="px-3 py-2">
+                      {sp.promotion.discountType === "PERCENTAGE"
+                        ? `${sp.promotion.discountPercent}%`
+                        : `${(sp.promotion.discountAmount ?? 0).toLocaleString()} UZS`}
+                    </td>
+                    <td className="px-3 py-2">
+                      {new Date(sp.appliedAt).toLocaleDateString("en-GB")}
+                    </td>
+                    <td className="px-3 py-2 text-muted-foreground">
+                      {sp.expiresAt
+                        ? new Date(sp.expiresAt).toLocaleDateString("en-GB")
+                        : "Never"}
+                    </td>
+                    <td className="px-3 py-2">
+                      {sp._count.appliedPromotions} period{sp._count.appliedPromotions !== 1 ? "s" : ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Referrals */}
+      <Separator />
+      <div className="space-y-3">
+        <h3 className="text-lg font-medium">Referrals</h3>
+        {student.referralCode && (
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground">Referral Code:</span>
+            <code className="rounded bg-muted px-2 py-0.5 font-mono text-xs">
+              {student.referralCode}
+            </code>
+          </div>
+        )}
+        {referrals.referralReceived && (
+          <div className="text-sm">
+            <span className="text-muted-foreground">Referred by: </span>
+            <Link
+              href={`/students/${referrals.referralReceived.referrer.id}`}
+              className="text-primary hover:underline"
+            >
+              {referrals.referralReceived.referrer.firstName}{" "}
+              {referrals.referralReceived.referrer.lastName}
+            </Link>
+            <span className="ml-2">
+              <StatusBadge type="refund" value={referrals.referralReceived.status} />
+            </span>
+          </div>
+        )}
+        {referrals.referralsMade.length > 0 ? (
+          <div className="rounded-md border">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b bg-muted/50">
+                  <th className="px-3 py-2 text-left font-medium">Referred Student</th>
+                  <th className="px-3 py-2 text-left font-medium">Status</th>
+                  <th className="px-3 py-2 text-left font-medium">Completed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {referrals.referralsMade.map((r) => (
+                  <tr key={r.id} className="border-t">
+                    <td className="px-3 py-2">
+                      <Link
+                        href={`/students/${r.referred.id}`}
+                        className="text-primary hover:underline"
+                      >
+                        {r.referred.firstName} {r.referred.lastName}
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2">
+                      <StatusBadge type="refund" value={r.status} />
+                    </td>
+                    <td className="px-3 py-2 text-muted-foreground">
+                      {r.completedAt
+                        ? new Date(r.completedAt).toLocaleDateString("en-GB")
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">No referrals made.</p>
+        )}
+      </div>
 
       {/* Lifecycle info */}
       {student.activatedAt && (

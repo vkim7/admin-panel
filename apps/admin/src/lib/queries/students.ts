@@ -51,6 +51,8 @@ export async function getLostReasons() {
   });
 }
 
+export type LostReason = Awaited<ReturnType<typeof getLostReasons>>[number];
+
 export async function getUncertainStudents() {
   return prisma.student.findMany({
     where: {

@@ -36,8 +36,8 @@ export async function recordPayment(periodId: string, data: unknown) {
     newAmountPaid,
   );
 
-  await prisma.$transaction([
-    prisma.payment.create({
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.create({
       data: {
         studentId: period.studentId,
         studentPaymentPeriodId: periodId,
@@ -46,15 +46,78 @@ export async function recordPayment(periodId: string, data: unknown) {
         note: parsed.data.note,
         recordedById: admin.id,
       },
-    }),
-    prisma.studentPaymentPeriod.update({
+    });
+
+    await tx.studentPaymentPeriod.update({
       where: { id: periodId },
       data: {
         amountPaid: newAmountPaid,
         paymentStatus: newStatus,
       },
-    }),
-  ]);
+    });
+
+    // Referral completion: when a referred student makes their first real payment
+    const pendingReferral = await tx.referral.findUnique({
+      where: { referredStudentId: period.studentId },
+    });
+
+    if (pendingReferral && pendingReferral.status === "PENDING") {
+      // Check this is the student's first real (non-transfer-credit) payment
+      const realPaymentCount = await tx.payment.count({
+        where: {
+          studentId: period.studentId,
+          isTransferCredit: false,
+        },
+      });
+
+      // realPaymentCount includes the one we just created above
+      if (realPaymentCount === 1) {
+        // Complete the referral
+        await tx.referral.update({
+          where: { id: pendingReferral.id },
+          data: { status: "COMPLETED", completedAt: new Date() },
+        });
+
+        // Find referral reward promotions and create StudentPromotions
+        const [referrerReward, referredReward] = await Promise.all([
+          tx.promotion.findFirst({
+            where: { type: "LOYALTY", isActive: true, name: { contains: "Referral Reward" } },
+            select: { id: true, validityDays: true },
+          }),
+          tx.promotion.findFirst({
+            where: { type: "LOYALTY", isActive: true, name: { contains: "Referral Welcome" } },
+            select: { id: true, validityDays: true },
+          }),
+        ]);
+
+        if (referrerReward) {
+          const expiresAt = referrerReward.validityDays
+            ? new Date(Date.now() + referrerReward.validityDays * 24 * 60 * 60 * 1000)
+            : null;
+          await tx.studentPromotion.create({
+            data: {
+              studentId: pendingReferral.referrerStudentId,
+              promotionId: referrerReward.id,
+              expiresAt,
+            },
+          });
+        }
+
+        if (referredReward) {
+          const expiresAt = referredReward.validityDays
+            ? new Date(Date.now() + referredReward.validityDays * 24 * 60 * 60 * 1000)
+            : null;
+          await tx.studentPromotion.create({
+            data: {
+              studentId: pendingReferral.referredStudentId,
+              promotionId: referredReward.id,
+              expiresAt,
+            },
+          });
+        }
+      }
+    }
+  });
 
   revalidatePath("/payments");
   revalidatePath(`/students/${period.studentId}`);

@@ -15,6 +15,8 @@ import {
   AlertTriangle,
   AlertCircle,
   Banknote,
+  ReceiptText,
+  Tag,
 } from "lucide-react";
 
 const navItems = [
@@ -27,6 +29,8 @@ const navItems = [
   { label: "Groups", href: "/groups", icon: Layers },
   { label: "Teachers", href: "/teachers", icon: Users },
   { label: "Teacher Pay", href: "/teacher-payments", icon: Banknote },
+  { label: "Refunds", href: "/refunds", icon: ReceiptText },
+  { label: "Promotions", href: "/promotions", icon: Tag },
 ];
 
 interface AppSidebarProps {
@@ -34,9 +38,10 @@ interface AppSidebarProps {
   receptionCount?: number;
   uncertainCount?: number;
   pendingResolutionCount?: number;
+  pendingRefundCount?: number;
 }
 
-export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingResolutionCount }: AppSidebarProps) {
+export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingResolutionCount, pendingRefundCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
@@ -79,6 +84,11 @@ export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingR
               {item.href === "/pending-lessons" && pendingResolutionCount ? (
                 <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
                   {pendingResolutionCount}
+                </span>
+              ) : null}
+              {item.href === "/refunds" && pendingRefundCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {pendingRefundCount}
                 </span>
               ) : null}
             </Link>

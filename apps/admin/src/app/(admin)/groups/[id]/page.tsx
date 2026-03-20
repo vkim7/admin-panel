@@ -16,9 +16,14 @@ import {
   getTransferReasons,
   getGroupsForTransfer,
 } from "@/lib/queries/transfers";
+import { getGroupsForMerge } from "@/lib/queries/group-merge";
+import { getLostReasons } from "@/lib/queries/students";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
+import { canGraduate } from "@/lib/helpers/level-progression";
 import { StudentList } from "@/components/groups/student-list";
 import { AddStudentDialog } from "@/components/groups/add-student-dialog";
+import { MergeDialog } from "@/components/groups/merge-dialog";
+import { GraduationDialog } from "@/components/groups/graduation-dialog";
 import { LessonGrid } from "@/components/lessons/lesson-grid";
 import { TeacherChangeDialog } from "@/components/lessons/teacher-change-dialog";
 import { PageHeader } from "@/components/ui/page-header";
@@ -38,7 +43,7 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
@@ -46,6 +51,8 @@ export default async function GroupDetailPage({
     getLessonAttendanceStatus(id),
     getTransferReasons(),
     getGroupsForTransfer(id),
+    getGroupsForMerge(id),
+    getLostReasons(),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -73,6 +80,14 @@ export default async function GroupDetailPage({
   // Students available for assignment
   const availableStudents = await getStudentsForGroupAssignment(id);
 
+  // Check graduation eligibility
+  const graduationEligibility = canGraduate({
+    level: group.level,
+    isActive: group.isActive,
+    skipAutoGraduation: group.skipAutoGraduation,
+    lessons: group.lessons,
+  });
+
   // Active members for the lesson grid
   const activeMembers = activeMemberships.map((m) => ({
     id: m.student.id,
@@ -97,6 +112,21 @@ export default async function GroupDetailPage({
             )}
             {group.isActive && (
               <TeacherChangeDialog groupId={id} teachers={reassignmentTeachers} />
+            )}
+            {group.isActive && activeMemberships.length > 0 && (
+              <MergeDialog
+                sourceGroupId={id}
+                sourceGroupPublicId={group.publicId}
+                activeStudentCount={activeMemberships.length}
+                availableGroups={mergeGroups}
+              />
+            )}
+            {graduationEligibility.eligible && (
+              <GraduationDialog
+                groupId={id}
+                groupPublicId={group.publicId}
+                lostReasons={lostReasons}
+              />
             )}
             <Button variant="outline" size="sm" asChild>
               <Link href={`/groups/${id}/edit`}>
