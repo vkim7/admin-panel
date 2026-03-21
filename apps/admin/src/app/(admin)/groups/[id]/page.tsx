@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getGroupById } from "@/lib/queries/groups";
-import { getStudentsForGroupAssignment, getTrialAttemptsForStudents, getTrialMembershipAttendance } from "@/lib/queries/students";
+import { getStudentsForGroupAssignment, getTrialMembershipAttendance } from "@/lib/queries/students";
 import {
   getLessonsForGroup,
   getCancellationReasons,
@@ -77,11 +77,8 @@ export default async function GroupDetailPage({
   // Compute progress stage dynamically
   const progressStage = getProgressStage(group.startDate, group.endDate);
 
-  // Students available for assignment + trial attempts
+  // Students available for assignment
   const availableStudents = await getStudentsForGroupAssignment(id);
-  const trialAttempts = await getTrialAttemptsForStudents(
-    availableStudents.map((s) => s.id),
-  );
 
   // Derive trial attendance scoped to each membership's date window
   const trialMemberships = group.memberships
@@ -132,7 +129,7 @@ export default async function GroupDetailPage({
         actions={
           <div className="flex gap-2">
             {group.isActive && hasCapacity && (
-              <AddStudentDialog groupId={id} groupType={group.type} students={availableStudents} trialAttempts={trialAttempts} />
+              <AddStudentDialog groupId={id} students={availableStudents} />
             )}
             {group.isActive && (
               <TeacherChangeDialog groupId={id} teachers={reassignmentTeachers} />

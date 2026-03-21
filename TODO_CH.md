@@ -34,3 +34,24 @@ commits or not the student should be charged for the first lesson
 important: even if students lost their free trials they can still be schedule but without the free trial promotion
 
 important: each student has a right to 2 free trials in group lessons and 1 free trial in the individual lessons
+
+
+////
+Triggers (how students enter reassignment)
+
+i thought the only reason for "Graduation without continuation" would be failing the final exam, are they any other reasons you foresee?
+
+"Send to reassignment" action — on ACTIVE student would be required to handle the mid/final exam failures? or any other cases?
+
+i thought the returning students would fall into a Lost list? or would they go to the lost list first and then moved to reassignment?
+
+Orphaned students - who are orphaned students? how could we end up with orphaned students? where would they come from what scenarios would create them
+
+
+
+TODO
+let's make sure all students independent of which list they're assigned to a group from - get their free trial lesson if they haven't yet unless they've maxed out their free trial attempts
+
+
+<!-- TODO CH -->
+Phase 15 implemented - check / commit

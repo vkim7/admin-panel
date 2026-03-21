@@ -196,7 +196,6 @@ export function AssignDialog({
       const result = await addStudentsToGroup(values.groupId, {
         studentIds: [student.id],
         joinDate: values.joinDate,
-        isTrial: true,
         comment: null,
       });
       if ("error" in result) {

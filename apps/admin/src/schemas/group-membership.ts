@@ -4,7 +4,6 @@ import { requiredString, requiredIsoDate, nullableString } from "./helpers";
 export const addStudentsSchema = z.object({
   studentIds: z.array(z.string().min(1)).min(1, "Select at least one student"),
   joinDate: requiredIsoDate("Join date is required"),
-  isTrial: z.boolean().default(true),
   comment: nullableString(500),
 });
 
@@ -14,7 +13,6 @@ export type AddStudentsValues = z.infer<typeof addStudentsSchema>;
 export const addStudentsBaseSchema = z.object({
   studentIds: z.array(z.string().min(1)).min(1, "Select at least one student"),
   joinDate: z.string().min(1, "Join date is required"),
-  isTrial: z.boolean(),
   comment: z.string().nullable(),
 });
 

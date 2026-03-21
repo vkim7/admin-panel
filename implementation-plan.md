@@ -1005,38 +1005,38 @@ apps/admin/src/app/(admin)/groups/[id]/page.tsx                 — pass trial a
 
 ### Key Decisions
 
-- **Reception = new students only.** Every student assigned from Reception is taking a trial lesson (implicit, no checkbox). They've never been in a group before.
-- **Reassignment = returning students only.** Students who were previously in a group and need a new one. No trial option — they've already had one (or had the chance).
-- **Two separate lists, same assign dialog.** Both pages reuse the assign dialog for group assignment, but Reception auto-sets `isTrial=true` and Reassignment does not.
+- **Reception = new students only.** Students fresh from amoCRM who've never been in a group.
+- **Reassignment = returning students only.** Students who were previously in a group and need a new one.
+- **Two separate lists, same assign dialog.** Both pages reuse the same assign dialog. Trial status is auto-determined on the server for all assignment paths — if the student has remaining free trial attempts for the group type, it's a trial; otherwise they're billed immediately. No UI toggle anywhere. Edge cases handled via promotions.
 
 ### Schema Change
 
-- [ ] **Add `AWAITING_REASSIGNMENT` to `StudentStatus` enum**
+- [x] **Add `AWAITING_REASSIGNMENT` to `StudentStatus` enum**
   - New lifecycle: `ACTIVE` → `AWAITING_REASSIGNMENT` → `ACTIVE` (re-assigned to new group)
   - Also: `INACTIVE` → `AWAITING_REASSIGNMENT` (returning students)
   - Student's level+stage is preserved — admin knows exactly where to place them
 
 ### Triggers (how students enter reassignment)
 
-- [ ] **Exam failure** — student fails mid or final exam → removed from group → status set to `AWAITING_REASSIGNMENT`. Level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final" — student does NOT restart the level).
-- [ ] **Graduation without continuation** — during Phase 11 graduation workflow, admin picks "Send to reassignment" for non-continuing students → `AWAITING_REASSIGNMENT`.
-- [ ] **"Send to reassignment" action** — available on any ACTIVE or INACTIVE student detail page. Sets status to `AWAITING_REASSIGNMENT`. Covers:
-  - Returning students (INACTIVE → AWAITING_REASSIGNMENT)
+- [x] **Exam failure** — student fails mid or final exam → removed from group → status set to `AWAITING_REASSIGNMENT`. Level+stage stays as-is (e.g. "Beginner Final" stays "Beginner Final" — student does NOT restart the level).
+- [x] **Graduation without continuation** — during Phase 11 graduation workflow, admin picks "Send to reassignment" for non-continuing students → `AWAITING_REASSIGNMENT`.
+- [x] **"Send to reassignment" action** — available on ACTIVE student detail page. Sets status to `AWAITING_REASSIGNMENT`. Covers:
   - Orphaned students (ACTIVE with no active membership → AWAITING_REASSIGNMENT)
   - Manual removals from groups
+  - Note: INACTIVE → AWAITING_REASSIGNMENT deferred to Phase 16 (Lost List "Send to reassignment" action)
 
 ### Orphan Detection (safety net)
 
-- [ ] **Detect ACTIVE students with zero active memberships** (leaveDate IS NULL on all memberships, or no memberships at all). These are students who slipped through — removed manually, edge cases, etc.
+- [x] **Detect ACTIVE students with zero active memberships** (leaveDate IS NULL on all memberships, or no memberships at all). These are students who slipped through — removed manually, edge cases, etc.
   - Show as a warning section at the top of the Reassignment page (or as a sidebar badge)
   - Admin can review and either send to reassignment or deactivate
 
 ### Reassignment Page (`/reassignment`)
 
-- [ ] **Sidebar nav item** — between Reception and Uncertain, with count badge
-- [ ] **Table columns:** CRM, name, phone, level+stage, previous group (last active membership's group), reason (exam failure / graduation / returning / manual), date entered reassignment
-- [ ] **Assign action** — reuses the same assign dialog as Reception, but without trial option
-- [ ] **Deactivate action** — if student is no longer interested, deactivate with lostReason → student moves to **Lost List** (Phase 16) for win-back follow-up
+- [x] **Sidebar nav item** — between Reception and Uncertain, with count badge
+- [x] **Table columns:** CRM, name, phone, level+stage, previous group (last active membership's group), reason (exam failure / graduation / returning / manual), date entered reassignment
+- [x] **Assign action** — reuses the same assign dialog as Reception (trial auto-determined by server)
+- [x] **Deactivate action** — if student is no longer interested, deactivate with lostReason → student moves to **Lost List** (Phase 16) for win-back follow-up
 
 ### Cross-references with Lost List (Phase 16)
 
@@ -1045,16 +1045,37 @@ apps/admin/src/app/(admin)/groups/[id]/page.tsx                 — pass trial a
 - **Graduation → Lost List:** "Deactivate" option during graduation (Phase 11) sends student directly to Lost List.
 - Students can move between Lost List and Reassignment multiple times (e.g., won back from Lost List → reassigned → leaves again → Lost List).
 
+### Implementation Notes
+
+- **Query file:** `src/lib/queries/reassignment.ts` with three functions: `getReassignmentStudents` (AWAITING_REASSIGNMENT students with last group info), `getReassignmentCount` (for sidebar badge), `getOrphanedStudents` (ACTIVE students with zero active memberships).
+- **Send to reassignment action:** `sendToReassignment` added to `src/lib/actions/students.ts`. Available for ACTIVE students (including orphans). Student actions restructured: ACTIVE gets "Send to Reassignment" + "Deactivate"; AWAITING_ASSIGNMENT/AWAITING_REASSIGNMENT gets "Deactivate" only.
+- **Reassignment → ACTIVE flow:** Updated `addStudentsToGroup` and `resolveTrialMembership` in `src/lib/actions/group-memberships.ts` to handle AWAITING_REASSIGNMENT → ACTIVE transitions.
+- **Auto-determined trial status:** Removed `isTrial` from schema, UI, and all assignment paths. `addStudentsToGroup` now auto-determines per student by checking `wasTrialOriginally` count against the limit (2 for GROUP, 1 for INDIVIDUAL). Also removed the trial toggle checkbox from the group detail "Add Student" dialog and the `trialAttempts` computation. Edge cases handled via promotions.
+- **AssignDialog reuse:** Both Reception and Reassignment use the same dialog with no trial prop — server decides.
+- **Reassignment page:** `src/app/(admin)/reassignment/page.tsx` server component. Table at `src/components/reassignment/reassignment-table.tsx` with assign and deactivate actions.
+- **Orphan warning:** `src/components/reassignment/orphan-warning.tsx` shown at top of Reassignment page. Displays ACTIVE students with no active group membership, with send-to-reassignment and deactivate actions.
+- **Sidebar:** Added Reassignment nav item with `RefreshCw` icon between Reception and Uncertain, with badge count.
+- **Layout:** Added `getReassignmentCount` to `Promise.all` in `src/app/(admin)/layout.tsx`.
+- **Revalidation:** Added `/reassignment` path revalidation to graduation, `deactivateStudent`, `addStudentsToGroup`, and `resolveTrialMembership`.
+
 ### Files
 
 ```
-packages/database/prisma/schema.prisma              — add AWAITING_REASSIGNMENT to StudentStatus
-apps/admin/src/lib/queries/reassignment.ts           — query AWAITING_REASSIGNMENT students
-apps/admin/src/lib/actions/students.ts               — sendToReassignment action
+packages/database/prisma/schema.prisma              — add AWAITING_REASSIGNMENT to StudentStatus (Phase 11)
+apps/admin/src/lib/queries/reassignment.ts           — query AWAITING_REASSIGNMENT students + orphan detection
+apps/admin/src/lib/actions/students.ts               — sendToReassignment action + deactivate revalidation
+apps/admin/src/lib/actions/group-memberships.ts      — AWAITING_REASSIGNMENT → ACTIVE + auto-trial determination (removed isTrial from input)
+apps/admin/src/lib/actions/group-graduation.ts       — revalidation for /reassignment
+apps/admin/src/schemas/group-membership.ts           — removed isTrial from addStudentsSchema
 apps/admin/src/app/(admin)/reassignment/page.tsx     — server component page
-apps/admin/src/components/reassignment/reassignment-table.tsx — client component table
-apps/admin/src/components/app-sidebar.tsx             — add Reassignment nav item
-apps/admin/src/app/(admin)/layout.tsx                — fetch reassignment count
+apps/admin/src/components/reassignment/reassignment-table.tsx — client component table with assign + deactivate
+apps/admin/src/components/reassignment/orphan-warning.tsx    — orphan detection warning component
+apps/admin/src/components/reception/assign-dialog.tsx — removed isTrial prop
+apps/admin/src/components/groups/add-student-dialog.tsx — removed trial toggle UI + trialAttempts prop
+apps/admin/src/app/(admin)/groups/[id]/page.tsx      — removed trialAttempts computation
+apps/admin/src/components/students/student-actions.tsx — added "Send to Reassignment" for ACTIVE students
+apps/admin/src/components/app-sidebar.tsx             — add Reassignment nav item with RefreshCw icon + badge
+apps/admin/src/app/(admin)/layout.tsx                — fetch reassignment count in Promise.all
 ```
 
 ---

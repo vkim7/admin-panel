@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { deactivateStudent, reactivateStudent } from "@/lib/actions/students";
+import { deactivateStudent, reactivateStudent, sendToReassignment } from "@/lib/actions/students";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 
 type LostReason = {
@@ -42,6 +42,7 @@ export function StudentActions({
 }: StudentActionsProps) {
   const [showDeactivate, setShowDeactivate] = useState(false);
   const [showReactivate, setShowReactivate] = useState(false);
+  const [showReassignment, setShowReassignment] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -77,16 +78,48 @@ export function StudentActions({
     );
   }
 
+  const showReassignButton = status === "ACTIVE";
+  const showDeactivateButton = status === "ACTIVE" || status === "AWAITING_ASSIGNMENT" || status === "AWAITING_REASSIGNMENT";
+
   return (
     <>
-      <Button
-        variant="outline"
-        size="sm"
-        className="text-destructive hover:text-destructive"
-        onClick={() => setShowDeactivate(true)}
-      >
-        Deactivate
-      </Button>
+      {showReassignButton && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowReassignment(true)}
+        >
+          Send to Reassignment
+        </Button>
+      )}
+
+      {showDeactivateButton && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-destructive hover:text-destructive"
+          onClick={() => setShowDeactivate(true)}
+        >
+          Deactivate
+        </Button>
+      )}
+
+      <ConfirmationDialog
+        open={showReassignment}
+        onOpenChange={setShowReassignment}
+        title="Send to Reassignment"
+        description="This student will be moved to 'Awaiting Reassignment' status and appear on the Reassignment page for re-placement."
+        confirmLabel="Send to Reassignment"
+        variant="default"
+        onConfirm={async () => {
+          const result = await sendToReassignment(studentId);
+          if (result?.error) {
+            toast.error(result.error);
+          } else {
+            toast.success("Student sent to reassignment");
+          }
+        }}
+      />
 
       <Dialog open={showDeactivate} onOpenChange={setShowDeactivate}>
         <DialogContent>

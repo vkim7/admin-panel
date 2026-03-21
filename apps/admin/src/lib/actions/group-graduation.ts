@@ -278,6 +278,7 @@ export async function graduateGroup(data: unknown) {
   revalidatePath("/students");
   revalidatePath("/payments");
   revalidatePath("/reception");
+  revalidatePath("/reassignment");
 
   return {
     success: true,

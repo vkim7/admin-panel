@@ -137,6 +137,31 @@ export async function deactivateStudent(id: string, data: unknown) {
   revalidatePath(`/students/${id}`);
   revalidatePath("/students");
   revalidatePath("/reception");
+  revalidatePath("/reassignment");
+  return { success: true };
+}
+
+export async function sendToReassignment(id: string) {
+  await requireAdmin();
+
+  const student = await prisma.student.findUnique({ where: { id } });
+
+  if (!student) {
+    return { error: "Student not found" };
+  }
+
+  if (student.status !== "ACTIVE") {
+    return { error: "Only active students can be sent to reassignment" };
+  }
+
+  await prisma.student.update({
+    where: { id },
+    data: { status: "AWAITING_REASSIGNMENT" },
+  });
+
+  revalidatePath(`/students/${id}`);
+  revalidatePath("/students");
+  revalidatePath("/reassignment");
   return { success: true };
 }
 

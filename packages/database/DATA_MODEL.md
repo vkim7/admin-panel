@@ -155,7 +155,7 @@ Path A — Student leaves school:
 Path B — Student needs reassignment (exam failure, graduation without continuation):
   → status: AWAITING_REASSIGNMENT
   → Visible in Reassignment page
-  → Admin assigns to new group (no trial — already had one)
+  → Admin assigns to new group (trial auto-determined by server based on remaining attempts)
   → status: ACTIVE
 
 Path C — Inactive student returns (won back from Lost List):

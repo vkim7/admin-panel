@@ -16,7 +16,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { studentIds, joinDate: joinDateStr, isTrial, comment } = parsed.data;
+  const { studentIds, joinDate: joinDateStr, comment } = parsed.data;
   const joinDate = new Date(joinDateStr + "T00:00:00Z");
 
   const group = await prisma.group.findUnique({
@@ -96,27 +96,25 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     }
   }
 
-  // Trial attempt enforcement: check per student per group type
-  if (isTrial) {
-    for (const studentId of studentIds) {
-      const trialCount = await prisma.groupMembership.count({
-        where: { studentId, wasTrialOriginally: true, group: { type: group.type } },
-      });
-      const limit = group.type === "GROUP" ? 2 : 1;
-      if (trialCount >= limit) {
-        const student = students.find((s) => s.id === studentId);
-        return {
-          error: `${student?.firstName} ${student?.lastName} has used all free ${group.type.toLowerCase()} trial attempts`,
-        };
-      }
-    }
-  }
-
   // Auto-calculate lessonsStart from joinDate
   const lessonsStart = calculateLessonsStart(group.lessons, joinDate);
 
+  // Pre-compute trial attempts per student to auto-determine isTrial
+  const trialLimit = group.type === "GROUP" ? 2 : 1;
+  const trialCounts = await Promise.all(
+    studentIds.map(async (studentId) => {
+      const count = await prisma.groupMembership.count({
+        where: { studentId, wasTrialOriginally: true, group: { type: group.type } },
+      });
+      return { studentId, hasTrialRemaining: count < trialLimit };
+    }),
+  );
+  const trialMap = new Map(trialCounts.map((t) => [t.studentId, t.hasTrialRemaining]));
+
   await prisma.$transaction(async (tx) => {
     for (const studentId of studentIds) {
+      const isTrial = trialMap.get(studentId) ?? false;
+
       const membership = await tx.groupMembership.create({
         data: {
           studentId,
@@ -174,7 +172,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
         select: { status: true },
       });
 
-      if (student && student.status === "AWAITING_ASSIGNMENT") {
+      if (student && (student.status === "AWAITING_ASSIGNMENT" || student.status === "AWAITING_REASSIGNMENT")) {
         await tx.student.update({
           where: { id: studentId },
           data: {
@@ -189,6 +187,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
 
   revalidatePath(`/groups/${groupId}`);
   revalidatePath("/reception");
+  revalidatePath("/reassignment");
   return { success: true };
 }
 
@@ -294,7 +293,7 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
       }
 
       // Activate student if awaiting assignment
-      if (membership.student.status === "AWAITING_ASSIGNMENT") {
+      if (membership.student.status === "AWAITING_ASSIGNMENT" || membership.student.status === "AWAITING_REASSIGNMENT") {
         await tx.student.update({
           where: { id: membership.studentId },
           data: {
@@ -440,6 +439,7 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
 
   revalidatePath(`/groups/${membership.groupId}`);
   revalidatePath("/reception");
+  revalidatePath("/reassignment");
   revalidatePath(`/students/${membership.studentId}`);
   return { success: true };
 }

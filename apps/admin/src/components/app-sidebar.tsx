@@ -14,6 +14,7 @@ import {
   LogOut,
   AlertTriangle,
   AlertCircle,
+  RefreshCw,
   Banknote,
   ReceiptText,
   Tag,
@@ -22,6 +23,7 @@ import {
 const navItems = [
   { label: "Schedule", href: "/schedule", icon: CalendarDays },
   { label: "Reception", href: "/reception", icon: UserPlus },
+  { label: "Reassignment", href: "/reassignment", icon: RefreshCw },
   { label: "Uncertain", href: "/uncertain", icon: AlertTriangle },
   { label: "Pending", href: "/pending-lessons", icon: AlertCircle },
   { label: "No Payment", href: "/payments", icon: CreditCard },
@@ -36,12 +38,13 @@ const navItems = [
 interface AppSidebarProps {
   adminName: string;
   receptionCount?: number;
+  reassignmentCount?: number;
   uncertainCount?: number;
   pendingResolutionCount?: number;
   pendingRefundCount?: number;
 }
 
-export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingResolutionCount, pendingRefundCount }: AppSidebarProps) {
+export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
@@ -74,6 +77,11 @@ export function AppSidebar({ adminName, receptionCount, uncertainCount, pendingR
               {item.href === "/reception" && receptionCount ? (
                 <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
                   {receptionCount}
+                </span>
+              ) : null}
+              {item.href === "/reassignment" && reassignmentCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {reassignmentCount}
                 </span>
               ) : null}
               {item.href === "/uncertain" && uncertainCount ? (
