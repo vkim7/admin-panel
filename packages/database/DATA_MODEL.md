@@ -159,7 +159,7 @@ Path B — Student needs reassignment (exam failure, graduation without continua
   → status: ACTIVE
 
 Path C — Inactive student returns (won back from Lost List):
-  → Option A: "Assign to group" directly from Lost List → INACTIVE → ACTIVE (no trial)
+  → Option A: "Assign to group" directly from Lost List → INACTIVE → ACTIVE (trial auto-determined by server based on remaining attempts)
   → Option B: "Send to reassignment" → INACTIVE → AWAITING_REASSIGNMENT → Path B
 
 Students can cycle between Lost List and Reassignment multiple times.

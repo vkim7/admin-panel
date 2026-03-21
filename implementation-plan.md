@@ -1088,13 +1088,13 @@ apps/admin/src/app/(admin)/layout.tsx                — fetch reassignment coun
 
 ### Lost Page (`/lost`)
 
-- [ ] **Sidebar nav item** — with count badge showing total inactive students
-- [ ] **Table columns:** CRM, name, phone, level+stage, lost reason, deactivation date, deactivated by, last group (from most recent membership), time since deactivation
-- [ ] **Search/filter:** by name, phone, lost reason, level
-- [ ] **"Assign to group" action** — opens the assign dialog directly from the Lost List. Student goes INACTIVE → ACTIVE (no trial). For when admin knows which group to place the student in right away.
-- [ ] **"Send to reassignment" action** — INACTIVE → AWAITING_REASSIGNMENT → student appears on Reassignment page (Phase 15). For when the student wants to return but the group hasn't been decided yet.
-- [ ] **Contact info:** phone prominently displayed for admin to call/message as part of win-back scripts
-- [ ] **Notes/history:** admin can view student detail (existing page) for full history — groups attended, duration, comments
+- [x] **Sidebar nav item** — with count badge showing total inactive students
+- [x] **Table columns:** CRM, name, phone, level+stage, lost reason, deactivation date, deactivated by, last group (from most recent membership)
+- [x] **Search/filter:** by name (DataTable search)
+- [x] **"Assign to group" action** — opens the assign dialog directly from the Lost List. Student goes INACTIVE → ACTIVE (trial auto-determined server-side). For when admin knows which group to place the student in right away.
+- [x] **"Send to reassignment" action** — INACTIVE → AWAITING_REASSIGNMENT → student appears on Reassignment page (Phase 15). For when the student wants to return but the group hasn't been decided yet.
+- [x] **Contact info:** phone prominently displayed for admin to call/message as part of win-back scripts
+- [x] **Notes/history:** admin can view student detail (existing page) for full history — groups attended, duration, comments
 
 ### Win-Back Flow
 
@@ -1107,14 +1107,28 @@ Student deactivated (lostReason set)
     Option B: Group TBD → "Send to reassignment" → AWAITING_REASSIGNMENT → Reassignment page (Phase 15) → assign → ACTIVE
 ```
 
+### Implementation Notes
+
+- **Trial auto-determination:** Assigning from Lost List uses the same `addStudentsToGroup` action as Reception/Reassignment. Trial status is auto-determined server-side (Phase 14 logic) — returning students who haven't used their free trial still get one.
+- **Inactivation field cleanup:** When transitioning INACTIVE → ACTIVE (direct assign) or INACTIVE → AWAITING_REASSIGNMENT (send to reassignment), the inactivation fields (inactivatedAt, inactivatedById, lostReasonId, otherLostReason) are cleared.
+- **`sendToReassignment` extended:** Now accepts both ACTIVE and INACTIVE students. ACTIVE → AWAITING_REASSIGNMENT (existing). INACTIVE → AWAITING_REASSIGNMENT (new, clears inactivation fields).
+- **`addStudentsToGroup` extended:** Activation check now handles INACTIVE status in addition to AWAITING_ASSIGNMENT and AWAITING_REASSIGNMENT.
+- **Revalidation:** `/lost` added to deactivateStudent, reactivateStudent, sendToReassignment, addStudentsToGroup, resolveTrialMembership, graduateGroup.
+
 ### Files
 
 ```
-apps/admin/src/lib/queries/lost.ts                  — query INACTIVE students with last group info
-apps/admin/src/app/(admin)/lost/page.tsx             — server component page
-apps/admin/src/components/lost/lost-table.tsx         — client component table
-apps/admin/src/components/app-sidebar.tsx             — add Lost nav item
-apps/admin/src/app/(admin)/layout.tsx                — fetch lost count
+NEW:
+apps/admin/src/lib/queries/lost.ts                   — getLostStudents, getLostCount
+apps/admin/src/app/(admin)/lost/page.tsx              — server component page
+apps/admin/src/components/lost/lost-table.tsx          — client table with assign + send-to-reassignment
+
+MODIFIED:
+apps/admin/src/lib/actions/students.ts                — extend sendToReassignment for INACTIVE, add /lost revalidation
+apps/admin/src/lib/actions/group-memberships.ts       — extend activation for INACTIVE, add /lost revalidation
+apps/admin/src/lib/actions/group-graduation.ts        — add /lost revalidation
+apps/admin/src/components/app-sidebar.tsx              — Lost nav item + lostCount badge
+apps/admin/src/app/(admin)/layout.tsx                 — fetch + pass lostCount
 ```
 
 ---

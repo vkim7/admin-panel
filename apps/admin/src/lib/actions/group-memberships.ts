@@ -172,13 +172,19 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
         select: { status: true },
       });
 
-      if (student && (student.status === "AWAITING_ASSIGNMENT" || student.status === "AWAITING_REASSIGNMENT")) {
+      if (student && (student.status === "AWAITING_ASSIGNMENT" || student.status === "AWAITING_REASSIGNMENT" || student.status === "INACTIVE")) {
         await tx.student.update({
           where: { id: studentId },
           data: {
             status: "ACTIVE",
             activatedAt: new Date(),
             activatedById: admin.id,
+            ...(student.status === "INACTIVE" && {
+              inactivatedAt: null,
+              inactivatedById: null,
+              lostReasonId: null,
+              otherLostReason: null,
+            }),
           },
         });
       }
@@ -188,6 +194,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
   revalidatePath(`/groups/${groupId}`);
   revalidatePath("/reception");
   revalidatePath("/reassignment");
+  revalidatePath("/lost");
   return { success: true };
 }
 
@@ -440,6 +447,7 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
   revalidatePath(`/groups/${membership.groupId}`);
   revalidatePath("/reception");
   revalidatePath("/reassignment");
+  revalidatePath("/lost");
   revalidatePath(`/students/${membership.studentId}`);
   return { success: true };
 }

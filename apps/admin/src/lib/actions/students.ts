@@ -138,6 +138,7 @@ export async function deactivateStudent(id: string, data: unknown) {
   revalidatePath("/students");
   revalidatePath("/reception");
   revalidatePath("/reassignment");
+  revalidatePath("/lost");
   return { success: true };
 }
 
@@ -150,18 +151,27 @@ export async function sendToReassignment(id: string) {
     return { error: "Student not found" };
   }
 
-  if (student.status !== "ACTIVE") {
-    return { error: "Only active students can be sent to reassignment" };
+  if (student.status !== "ACTIVE" && student.status !== "INACTIVE") {
+    return { error: "Only active or inactive students can be sent to reassignment" };
   }
 
   await prisma.student.update({
     where: { id },
-    data: { status: "AWAITING_REASSIGNMENT" },
+    data: {
+      status: "AWAITING_REASSIGNMENT",
+      ...(student.status === "INACTIVE" && {
+        inactivatedAt: null,
+        inactivatedById: null,
+        lostReasonId: null,
+        otherLostReason: null,
+      }),
+    },
   });
 
   revalidatePath(`/students/${id}`);
   revalidatePath("/students");
   revalidatePath("/reassignment");
+  revalidatePath("/lost");
   return { success: true };
 }
 
@@ -208,5 +218,6 @@ export async function reactivateStudent(id: string) {
   revalidatePath(`/students/${id}`);
   revalidatePath("/students");
   revalidatePath("/reception");
+  revalidatePath("/lost");
   return { success: true };
 }

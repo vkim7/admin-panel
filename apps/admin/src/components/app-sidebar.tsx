@@ -18,6 +18,7 @@ import {
   Banknote,
   ReceiptText,
   Tag,
+  UserX,
 } from "lucide-react";
 
 const navItems = [
@@ -33,6 +34,7 @@ const navItems = [
   { label: "Teacher Pay", href: "/teacher-payments", icon: Banknote },
   { label: "Refunds", href: "/refunds", icon: ReceiptText },
   { label: "Promotions", href: "/promotions", icon: Tag },
+  { label: "Lost", href: "/lost", icon: UserX },
 ];
 
 interface AppSidebarProps {
@@ -42,9 +44,10 @@ interface AppSidebarProps {
   uncertainCount?: number;
   pendingResolutionCount?: number;
   pendingRefundCount?: number;
+  lostCount?: number;
 }
 
-export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount }: AppSidebarProps) {
+export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount, lostCount }: AppSidebarProps) {
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
 
@@ -97,6 +100,11 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
               {item.href === "/refunds" && pendingRefundCount ? (
                 <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
                   {pendingRefundCount}
+                </span>
+              ) : null}
+              {item.href === "/lost" && lostCount ? (
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                  {lostCount}
                 </span>
               ) : null}
             </Link>
