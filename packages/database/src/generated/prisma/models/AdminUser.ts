@@ -36,6 +36,7 @@ export type AdminUserSumAggregateOutputType = {
 
 export type AdminUserMinAggregateOutputType = {
   id: string | null
+  email: string | null
   telegramId: bigint | null
   firstName: string | null
   lastName: string | null
@@ -48,6 +49,7 @@ export type AdminUserMinAggregateOutputType = {
 
 export type AdminUserMaxAggregateOutputType = {
   id: string | null
+  email: string | null
   telegramId: bigint | null
   firstName: string | null
   lastName: string | null
@@ -60,6 +62,7 @@ export type AdminUserMaxAggregateOutputType = {
 
 export type AdminUserCountAggregateOutputType = {
   id: number
+  email: number
   telegramId: number
   firstName: number
   lastName: number
@@ -82,6 +85,7 @@ export type AdminUserSumAggregateInputType = {
 
 export type AdminUserMinAggregateInputType = {
   id?: true
+  email?: true
   telegramId?: true
   firstName?: true
   lastName?: true
@@ -94,6 +98,7 @@ export type AdminUserMinAggregateInputType = {
 
 export type AdminUserMaxAggregateInputType = {
   id?: true
+  email?: true
   telegramId?: true
   firstName?: true
   lastName?: true
@@ -106,6 +111,7 @@ export type AdminUserMaxAggregateInputType = {
 
 export type AdminUserCountAggregateInputType = {
   id?: true
+  email?: true
   telegramId?: true
   firstName?: true
   lastName?: true
@@ -205,7 +211,8 @@ export type AdminUserGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type AdminUserGroupByOutputType = {
   id: string
-  telegramId: bigint
+  email: string
+  telegramId: bigint | null
   firstName: string
   lastName: string
   username: string | null
@@ -240,7 +247,8 @@ export type AdminUserWhereInput = {
   OR?: Prisma.AdminUserWhereInput[]
   NOT?: Prisma.AdminUserWhereInput | Prisma.AdminUserWhereInput[]
   id?: Prisma.StringFilter<"AdminUser"> | string
-  telegramId?: Prisma.BigIntFilter<"AdminUser"> | bigint | number
+  email?: Prisma.StringFilter<"AdminUser"> | string
+  telegramId?: Prisma.BigIntNullableFilter<"AdminUser"> | bigint | number | null
   firstName?: Prisma.StringFilter<"AdminUser"> | string
   lastName?: Prisma.StringFilter<"AdminUser"> | string
   username?: Prisma.StringNullableFilter<"AdminUser"> | string | null
@@ -268,7 +276,8 @@ export type AdminUserWhereInput = {
 
 export type AdminUserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  telegramId?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   username?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -296,6 +305,7 @@ export type AdminUserOrderByWithRelationInput = {
 
 export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  email?: string
   telegramId?: bigint | number
   AND?: Prisma.AdminUserWhereInput | Prisma.AdminUserWhereInput[]
   OR?: Prisma.AdminUserWhereInput[]
@@ -323,11 +333,12 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   priceSettings?: Prisma.PriceSettingListRelationFilter
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodListRelationFilter
   deactivatedTeachers?: Prisma.TeacherListRelationFilter
-}, "id" | "telegramId">
+}, "id" | "email" | "telegramId">
 
 export type AdminUserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  telegramId?: Prisma.SortOrder
+  email?: Prisma.SortOrder
+  telegramId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   username?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -347,7 +358,8 @@ export type AdminUserScalarWhereWithAggregatesInput = {
   OR?: Prisma.AdminUserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AdminUserScalarWhereWithAggregatesInput | Prisma.AdminUserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
-  telegramId?: Prisma.BigIntWithAggregatesFilter<"AdminUser"> | bigint | number
+  email?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
+  telegramId?: Prisma.BigIntNullableWithAggregatesFilter<"AdminUser"> | bigint | number | null
   firstName?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"AdminUser"> | string
   username?: Prisma.StringNullableWithAggregatesFilter<"AdminUser"> | string | null
@@ -359,7 +371,8 @@ export type AdminUserScalarWhereWithAggregatesInput = {
 
 export type AdminUserCreateInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -387,7 +400,8 @@ export type AdminUserCreateInput = {
 
 export type AdminUserUncheckedCreateInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -415,7 +429,8 @@ export type AdminUserUncheckedCreateInput = {
 
 export type AdminUserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -443,7 +458,8 @@ export type AdminUserUpdateInput = {
 
 export type AdminUserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -471,7 +487,8 @@ export type AdminUserUncheckedUpdateInput = {
 
 export type AdminUserCreateManyInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -483,7 +500,8 @@ export type AdminUserCreateManyInput = {
 
 export type AdminUserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -495,7 +513,8 @@ export type AdminUserUpdateManyMutationInput = {
 
 export type AdminUserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -507,6 +526,7 @@ export type AdminUserUncheckedUpdateManyInput = {
 
 export type AdminUserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -523,6 +543,7 @@ export type AdminUserAvgOrderByAggregateInput = {
 
 export type AdminUserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -535,6 +556,7 @@ export type AdminUserMaxOrderByAggregateInput = {
 
 export type AdminUserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  email?: Prisma.SortOrder
   telegramId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -563,8 +585,8 @@ export type StringFieldUpdateOperationsInput = {
   set?: string
 }
 
-export type BigIntFieldUpdateOperationsInput = {
-  set?: bigint | number
+export type NullableBigIntFieldUpdateOperationsInput = {
+  set?: bigint | number | null
   increment?: bigint | number
   decrement?: bigint | number
   multiply?: bigint | number
@@ -841,7 +863,8 @@ export type AdminUserUpdateOneWithoutSmsSentNestedInput = {
 
 export type AdminUserCreateWithoutDeactivatedTeachersInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -868,7 +891,8 @@ export type AdminUserCreateWithoutDeactivatedTeachersInput = {
 
 export type AdminUserUncheckedCreateWithoutDeactivatedTeachersInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -911,7 +935,8 @@ export type AdminUserUpdateToOneWithWhereWithoutDeactivatedTeachersInput = {
 
 export type AdminUserUpdateWithoutDeactivatedTeachersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -938,7 +963,8 @@ export type AdminUserUpdateWithoutDeactivatedTeachersInput = {
 
 export type AdminUserUncheckedUpdateWithoutDeactivatedTeachersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -965,7 +991,8 @@ export type AdminUserUncheckedUpdateWithoutDeactivatedTeachersInput = {
 
 export type AdminUserCreateWithoutActivatedStudentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -992,7 +1019,8 @@ export type AdminUserCreateWithoutActivatedStudentsInput = {
 
 export type AdminUserUncheckedCreateWithoutActivatedStudentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1024,7 +1052,8 @@ export type AdminUserCreateOrConnectWithoutActivatedStudentsInput = {
 
 export type AdminUserCreateWithoutInactivatedStudentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1051,7 +1080,8 @@ export type AdminUserCreateWithoutInactivatedStudentsInput = {
 
 export type AdminUserUncheckedCreateWithoutInactivatedStudentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1094,7 +1124,8 @@ export type AdminUserUpdateToOneWithWhereWithoutActivatedStudentsInput = {
 
 export type AdminUserUpdateWithoutActivatedStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1121,7 +1152,8 @@ export type AdminUserUpdateWithoutActivatedStudentsInput = {
 
 export type AdminUserUncheckedUpdateWithoutActivatedStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1159,7 +1191,8 @@ export type AdminUserUpdateToOneWithWhereWithoutInactivatedStudentsInput = {
 
 export type AdminUserUpdateWithoutInactivatedStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1186,7 +1219,8 @@ export type AdminUserUpdateWithoutInactivatedStudentsInput = {
 
 export type AdminUserUncheckedUpdateWithoutInactivatedStudentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1213,7 +1247,8 @@ export type AdminUserUncheckedUpdateWithoutInactivatedStudentsInput = {
 
 export type AdminUserCreateWithoutTeacherUnavailabilitiesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1240,7 +1275,8 @@ export type AdminUserCreateWithoutTeacherUnavailabilitiesInput = {
 
 export type AdminUserUncheckedCreateWithoutTeacherUnavailabilitiesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1283,7 +1319,8 @@ export type AdminUserUpdateToOneWithWhereWithoutTeacherUnavailabilitiesInput = {
 
 export type AdminUserUpdateWithoutTeacherUnavailabilitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1310,7 +1347,8 @@ export type AdminUserUpdateWithoutTeacherUnavailabilitiesInput = {
 
 export type AdminUserUncheckedUpdateWithoutTeacherUnavailabilitiesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1337,7 +1375,8 @@ export type AdminUserUncheckedUpdateWithoutTeacherUnavailabilitiesInput = {
 
 export type AdminUserCreateWithoutGroupTeacherChangesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1364,7 +1403,8 @@ export type AdminUserCreateWithoutGroupTeacherChangesInput = {
 
 export type AdminUserUncheckedCreateWithoutGroupTeacherChangesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1407,7 +1447,8 @@ export type AdminUserUpdateToOneWithWhereWithoutGroupTeacherChangesInput = {
 
 export type AdminUserUpdateWithoutGroupTeacherChangesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1434,7 +1475,8 @@ export type AdminUserUpdateWithoutGroupTeacherChangesInput = {
 
 export type AdminUserUncheckedUpdateWithoutGroupTeacherChangesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1461,7 +1503,8 @@ export type AdminUserUncheckedUpdateWithoutGroupTeacherChangesInput = {
 
 export type AdminUserCreateWithoutAssignedMembershipsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1488,7 +1531,8 @@ export type AdminUserCreateWithoutAssignedMembershipsInput = {
 
 export type AdminUserUncheckedCreateWithoutAssignedMembershipsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1531,7 +1575,8 @@ export type AdminUserUpdateToOneWithWhereWithoutAssignedMembershipsInput = {
 
 export type AdminUserUpdateWithoutAssignedMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1558,7 +1603,8 @@ export type AdminUserUpdateWithoutAssignedMembershipsInput = {
 
 export type AdminUserUncheckedUpdateWithoutAssignedMembershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1585,7 +1631,8 @@ export type AdminUserUncheckedUpdateWithoutAssignedMembershipsInput = {
 
 export type AdminUserCreateWithoutCancelledLessonsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1612,7 +1659,8 @@ export type AdminUserCreateWithoutCancelledLessonsInput = {
 
 export type AdminUserUncheckedCreateWithoutCancelledLessonsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1655,7 +1703,8 @@ export type AdminUserUpdateToOneWithWhereWithoutCancelledLessonsInput = {
 
 export type AdminUserUpdateWithoutCancelledLessonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1682,7 +1731,8 @@ export type AdminUserUpdateWithoutCancelledLessonsInput = {
 
 export type AdminUserUncheckedUpdateWithoutCancelledLessonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1709,7 +1759,8 @@ export type AdminUserUncheckedUpdateWithoutCancelledLessonsInput = {
 
 export type AdminUserCreateWithoutRecordedPaymentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1736,7 +1787,8 @@ export type AdminUserCreateWithoutRecordedPaymentsInput = {
 
 export type AdminUserUncheckedCreateWithoutRecordedPaymentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1779,7 +1831,8 @@ export type AdminUserUpdateToOneWithWhereWithoutRecordedPaymentsInput = {
 
 export type AdminUserUpdateWithoutRecordedPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1806,7 +1859,8 @@ export type AdminUserUpdateWithoutRecordedPaymentsInput = {
 
 export type AdminUserUncheckedUpdateWithoutRecordedPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1833,7 +1887,8 @@ export type AdminUserUncheckedUpdateWithoutRecordedPaymentsInput = {
 
 export type AdminUserCreateWithoutPaymentPeriodAdjustmentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1860,7 +1915,8 @@ export type AdminUserCreateWithoutPaymentPeriodAdjustmentsInput = {
 
 export type AdminUserUncheckedCreateWithoutPaymentPeriodAdjustmentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1903,7 +1959,8 @@ export type AdminUserUpdateToOneWithWhereWithoutPaymentPeriodAdjustmentsInput = 
 
 export type AdminUserUpdateWithoutPaymentPeriodAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1930,7 +1987,8 @@ export type AdminUserUpdateWithoutPaymentPeriodAdjustmentsInput = {
 
 export type AdminUserUncheckedUpdateWithoutPaymentPeriodAdjustmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1957,7 +2015,8 @@ export type AdminUserUncheckedUpdateWithoutPaymentPeriodAdjustmentsInput = {
 
 export type AdminUserCreateWithoutRefundsInitiatedInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -1984,7 +2043,8 @@ export type AdminUserCreateWithoutRefundsInitiatedInput = {
 
 export type AdminUserUncheckedCreateWithoutRefundsInitiatedInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2016,7 +2076,8 @@ export type AdminUserCreateOrConnectWithoutRefundsInitiatedInput = {
 
 export type AdminUserCreateWithoutRefundsProcessedInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2043,7 +2104,8 @@ export type AdminUserCreateWithoutRefundsProcessedInput = {
 
 export type AdminUserUncheckedCreateWithoutRefundsProcessedInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2086,7 +2148,8 @@ export type AdminUserUpdateToOneWithWhereWithoutRefundsInitiatedInput = {
 
 export type AdminUserUpdateWithoutRefundsInitiatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2113,7 +2176,8 @@ export type AdminUserUpdateWithoutRefundsInitiatedInput = {
 
 export type AdminUserUncheckedUpdateWithoutRefundsInitiatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2151,7 +2215,8 @@ export type AdminUserUpdateToOneWithWhereWithoutRefundsProcessedInput = {
 
 export type AdminUserUpdateWithoutRefundsProcessedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2178,7 +2243,8 @@ export type AdminUserUpdateWithoutRefundsProcessedInput = {
 
 export type AdminUserUncheckedUpdateWithoutRefundsProcessedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2205,7 +2271,8 @@ export type AdminUserUncheckedUpdateWithoutRefundsProcessedInput = {
 
 export type AdminUserCreateWithoutGeneratedTeacherPaymentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2232,7 +2299,8 @@ export type AdminUserCreateWithoutGeneratedTeacherPaymentsInput = {
 
 export type AdminUserUncheckedCreateWithoutGeneratedTeacherPaymentsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2275,7 +2343,8 @@ export type AdminUserUpdateToOneWithWhereWithoutGeneratedTeacherPaymentsInput = 
 
 export type AdminUserUpdateWithoutGeneratedTeacherPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2302,7 +2371,8 @@ export type AdminUserUpdateWithoutGeneratedTeacherPaymentsInput = {
 
 export type AdminUserUncheckedUpdateWithoutGeneratedTeacherPaymentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2329,7 +2399,8 @@ export type AdminUserUncheckedUpdateWithoutGeneratedTeacherPaymentsInput = {
 
 export type AdminUserCreateWithoutTeacherRateChangesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2356,7 +2427,8 @@ export type AdminUserCreateWithoutTeacherRateChangesInput = {
 
 export type AdminUserUncheckedCreateWithoutTeacherRateChangesInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2399,7 +2471,8 @@ export type AdminUserUpdateToOneWithWhereWithoutTeacherRateChangesInput = {
 
 export type AdminUserUpdateWithoutTeacherRateChangesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2426,7 +2499,8 @@ export type AdminUserUpdateWithoutTeacherRateChangesInput = {
 
 export type AdminUserUncheckedUpdateWithoutTeacherRateChangesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2453,7 +2527,8 @@ export type AdminUserUncheckedUpdateWithoutTeacherRateChangesInput = {
 
 export type AdminUserCreateWithoutPriceSettingsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2480,7 +2555,8 @@ export type AdminUserCreateWithoutPriceSettingsInput = {
 
 export type AdminUserUncheckedCreateWithoutPriceSettingsInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2523,7 +2599,8 @@ export type AdminUserUpdateToOneWithWhereWithoutPriceSettingsInput = {
 
 export type AdminUserUpdateWithoutPriceSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2550,7 +2627,8 @@ export type AdminUserUpdateWithoutPriceSettingsInput = {
 
 export type AdminUserUncheckedUpdateWithoutPriceSettingsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2577,7 +2655,8 @@ export type AdminUserUncheckedUpdateWithoutPriceSettingsInput = {
 
 export type AdminUserCreateWithoutCallsMadeInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2604,7 +2683,8 @@ export type AdminUserCreateWithoutCallsMadeInput = {
 
 export type AdminUserUncheckedCreateWithoutCallsMadeInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2647,7 +2727,8 @@ export type AdminUserUpdateToOneWithWhereWithoutCallsMadeInput = {
 
 export type AdminUserUpdateWithoutCallsMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2674,7 +2755,8 @@ export type AdminUserUpdateWithoutCallsMadeInput = {
 
 export type AdminUserUncheckedUpdateWithoutCallsMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2701,7 +2783,8 @@ export type AdminUserUncheckedUpdateWithoutCallsMadeInput = {
 
 export type AdminUserCreateWithoutSmsSentInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2728,7 +2811,8 @@ export type AdminUserCreateWithoutSmsSentInput = {
 
 export type AdminUserUncheckedCreateWithoutSmsSentInput = {
   id?: string
-  telegramId: bigint | number
+  email: string
+  telegramId?: bigint | number | null
   firstName: string
   lastName: string
   username?: string | null
@@ -2771,7 +2855,8 @@ export type AdminUserUpdateToOneWithWhereWithoutSmsSentInput = {
 
 export type AdminUserUpdateWithoutSmsSentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2798,7 +2883,8 @@ export type AdminUserUpdateWithoutSmsSentInput = {
 
 export type AdminUserUncheckedUpdateWithoutSmsSentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  telegramId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2991,6 +3077,7 @@ export type AdminUserCountOutputTypeCountDeactivatedTeachersArgs<ExtArgs extends
 
 export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  email?: boolean
   telegramId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -3020,6 +3107,7 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type AdminUserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  email?: boolean
   telegramId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -3032,6 +3120,7 @@ export type AdminUserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type AdminUserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  email?: boolean
   telegramId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -3044,6 +3133,7 @@ export type AdminUserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
 
 export type AdminUserSelectScalar = {
   id?: boolean
+  email?: boolean
   telegramId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -3054,7 +3144,7 @@ export type AdminUserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "telegramId" | "firstName" | "lastName" | "username" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["adminUser"]>
+export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "telegramId" | "firstName" | "lastName" | "username" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["adminUser"]>
 export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   recordedPayments?: boolean | Prisma.AdminUser$recordedPaymentsArgs<ExtArgs>
   callsMade?: boolean | Prisma.AdminUser$callsMadeArgs<ExtArgs>
@@ -3099,7 +3189,8 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    telegramId: bigint
+    email: string
+    telegramId: bigint | null
     firstName: string
     lastName: string
     username: string | null
@@ -3547,6 +3638,7 @@ export interface Prisma__AdminUserClient<T, Null = never, ExtArgs extends runtim
  */
 export interface AdminUserFieldRefs {
   readonly id: Prisma.FieldRef<"AdminUser", 'String'>
+  readonly email: Prisma.FieldRef<"AdminUser", 'String'>
   readonly telegramId: Prisma.FieldRef<"AdminUser", 'BigInt'>
   readonly firstName: Prisma.FieldRef<"AdminUser", 'String'>
   readonly lastName: Prisma.FieldRef<"AdminUser", 'String'>

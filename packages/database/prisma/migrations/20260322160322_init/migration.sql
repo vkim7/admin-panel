@@ -55,7 +55,8 @@ CREATE TYPE "SmsStatus" AS ENUM ('SENT', 'DELIVERED', 'FAILED');
 -- CreateTable
 CREATE TABLE "AdminUser" (
     "id" TEXT NOT NULL,
-    "telegramId" BIGINT NOT NULL,
+    "email" TEXT NOT NULL,
+    "telegramId" BIGINT,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "username" TEXT,
@@ -546,6 +547,9 @@ CREATE TABLE "Exam" (
 
     CONSTRAINT "Exam_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AdminUser_email_key" ON "AdminUser"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "AdminUser_telegramId_key" ON "AdminUser"("telegramId");

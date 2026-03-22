@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth";
+import { auth } from "@/auth";
 import { LoginForm } from "@/components/auth/login-form";
 
 export default async function LoginPage() {
-  // If already logged in, redirect to schedule
-  const session = await getSession();
-  if (session) redirect("/schedule");
+  const session = await auth();
+  if (session?.adminId) redirect("/schedule");
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -13,12 +12,10 @@ export default async function LoginPage() {
         <div>
           <h1 className="text-2xl font-semibold">Admin Panel</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Sign in with your Telegram account
+            Sign in with your Google account
           </p>
         </div>
-        <LoginForm
-          botUsername={process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME}
-        />
+        <LoginForm />
       </div>
     </div>
   );

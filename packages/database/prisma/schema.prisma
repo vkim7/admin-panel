@@ -401,7 +401,8 @@ enum SmsStatus {
 
 model AdminUser {
   id         String    @id @default(cuid())
-  telegramId BigInt    @unique
+  email      String    @unique
+  telegramId BigInt?   @unique
   firstName  String
   lastName   String
   username   String?

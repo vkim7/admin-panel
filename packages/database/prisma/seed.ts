@@ -111,6 +111,7 @@ async function main() {
   if (existingAdmins === 0) {
     const admin = await prisma.adminUser.create({
       data: {
+        email: "vladimiir.kim@gmail.com",
         telegramId: 511001n,
         firstName: "Vladimir",
         lastName: "Kim",
@@ -120,6 +121,7 @@ async function main() {
 
     const admin2 = await prisma.adminUser.create({
       data: {
+        email: "loopenglish@yandex.com",
         telegramId: 990254932n,
         firstName: "Laziz",
         lastName: "Islomkhujaev",

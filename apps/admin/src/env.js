@@ -7,22 +7,19 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    // Telegram bot token for Login Widget HMAC validation.
-    TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
-    // Secret for signing session JWTs. Must be set in production.
-    AUTH_SECRET: z.string().min(1).default("dev-secret-do-not-use-in-production"),
+    // NextAuth secret for signing session JWTs.
+    AUTH_SECRET: z.string().min(1),
+    // Google OAuth credentials.
+    GOOGLE_CLIENT_ID: z.string().min(1),
+    GOOGLE_CLIENT_SECRET: z.string().min(1),
   },
-  client: {
-    // Bot username for the Telegram Login Widget (without @).
-    NEXT_PUBLIC_TELEGRAM_BOT_USERNAME: z.string().min(1).optional(),
-  },
+  client: {},
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
     AUTH_SECRET: process.env.AUTH_SECRET,
-    NEXT_PUBLIC_TELEGRAM_BOT_USERNAME:
-      process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

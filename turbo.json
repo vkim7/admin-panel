@@ -5,9 +5,9 @@
       "dependsOn": ["^build"],
       "env": [
         "DATABASE_URL",
-        "TELEGRAM_BOT_TOKEN",
         "AUTH_SECRET",
-        "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME"
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
       ],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
