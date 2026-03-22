@@ -361,12 +361,12 @@ enum DiscountType {
 enum PromotionType {
   SEASONAL
   FAMILY
-  LOYALTY
+  REFERRAL
   WIN_BACK
   TRIAL
-  EARLY_PAYMENT
-  PARTNER
-  OTHER
+  PROMO_CODE
+  APOLOGY
+  REWARD
 }
 
 enum TeacherPayStatus {

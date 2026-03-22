@@ -1,58 +1,50 @@
-<!-- TODO -->
-deactivate group functionality planned?
+# Remaining Work
 
-1. too few students 
-- less than minimum number of students left - either transfer or reassignment list
-  - students haven't passed - either transfer or reassignment list
-1. teacher leaves -> substitute -> deactivate - either transfer or reassignment list
+Everything that's left to do, in one place. Items grouped by priority/category.
 
+---
 
-<!-- TODO -->
+## 1. Group Deactivation
 
-"First-lesson trial discount — auto-applied when a trial commits via a seeded TRIAL promotion" - what happens if student doesn't commit?
+Not yet planned — needs design for these scenarios:
+- Too few students remaining → transfer or reassignment
+- Students haven't passed → transfer or reassignment
+- Teacher leaves → substitute → deactivate group → transfer or reassignment
 
-Trial discount if student doesn't commit — Nothing happens. The TRIAL StudentPromotion is only created inside resolveTrialMembership() when action === "commit".
+## 2. Phase 13: Communication (Deferred)
 
-If the student is removed (action === "remove"), no promotion is created and no billing periods exist. No discount is ever applied.
+Blocked on SMS vendor selection.
 
+- [ ] SMS sending — vendor TBD, message templates, delivery tracking
+- [ ] Call history — log calls with students (date, duration, notes)
+- [ ] Student profile enhancement — add communication tab (SMS + call history)
 
-<!-- todo -->
-let's add a comment for the "## Phase 18: Promotion Auto-Detection &           
-Application Rules" in our implementation plan to update the logic behind the     
-First-lesson trial discount - it should only be applied to individual lessons -  
-for group lessons the first lesson is free. when applying the First-lesson trial 
- discount we should charge the student independent of the outcome - whether he   
-commits or not the student should be charged for the first lesson
+## 3. Phase 18: Scenario Testing
 
-- for group lessons - the first trial lesson is always free(100% discount - will need a separate promotion for that?)
-- for individual lessons - we should charge the student independent of the outcome - whether he commits or not the student should be charged for the first lesson
+- [ ] Happy paths — full student lifecycle: enroll → assign → pay → attend → transfer → graduate
+- [ ] Billing edge cases — mid-month joins, transfers with overpayment credit, partial periods, price changes
+- [ ] Scheduling conflicts — teacher unavailability, double-booking, holiday collisions, cancel+append chains
+- [ ] Group lifecycle — merge with overlapping students, graduate with non-continuing students, merge then graduate
+- [ ] Constraint enforcement — try to violate each of the 37 constraints, verify system blocks with clear message
+- [ ] Concurrent operations — transfer while recording payment, deactivate teacher with pending resolution
+- [ ] Data integrity — after each scenario, verify no orphaned billing periods, dangling slots, incorrect payment statuses
 
-- for group lessons - students have 2 attempts max to have a trial lesson. if student is no-show to his first trial lesson he's moved to the lost list with reason "trial no-show". We will then contact him to schedule his 2nd trial lesson - once scheduled he's removed from the lost list - if he's no-show again he is moved to the lost list again with reason "trial no-show twice" or better wording - student loses his free trials.
+## 4. Production Hardening
 
-- for individual lessons - the same logic applies but student has only one attempt at free trial lesson - if "no show" - he's moved to the lost list
+- [ ] Remove dev auth bypass — delete `DEV_BYPASS_AUTH` blocks (search `TODO: remove before prod` in `src/lib/auth.ts`, `src/middleware.ts`, `apps/admin/.env`)
 
-important: even if students lost their free trials they can still be schedule but without the free trial promotion
+## 5. Uncertain List Enhancement
 
-important: each student has a right to 2 free trials in group lessons and 1 free trial in the individual lessons
+- [ ] Auto-criteria for uncertain flag (3+ absences, 3+ incomplete homework) — deferred until attendance tracking is mature
 
+## 6. Future Features
 
-////
-Triggers (how students enter reassignment)
-
-i thought the only reason for "Graduation without continuation" would be failing the final exam, are they any other reasons you foresee?
-
-"Send to reassignment" action — on ACTIVE student would be required to handle the mid/final exam failures? or any other cases?
-
-i thought the returning students would fall into a Lost list? or would they go to the lost list first and then moved to reassignment?
-
-Orphaned students - who are orphaned students? how could we end up with orphaned students? where would they come from what scenarios would create them
-
-
-
-TODO
-let's make sure all students independent of which list they're assigned to a group from - get their free trial lesson if they haven't yet unless they've maxed out their free trial attempts
-
-
-<!-- TODO CH -->
-Phase 15 implemented - check / commit
-
+- [ ] Exam List — Exam model exists, needs management UI per group
+- [ ] Payment List — financial reporting: filter by year/month/teacher/group, teacher salary overview
+- [ ] amoCRM integration — API polling for leads in "Ready for Group" stage → auto-create student records
+- [ ] Zoom integration — auto-create meetings per group (see `tech/zoom-integration-plan.md`)
+- [ ] Analytics dashboard — student counts, revenue, utilization, homework completion
+- [ ] Bulk student actions — mass payment recording, mass SMS, mass transfer
+- [ ] Payment gateway integration — Click, Payme (currently manual recording only)
+- [ ] Teacher file uploads — contract/passport document storage (needs S3/Cloudflare R2, `TeacherDocument` model)
+- [ ] Content management — deferred, teachers use physical textbooks

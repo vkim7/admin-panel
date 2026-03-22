@@ -27,7 +27,8 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | 14 | Trial Tracking & Enforcement | 7, 8, 12 | C#38 |
 | 15 | Reassignment & Orphan Detection | 11 | C#39 |
 | 16 | Lost List & Win-Back | 2 | — |
-| 17 | Scenario Testing | All | All |
+| 17 | Promotion Auto-Detection & Application Rules | 12 | — |
+| 18 | Scenario Testing | All | All |
 
 ```
 Phase 0 ─── Phase 1 (Teachers) ───┐
@@ -48,7 +49,9 @@ Phase 0 ─── Phase 1 (Teachers) ───┐
 
                                    Phase 2 ──── Phase 16 (Lost List & Win-Back)
 
-                                   All phases ──── Phase 17 (Scenario Testing)
+                                   Phase 12 ──── Phase 17 (Promotion Auto-Detection)
+
+                                   All phases ──── Phase 18 (Scenario Testing)
 ```
 
 ---
@@ -1133,9 +1136,108 @@ apps/admin/src/app/(admin)/layout.tsx                 — fetch + pass lostCount
 
 ---
 
-## Phase 17: Scenario Testing
+## Phase 17: Promotion Auto-Detection & Application Rules
+
+**Goal:** Implement auto-detection logic and finalize promotion types. Currently all promotions except TRIAL and REFERRAL are manually assigned.
+
+**Depends on:** Phase 12 (promotion infrastructure).
+
+### Key Decisions (confirmed with co-founder 2026-03-21)
+
+**PromotionType enum — new:**
+`SEASONAL, FAMILY, REFERRAL, WIN_BACK, TRIAL, PROMO_CODE, APOLOGY, REWARD`
+
+**Removed:** LOYALTY (→ REFERRAL), EARLY_PAYMENT, PARTNER, OTHER
+
+**Promotion types (finalized):**
+
+| Type | Discount | Trigger | Duration | Auto/Manual |
+|------|----------|---------|----------|-------------|
+| FAMILY | 100,000 UZS | 2+ active family members | Recurring, indefinite (auto-removed when <2 active) | Auto |
+| REFERRAL | 100,000 UZS | Friend's referral code → first payment | One-time, first cycle (both referrer AND referred) | Auto (existing) |
+| PROMO_CODE | Varies per campaign | Celebrity/campaign code at student creation | One-time, first cycle | Auto on creation |
+| WIN_BACK | 100,000 UZS | Student assigned from Lost List | One-time, first cycle back | Auto |
+| SEASONAL | Varies per campaign | Student created during campaign window OR assigned during window with 0 committed memberships | One-time, first committed cycle | Auto |
+| APOLOGY | 100,000 UZS | Admin applies manually (service recovery) | One-time (can repeat) | Manual |
+| REWARD | 100,000 UZS | Admin applies manually | One-time (can repeat) | Manual |
+| TRIAL | Varies (100% group, 50% individual) | Auto on trial membership | One-time per trial | Auto (existing) |
+
+**Rules:**
+- All promotions stack additively, clamped to `amountDue` (constraint #36)
+- REFERRAL and PROMO_CODE are mutually exclusive (one acquisition channel per student)
+- Only FAMILY has auto-removal (stops applying from next billing cycle when <2 active family members; don't retroactively remove from current/past periods)
+- Application timing: next billing cycle for existing students, first billing cycle for newly joining students
+
+**WIN_BACK tracking fix:**
+- `sendToReassignment()` must NOT clear inactivation fields (`lostReasonId`, `inactivatedAt`, etc.) when INACTIVE → AWAITING_REASSIGNMENT
+- Fields cleared only at final activation in `addStudentsToGroup`
+- `lostReasonId != null` at activation = definitively a win-back student (graduation/exam-failure students never have lostReasonId)
+
+**SEASONAL eligibility:**
+- "New student" = 0 non-trial committed memberships (`GroupMembership.count({ isTrial: false }) === 0`)
+- Two trigger points: (a) at registration if campaign active, (b) at assignment/commit if campaign active and student doesn't already have it
+- StudentPromotion persists even if assignment happens after campaign ends
+
+**Seed data (8 promotions):**
+
+| Name | Type | Discount | Notes |
+|------|------|----------|-------|
+| Trial Group Free Lesson | TRIAL | 100% | Existing, unchanged |
+| Trial Individual 50% | TRIAL | 50% | Existing, unchanged |
+| Referral Reward | REFERRAL | 100,000 UZS | Existing, type LOYALTY → REFERRAL |
+| Referral Welcome | REFERRAL | 100,000 UZS | Existing, type LOYALTY → REFERRAL |
+| Family Discount | FAMILY | 100,000 UZS | **New**, recurring indefinite |
+| Win-Back Discount | WIN_BACK | 100,000 UZS | **New**, one-time |
+| Apology Discount | APOLOGY | 100,000 UZS | **New**, one-time |
+| Reward Discount | REWARD | 100,000 UZS | **New**, one-time |
+
+### Scope
+
+- [x] **Schema migration** — PromotionType enum change
+- [x] **Zod + UI constant updates** — promotion type dropdowns/badges
+- [x] **WIN_BACK tracking fix** — stop clearing inactivation fields in `sendToReassignment`
+- [x] **Auto-detection in `addStudentsToGroup`** — WIN_BACK, SEASONAL, FAMILY (new helper `src/lib/helpers/promotion-auto-detect.ts`)
+- [x] **SEASONAL at registration** — in `createStudent()`
+- [x] **FAMILY auto-removal** — in `deactivateStudent()` + future period cleanup + `updateStudent()` on family change
+- [x] **PROMO_CODE support** — student form field + `createStudent()` action + mutual exclusivity with REFERRAL
+- [x] **Referral type migration** — LOYALTY → REFERRAL in `payments.ts` + seed
+- [x] **Documentation** — update `implementation-plan.md` + `DATA_MODEL.md`
+
+**Order of operations in `addStudentsToGroup`:**
+```
+1. Create membership + schedule slots + billing periods (existing)
+2. Auto-detect WIN_BACK (lostReasonId != null)
+3. Auto-detect SEASONAL (0 non-trial memberships + active campaign)
+4. Auto-detect FAMILY (2+ active family members)
+5. Activate student (set ACTIVE, clear inactivation fields)
+6. applyPromotionsToPeriods() (existing — picks up auto-created StudentPromotions)
+7. Apply FAMILY to existing family members' future periods (if newly eligible)
+```
+
+### Implementation Notes
+
+**New file:**
+- `src/lib/helpers/promotion-auto-detect.ts` — `detectWinBack()`, `detectSeasonal()`, `detectFamily()`, `applyFamilyToExistingMembers()`, `removeFamilyIfNeeded()`
+
+**Modified files:**
+- `schema.prisma` — PromotionType enum
+- `schemas/promotion.ts`, `promotion-form.tsx`, `promotion-table.tsx` — enum/labels
+- `schemas/student.ts` — added `promoCode` field (both base + full schema)
+- `student-form.tsx` — promo code input (create mode only)
+- `students/[id]/edit/page.tsx` — passes `promoCode: null` in defaultValues
+- `students.ts` — `createStudent()`: transactional (student + PROMO_CODE + SEASONAL). `updateStudent()`: FAMILY detect/remove on family change. `deactivateStudent()`: FAMILY auto-removal. `sendToReassignment()`: preserves inactivation fields for WIN_BACK tracking
+- `group-memberships.ts` — `addStudentsToGroup()`: auto-detection (WIN_BACK → SEASONAL → FAMILY → activate → apply → FAMILY for existing members)
+- `payments.ts` — LOYALTY → REFERRAL lookup
+- `referrals.ts` — mutual exclusivity check (REFERRAL vs PROMO_CODE)
+- `seed.ts` — 8 promotions (TRIAL ×2, REFERRAL ×2, FAMILY, WIN_BACK, APOLOGY, REWARD). Referral Welcome changed from PERCENTAGE 10% to FIXED_AMOUNT 100k
+
+---
+
+## Phase 18: Scenario Testing
 
 **Goal:** Validate the entire system end-to-end by walking through realistic operational scenarios in the live admin panel, catching edge cases that unit tests and per-phase development miss.
+
+**Depends on:** All phases.
 
 ### Approach
 
@@ -1150,28 +1252,6 @@ Claude generates real-life scenarios based on the business rules, constraints, a
 - [ ] **Constraint enforcement** — try to violate each of the 37 constraints and verify the system blocks it with a clear message
 - [ ] **Concurrent operations** — transfer a student while recording a payment for them, deactivate a teacher who has a pending resolution lesson
 - [ ] **Data integrity** — after each scenario, verify DB state is consistent (no orphaned billing periods, no dangling schedule slots, correct payment statuses)
-
----
-
-## Phase 18: Promotion Auto-Detection & Application Rules
-
-**Goal:** Define and implement auto-detection logic for each promotion type, specifying when promotions are automatically assigned to students and which payment periods they apply to. Currently all promotions except TRIAL are manually assigned.
-
-### Scope
-
-- [ ] **FAMILY** — auto-detect when 2+ students share a `Family`, auto-assign to all family members
-- [ ] **LOYALTY** — define criteria (e.g., N consecutive months paid on time), auto-assign
-- [ ] **WIN_BACK** — auto-assign when a previously inactive student is reactivated
-- [ ] **EARLY_PAYMENT** — auto-detect when payment is recorded before period start date
-- [ ] **SEASONAL / PARTNER / OTHER** — remain manual (admin-assigned campaigns)
-- [ ] **Application timing** — define exactly which payment periods each promotion type targets (current period only, next period, all future periods, etc.)
-- [ ] **Stacking rules** — clarify how multiple auto-detected promotions interact (additive vs best-one-wins)
-
-### Notes
-
-- Phase 12 built the promotion infrastructure (CRUD, `applyPromotionsToPeriods()`, `StudentPromotion`, `AppliedPromotion`). This phase adds the trigger logic.
-- TRIAL auto-detection already works (created on trial commit in `resolveTrialMembership`).
-- Referral reward auto-detection already works (created on first payment in `recordPayment`).
 
 ---
 
@@ -1207,6 +1287,7 @@ Decisions to revisit with co-founder before finalizing.
 
 - **Offline reschedule (C#27)** — Currently implemented: when student and teacher privately agree to move an individual lesson to a different time, admin records the change in the system (updates date/time, swaps teacher schedule slot). **Question: is this needed?** If admin doesn't record it, the schedule view shows the lesson at the original time and conflict detection doesn't know about the real time — could allow double-booking the teacher. For individual lessons this is low-risk since teachers manage their own schedule. If we decide it's not needed, hide the "Offline Reschedule" button (code stays, just not exposed).
 - **Offline reschedule scope** — C#27 says "Not applicable to group lessons", but in practice offline reschedules happen for both group and individual lessons. Currently the button only shows for individual groups. Revisit whether to allow for both group types.
+- ~~**FAMILY promotion on family change**~~ — Handled in Phase 17. `updateStudent` now runs `removeFamilyIfNeeded` on old family + `detectFamily` on new family when `familyId` changes for active students.
 
 ---
 

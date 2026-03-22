@@ -27,6 +27,19 @@ export async function recordReferral(data: unknown) {
   if (!referrer) return { error: "Referrer student not found" };
   if (!referred) return { error: "Referred student not found" };
 
+  // Mutual exclusivity: REFERRAL and PROMO_CODE cannot coexist
+  const hasPromoCode = await prisma.studentPromotion.findFirst({
+    where: {
+      studentId: parsed.data.referredStudentId,
+      promotion: { type: "PROMO_CODE" },
+    },
+    select: { id: true },
+  });
+
+  if (hasPromoCode) {
+    return { error: "This student already has a promo code discount. Referral and promo code are mutually exclusive." };
+  }
+
   try {
     await prisma.referral.create({
       data: {

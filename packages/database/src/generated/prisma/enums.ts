@@ -119,12 +119,12 @@ export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType]
 export const PromotionType = {
   SEASONAL: 'SEASONAL',
   FAMILY: 'FAMILY',
-  LOYALTY: 'LOYALTY',
+  REFERRAL: 'REFERRAL',
   WIN_BACK: 'WIN_BACK',
   TRIAL: 'TRIAL',
-  EARLY_PAYMENT: 'EARLY_PAYMENT',
-  PARTNER: 'PARTNER',
-  OTHER: 'OTHER'
+  PROMO_CODE: 'PROMO_CODE',
+  APOLOGY: 'APOLOGY',
+  REWARD: 'REWARD'
 } as const
 
 export type PromotionType = (typeof PromotionType)[keyof typeof PromotionType]

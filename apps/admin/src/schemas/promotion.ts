@@ -24,12 +24,12 @@ const GROUP_TYPES = ["GROUP", "INDIVIDUAL"] as const;
 const PROMOTION_TYPES = [
   "SEASONAL",
   "FAMILY",
-  "LOYALTY",
+  "REFERRAL",
   "WIN_BACK",
   "TRIAL",
-  "EARLY_PAYMENT",
-  "PARTNER",
-  "OTHER",
+  "PROMO_CODE",
+  "APOLOGY",
+  "REWARD",
 ] as const;
 
 const DISCOUNT_TYPES = ["PERCENTAGE", "FIXED_AMOUNT"] as const;

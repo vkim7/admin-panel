@@ -8,6 +8,12 @@ import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-ge
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
+import {
+  detectWinBack,
+  detectSeasonal,
+  detectFamily,
+  applyFamilyToExistingMembers,
+} from "@/lib/helpers/promotion-auto-detect";
 
 export async function addStudentsToGroup(groupId: string, data: unknown) {
   const admin = await requireAdmin();
@@ -72,7 +78,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
   const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
   const students = await prisma.student.findMany({
     where: { id: { in: studentIds } },
-    select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true },
+    select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true, familyId: true },
   });
 
   const teacher = await prisma.teacher.findUnique({
@@ -130,6 +136,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
       });
 
       // For non-trial memberships: create billing periods (C#32)
+      let hasPeriods = false;
       if (!isTrial) {
         const levelCategory = getLevelCategory(group.level);
         const pricePerLesson = await getApplicablePrice(
@@ -154,32 +161,48 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
 
         if (periods.length > 0) {
           await tx.studentPaymentPeriod.createMany({ data: periods });
-
-          // Apply any active promotions to the newly created billing periods
-          await applyPromotionsToPeriods({
-            studentId,
-            membershipId: membership.id,
-            groupLevel: group.level,
-            groupType: group.type,
-            tx,
-          });
+          hasPeriods = true;
         }
       }
 
-      // Activate student if awaiting assignment (both trial and non-trial)
+      // Fetch student state for auto-detection + activation
       const student = await tx.student.findUnique({
         where: { id: studentId },
-        select: { status: true },
+        select: { status: true, lostReasonId: true, familyId: true },
       });
 
+      const studentInfo = students.find((s) => s.id === studentId);
+
+      // --- Auto-detect promotions (before applyPromotionsToPeriods) ---
+
+      // WIN_BACK: student has lostReasonId (came from Lost List, directly or via reassignment)
+      if (student) {
+        await detectWinBack({ studentId, lostReasonId: student.lostReasonId, tx });
+      }
+
+      // SEASONAL: 0 non-trial committed memberships + active campaign
+      await detectSeasonal({ studentId, tx });
+
+      // FAMILY: 2+ active family members (including the student about to be activated)
+      const newlyPromotedFamilyMembers = await detectFamily({
+        studentId,
+        familyId: studentInfo?.familyId ?? student?.familyId ?? null,
+        tx,
+      });
+
+      // --- Activate student ---
       if (student && (student.status === "AWAITING_ASSIGNMENT" || student.status === "AWAITING_REASSIGNMENT" || student.status === "INACTIVE")) {
+        const needsClearInactivation =
+          student.status === "INACTIVE" ||
+          (student.status === "AWAITING_REASSIGNMENT" && student.lostReasonId != null);
+
         await tx.student.update({
           where: { id: studentId },
           data: {
             status: "ACTIVE",
             activatedAt: new Date(),
             activatedById: admin.id,
-            ...(student.status === "INACTIVE" && {
+            ...(needsClearInactivation && {
               inactivatedAt: null,
               inactivatedById: null,
               lostReasonId: null,
@@ -188,6 +211,20 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
           },
         });
       }
+
+      // --- Apply all promotions (including auto-detected) to billing periods ---
+      if (hasPeriods) {
+        await applyPromotionsToPeriods({
+          studentId,
+          membershipId: membership.id,
+          groupLevel: group.level,
+          groupType: group.type,
+          tx,
+        });
+      }
+
+      // Apply FAMILY discount to existing family members' future periods
+      await applyFamilyToExistingMembers({ memberIds: newlyPromotedFamilyMembers, tx });
     }
   });
 

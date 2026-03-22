@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "StudentStatus" AS ENUM ('AWAITING_ASSIGNMENT', 'ACTIVE', 'INACTIVE');
+CREATE TYPE "StudentStatus" AS ENUM ('AWAITING_ASSIGNMENT', 'AWAITING_REASSIGNMENT', 'ACTIVE', 'INACTIVE');
 
 -- CreateEnum
 CREATE TYPE "PreferredLanguage" AS ENUM ('UZBEK', 'RUSSIAN', 'ANY');
@@ -35,7 +35,7 @@ CREATE TYPE "LessonStatus" AS ENUM ('SCHEDULED', 'PENDING_RESOLUTION', 'COMPLETE
 CREATE TYPE "DiscountType" AS ENUM ('PERCENTAGE', 'FIXED_AMOUNT');
 
 -- CreateEnum
-CREATE TYPE "PromotionType" AS ENUM ('SEASONAL', 'FAMILY', 'LOYALTY', 'WIN_BACK', 'TRIAL', 'EARLY_PAYMENT', 'PARTNER', 'OTHER');
+CREATE TYPE "PromotionType" AS ENUM ('SEASONAL', 'FAMILY', 'REFERRAL', 'WIN_BACK', 'TRIAL', 'PROMO_CODE', 'APOLOGY', 'REWARD');
 
 -- CreateEnum
 CREATE TYPE "TeacherPayStatus" AS ENUM ('UNPAID', 'PAID');
@@ -253,6 +253,8 @@ CREATE TABLE "GroupMembership" (
     "joinDate" DATE NOT NULL,
     "leaveDate" DATE,
     "isTrial" BOOLEAN NOT NULL DEFAULT false,
+    "wasTrialOriginally" BOOLEAN NOT NULL DEFAULT false,
+    "trialTeacherId" TEXT,
     "transferReasonId" TEXT,
     "otherTransferReason" TEXT,
     "comment" TEXT,
@@ -823,6 +825,9 @@ ALTER TABLE "GroupMembership" ADD CONSTRAINT "GroupMembership_studentId_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "GroupMembership" ADD CONSTRAINT "GroupMembership_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "GroupMembership" ADD CONSTRAINT "GroupMembership_trialTeacherId_fkey" FOREIGN KEY ("trialTeacherId") REFERENCES "Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "GroupMembership" ADD CONSTRAINT "GroupMembership_transferReasonId_fkey" FOREIGN KEY ("transferReasonId") REFERENCES "TransferReason"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

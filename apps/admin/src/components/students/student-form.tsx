@@ -94,6 +94,7 @@ export function StudentForm({
       preferredLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
       familyId: null,
       comment: null,
+      promoCode: null,
     },
   });
 
@@ -390,6 +391,30 @@ export function StudentForm({
             </FormItem>
           )}
         />
+
+        {/* Promo Code — only on creation */}
+        {!isEdit && (
+          <FormField
+            control={form.control}
+            name="promoCode"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Promo Code</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    value={field.value ?? ""}
+                    placeholder="e.g. BIEBER2026"
+                  />
+                </FormControl>
+                <FormDescription>
+                  Optional. Celebrity or campaign code for a first-month discount.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Actions */}
         <div className="flex gap-3">

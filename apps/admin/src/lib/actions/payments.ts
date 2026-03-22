@@ -81,11 +81,11 @@ export async function recordPayment(periodId: string, data: unknown) {
         // Find referral reward promotions and create StudentPromotions
         const [referrerReward, referredReward] = await Promise.all([
           tx.promotion.findFirst({
-            where: { type: "LOYALTY", isActive: true, name: { contains: "Referral Reward" } },
+            where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Reward" } },
             select: { id: true, validityDays: true },
           }),
           tx.promotion.findFirst({
-            where: { type: "LOYALTY", isActive: true, name: { contains: "Referral Welcome" } },
+            where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Welcome" } },
             select: { id: true, validityDays: true },
           }),
         ]);

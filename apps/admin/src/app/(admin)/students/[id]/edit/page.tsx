@@ -40,6 +40,7 @@ export default async function EditStudentPage({
           preferredLanguage: student.preferredLanguage,
           familyId: student.familyId,
           comment: student.comment,
+          promoCode: null,
         }}
         initialFamily={
           student.family

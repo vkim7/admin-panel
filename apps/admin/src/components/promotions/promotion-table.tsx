@@ -28,12 +28,12 @@ type PromotionRow = {
 const TYPE_LABEL: Record<string, string> = {
   SEASONAL: "Seasonal",
   FAMILY: "Family",
-  LOYALTY: "Loyalty",
+  REFERRAL: "Referral",
   WIN_BACK: "Win-Back",
   TRIAL: "Trial",
-  EARLY_PAYMENT: "Early Payment",
-  PARTNER: "Partner",
-  OTHER: "Other",
+  PROMO_CODE: "Promo Code",
+  APOLOGY: "Apology",
+  REWARD: "Reward",
 };
 
 const LEVEL_SHORT: Record<string, string> = {

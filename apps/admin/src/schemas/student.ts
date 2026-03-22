@@ -28,6 +28,7 @@ export const studentBaseSchema = z.object({
   preferredLanguage: z.enum(PREFERRED_LANGUAGES, { error: "Language preference is required" }),
   familyId: z.string().nullable(),
   comment: z.string().nullable(),
+  promoCode: z.string().nullable(),
 });
 
 export type StudentFormValues = z.infer<typeof studentBaseSchema>;
@@ -46,6 +47,7 @@ export const studentSchema = z
     preferredLanguage: z.enum(PREFERRED_LANGUAGES, { error: "Language preference is required" }),
     familyId: nullableString(),
     comment: nullableString(500),
+    promoCode: nullableString(),
   })
   .refine(
     (data) => {

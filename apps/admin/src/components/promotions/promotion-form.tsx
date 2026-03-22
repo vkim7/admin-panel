@@ -45,12 +45,12 @@ const GROUP_TYPES = [
 const PROMOTION_TYPES = [
   { value: "SEASONAL", label: "Seasonal" },
   { value: "FAMILY", label: "Family" },
-  { value: "LOYALTY", label: "Loyalty" },
+  { value: "REFERRAL", label: "Referral" },
   { value: "WIN_BACK", label: "Win-Back" },
   { value: "TRIAL", label: "Trial" },
-  { value: "EARLY_PAYMENT", label: "Early Payment" },
-  { value: "PARTNER", label: "Partner" },
-  { value: "OTHER", label: "Other" },
+  { value: "PROMO_CODE", label: "Promo Code" },
+  { value: "APOLOGY", label: "Apology" },
+  { value: "REWARD", label: "Reward" },
 ] as const;
 
 interface PromotionFormProps {
@@ -66,7 +66,7 @@ export function PromotionForm({ defaultValues, promotionId }: PromotionFormProps
     resolver: zodResolver(promotionBaseSchema),
     defaultValues: defaultValues ?? {
       name: "",
-      type: "OTHER" as const,
+      type: "REWARD" as const,
       discountType: "PERCENTAGE" as const,
       discountPercent: null,
       discountAmount: null,

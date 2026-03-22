@@ -26,11 +26,6 @@ export async function createSession(adminId: string, role: string) {
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  // TODO: remove before prod — DEV ONLY: bypass auth during local development
-  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_AUTH === "true") {
-    return { adminId: "dev", role: "SUPER_ADMIN" };
-  }
-
   const cookieStore = await cookies();
   const token = cookieStore.get(COOKIE_NAME)?.value;
   if (!token) return null;
@@ -48,23 +43,6 @@ export async function destroySession() {
 export async function getCurrentAdmin() {
   const session = await getSession();
   if (!session) return null;
-
-  // TODO: remove before prod — DEV ONLY: return first active SUPER_ADMIN without needing a real session
-  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_AUTH === "true") {
-    const admin = await prisma.adminUser.findFirst({
-      where: { role: "SUPER_ADMIN", isActive: true },
-      select: {
-        id: true,
-        telegramId: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        role: true,
-        isActive: true,
-      },
-    });
-    return admin;
-  }
 
   const admin = await prisma.adminUser.findUnique({
     where: { id: session.adminId },

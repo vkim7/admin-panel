@@ -709,13 +709,13 @@ A discount configuration. Can be percentage-based or fixed amount.
 
 | Field | Purpose |
 |-------|---------|
-| type | SEASONAL, FAMILY, LOYALTY, WIN_BACK, TRIAL, EARLY_PAYMENT, PARTNER, OTHER |
+| type | SEASONAL, FAMILY, REFERRAL, WIN_BACK, TRIAL, PROMO_CODE, APOLOGY, REWARD |
 | discountType | PERCENTAGE or FIXED_AMOUNT |
 | discountPercent | Int, e.g. 10 for 10% off. Whole numbers only. Set when discountType = PERCENTAGE. |
 | discountAmount | Int (UZS), e.g. 50000 for 50k off. Set when discountType = FIXED_AMOUNT. |
 | levels[] | Empty = all levels. [BEGINNER, ELEMENTARY] = only those. |
 | groupTypes[] | Empty = all. [GROUP] = group lessons only. [INDIVIDUAL] = individual only. |
-| isRecurring | True for family/loyalty (applies every month) |
+| isRecurring | True for family (applies every month) |
 | recurringMonths | Null = indefinite. 3 = applies for 3 months. |
 | maxUsesPerStudent | Null = unlimited. 1 = one-time. |
 | maxUsesTotal | Null = unlimited. 100 = first 100 students. |
@@ -725,7 +725,15 @@ A discount configuration. Can be percentage-based or fixed amount.
 
 **Stacking:** All active promotions stack additively. No cap at the Promotion level, but the resulting `discountAmount` on `StudentPaymentPeriod` is clamped to `amountDue` (constraint #36) — a student never pays less than zero.
 
-**Influencer/partner codes:** A Promotion with `type = PARTNER` and a `code`. Students sign up with the code, get the discount. Admin tracks usage count for influencer payouts.
+**Promo codes:** A Promotion with `type = PROMO_CODE` and a `code`. Students sign up with the code, get the discount. Admin tracks usage count for influencer/campaign payouts. PROMO_CODE and REFERRAL are mutually exclusive — a student can only have one acquisition channel.
+
+**Auto-detection rules (Phase 17):**
+- **FAMILY:** Auto-created when student is assigned to a group and family has 2+ active members. Applied to the joining student AND all existing active family members. Auto-removed (expired + future discounts reversed) when family drops below 2 active members (deactivation or family change).
+- **WIN_BACK:** Auto-created when a student with `lostReasonId != null` is assigned to a group (came from Lost List, directly or via reassignment). `sendToReassignment` preserves inactivation fields for this detection.
+- **SEASONAL:** Auto-created at student registration if an active campaign exists (`validFrom <= now <= validTo`), and also at group assignment if the student has 0 non-trial committed memberships. Persists even if assignment happens after campaign ends.
+- **PROMO_CODE:** Validated and attached at student creation. Mutually exclusive with REFERRAL.
+- **REFERRAL:** Auto-created on first payment (existing Phase 12 logic).
+- **APOLOGY / REWARD:** Admin-applied manually via existing promotion UI.
 
 ### StudentPromotion
 Links a student to a promotion. Created when a student receives a discount.
