@@ -3,6 +3,12 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "DATABASE_URL",
+        "TELEGRAM_BOT_TOKEN",
+        "AUTH_SECRET",
+        "NEXT_PUBLIC_TELEGRAM_BOT_USERNAME"
+      ],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
