@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { logout } from "@/lib/actions/auth";
 import {
   CalendarDays,
@@ -19,6 +19,7 @@ import {
   ReceiptText,
   Tag,
   UserX,
+  Loader2,
 } from "lucide-react";
 
 const navItems = [
@@ -49,10 +50,23 @@ interface AppSidebarProps {
 
 export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount, lostCount }: AppSidebarProps) {
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const [isNavPending, startNavTransition] = useTransition();
+  const [isLogoutPending, startLogoutTransition] = useTransition();
+  const [pendingHref, setPendingHref] = useState<string | null>(null);
+
+  function handleNav(href: string) {
+    setPendingHref(href);
+    startNavTransition(() => {
+      router.push(href);
+    });
+  }
+
+  // Clear pending state once navigation completes (pathname changes)
+  const resolvedPending = isNavPending ? pendingHref : null;
 
   function handleLogout() {
-    startTransition(() => logout());
+    startLogoutTransition(() => logout());
   }
 
   return (
@@ -64,18 +78,26 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + "/");
+          const isPending = resolvedPending === item.href;
           const Icon = item.icon;
           return (
-            <Link
+            <button
               key={item.href}
-              href={item.href}
-              className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors ${
+              onClick={() => handleNav(item.href)}
+              disabled={isNavPending}
+              className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors text-left ${
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  : isPending
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
-              <Icon className="size-4" />
+              {isPending ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Icon className="size-4" />
+              )}
               {item.label}
               {item.href === "/reception" && receptionCount ? (
                 <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
@@ -107,7 +129,7 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
                   {lostCount}
                 </span>
               ) : null}
-            </Link>
+            </button>
           );
         })}
       </nav>
@@ -115,11 +137,11 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
         <div className="px-3 text-xs text-muted-foreground">{adminName}</div>
         <button
           onClick={handleLogout}
-          disabled={isPending}
+          disabled={isLogoutPending}
           className="mt-1 flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted disabled:opacity-50"
         >
           <LogOut className="size-3.5" />
-          {isPending ? "Signing out..." : "Sign out"}
+          {isLogoutPending ? "Signing out..." : "Sign out"}
         </button>
       </div>
     </aside>
