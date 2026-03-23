@@ -75,6 +75,13 @@ export const groupCreateSchema = z
       return (TIME_SLOTS as readonly string[]).includes(data.startTime);
     },
     { message: "Start time must be a valid time slot", path: ["startTime"] },
+  )
+  .refine(
+    (data) => {
+      const today = new Date().toISOString().split("T")[0];
+      return data.startDate >= today!;
+    },
+    { message: "Start date cannot be in the past", path: ["startDate"] },
   );
 
 // Edit schema — level/progressStage/days/type/startDate not editable

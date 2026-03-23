@@ -86,6 +86,50 @@ export type StudentPaymentPeriodWithDetails = Awaited<
 >[number];
 
 /**
+ * Get paid payments for a given month, optionally filtered by method.
+ * Used by the Payments tab.
+ */
+export async function getPaidPayments(
+  year: number,
+  month: number,
+  method?: string,
+) {
+  return prisma.payment.findMany({
+    where: {
+      isTransferCredit: false,
+      paidAt: {
+        gte: new Date(Date.UTC(year, month - 1, 1)),
+        lt: new Date(Date.UTC(year, month, 1)),
+      },
+      ...(method ? { paymentMethod: method } : {}),
+    },
+    include: {
+      student: {
+        select: {
+          id: true,
+          crmCode: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
+      studentPaymentPeriod: {
+        select: {
+          periodYear: true,
+          periodMonth: true,
+          group: { select: { id: true, publicId: true } },
+        },
+      },
+      recordedBy: {
+        select: { firstName: true, lastName: true },
+      },
+    },
+    orderBy: { paidAt: "desc" },
+  });
+}
+
+export type PaidPayment = Awaited<ReturnType<typeof getPaidPayments>>[number];
+
+/**
  * Get a single billing period by ID (for the adjustment dialog).
  */
 export async function getPaymentPeriodById(id: string) {

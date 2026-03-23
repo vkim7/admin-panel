@@ -29,6 +29,7 @@ export const studentBaseSchema = z.object({
   familyId: z.string().nullable(),
   comment: z.string().nullable(),
   promoCode: z.string().nullable(),
+  referredByCode: z.string().nullable(),
 });
 
 export type StudentFormValues = z.infer<typeof studentBaseSchema>;
@@ -48,7 +49,19 @@ export const studentSchema = z
     familyId: nullableString(),
     comment: nullableString(500),
     promoCode: nullableString(),
+    referredByCode: nullableString(),
   })
+  .refine(
+    (data) => {
+      // Promo code and referral code are mutually exclusive
+      if (data.promoCode && data.referredByCode) return false;
+      return true;
+    },
+    {
+      message: "Promo code and referral code are mutually exclusive — use one or the other",
+      path: ["referredByCode"],
+    },
+  )
   .refine(
     (data) => {
       // C#7: Minor enrollment requires familyId

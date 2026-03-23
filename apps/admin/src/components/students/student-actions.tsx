@@ -20,8 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { deactivateStudent, reactivateStudent, sendToReassignment } from "@/lib/actions/students";
-import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { deactivateStudent, reactivateStudent } from "@/lib/actions/students";
 
 type LostReason = {
   id: string;
@@ -41,8 +40,6 @@ export function StudentActions({
   lostReasons,
 }: StudentActionsProps) {
   const [showDeactivate, setShowDeactivate] = useState(false);
-  const [showReactivate, setShowReactivate] = useState(false);
-  const [showReassignment, setShowReassignment] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -51,82 +48,50 @@ export function StudentActions({
 
   if (status === "INACTIVE") {
     return (
-      <>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowReactivate(true)}
-        >
-          Reactivate
-        </Button>
-        <ConfirmationDialog
-          open={showReactivate}
-          onOpenChange={setShowReactivate}
-          title="Reactivate Student"
-          description="This student will be set back to 'Awaiting Assignment' and can be assigned to a new group."
-          confirmLabel="Reactivate"
-          onConfirm={async () => {
+      <Button
+        variant="outline"
+        size="sm"
+        disabled={isPending}
+        onClick={() => {
+          startTransition(async () => {
             const result = await reactivateStudent(studentId);
             if (result?.error) {
               toast.error(result.error);
             } else {
               toast.success("Student reactivated");
             }
-          }}
-        />
-      </>
+          });
+        }}
+      >
+        Reactivate
+      </Button>
     );
   }
 
-  const showReassignButton = status === "ACTIVE";
-  const showDeactivateButton = status === "ACTIVE" || status === "AWAITING_ASSIGNMENT" || status === "AWAITING_REASSIGNMENT";
+  const showDeactivateButton =
+    status === "ACTIVE" ||
+    status === "AWAITING_ASSIGNMENT" ||
+    status === "AWAITING_REASSIGNMENT";
 
   return (
     <>
-      {showReassignButton && (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowReassignment(true)}
-        >
-          Send to Reassignment
-        </Button>
-      )}
-
+      {/* Deactivate is a dangerous action — shown as muted link-style */}
       {showDeactivateButton && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-destructive hover:text-destructive"
+        <button
+          type="button"
           onClick={() => setShowDeactivate(true)}
+          className="text-xs text-muted-foreground underline-offset-2 hover:text-destructive hover:underline"
         >
           Deactivate
-        </Button>
+        </button>
       )}
-
-      <ConfirmationDialog
-        open={showReassignment}
-        onOpenChange={setShowReassignment}
-        title="Send to Reassignment"
-        description="This student will be moved to 'Awaiting Reassignment' status and appear on the Reassignment page for re-placement."
-        confirmLabel="Send to Reassignment"
-        variant="default"
-        onConfirm={async () => {
-          const result = await sendToReassignment(studentId);
-          if (result?.error) {
-            toast.error(result.error);
-          } else {
-            toast.success("Student sent to reassignment");
-          }
-        }}
-      />
 
       <Dialog open={showDeactivate} onOpenChange={setShowDeactivate}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Deactivate Student</DialogTitle>
             <DialogDescription>
-              This will mark the student as inactive. Please select a reason.
+              This will remove the student from all active groups (with billing adjustment) and mark them as inactive.
             </DialogDescription>
           </DialogHeader>
 

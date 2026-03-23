@@ -94,13 +94,6 @@ export default async function GroupDetailPage({
     trialMemberships,
   );
 
-  // For active trial students, also check if they have attendance (for resolution dialog)
-  const activeTrialStudentIdsWithAttendance = new Set(
-    group.memberships
-      .filter((m) => m.isTrial && !m.leaveDate && trialMembershipIdsWithAttendance.has(m.id))
-      .map((m) => m.student.id),
-  );
-
   // Check graduation eligibility
   const graduationEligibility = canGraduate({
     level: group.level,
@@ -257,7 +250,7 @@ export default async function GroupDetailPage({
         transferReasons={transferReasons}
         availableGroups={transferGroups}
         trialMembershipIdsWithAttendance={trialMembershipIdsWithAttendance}
-        activeTrialStudentIdsWithAttendance={activeTrialStudentIdsWithAttendance}
+        lostReasons={lostReasons}
       />
 
       <Separator />

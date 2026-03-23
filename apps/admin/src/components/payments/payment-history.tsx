@@ -17,6 +17,7 @@ const METHOD_LABEL: Record<string, string> = {
   click: "Click",
   payme: "Payme",
   cash: "Cash",
+  bank_transfer: "Bank Transfer",
 };
 
 function formatUZS(amount: number) {

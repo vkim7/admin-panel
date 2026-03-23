@@ -32,6 +32,8 @@ interface TransferDialogProps {
   currentGroupPublicId: string;
   transferReasons: TransferReason[];
   availableGroups: TransferGroup[];
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 type BillingPreview = Awaited<ReturnType<typeof getTransferBillingPreview>>;
@@ -46,8 +48,13 @@ export function TransferDialog({
   currentGroupPublicId,
   transferReasons,
   availableGroups,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: TransferDialogProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = controlledOnOpenChange ?? setInternalOpen;
+  const isControlled = controlledOpen !== undefined;
   const [isPending, startTransition] = useTransition();
   const [selectedGroupId, setSelectedGroupId] = useState<string>("");
   const [reasonId, setReasonId] = useState<string>("");
@@ -141,12 +148,14 @@ export function TransferDialog({
         if (!v) resetForm();
       }}
     >
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <ArrowRightLeft className="mr-1 size-3.5" />
-          Transfer
-        </Button>
-      </DialogTrigger>
+      {!isControlled && (
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <ArrowRightLeft className="mr-1 size-3.5" />
+            Transfer
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Transfer {studentName}</DialogTitle>

@@ -23,3 +23,9 @@ export const trialResolutionSchema = z.object({
 });
 
 export type TrialResolutionValues = z.infer<typeof trialResolutionSchema>;
+
+export const transferTrialSchema = z.object({
+  destinationGroupId: z.string().min(1, "Destination group is required"),
+});
+
+export type TransferTrialValues = z.infer<typeof transferTrialSchema>;

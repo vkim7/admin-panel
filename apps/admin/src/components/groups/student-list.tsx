@@ -1,14 +1,46 @@
 "use client";
 
-import { useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
+import { MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
-import { TrialResolutionDialog } from "./trial-resolution-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { TrialActionsMenu } from "./trial-resolution-dialog";
 import { TransferDialog } from "@/components/transfers/transfer-dialog";
-import { toggleUncertain } from "@/lib/actions/students";
+import { toggleUncertain, sendToReassignment, sendToLostList } from "@/lib/actions/students";
 import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
+
+type LostReason = {
+  id: string;
+  name: string;
+  isOther: boolean;
+};
 
 type MembershipRow = {
   id: string;
@@ -31,6 +63,7 @@ type MembershipRow = {
     periodYear: number;
     periodMonth: number;
     amountDue: number;
+    discountAmount: number;
     amountPaid: number;
     paymentStatus: string;
   }[];
@@ -84,6 +117,183 @@ function UncertainToggle({
   );
 }
 
+function MemberActionsMenu({
+  studentId,
+  membershipId,
+  studentName,
+  transferReasons,
+  availableGroups,
+  currentGroupPublicId,
+  lostReasons,
+}: {
+  studentId: string;
+  membershipId: string;
+  studentName: string;
+  transferReasons?: TransferReason[];
+  availableGroups?: TransferGroup[];
+  currentGroupPublicId?: string;
+  lostReasons?: LostReason[];
+}) {
+  const [isPending, startTransition] = useTransition();
+  const [reassignOpen, setReassignOpen] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [lostOpen, setLostOpen] = useState(false);
+  const [selectedReasonId, setSelectedReasonId] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+
+  const selectedReason = lostReasons?.find((r) => r.id === selectedReasonId);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="size-7">
+            <MoreHorizontal className="size-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {transferReasons && availableGroups && currentGroupPublicId && (
+            <DropdownMenuItem onSelect={() => setTransferOpen(true)}>
+              Transfer
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onSelect={() => setReassignOpen(true)}>
+            Send to Reassignment
+          </DropdownMenuItem>
+          {lostReasons && (
+            <DropdownMenuItem onSelect={() => setLostOpen(true)}>
+              Send to Lost list
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Transfer dialog */}
+      {transferReasons && availableGroups && currentGroupPublicId && (
+        <TransferDialog
+          membershipId={membershipId}
+          studentName={studentName}
+          currentGroupPublicId={currentGroupPublicId}
+          transferReasons={transferReasons}
+          availableGroups={availableGroups}
+          open={transferOpen}
+          onOpenChange={setTransferOpen}
+        />
+      )}
+
+      {/* Reassignment confirmation */}
+      <Dialog open={reassignOpen} onOpenChange={setReassignOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send to Reassignment</DialogTitle>
+            <DialogDescription>
+              {studentName} will be removed from this group. If they have no other active groups, their status will change to Awaiting Reassignment.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReassignOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              disabled={isPending}
+              onClick={() => {
+                startTransition(async () => {
+                  const result = await sendToReassignment(studentId, membershipId);
+                  if (result?.error) {
+                    toast.error(result.error);
+                  } else {
+                    toast.success(`${studentName} sent to reassignment`);
+                    setReassignOpen(false);
+                  }
+                });
+              }}
+            >
+              {isPending ? "..." : "Send to Reassignment"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Send to Lost list dialog */}
+      <Dialog
+        open={lostOpen}
+        onOpenChange={(v) => {
+          setLostOpen(v);
+          if (!v) {
+            setSelectedReasonId("");
+            setOtherReason("");
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Send to Lost list</DialogTitle>
+            <DialogDescription>
+              {studentName} will be removed from this group. If they have no other active groups, they will be deactivated.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Reason for leaving</Label>
+              <Select onValueChange={setSelectedReasonId} value={selectedReasonId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {(lostReasons ?? []).map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedReason?.isOther && (
+              <div className="space-y-2">
+                <Label>Please specify</Label>
+                <Textarea
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                  placeholder="Why is the student leaving?"
+                  rows={2}
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLostOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={!selectedReasonId || isPending}
+              onClick={() => {
+                startTransition(async () => {
+                  const result = await sendToLostList(studentId, membershipId, {
+                    lostReasonId: selectedReasonId,
+                    otherLostReason: otherReason || null,
+                  });
+                  if (result?.error) {
+                    toast.error(result.error);
+                  } else if ("success" in result) {
+                    toast.success(`${studentName} sent to lost list`);
+                    setLostOpen(false);
+                  }
+                });
+              }}
+            >
+              {isPending ? "..." : "Send to Lost list"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 export function StudentList({
   memberships,
   groupId,
@@ -92,7 +302,7 @@ export function StudentList({
   transferReasons,
   availableGroups,
   trialMembershipIdsWithAttendance,
-  activeTrialStudentIdsWithAttendance,
+  lostReasons,
 }: {
   memberships: MembershipRow[];
   groupId: string;
@@ -101,7 +311,7 @@ export function StudentList({
   transferReasons?: TransferReason[];
   availableGroups?: TransferGroup[];
   trialMembershipIdsWithAttendance?: Set<string>;
-  activeTrialStudentIdsWithAttendance?: Set<string>;
+  lostReasons?: LostReason[];
 }) {
   const active = memberships.filter((m) => !m.leaveDate);
   const past = memberships.filter((m) => m.leaveDate);
@@ -133,7 +343,7 @@ export function StudentList({
                 </th>
                 <th className="px-3 py-2 text-left font-medium">Status</th>
                 <th className="px-3 py-2 text-left font-medium">Comment</th>
-                <th className="px-3 py-2 text-left font-medium"></th>
+                <th className="px-3 py-2 text-left font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -177,10 +387,21 @@ export function StudentList({
                       {m.isTrial ? (
                         "—"
                       ) : currentPeriod ? (
-                        <StatusBadge
-                          type="payment"
-                          value={currentPeriod.paymentStatus}
-                        />
+                        <div className="flex items-center gap-1.5">
+                          <StatusBadge
+                            type="payment"
+                            value={currentPeriod.paymentStatus}
+                          />
+                          {currentPeriod.paymentStatus !== "PAID" &&
+                            (() => {
+                              const rem = currentPeriod.amountDue - currentPeriod.discountAmount - currentPeriod.amountPaid;
+                              return rem > 0 ? (
+                                <span className="text-xs text-destructive">
+                                  {rem.toLocaleString("en-US")}
+                                </span>
+                              ) : null;
+                            })()}
+                        </div>
                       ) : (
                         "—"
                       )}
@@ -213,26 +434,28 @@ export function StudentList({
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1">
                         {m.isTrial && (
-                          <TrialResolutionDialog
+                          <TrialActionsMenu
                             membershipId={m.id}
+                            studentId={m.student.id}
                             studentName={`${m.student.firstName} ${m.student.lastName}`}
-                            groupId={groupId}
                             groupType={groupType}
-                            hasAttendance={activeTrialStudentIdsWithAttendance?.has(m.student.id) ?? false}
+                            hasAttendance={trialMembershipIdsWithAttendance?.has(m.id) ?? false}
+                            lostReasons={lostReasons}
+                            availableGroups={availableGroups}
+                            currentGroupPublicId={currentGroupPublicId}
                           />
                         )}
-                        {!m.isTrial &&
-                          transferReasons &&
-                          availableGroups &&
-                          currentGroupPublicId && (
-                            <TransferDialog
-                              membershipId={m.id}
-                              studentName={`${m.student.firstName} ${m.student.lastName}`}
-                              currentGroupPublicId={currentGroupPublicId}
-                              transferReasons={transferReasons}
-                              availableGroups={availableGroups}
-                            />
-                          )}
+                        {!m.isTrial && (
+                          <MemberActionsMenu
+                            studentId={m.student.id}
+                            membershipId={m.id}
+                            studentName={`${m.student.firstName} ${m.student.lastName}`}
+                            transferReasons={transferReasons}
+                            availableGroups={availableGroups}
+                            currentGroupPublicId={currentGroupPublicId}
+                            lostReasons={lostReasons}
+                          />
+                        )}
                       </div>
                     </td>
                   </tr>

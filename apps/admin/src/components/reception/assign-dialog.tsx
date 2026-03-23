@@ -24,7 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
+import { AlertTriangle, Check } from "lucide-react";
 
 export type GroupOption = {
   id: string;
@@ -50,9 +50,6 @@ export type StudentForAssign = {
   preferredTimeSlots: string[];
   preferredLanguage: string;
 };
-
-// Language hard-enforcement applies at these levels
-const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
 
 const assignFormSchema = z.object({
   groupId: z.string().min(1, "Select a group"),
@@ -113,11 +110,6 @@ export function AssignDialog({
     const studentKey = `${student.level}:${student.progressStage}`;
     const studentIdx = LEVEL_STAGE_ORDER.indexOf(studentKey);
 
-    // Hard language filter: BEGINNER/ELEMENTARY with specific language preference
-    const isHardLanguage =
-      LANGUAGE_HARD_LEVELS.has(student.level) &&
-      student.preferredLanguage !== "ANY";
-
     const eligible = groups.filter((g) => {
       const groupKey = `${g.level}:${g.progressStage}`;
       const groupIdx = LEVEL_STAGE_ORDER.indexOf(groupKey);
@@ -126,9 +118,6 @@ export function AssignDialog({
       // Within 3 stages
       const distance = Math.abs(groupIdx - studentIdx);
       if (distance > 3) return false;
-
-      // Hard language enforcement: exclude mismatched groups entirely
-      if (isHardLanguage && !groupMatchesLanguage(g)) return false;
 
       return true;
     });
@@ -204,6 +193,9 @@ export function AssignDialog({
         toast.success(
           `${student.firstName} ${student.lastName} assigned to group`,
         );
+        if ("warning" in result && result.warning) {
+          toast.warning(result.warning);
+        }
         onOpenChange(false);
         form.reset();
       }
@@ -218,6 +210,10 @@ export function AssignDialog({
 
   function renderGroupRow(group: GroupOption) {
     const isSelected = selectedGroupId === group.id;
+    const hasLanguageMismatch =
+      student.preferredLanguage !== "ANY" &&
+      group.teachingLanguage !== "ANY" &&
+      student.preferredLanguage !== group.teachingLanguage;
 
     const levelLabel = LEVEL_SHORT[group.level] ?? group.level;
     const stageLabel = STAGE_SHORT[group.progressStage] ?? group.progressStage;
@@ -231,7 +227,9 @@ export function AssignDialog({
         className={`flex w-full items-center gap-3 rounded-md border px-3 py-2 text-left text-sm transition-colors ${
           isSelected
             ? "border-primary bg-primary/5"
-            : "hover:bg-accent"
+            : hasLanguageMismatch
+              ? "border-amber-300 bg-amber-50/50 hover:bg-amber-50"
+              : "hover:bg-accent"
         }`}
       >
         {isSelected && <Check className="size-4 shrink-0 text-primary" />}
@@ -241,6 +239,9 @@ export function AssignDialog({
               <span className="font-medium">{group.publicId}</span>
               {getGroupLanguage(group) && (
                 <span className="text-muted-foreground">{getGroupLanguage(group)}</span>
+              )}
+              {hasLanguageMismatch && (
+                <AlertTriangle className="size-3.5 text-amber-500" />
               )}
             </span>
             <span className="text-xs font-medium text-foreground/70">
@@ -293,14 +294,10 @@ export function AssignDialog({
               {student.preferredTimeSlots.join(", ")}
             </span>
           )}
-          {LANGUAGE_HARD_LEVELS.has(student.level) && (
+          {student.preferredLanguage !== "ANY" && (
             <span className="text-muted-foreground">
               Lang:{" "}
-              {student.preferredLanguage === "UZBEK"
-                ? "Uzbek"
-                : student.preferredLanguage === "RUSSIAN"
-                  ? "Russian"
-                  : "Any"}
+              {student.preferredLanguage === "UZBEK" ? "Uzbek" : "Russian"}
             </span>
           )}
         </div>

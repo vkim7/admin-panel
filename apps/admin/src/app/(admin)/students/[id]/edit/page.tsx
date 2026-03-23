@@ -41,6 +41,7 @@ export default async function EditStudentPage({
           familyId: student.familyId,
           comment: student.comment,
           promoCode: null,
+          referredByCode: null,
         }}
         initialFamily={
           student.family

@@ -19,6 +19,8 @@ export async function recordPayment(periodId: string, data: unknown) {
       id: true,
       studentId: true,
       groupId: true,
+      periodYear: true,
+      periodMonth: true,
       amountDue: true,
       discountAmount: true,
       amountPaid: true,
@@ -27,6 +29,28 @@ export async function recordPayment(periodId: string, data: unknown) {
 
   if (!period) {
     return { error: "Billing period not found" };
+  }
+
+  // Block payments for future billing periods
+  const now = new Date();
+  const currentYear = now.getUTCFullYear();
+  const currentMonth = now.getUTCMonth() + 1;
+  if (
+    period.periodYear > currentYear ||
+    (period.periodYear === currentYear && period.periodMonth > currentMonth)
+  ) {
+    return { error: "Cannot record payments for future billing periods" };
+  }
+
+  // Cap payment at remaining balance
+  const remaining = period.amountDue - period.discountAmount - period.amountPaid;
+  if (remaining <= 0) {
+    return { error: "This billing period is already fully paid" };
+  }
+  if (parsed.data.amount > remaining) {
+    return {
+      error: `Amount exceeds remaining balance (${remaining.toLocaleString("en-US")} UZS)`,
+    };
   }
 
   const newAmountPaid = period.amountPaid + parsed.data.amount;

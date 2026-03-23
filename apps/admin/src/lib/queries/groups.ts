@@ -39,6 +39,7 @@ export async function getGroupById(id: string) {
               periodYear: true,
               periodMonth: true,
               amountDue: true,
+              discountAmount: true,
               amountPaid: true,
               paymentStatus: true,
             },

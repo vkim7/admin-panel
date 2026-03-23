@@ -86,7 +86,7 @@ export const requiredIsoDate = (error = "Required") =>
   z
     .string({ error })
     .trim()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Must be YYYY-MM-DD" });
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Must be DD.MM.YYYY" });
 
 /** Nullable ISO date — empty becomes null (NULL DATE). */
 export const nullableIsoDate = () =>
@@ -97,7 +97,7 @@ export const nullableIsoDate = () =>
     },
     z
       .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Must be YYYY-MM-DD" })
+      .regex(/^\d{4}-\d{2}-\d{2}$/, { error: "Must be DD.MM.YYYY" })
       .nullable(),
   );
 

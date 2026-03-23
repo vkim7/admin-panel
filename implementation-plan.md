@@ -427,18 +427,30 @@ Also modified: `app-sidebar.tsx` (badge prop, "Eng Admin" links to /schedule), `
   - On save: create PaymentPeriodAdjustment (audit trail with before/after snapshots), recalculate paymentStatus
 - [x] **Student profile enhancement**: Payments section on student detail page showing all billing periods with payment history and adjustment trail. Record payment and adjust period actions available inline.
 
+### Implementation Notes (Feedback Phase C)
+
+- **Payment validation (#21):** `recordPayment` now selects `periodYear`/`periodMonth` and validates: (1) period is not in the future, (2) amount does not exceed remaining balance (`amountDue - discountAmount - amountPaid`), (3) period is not already fully paid. `record-payment-dialog.tsx` has `max={remaining}` on amount input.
+- **Remaining amount (#16):** "Remaining" column added to `no-payment-table.tsx`. Group detail student list shows remaining amount in red next to status badge — required adding `discountAmount` to `paymentPeriods` select in `getGroupById` and to `MembershipRow` type in `student-list.tsx`.
+- **Payment History page (#17):** New route `/payment-history` with own sidebar entry ("Payment History", `Receipt` icon). New query `getPaidPayments(year, month, method?)` filters `Payment` records by `paidAt` date range and excludes transfer credits. New `paid-payments-table.tsx` component. Month picker (last 6 months) + payment method filter pills as `<Link>` search params. Added `bank_transfer` to `recordPaymentSchema` enum, `RecordPaymentDialog` select, and `METHOD_LABEL` maps in `payment-history.tsx` and `paid-payments-table.tsx`.
+- **Code review fixes:** (1) `updateStudent` — `redirect()` moved outside try/catch to avoid catching Next.js internal throw. (2) `sendToReassignment` — membership validation moved before transaction, returns `{ error }` instead of throwing. (3) `record-payment-dialog` — dialog resets amount/method/note from fresh props on open via `handleOpenChange`. (4) `payment-history` page — searchParams validated with `Number.isFinite()`, falls back to current month on garbage. (5) `reactivateStudent` — clears `isUncertain` and `uncertainComment`.
+
 ### Files
 
 ```
 src/schemas/payment.ts
-src/lib/queries/payments.ts
-src/lib/actions/payments.ts
+src/lib/queries/payments.ts                    ← + getPaidPayments query, PaidPayment type
+src/lib/actions/payments.ts                    ← + future-month block, amount cap validation
 src/lib/helpers/payment-status.ts              ← shared helper (C#16)
-src/app/(admin)/payments/page.tsx              ← rewrite existing placeholder
-src/components/payments/no-payment-table.tsx
-src/components/payments/record-payment-dialog.tsx
+src/app/(admin)/payments/page.tsx              ← No Payment list (unchanged from Phase 6)
+src/app/(admin)/payment-history/page.tsx       ← NEW: Payment History page with filters
+src/components/payments/no-payment-table.tsx   ← + Remaining column
+src/components/payments/record-payment-dialog.tsx  ← + max attr, Bank Transfer option
+src/components/payments/paid-payments-table.tsx    ← NEW: paid payments DataTable
 src/components/payments/period-editor.tsx
-src/components/payments/payment-history.tsx
+src/components/payments/payment-history.tsx    ← + bank_transfer in METHOD_LABEL
+src/components/groups/student-list.tsx         ← + discountAmount type, remaining display
+src/lib/queries/groups.ts                      ← + discountAmount in paymentPeriods select
+src/components/app-sidebar.tsx                 ← + Payment History nav entry
 ```
 
 ---
@@ -653,7 +665,7 @@ src/lib/helpers/leave-billing.ts          — C#31 leave billing (reused by Phas
 src/lib/actions/transfers.ts              — transferStudent action + billing preview wrapper
 src/schemas/transfer.ts                   — Zod validation
 src/lib/queries/transfers.ts              — transfer reasons, eligible groups, billing preview
-src/components/transfers/transfer-dialog.tsx — full transfer UI (group picker + reason + billing preview)
+src/components/transfers/transfer-dialog.tsx — full transfer UI (group picker + reason + billing preview). Supports controlled mode (open/onOpenChange props) for use from dropdown menus (Phase B).
 
 Modified:
 src/lib/helpers/lesson-scheduling.ts      — extracted checkScheduleConflicts
@@ -748,7 +760,7 @@ src/app/(admin)/teachers/[id]/page.tsx                   — added payment histo
   - mergedIntoGroupId and graduatedIntoGroupId are mutually exclusive (Zod validation)
   - **Pending refund from prior transfer:** If a student continuing to the new group has a PENDING Refund (from a transfer where credit exceeded destination periods), the refund is NOT auto-carried forward. Admin resolves it manually via refund UI: either "Convert to credit" (cancel refund, apply as transfer credit to new group's billing) or "Process refund" (return the money).
 - [x] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
-- [x] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and future dropout flow.
+- [x] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and dropout/reassignment/lost flows (Phase A expanded refund triggers to all membership closures).
 
 ### Shared Helpers
 
@@ -973,6 +985,17 @@ Two billing paths depending on trial outcome, differentiated by group type:
 - Student detail Group History: added Reason column (transfer reason text, or "Merged"/"Graduated" label, or trial status badge) and "Moved to" column (link to destination group via `continuedAsMemberships` or `mergedIntoGroup`/`graduatedIntoGroup`). For "Other" transfer reasons, displays the free-text `otherTransferReason` instead of "Other".
 - Transfer credit notes now use group `publicId` (e.g. "GR-1") instead of raw cuid
 - Payment history: "Partial period" badge renamed to "Prorated" to avoid confusion with "Partially paid" status badge. Transfer credit payments show only the "Transfer credit" badge (no empty payment method badge).
+- **Phase B additions (feedback items #14, #15):**
+  - All student actions in group student list unified into dropdown menus (dots icon trigger, "Actions" column header):
+    - **Non-trial (`MemberActionsMenu` in `student-list.tsx`):** Transfer / Send to Reassignment / Send to Lost list
+    - **Trial with attendance (`TrialActionsMenu`):** Commit / Send to Lost list (auto-reason) / Send to Reassignment
+    - **Trial no-show (`TrialActionsMenu`):** Send to Lost list (manual reason picker) / Send to Reassignment / Transfer Trial (group picker)
+  - Each dropdown item opens its own confirmation/form dialog. Dialogs are self-contained within the menu components.
+  - `TransferDialog` gained optional `open`/`onOpenChange` props for controlled usage from `MemberActionsMenu` (trigger hidden when controlled).
+  - New `transferTrialStudent` action in `group-memberships.ts`: validates trial + active, checks capacity/duplicates/schedule conflicts, blocks if trial attempts exhausted, atomically closes source + creates new trial membership (no billing).
+  - Schema: added `transferTrialSchema` to `group-membership.ts`.
+  - Deleted `send-to-lost-dialog.tsx` and `transfer-trial-dialog.tsx` (functionality inlined into menu components).
+  - Removed `activeTrialStudentIdsWithAttendance` prop from `StudentList` (replaced by membership-ID-based `trialMembershipIdsWithAttendance`).
 
 ### Files
 
@@ -987,9 +1010,10 @@ apps/admin/src/lib/queries/teachers.ts                          — getTeacherTr
 apps/admin/src/lib/queries/students.ts                          — getTrialAttemptsForStudents, getTrialMembershipAttendance
 apps/admin/src/lib/helpers/transfer-credit.ts                   — use publicId in transfer credit notes
 apps/admin/src/components/ui/trial-status-badge.tsx             — NEW: shared TrialStatusBadge + getTrialStatus helper
-apps/admin/src/components/groups/trial-resolution-dialog.tsx    — renamed + billing preview + attendance gate
+apps/admin/src/components/groups/trial-resolution-dialog.tsx    — rewritten as `TrialActionsMenu` (Phase B): dropdown menu with trial actions + inline dialogs
+apps/admin/src/components/groups/student-list.tsx               — trial status badges for past members + `MemberActionsMenu` dropdown for non-trial + `TrialActionsMenu` for trial (Phase B)
+apps/admin/src/components/groups/send-to-lost-dialog.tsx        — DELETED (Phase B): functionality inlined into menu components
 apps/admin/src/components/groups/add-student-dialog.tsx         — trial attempts display + enforcement
-apps/admin/src/components/groups/student-list.tsx               — trial status badges for past members
 apps/admin/src/components/reception/assign-dialog.tsx           — trial toggle removed
 apps/admin/src/components/payments/payment-history.tsx          — "Prorated" label, transfer credit badge fix
 apps/admin/src/components/teachers/trial-history.tsx            — NEW: teacher trial history component
@@ -1051,12 +1075,14 @@ apps/admin/src/app/(admin)/groups/[id]/page.tsx                 — pass trial a
 ### Implementation Notes
 
 - **Query file:** `src/lib/queries/reassignment.ts` with three functions: `getReassignmentStudents` (AWAITING_REASSIGNMENT students with last group info), `getReassignmentCount` (for sidebar badge), `getOrphanedStudents` (ACTIVE students with zero active memberships).
-- **Send to reassignment action:** `sendToReassignment` added to `src/lib/actions/students.ts`. Available for ACTIVE students (including orphans). Student actions restructured: ACTIVE gets "Send to Reassignment" + "Deactivate"; AWAITING_ASSIGNMENT/AWAITING_REASSIGNMENT gets "Deactivate" only.
+- **Send to reassignment action:** `sendToReassignment` in `src/lib/actions/students.ts` redesigned as a **group-level action** accepting `(studentId, membershipId)`. Closes the specific membership with `performLeaveBilling`, creates pending refund if overpayment exists, and only sets status to `AWAITING_REASSIGNMENT` if no other active memberships remain. Also accepts INACTIVE students (clears inactivation fields). "Send to Reassignment" button removed from student-actions.tsx (student detail page) — now only available in group student list.
+- **Send to lost list action:** New `sendToLostList(studentId, membershipId, { lostReasonId, otherLostReason })` in `src/lib/actions/students.ts`. Same membership-scoped logic as sendToReassignment. If no other active memberships, deactivates with lost reason. UI: inlined into `MemberActionsMenu` (student-list.tsx) and `TrialActionsMenu` (trial-resolution-dialog.tsx) dropdown menus.
+- **Deactivate student redesigned:** `deactivateStudent` is now a "nuclear option" that auto-closes ALL active memberships via `performLeaveBilling(adjustmentType: "DROPOUT")`, creates pending refunds for overpayments, then sets INACTIVE. Button demoted to subtle muted link in student-actions.tsx.
 - **Reassignment → ACTIVE flow:** Updated `addStudentsToGroup` and `resolveTrialMembership` in `src/lib/actions/group-memberships.ts` to handle AWAITING_REASSIGNMENT → ACTIVE transitions.
 - **Auto-determined trial status:** Removed `isTrial` from schema, UI, and all assignment paths. `addStudentsToGroup` now auto-determines per student by checking `wasTrialOriginally` count against the limit (2 for GROUP, 1 for INDIVIDUAL). Also removed the trial toggle checkbox from the group detail "Add Student" dialog and the `trialAttempts` computation. Edge cases handled via promotions.
 - **AssignDialog reuse:** Both Reception and Reassignment use the same dialog with no trial prop — server decides.
 - **Reassignment page:** `src/app/(admin)/reassignment/page.tsx` server component. Table at `src/components/reassignment/reassignment-table.tsx` with assign and deactivate actions.
-- **Orphan warning:** `src/components/reassignment/orphan-warning.tsx` shown at top of Reassignment page. Displays ACTIVE students with no active group membership, with send-to-reassignment and deactivate actions.
+- **Orphan warning:** `src/components/reassignment/orphan-warning.tsx` always-visible collapsible section at top of Reassignment page. Auto-expanded when orphans exist (amber styling), collapsed when empty (muted styling with explanatory text). Displays ACTIVE students with no active group membership, with send-to-reassignment and deactivate actions.
 - **Sidebar:** Added Reassignment nav item with `RefreshCw` icon between Reception and Uncertain, with badge count.
 - **Layout:** Added `getReassignmentCount` to `Promise.all` in `src/app/(admin)/layout.tsx`.
 - **Revalidation:** Added `/reassignment` path revalidation to graduation, `deactivateStudent`, `addStudentsToGroup`, and `resolveTrialMembership`.
@@ -1072,8 +1098,10 @@ apps/admin/src/lib/actions/group-graduation.ts       — revalidation for /reass
 apps/admin/src/schemas/group-membership.ts           — removed isTrial from addStudentsSchema
 apps/admin/src/app/(admin)/reassignment/page.tsx     — server component page
 apps/admin/src/components/reassignment/reassignment-table.tsx — client component table with assign + deactivate
-apps/admin/src/components/reassignment/orphan-warning.tsx    — orphan detection warning component
-apps/admin/src/components/reception/assign-dialog.tsx — removed isTrial prop
+apps/admin/src/components/reassignment/orphan-warning.tsx    — orphan detection warning component (always-visible collapsible)
+apps/admin/src/components/groups/send-to-lost-dialog.tsx    — DELETED (Phase B): inlined into dropdown menus
+apps/admin/src/components/groups/student-list.tsx            — added Reassign + Lost buttons for non-trial active members
+apps/admin/src/components/reception/assign-dialog.tsx — removed isTrial prop, language warning indicator (all levels)
 apps/admin/src/components/groups/add-student-dialog.tsx — removed trial toggle UI + trialAttempts prop
 apps/admin/src/app/(admin)/groups/[id]/page.tsx      — removed trialAttempts computation
 apps/admin/src/components/students/student-actions.tsx — added "Send to Reassignment" for ACTIVE students
@@ -1222,10 +1250,10 @@ apps/admin/src/app/(admin)/layout.tsx                 — fetch + pass lostCount
 **Modified files:**
 - `schema.prisma` — PromotionType enum
 - `schemas/promotion.ts`, `promotion-form.tsx`, `promotion-table.tsx` — enum/labels
-- `schemas/student.ts` — added `promoCode` field (both base + full schema)
-- `student-form.tsx` — promo code input (create mode only)
-- `students/[id]/edit/page.tsx` — passes `promoCode: null` in defaultValues
-- `students.ts` — `createStudent()`: transactional (student + PROMO_CODE + SEASONAL). `updateStudent()`: FAMILY detect/remove on family change. `deactivateStudent()`: FAMILY auto-removal. `sendToReassignment()`: preserves inactivation fields for WIN_BACK tracking
+- `schemas/student.ts` — added `promoCode` and `referredByCode` fields (both base + full schema), mutual exclusivity refine
+- `student-form.tsx` — side-by-side promo code + referral code inputs (create mode only), mutually exclusive (entering one disables the other)
+- `students/[id]/edit/page.tsx` — passes `promoCode: null, referredByCode: null` in defaultValues
+- `students.ts` — `createStudent()`: transactional (student + PROMO_CODE + SEASONAL + REFERRAL via referredByCode). `updateStudent()`: FAMILY detect/remove on family change. `deactivateStudent()`: auto-closes all memberships with leave billing + FAMILY auto-removal. `sendToReassignment(studentId, membershipId)`: membership-scoped removal with leave billing. `sendToLostList(studentId, membershipId, data)`: new, membership-scoped deactivation with lost reason.
 - `group-memberships.ts` — `addStudentsToGroup()`: auto-detection (WIN_BACK → SEASONAL → FAMILY → activate → apply → FAMILY for existing members)
 - `payments.ts` — LOYALTY → REFERRAL lookup
 - `referrals.ts` — mutual exclusivity check (REFERRAL vs PROMO_CODE)

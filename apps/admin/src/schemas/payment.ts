@@ -6,7 +6,7 @@ export const recordPaymentSchema = z.object({
     .number()
     .int("Amount must be a whole number")
     .positive("Amount must be positive"),
-  paymentMethod: z.enum(["click", "payme", "cash"]),
+  paymentMethod: z.enum(["click", "payme", "cash", "bank_transfer"]),
   note: nullableString(),
 });
 

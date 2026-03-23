@@ -95,6 +95,7 @@ export function StudentForm({
       familyId: null,
       comment: null,
       promoCode: null,
+      referredByCode: null,
     },
   });
 
@@ -392,28 +393,52 @@ export function StudentForm({
           )}
         />
 
-        {/* Promo Code — only on creation */}
+        {/* Promo Code & Referral Code — only on creation, mutually exclusive */}
         {!isEdit && (
-          <FormField
-            control={form.control}
-            name="promoCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Promo Code</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    value={field.value ?? ""}
-                    placeholder="e.g. BIEBER2026"
-                  />
-                </FormControl>
-                <FormDescription>
-                  Optional. Celebrity or campaign code for a first-month discount.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="promoCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Promo Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="e.g. BIEBER2026"
+                      disabled={!!form.watch("referredByCode")}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Campaign code for a first-month discount.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="referredByCode"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Referral Code</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      value={field.value ?? ""}
+                      placeholder="e.g. ABC12345"
+                      disabled={!!form.watch("promoCode")}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Referring student&apos;s code.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         )}
 
         {/* Actions */}

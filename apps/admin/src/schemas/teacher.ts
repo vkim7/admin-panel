@@ -40,7 +40,7 @@ export const rateChangeSchema = z.object({
   individualLessonRate: requiredInt("Individual rate is required"),
   effectiveFrom: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Must be YYYY-MM-DD")
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Must be DD.MM.YYYY")
     .refine(
       (val) => {
         const day = parseInt(val.split("-")[2] ?? "0", 10);

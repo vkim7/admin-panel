@@ -6,6 +6,7 @@ import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import { studentSchema, deactivateStudentSchema } from "@/schemas/student";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
+import { performLeaveBilling } from "@/lib/helpers/leave-billing";
 
 export async function createStudent(data: unknown) {
   await requireAdmin();
@@ -14,7 +15,7 @@ export async function createStudent(data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { dateOfBirth, preferredDays, preferredTimeSlots, promoCode, ...rest } = parsed.data;
+  const { dateOfBirth, preferredDays, preferredTimeSlots, promoCode, referredByCode, ...rest } = parsed.data;
 
   // Validate promo code before creating student (fail fast)
   let promoCodePromotion: { id: string; validityDays: number | null } | null = null;
@@ -25,15 +26,44 @@ export async function createStudent(data: unknown) {
     });
 
     if (!promo) {
+      // Check if it's a student referral code entered in the wrong field
+      const studentWithCode = await prisma.student.findFirst({
+        where: { referralCode: promoCode },
+        select: { id: true },
+      });
+      if (studentWithCode) {
+        return { error: `"${promoCode}" is a referral code — enter it in the Referral Code field instead` };
+      }
       return { error: `Promo code "${promoCode}" not found` };
     }
     if (promo.type !== "PROMO_CODE") {
-      return { error: `Code "${promoCode}" is not a valid promo code` };
+      return { error: `Code "${promoCode}" is not a promo code (it's a ${promo.type.toLowerCase().replace("_", " ")} promotion)` };
     }
     if (!promo.isActive) {
       return { error: `Promo code "${promoCode}" is no longer active` };
     }
     promoCodePromotion = { id: promo.id, validityDays: promo.validityDays };
+  }
+
+  // Validate referral code — find the referring student
+  let referrerStudentId: string | null = null;
+  if (referredByCode) {
+    const referrer = await prisma.student.findFirst({
+      where: { referralCode: referredByCode },
+      select: { id: true },
+    });
+    if (!referrer) {
+      // Check if it's a promo code entered in the wrong field
+      const promoWithCode = await prisma.promotion.findUnique({
+        where: { code: referredByCode },
+        select: { id: true },
+      });
+      if (promoWithCode) {
+        return { error: `"${referredByCode}" is a promo code — enter it in the Promo Code field instead` };
+      }
+      return { error: `Referral code "${referredByCode}" not found` };
+    }
+    referrerStudentId = referrer.id;
   }
 
   // Auto-generate a unique referral code (8 chars, alphanumeric uppercase)
@@ -62,6 +92,16 @@ export async function createStudent(data: unknown) {
 
         await tx.studentPromotion.create({
           data: { studentId: student.id, promotionId: promoCodePromotion.id, expiresAt },
+        });
+      }
+
+      // REFERRAL: create referral record linking referrer → this student
+      if (referrerStudentId) {
+        await tx.referral.create({
+          data: {
+            referrerStudentId,
+            referredStudentId: student.id,
+          },
         });
       }
 
@@ -145,9 +185,6 @@ export async function updateStudent(id: string, data: unknown) {
         }
       }
     });
-
-    revalidatePath(`/students/${id}`);
-    redirect(`/students/${id}`);
   } catch (e: unknown) {
     if (
       typeof e === "object" &&
@@ -159,6 +196,9 @@ export async function updateStudent(id: string, data: unknown) {
     }
     throw e;
   }
+
+  revalidatePath(`/students/${id}`);
+  redirect(`/students/${id}`);
 }
 
 export async function deactivateStudent(id: string, data: unknown) {
@@ -173,7 +213,7 @@ export async function deactivateStudent(id: string, data: unknown) {
     include: {
       groupMemberships: {
         where: { leaveDate: null },
-        select: { id: true, group: { select: { publicId: true } } },
+        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
       },
     },
   });
@@ -184,14 +224,6 @@ export async function deactivateStudent(id: string, data: unknown) {
 
   if (student.status === "INACTIVE") {
     return { error: "Student is already inactive" };
-  }
-
-  // Warn about active memberships
-  if (student.groupMemberships.length > 0) {
-    const groupIds = student.groupMemberships.map((m) => m.group.publicId).join(", ");
-    return {
-      error: `Student has active group memberships (${groupIds}). Handle those first.`,
-    };
   }
 
   // C#17: Validate that otherLostReason is provided if the reason isOther
@@ -207,7 +239,47 @@ export async function deactivateStudent(id: string, data: unknown) {
     return { error: "Please specify the reason" };
   }
 
+  const groupIds = new Set<string>();
+
   await prisma.$transaction(async (tx) => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Close all active memberships + leave billing
+    for (const m of student.groupMemberships) {
+      groupIds.add(m.group.id);
+
+      await tx.groupMembership.update({
+        where: { id: m.id },
+        data: { leaveDate: today },
+      });
+
+      // Run leave billing for non-trial memberships
+      if (!m.isTrial) {
+        const result = await performLeaveBilling({
+          membershipId: m.id,
+          leaveDate: today,
+          adjustmentType: "DROPOUT",
+          adminId: admin.id,
+          tx,
+        });
+
+        // Create pending refund if overpayment exists
+        if (result.overpayment > 0 && result.adjustedPeriodId) {
+          await tx.refund.create({
+            data: {
+              studentId: id,
+              studentPaymentPeriodId: result.adjustedPeriodId,
+              amount: result.overpayment,
+              status: "PENDING",
+              initiatedById: admin.id,
+              note: `Deactivation from ${m.group.publicId}`,
+            },
+          });
+        }
+      }
+    }
+
     await tx.student.update({
       where: { id },
       data: {
@@ -229,13 +301,33 @@ export async function deactivateStudent(id: string, data: unknown) {
   revalidatePath("/reception");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  for (const gId of groupIds) {
+    revalidatePath(`/groups/${gId}`);
+  }
   return { success: true };
 }
 
-export async function sendToReassignment(id: string) {
-  await requireAdmin();
+/**
+ * Send student to reassignment — closes a specific group membership.
+ *
+ * When called with a membershipId: closes that membership + leave billing,
+ * then sets AWAITING_REASSIGNMENT if no other active memberships remain.
+ *
+ * When called without membershipId (orphan case or INACTIVE→AWAITING_REASSIGNMENT):
+ * just changes status.
+ */
+export async function sendToReassignment(studentId: string, membershipId?: string) {
+  const admin = await requireAdmin();
 
-  const student = await prisma.student.findUnique({ where: { id } });
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    include: {
+      groupMemberships: {
+        where: { leaveDate: null },
+        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
+      },
+    },
+  });
 
   if (!student) {
     return { error: "Student not found" };
@@ -245,20 +337,189 @@ export async function sendToReassignment(id: string) {
     return { error: "Only active or inactive students can be sent to reassignment" };
   }
 
-  // Keep inactivation fields intact for INACTIVE → AWAITING_REASSIGNMENT.
-  // lostReasonId != null at activation time = WIN_BACK student (came from Lost List).
-  // Fields are cleared at the final activation point in addStudentsToGroup.
-  await prisma.student.update({
-    where: { id },
-    data: {
-      status: "AWAITING_REASSIGNMENT",
-    },
+  // Validate membership before entering the transaction
+  const targetMembership = membershipId
+    ? student.groupMemberships.find((m) => m.id === membershipId)
+    : null;
+  if (membershipId && !targetMembership) {
+    return { error: "Membership not found or already closed" };
+  }
+
+  let closedGroupId: string | null = null;
+
+  await prisma.$transaction(async (tx) => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Close specific membership if provided
+    if (membershipId && targetMembership) {
+      closedGroupId = targetMembership.group.id;
+
+      await tx.groupMembership.update({
+        where: { id: membershipId },
+        data: { leaveDate: today },
+      });
+
+      // Run leave billing for non-trial memberships
+      if (!targetMembership.isTrial) {
+        const result = await performLeaveBilling({
+          membershipId,
+          leaveDate: today,
+          adjustmentType: "DROPOUT",
+          adminId: admin.id,
+          tx,
+        });
+
+        if (result.overpayment > 0 && result.adjustedPeriodId) {
+          await tx.refund.create({
+            data: {
+              studentId,
+              studentPaymentPeriodId: result.adjustedPeriodId,
+              amount: result.overpayment,
+              status: "PENDING",
+              initiatedById: admin.id,
+              note: `Reassignment from ${targetMembership.group.publicId}`,
+            },
+          });
+        }
+      }
+    }
+
+    // Check remaining active memberships (excluding the one we just closed)
+    const remainingActive = student.groupMemberships.filter(
+      (m) => m.id !== membershipId,
+    ).length;
+
+    // Set status based on remaining memberships
+    if (remainingActive === 0) {
+      // Keep inactivation fields intact for INACTIVE → AWAITING_REASSIGNMENT.
+      // lostReasonId != null at activation time = WIN_BACK student (came from Lost List).
+      // Fields are cleared at the final activation point in addStudentsToGroup.
+      await tx.student.update({
+        where: { id: studentId },
+        data: { status: "AWAITING_REASSIGNMENT" },
+      });
+    }
+    // If student has other active memberships, keep them ACTIVE
   });
 
-  revalidatePath(`/students/${id}`);
+  revalidatePath(`/students/${studentId}`);
   revalidatePath("/students");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  if (closedGroupId) {
+    revalidatePath(`/groups/${closedGroupId}`);
+  }
+  return { success: true };
+}
+
+/**
+ * Send student to lost list from a specific group — closes that membership
+ * and deactivates the student if no other active memberships remain.
+ */
+export async function sendToLostList(
+  studentId: string,
+  membershipId: string,
+  data: unknown,
+) {
+  const admin = await requireAdmin();
+  const parsed = deactivateStudentSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  const student = await prisma.student.findUnique({
+    where: { id: studentId },
+    include: {
+      groupMemberships: {
+        where: { leaveDate: null },
+        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
+      },
+    },
+  });
+
+  if (!student) {
+    return { error: "Student not found" };
+  }
+
+  const membership = student.groupMemberships.find((m) => m.id === membershipId);
+  if (!membership) {
+    return { error: "Membership not found or already closed" };
+  }
+
+  const reason = await prisma.lostReason.findUnique({
+    where: { id: parsed.data.lostReasonId },
+  });
+
+  if (!reason) {
+    return { error: "Invalid lost reason" };
+  }
+
+  if (reason.isOther && !parsed.data.otherLostReason) {
+    return { error: "Please specify the reason" };
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
+
+    // Close this membership
+    await tx.groupMembership.update({
+      where: { id: membershipId },
+      data: { leaveDate: today },
+    });
+
+    // Run leave billing for non-trial memberships
+    if (!membership.isTrial) {
+      const result = await performLeaveBilling({
+        membershipId,
+        leaveDate: today,
+        adjustmentType: "DROPOUT",
+        adminId: admin.id,
+        tx,
+      });
+
+      if (result.overpayment > 0 && result.adjustedPeriodId) {
+        await tx.refund.create({
+          data: {
+            studentId,
+            studentPaymentPeriodId: result.adjustedPeriodId,
+            amount: result.overpayment,
+            status: "PENDING",
+            initiatedById: admin.id,
+            note: `Left group ${membership.group.publicId}`,
+          },
+        });
+      }
+    }
+
+    // Check remaining active memberships
+    const remainingActive = student.groupMemberships.filter(
+      (m) => m.id !== membershipId,
+    ).length;
+
+    // Only deactivate if no other active memberships
+    if (remainingActive === 0) {
+      await tx.student.update({
+        where: { id: studentId },
+        data: {
+          status: "INACTIVE",
+          inactivatedAt: new Date(),
+          inactivatedById: admin.id,
+          lostReasonId: parsed.data.lostReasonId,
+          otherLostReason: parsed.data.otherLostReason,
+        },
+      });
+
+      await removeFamilyIfNeeded({ familyId: student.familyId, tx });
+    }
+  });
+
+  revalidatePath(`/students/${studentId}`);
+  revalidatePath("/students");
+  revalidatePath("/reassignment");
+  revalidatePath("/lost");
+  revalidatePath(`/groups/${membership.group.id}`);
   return { success: true };
 }
 
@@ -295,6 +556,8 @@ export async function reactivateStudent(id: string) {
     where: { id },
     data: {
       status: "AWAITING_ASSIGNMENT",
+      isUncertain: false,
+      uncertainComment: null,
       inactivatedAt: null,
       inactivatedById: null,
       lostReasonId: null,

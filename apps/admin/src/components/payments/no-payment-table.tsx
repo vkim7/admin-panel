@@ -109,6 +109,22 @@ const columns: ColumnDef<UnpaidPeriod>[] = [
     },
   },
   {
+    id: "remaining",
+    header: ({ column }) => (
+      <SortableHeader column={column}>Remaining</SortableHeader>
+    ),
+    accessorFn: (row) => row.amountDue - row.discountAmount - row.amountPaid,
+    cell: ({ row }) => {
+      const { amountDue, discountAmount, amountPaid } = row.original;
+      const remaining = amountDue - discountAmount - amountPaid;
+      return (
+        <span className="text-sm font-medium text-destructive">
+          {formatUZS(remaining)}
+        </span>
+      );
+    },
+  },
+  {
     id: "phone",
     header: "Phone",
     cell: ({ row }) => {

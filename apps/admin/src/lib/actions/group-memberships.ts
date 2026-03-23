@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
-import { addStudentsSchema, trialResolutionSchema } from "@/schemas/group-membership";
+import { addStudentsSchema, trialResolutionSchema, transferTrialSchema } from "@/schemas/group-membership";
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
@@ -73,9 +73,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     if (conflict) return conflict;
   }
 
-  // Language hard-enforcement: BEGINNER/ELEMENTARY students with specific language preference
-  // must be in a group where the teacher can teach in that language
-  const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
+  // Language mismatch: warn but allow assignment for all levels
   const students = await prisma.student.findMany({
     where: { id: { in: studentIds } },
     select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true, familyId: true },
@@ -86,18 +84,17 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     select: { teachingLanguage: true },
   });
 
+  const languageWarnings: string[] = [];
   if (teacher) {
     for (const s of students) {
-      if (!LANGUAGE_HARD_LEVELS.has(s.level)) continue;
       if (s.preferredLanguage === "ANY") continue;
-      // Teacher with ANY (both) can teach any language
       if (teacher.teachingLanguage === "ANY") continue;
 
       if (s.preferredLanguage !== teacher.teachingLanguage) {
         const langLabel = s.preferredLanguage === "UZBEK" ? "Uzbek" : "Russian";
-        return {
-          error: `Student ${s.firstName} ${s.lastName} requires ${langLabel} instruction at ${s.level} level, but this group's teacher cannot teach in ${langLabel}`,
-        };
+        languageWarnings.push(
+          `${s.firstName} ${s.lastName} prefers ${langLabel} instruction but this group's teacher doesn't teach in ${langLabel}`,
+        );
       }
     }
   }
@@ -232,6 +229,9 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
   revalidatePath("/reception");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  if (languageWarnings.length > 0) {
+    return { success: true, warning: languageWarnings.join(". ") };
+  }
   return { success: true };
 }
 
@@ -485,6 +485,120 @@ export async function resolveTrialMembership(membershipId: string, data: unknown
   revalidatePath("/reception");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  revalidatePath(`/students/${membership.studentId}`);
+  return { success: true };
+}
+
+export async function transferTrialStudent(membershipId: string, data: unknown) {
+  const admin = await requireAdmin();
+  const parsed = transferTrialSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  const { destinationGroupId } = parsed.data;
+
+  const membership = await prisma.groupMembership.findUnique({
+    where: { id: membershipId },
+    include: {
+      group: { select: { id: true, type: true } },
+      student: { select: { id: true, status: true } },
+    },
+  });
+
+  if (!membership) return { error: "Membership not found" };
+  if (!membership.isTrial) return { error: "This membership is not a trial" };
+  if (membership.leaveDate) return { error: "This membership is already closed" };
+
+  const destGroup = await prisma.group.findUnique({
+    where: { id: destinationGroupId },
+    include: {
+      memberships: {
+        where: { leaveDate: null },
+        select: { id: true, studentId: true },
+      },
+      lessons: {
+        where: { originalLessonId: null },
+        select: { lessonNumber: true, lessonDate: true },
+        orderBy: { lessonDate: "asc" },
+      },
+    },
+  });
+
+  if (!destGroup) return { error: "Destination group not found" };
+  if (!destGroup.isActive) return { error: "Destination group is not active" };
+  if (destGroup.id === membership.groupId) return { error: "Cannot transfer to the same group" };
+
+  // Capacity check
+  const activeCount = destGroup.memberships.length;
+  if (activeCount >= destGroup.maxStudents) {
+    return { error: "Destination group is full" };
+  }
+
+  // Duplicate check
+  if (destGroup.memberships.some((m) => m.studentId === membership.studentId)) {
+    return { error: "Student is already active in the destination group" };
+  }
+
+  // Schedule conflict check
+  const conflict = await checkScheduleConflicts(
+    membership.studentId,
+    destGroup.id,
+    destGroup.days,
+    destGroup.startTime,
+    destGroup.durationMinutes,
+    prisma,
+  );
+  if (conflict) return conflict;
+
+  // Check trial attempts remaining for destination group type
+  const trialLimit = destGroup.type === "GROUP" ? 2 : 1;
+  const trialCount = await prisma.groupMembership.count({
+    where: {
+      studentId: membership.studentId,
+      wasTrialOriginally: true,
+      group: { type: destGroup.type },
+    },
+  });
+
+  if (trialCount >= trialLimit) {
+    return {
+      error: `No trial attempts remaining for ${destGroup.type === "GROUP" ? "group" : "individual"} lessons. Use Send to Lost or Send to Reassignment instead.`,
+    };
+  }
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const lessonsStart = calculateLessonsStart(destGroup.lessons, today);
+
+  await prisma.$transaction(async (tx) => {
+    // Close source membership
+    await tx.groupMembership.update({
+      where: { id: membershipId },
+      data: { leaveDate: today },
+    });
+
+    // Create new trial membership in destination group
+    await tx.groupMembership.create({
+      data: {
+        studentId: membership.studentId,
+        groupId: destinationGroupId,
+        joinDate: today,
+        isTrial: true,
+        wasTrialOriginally: true,
+        trialTeacherId: destGroup.teacherId,
+        lessonsStart,
+        assignedById: admin.id,
+        previousMembershipId: membershipId,
+      },
+    });
+  });
+
+  revalidatePath(`/groups/${membership.groupId}`);
+  revalidatePath(`/groups/${destinationGroupId}`);
+  revalidatePath("/reception");
+  revalidatePath("/reassignment");
   revalidatePath(`/students/${membership.studentId}`);
   return { success: true };
 }

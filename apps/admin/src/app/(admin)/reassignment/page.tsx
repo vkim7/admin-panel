@@ -19,9 +19,7 @@ export default async function ReassignmentPage() {
         title={`Reassignment (${students.length})`}
         breadcrumbs={[{ label: "Reassignment" }]}
       />
-      {orphans.length > 0 && (
-        <OrphanWarning orphans={orphans} lostReasons={lostReasons} />
-      )}
+      <OrphanWarning orphans={orphans} lostReasons={lostReasons} />
       <ReassignmentTable data={students} groups={groups} lostReasons={lostReasons} />
     </div>
   );

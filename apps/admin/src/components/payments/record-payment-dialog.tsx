@@ -51,6 +51,15 @@ export function RecordPaymentDialog({
   const [method, setMethod] = useState<string>("");
   const [note, setNote] = useState("");
 
+  function handleOpenChange(v: boolean) {
+    setOpen(v);
+    if (v) {
+      setAmount(String(amountDue - discountAmount - amountPaid));
+      setMethod("");
+      setNote("");
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!amount || !method) return;
@@ -74,7 +83,7 @@ export function RecordPaymentDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger ?? <Button size="sm">Record</Button>}
       </DialogTrigger>
@@ -100,6 +109,7 @@ export function RecordPaymentDialog({
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min={1}
+                max={remaining}
                 required
               />
             </div>
@@ -114,6 +124,7 @@ export function RecordPaymentDialog({
                   <SelectItem value="click">Click</SelectItem>
                   <SelectItem value="payme">Payme</SelectItem>
                   <SelectItem value="cash">Cash</SelectItem>
+                  <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
                 </SelectContent>
               </Select>
             </div>
