@@ -1,3 +1,49 @@
+1. Tasks rework
+2. Uploading additional documents per job
+3. Week/day view replacement with google like calendar (ONLY for events calendar)
+4. No way to go back when viewing a document from a mobile app
+5. Make sure notifications are only sent to people within a company
+6. Notification time is wrong - should always display a local time
+7. Push notifications for mobile app
+8. Update permissions for crew leader role
+
+<!-- TODO -->
+ loading handling in nextjs (loading.js?)
+
+<!-- TODO -->
+what ui are we missing? for example we have the admin users data models setup up but we're missing the admin users management page to invite new admin users manage existing ones
+
+<!-- !!! Persistent error: -->
+(node:33829) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as
+aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard
+libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+❯ src/__tests__/scenarios/scheduling.test.ts (17 tests | 1 failed) 55772ms
+    ✓ creates group → lessons + schedule slots + teacher history, holidays skipped  2062ms
+    ✓ C#4: rejects creating group with teacher double-booking  2139ms
+    ✓ cancel lesson → CANCELLED, slot deleted, replacement at end, endDate bumped  3277ms
+    ✓ cancel replacement → originalLessonId propagated from chain root (A→B→C)  4074ms
+    ✓ updates startTime → future SCHEDULED lessons + slots cascade-updated  2170ms
+    ✓ student cancel → replacement created, cancellationsUsed incremented  2968ms
+    ✓ student cancel GROUP lesson → error  1426ms
+    ✓ student cancel with <24h notice → error  1849ms
+    ✓ 3rd student cancel in month → error (limit is 2)  4609ms
+    ✓ reschedules lesson → dates swapped, slot moved, originalDate preserved  2476ms
+    ✓ records unavailability → affected SCHEDULED lessons become PENDING_RESOLUTION  2227ms
+    ✓ C#20a: overlapping unavailability on same date → error  932ms
+    ✓ assigns substitute → slot swapped, lesson back to SCHEDULED  3572ms
+    × changes teacher → group, future lessons, slots, history all updated 3179ms
+    ✓ snapshots activeStudentCount as of lessonDate  3685ms
+    ✓ student leaves between lesson and marking → snapshot uses lessonDate count  3892ms
+    ✓ absent trial student → auto-removed, deactivated if solo  7870ms
+
 # Remaining Work
 
 Everything that's left to do, in one place. Items grouped by priority/category.

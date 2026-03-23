@@ -32,6 +32,7 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 | `tech/implementation.md` | Tech stack, monorepo structure, architecture decisions, deployment strategy | **Yes** — core stack decisions (Next.js, Prisma, shadcn/ui, Zod, Vercel, Neon), auth strategy, notification channels, amoCRM integration approach. |
 | `tech/database-first-validation-guide.md` | Patterns for form validation aligned with DB schema — required vs nullable vs clearable fields, Zod helpers, PATCH semantics | **Yes** — conceptual guidance (flowchart, PATCH semantics, anti-patterns) is still valid, but **code examples are outdated (Zod v3)**. Use `apps/admin/src/schemas/helpers.ts` as the source of truth for validation code. |
 | `tech/hosting.md` | Hosting comparison, latency analysis, cost projections, data residency laws | **Yes** — for deployment decisions. Key takeaway: Vercel Dubai + Neon Frankfurt + Cloudflare CDN. |
+| `tech/testing.md` | Integration test setup — how it works, file structure, writing tests, factories, Neon test branch | **Yes** — read before writing or modifying integration tests. |
 | `tech/telegram-mini-apps.md` | TMA technical research — Bot API, sharing, payments, viewport, auth | **No** — only relevant to the student app (Telegram Mini App). |
 | `tech/tma-technical-research.md` | Deep TMA research — initData, WebView behavior, cookie/session issues, limitations | **No** — only relevant to the student app (Telegram Mini App). |
 
@@ -49,7 +50,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 - **DB:** Neon PostgreSQL (Frankfurt, serverless)
 - **UI:** shadcn/ui (TanStack Table for data tables)
 - **Validation:** Zod (follow patterns in `tech/database-first-validation-guide.md`)
-- **Auth:** Telegram Login Widget + role check in DB
+- **Auth:** Google OAuth via NextAuth.js v5 + role check in DB
+- **Testing:** Vitest integration tests against Neon test branch (see `tech/testing.md`)
 - **Hosting:** Vercel (Dubai `dxb1` region)
 - **CDN:** Cloudflare (free tier, Tashkent PoP)
 - **Monorepo:** Turborepo
@@ -71,6 +73,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 - **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) live in a separate `prisma/migrations/data_integrity_constraints.sql` and must be applied separately after migrations: `npx prisma db execute --file prisma/migrations/data_integrity_constraints.sql`
 
 - **Shared UI components (`src/components/ui/`):** Never modify the internals of shared UI components to achieve a feature-specific layout. These components are used across the app and changes risk visual regressions in untested places. Instead, control layout from the outside — use wrapper elements, className props, or composition. If a shared component genuinely needs a new capability, add it as an opt-in prop with a default that preserves existing behavior.
+
+- **Integration tests:** Tests live in `apps/admin/src/__tests__/scenarios/` and run with `npm run test:integration` (from `apps/admin/`). They call real server actions against the Neon test branch — auth is mocked, DB is real. Use factories from `helpers/factories.ts` to set up test data, `seedEssentials()` for reference data, and `truncateAll()` / `cleanupTestData()` for cleanup. See `tech/testing.md` for full details. When writing new tests, follow the pattern in `smoke.test.ts`. Unit tests (like schema-helpers) use the default `vitest.config.ts` and run with `npm run test`.
 
 - **Validation:** All type coercion (string→number, empty→null) happens in Zod schemas (`src/schemas/`), never in react-hook-form or Server Actions. Use helpers from `src/schemas/helpers.ts` (e.g. `requiredString()`, `nullableId()`, `requiredTime()`) — they handle DB column semantics (NULL vs NOT NULL, empty→null transforms). Read `tech/database-first-validation-guide.md` for the decision flowchart on which helper to use for each column type.
 

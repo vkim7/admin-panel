@@ -10,7 +10,8 @@
     "lint": "next lint",
     "check": "next lint && tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.config.integration.ts"
   },
   "dependencies": {
     "@eng/database": "*",

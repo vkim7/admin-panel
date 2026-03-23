@@ -14,7 +14,7 @@ export interface LeaveBillingResult {
  *
  * Adjusts billing when a membership ends mid-program:
  * 1. Current-month period: reduce totalLessons to lessons up to leaveDate, recalc amountDue
- * 2. Future-month periods: hard-delete (guaranteed untouched — UNPAID, no payments)
+ * 2. Future-month periods: delete AppliedPromotion records first, then hard-delete periods
  * 3. Calculate overpayment for transfer credit or refund
  *
  * @param adjustmentType - what triggered this (TRANSFER, MERGE, DROPOUT)
@@ -119,15 +119,48 @@ export async function performLeaveBilling({
     overpayment = Math.max(0, currentPeriod.amountPaid - effectiveDue);
   }
 
-  // Delete future-month periods (guaranteed untouched: UNPAID, no payments/adjustments)
+  // Delete future-month periods
+  const futurePeriodWhere = {
+    groupMembershipId: membershipId,
+    OR: [
+      { periodYear: { gt: leaveYear } },
+      { periodYear: leaveYear, periodMonth: { gt: leaveMonth } },
+    ],
+  } as const;
+
+  // Clean up AppliedPromotion records on future periods before deleting them
+  // (AppliedPromotion.studentPaymentPeriodId has onDelete: Restrict)
+  const futurePeriodIds = (
+    await tx.studentPaymentPeriod.findMany({
+      where: futurePeriodWhere,
+      select: { id: true },
+    })
+  ).map((p) => p.id);
+
+  if (futurePeriodIds.length > 0) {
+    await tx.appliedPromotion.deleteMany({
+      where: { studentPaymentPeriodId: { in: futurePeriodIds } },
+    });
+
+    // Sum up and delete any Payment records on future periods
+    // (Payment.studentPaymentPeriodId has onDelete: Restrict)
+    // Their amounts become part of the overpayment for transfer credit or refund
+    const futurePayments = await tx.payment.findMany({
+      where: { studentPaymentPeriodId: { in: futurePeriodIds } },
+      select: { amount: true },
+    });
+    for (const p of futurePayments) {
+      overpayment += p.amount;
+    }
+    if (futurePayments.length > 0) {
+      await tx.payment.deleteMany({
+        where: { studentPaymentPeriodId: { in: futurePeriodIds } },
+      });
+    }
+  }
+
   const futureResult = await tx.studentPaymentPeriod.deleteMany({
-    where: {
-      groupMembershipId: membershipId,
-      OR: [
-        { periodYear: { gt: leaveYear } },
-        { periodYear: leaveYear, periodMonth: { gt: leaveMonth } },
-      ],
-    },
+    where: futurePeriodWhere,
   });
 
   return {
