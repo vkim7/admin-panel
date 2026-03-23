@@ -126,7 +126,7 @@ export async function performLeaveBilling({
       { periodYear: { gt: leaveYear } },
       { periodYear: leaveYear, periodMonth: { gt: leaveMonth } },
     ],
-  } as const;
+  };
 
   // Clean up AppliedPromotion records on future periods before deleting them
   // (AppliedPromotion.studentPaymentPeriodId has onDelete: Restrict)
