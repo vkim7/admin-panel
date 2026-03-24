@@ -130,25 +130,27 @@ export async function getTrialMembershipAttendance(
 ): Promise<Set<string>> {
   if (memberships.length === 0) return new Set();
 
-  const result = new Set<string>();
-
-  // Batch by student+group, then check date ranges
-  for (const m of memberships) {
-    const count = await prisma.attendance.count({
-      where: {
-        studentId: m.studentId,
-        groupId: m.groupId,
-        lesson: {
-          lessonDate: {
-            gte: m.joinDate,
-            ...(m.leaveDate ? { lte: m.leaveDate } : {}),
+  const counts = await Promise.all(
+    memberships.map((m) =>
+      prisma.attendance.count({
+        where: {
+          studentId: m.studentId,
+          groupId: m.groupId,
+          lesson: {
+            lessonDate: {
+              gte: m.joinDate,
+              ...(m.leaveDate ? { lte: m.leaveDate } : {}),
+            },
           },
         },
-      },
-    });
-    if (count > 0) result.add(m.id);
-  }
+      }),
+    ),
+  );
 
+  const result = new Set<string>();
+  for (let i = 0; i < memberships.length; i++) {
+    if (counts[i]! > 0) result.add(memberships[i]!.id);
+  }
   return result;
 }
 

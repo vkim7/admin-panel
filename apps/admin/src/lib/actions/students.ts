@@ -8,7 +8,7 @@ import { studentSchema, deactivateStudentSchema } from "@/schemas/student";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
 
-export async function createStudent(data: unknown) {
+export async function createStudent(data: unknown, redirectTo?: string) {
   await requireAdmin();
   const parsed = studentSchema.safeParse(data);
   if (!parsed.success) {
@@ -141,7 +141,8 @@ export async function createStudent(data: unknown) {
     throw e;
   }
 
-  redirect(`/students/${studentId}`);
+  const safeRedirect = redirectTo === "/reception" ? "/reception" : `/students/${studentId}`;
+  redirect(safeRedirect);
 }
 
 export async function updateStudent(id: string, data: unknown) {

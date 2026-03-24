@@ -65,12 +65,14 @@ interface StudentFormProps {
     parentLastName: string;
     parentPhone: string;
   } | null;
+  redirectTo?: string;
 }
 
 export function StudentForm({
   defaultValues,
   studentId,
   initialFamily,
+  redirectTo,
 }: StudentFormProps) {
   const [isPending, startTransition] = useTransition();
   const [showFamilyForm, setShowFamilyForm] = useState(false);
@@ -103,7 +105,7 @@ export function StudentForm({
     startTransition(async () => {
       const result = isEdit
         ? await updateStudent(studentId!, values)
-        : await createStudent(values);
+        : await createStudent(values, redirectTo);
       if (result?.error) {
         toast.error(result.error);
       }

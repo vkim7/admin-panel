@@ -29,6 +29,17 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | 16 | Lost List & Win-Back | 2 | — |
 | 17 | Promotion Auto-Detection & Application Rules | 12 | — |
 | 18 | Scenario Testing | All | All |
+| **Feedback Phases** | | | |
+| A | Bug Fixes & Broken Behavior ✅ | Post-launch | feedback.md #6,8,19,20,22,32 |
+| B | Trial Resolution Overhaul ✅ | A | feedback.md #13,14,15 |
+| C | Payment Controls & Visibility ✅ | B | feedback.md #16,17,21 |
+| D | Small UI Polish ✅ | C | feedback.md #4,5,9,11,23,30 |
+| E | Reception Workflow | D | feedback.md #1,2,3 |
+| F | Teacher Management | D | feedback.md #10,12,18 |
+| G | Uncertain Students | D | feedback.md #24,25 |
+| H | Promotions, Comments & Constraints | D | feedback.md #7,28,33 |
+| I | Exams, Holidays & Scheduling | D | feedback.md #29,31 |
+| J | Deferred/Complex | — | feedback.md #26 |
 
 ```
 Phase 0 ─── Phase 1 (Teachers) ───┐
@@ -1306,6 +1317,38 @@ Not in the initial build. Tracked here so nothing is forgotten.
 - [ ] **Payment gateway integration** — Click, Payme (currently manual recording only)
 - [ ] **Teacher file uploads** — contract and passport document storage per teacher. Requires file storage infrastructure (S3/Cloudflare R2), upload API endpoints, file management UI on teacher detail page. Add `TeacherDocument` model (teacherId, type: CONTRACT/PASSPORT/OTHER, fileName, fileUrl, uploadedAt, uploadedById). Display as a list on teacher detail page with upload/download/delete actions.
 
+
+---
+
+## Feedback Phases
+
+Post-launch improvements from user feedback (`feedback.md`). These are separate from the core implementation phases above.
+
+### Phase A: Bug Fixes & Broken Behavior ✅
+
+Completed. See `feedback.md` for details.
+
+### Phase B: Trial Resolution Overhaul ✅
+
+Completed. See `feedback.md` for details.
+
+### Phase C: Payment Controls & Visibility ✅
+
+Completed. See `feedback.md` for details.
+
+### Phase D: Small UI Polish ✅
+
+Completed. Changes:
+
+- [x] **#4 — Phone search on reception + students tables** — Custom multi-field search (name, phone, parent phone) replacing DataTable's single-column `searchKey`. Reception query (`getReceptionStudents`) updated to include `dateOfBirth` and `family.parentPhone`.
+- [x] **#5 — Comment column visibility** — Reception table comment column: `text-muted-foreground` → `text-foreground`.
+- [x] **#9 — Age column** — Added to reception table, students table, and group detail student list. Shared `getAge()` helper extracted to `src/lib/helpers/date.ts`.
+- [x] **#11 — Schedule → teacher navigation** — Teacher names in schedule grid wrapped in `<Link>` to `/teachers/[id]`.
+- [x] **#23 — Teacher active/deactivated filter** — Filter pills on teachers page. Wired up existing `getAllTeachers(includeInactive)` query. Deactivated teachers show muted styling + badge.
+- [x] **#30 — Lessons by month** — Group detail page shows monthly breakdown instead of single total.
+- [x] **MONTH_NAMES consolidation** — `MONTH_NAMES` (short) and `MONTH_NAMES_FULL` (long) extracted to `src/lib/constants.ts`, replacing 8 inline definitions.
+
+**Files changed:** `reception-table.tsx`, `student-table.tsx`, `student-list.tsx`, `schedule-grid.tsx`, `teacher-table.tsx`, `groups/[id]/page.tsx`, `teachers/page.tsx`, `constants.ts`, `helpers/date.ts` (new), `queries/reception.ts`, `queries/groups.ts`, plus 7 files updated for MONTH_NAMES imports.
 
 ---
 

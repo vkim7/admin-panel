@@ -16,11 +16,11 @@ export type TransferReason = Awaited<ReturnType<typeof getTransferReasons>>[numb
  * Get all active groups except the current one, with member counts.
  * Used to populate the transfer destination picker.
  */
-export async function getGroupsForTransfer(currentGroupId: string) {
+export async function getGroupsForTransfer(currentGroupId?: string) {
   return prisma.group.findMany({
     where: {
       isActive: true,
-      id: { not: currentGroupId },
+      ...(currentGroupId ? { id: { not: currentGroupId } } : {}),
     },
     select: {
       id: true,
