@@ -84,7 +84,7 @@ export default async function GroupDetailPage({
   }
   for (const [key, count] of [...monthMap.entries()].sort()) {
     const [y, m] = key.split("-");
-    lessonsByMonth.push({ label: `${MONTH_NAMES[parseInt(m!, 10)]} ${y}`, count });
+    lessonsByMonth.push({ label: MONTH_NAMES[parseInt(m!, 10)]!, count });
   }
 
   // Compute progress stage dynamically
@@ -232,14 +232,16 @@ export default async function GroupDetailPage({
           </p>
         </div>
         <div>
-          <p className="text-xs font-medium text-muted-foreground">Lessons</p>
-          <div className="mt-1 space-y-0.5 text-sm">
+          <p className="text-xs font-medium text-muted-foreground">Lessons ({total})</p>
+          <div className="mt-1 flex flex-wrap gap-1.5">
             {lessonsByMonth.map((m) => (
-              <p key={m.label}>
-                {m.label} — {m.count}
-              </p>
+              <span
+                key={m.label}
+                className="rounded-md bg-muted px-1.5 py-0.5 text-xs"
+              >
+                {m.label} · {m.count}
+              </span>
             ))}
-            <p className="text-muted-foreground">{total} total</p>
           </div>
         </div>
         {group.zoomLink && (
