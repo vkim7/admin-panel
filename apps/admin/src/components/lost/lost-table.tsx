@@ -61,7 +61,7 @@ function makeColumns(
       cell: ({ row }) => (
         <Link
           href={`/students/${row.original.id}`}
-          className="font-medium text-primary hover:underline"
+          className="text-primary font-medium hover:underline"
         >
           {row.original.firstName} {row.original.lastName}
         </Link>
@@ -81,7 +81,8 @@ function makeColumns(
         <Badge variant="secondary" className="text-xs">
           {LEVEL_SHORT[row.original.level] ?? row.original.level}
           {" \u00b7 "}
-          {STAGE_SHORT[row.original.progressStage] ?? row.original.progressStage}
+          {STAGE_SHORT[row.original.progressStage] ??
+            row.original.progressStage}
         </Badge>
       ),
     },
@@ -90,14 +91,15 @@ function makeColumns(
       header: "Reason",
       cell: ({ row }) => {
         const reason = row.original.lostReason;
-        if (!reason) return <span className="text-sm text-muted-foreground">{"\u2014"}</span>;
+        if (!reason)
+          return (
+            <span className="text-muted-foreground text-sm">{"\u2014"}</span>
+          );
         const other = row.original.otherLostReason;
         return (
           <span className="text-sm" title={other ?? undefined}>
             {reason.name}
-            {other && (
-              <span className="text-muted-foreground">: {other}</span>
-            )}
+            {other && <span className="text-muted-foreground">: {other}</span>}
           </span>
         );
       },
@@ -111,7 +113,10 @@ function makeColumns(
       accessorFn: (row) => row.inactivatedAt,
       cell: ({ row }) => {
         const date = row.original.inactivatedAt;
-        if (!date) return <span className="text-sm text-muted-foreground">{"\u2014"}</span>;
+        if (!date)
+          return (
+            <span className="text-muted-foreground text-sm">{"\u2014"}</span>
+          );
         return (
           <span className="text-sm">
             {new Date(date).toLocaleDateString("en-GB")}
@@ -124,9 +129,12 @@ function makeColumns(
       header: "By",
       cell: ({ row }) => {
         const admin = row.original.inactivatedBy;
-        if (!admin) return <span className="text-sm text-muted-foreground">{"\u2014"}</span>;
+        if (!admin)
+          return (
+            <span className="text-muted-foreground text-sm">{"\u2014"}</span>
+          );
         return (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {admin.firstName} {admin.lastName}
           </span>
         );
@@ -138,11 +146,14 @@ function makeColumns(
       header: "Last Group",
       cell: ({ row }) => {
         const membership = row.original.groupMemberships[0];
-        if (!membership) return <span className="text-sm text-muted-foreground">{"\u2014"}</span>;
+        if (!membership)
+          return (
+            <span className="text-muted-foreground text-sm">{"\u2014"}</span>
+          );
         return (
           <Link
             href={`/groups/${membership.group.id}`}
-            className="text-sm text-primary hover:underline"
+            className="text-primary text-sm hover:underline"
           >
             {membership.group.publicId}
           </Link>
@@ -184,8 +195,10 @@ interface LostTableProps {
 }
 
 export function LostTable({ data, groups }: LostTableProps) {
-  const [selectedStudent, setSelectedStudent] = useState<StudentForAssign | null>(null);
-  const [reassigningStudent, setReassigningStudent] = useState<LostStudentRow | null>(null);
+  const [selectedStudent, setSelectedStudent] =
+    useState<StudentForAssign | null>(null);
+  const [reassigningStudent, setReassigningStudent] =
+    useState<LostStudentRow | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleAssign(student: LostStudentRow) {

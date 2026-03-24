@@ -14,16 +14,13 @@ import { Plus } from "lucide-react";
 
 export function ScheduleGrid({
   teachers,
-  label,
   days,
 }: {
   teachers: ScheduleTeacherRow[];
-  label: string;
   days: string; // "1,3,5" or "2,4,6"
 }) {
   return (
     <div className="space-y-3">
-      <h2 className="text-lg font-semibold">{label}</h2>
       {teachers.length === 0 ? (
         <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
           No groups scheduled

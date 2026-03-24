@@ -405,6 +405,7 @@ export const ModelName = {
   Refund: 'Refund',
   TeacherPaymentPeriod: 'TeacherPaymentPeriod',
   TeacherRateChange: 'TeacherRateChange',
+  TeacherDocument: 'TeacherDocument',
   PriceSetting: 'PriceSetting',
   Promotion: 'Promotion',
   StudentPromotion: 'StudentPromotion',
@@ -429,7 +430,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1987,6 +1988,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TeacherDocument: {
+      payload: Prisma.$TeacherDocumentPayload<ExtArgs>
+      fields: Prisma.TeacherDocumentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TeacherDocumentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TeacherDocumentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        findFirst: {
+          args: Prisma.TeacherDocumentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TeacherDocumentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        findMany: {
+          args: Prisma.TeacherDocumentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>[]
+        }
+        create: {
+          args: Prisma.TeacherDocumentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        createMany: {
+          args: Prisma.TeacherDocumentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TeacherDocumentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>[]
+        }
+        delete: {
+          args: Prisma.TeacherDocumentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        update: {
+          args: Prisma.TeacherDocumentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        deleteMany: {
+          args: Prisma.TeacherDocumentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TeacherDocumentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TeacherDocumentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>[]
+        }
+        upsert: {
+          args: Prisma.TeacherDocumentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TeacherDocumentPayload>
+        }
+        aggregate: {
+          args: Prisma.TeacherDocumentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTeacherDocument>
+        }
+        groupBy: {
+          args: Prisma.TeacherDocumentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeacherDocumentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TeacherDocumentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TeacherDocumentCountAggregateOutputType> | number
+        }
+      }
+    }
     PriceSetting: {
       payload: Prisma.$PriceSettingPayload<ExtArgs>
       fields: Prisma.PriceSettingFieldRefs
@@ -3060,6 +3135,19 @@ export const TeacherRateChangeScalarFieldEnum = {
 export type TeacherRateChangeScalarFieldEnum = (typeof TeacherRateChangeScalarFieldEnum)[keyof typeof TeacherRateChangeScalarFieldEnum]
 
 
+export const TeacherDocumentScalarFieldEnum = {
+  id: 'id',
+  teacherId: 'teacherId',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileSize: 'fileSize',
+  uploadedAt: 'uploadedAt',
+  uploadedById: 'uploadedById'
+} as const
+
+export type TeacherDocumentScalarFieldEnum = (typeof TeacherDocumentScalarFieldEnum)[keyof typeof TeacherDocumentScalarFieldEnum]
+
+
 export const PriceSettingScalarFieldEnum = {
   id: 'id',
   levelCategory: 'levelCategory',
@@ -3662,6 +3750,7 @@ export type GlobalOmitConfig = {
   refund?: Prisma.RefundOmit
   teacherPaymentPeriod?: Prisma.TeacherPaymentPeriodOmit
   teacherRateChange?: Prisma.TeacherRateChangeOmit
+  teacherDocument?: Prisma.TeacherDocumentOmit
   priceSetting?: Prisma.PriceSettingOmit
   promotion?: Prisma.PromotionOmit
   studentPromotion?: Prisma.StudentPromotionOmit

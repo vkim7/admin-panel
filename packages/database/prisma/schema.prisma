@@ -427,6 +427,7 @@ model AdminUser {
   priceSettings            PriceSetting[]            @relation("PriceChangedByAdmin")
   generatedTeacherPayments TeacherPaymentPeriod[]    @relation("GeneratedByAdmin")
   deactivatedTeachers      Teacher[]                 @relation("DeactivatedTeacher")
+  uploadedDocuments        TeacherDocument[]         @relation("UploadedDocument")
 }
 
 model Teacher {
@@ -464,6 +465,7 @@ model Teacher {
   groupTeacherHistory GroupTeacherHistory[]
   rateChanges         TeacherRateChange[]
   trialMemberships    GroupMembership[]       @relation("TrialTeacher")
+  documents           TeacherDocument[]
 }
 
 model Family {
@@ -1077,6 +1079,19 @@ model TeacherRateChange {
   changedBy AdminUser? @relation("RateChangedByAdmin", fields: [changedById], references: [id], onDelete: Restrict)
 
   @@unique([teacherId, effectiveFrom]) // One rate entry per teacher per effective date — to correct, update the existing entry
+}
+
+model TeacherDocument {
+  id           String @id @default(cuid())
+  teacherId    String
+  fileName     String // Original file name for display
+  fileKey      String @unique // R2 object key
+  fileSize     Int    // File size in bytes
+  uploadedAt   DateTime @default(now())
+  uploadedById String
+
+  teacher    Teacher   @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  uploadedBy AdminUser @relation("UploadedDocument", fields: [uploadedById], references: [id], onDelete: Restrict)
 }
 
 // Global lesson price settings. 4 price points based on two dimensions:

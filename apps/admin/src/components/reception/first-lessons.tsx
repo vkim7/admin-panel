@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { TrialActionsMenu } from "@/components/groups/trial-resolution-dialog";
 import { DAYS_LABEL } from "@/lib/constants";
 import type { FirstLessonRow } from "@/lib/queries/reception";
@@ -41,63 +49,63 @@ export function FirstLessons({ data, lostReasons, transferGroups }: FirstLessons
   }
 
   return (
-    <div>
-      <div className="rounded-md border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50 text-left text-xs text-muted-foreground">
-              <th className="px-3 py-2">CRM</th>
-              <th className="px-3 py-2">Student</th>
-              <th className="px-3 py-2">Group</th>
-              <th className="px-3 py-2">Lesson</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2 w-10">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => {
-              const daysKey = row.groupDays.join(",");
-              const daysLabel = DAYS_LABEL[daysKey] ?? daysKey;
-              const otherGroups = transferGroups.filter((g) => g.id !== row.groupId);
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>CRM</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Group</TableHead>
+            <TableHead>Lesson</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="w-10">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((row) => {
+            const daysKey = row.groupDays.join(",");
+            const daysLabel = DAYS_LABEL[daysKey] ?? daysKey;
+            const otherGroups = transferGroups.filter((g) => g.id !== row.groupId);
 
-              return (
-                <tr key={row.membershipId} className="border-b last:border-b-0">
-                  <td className="px-3 py-2 text-muted-foreground">{row.crmCode}</td>
-                  <td className="px-3 py-2">
-                    <Link href={`/students/${row.studentId}`} className="text-primary hover:underline">
-                      {row.studentName}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">
-                    <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
-                      {row.groupPublicId}
-                    </Link>
-                    <span className="ml-1 text-xs text-muted-foreground">
-                      {daysLabel} {row.groupStartTime}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">{formatDate(row.lessonDate)}</td>
-                  <td className="px-3 py-2">
-                    <AttendanceBadge status={row.attendanceStatus} />
-                  </td>
-                  <td className="px-3 py-2">
-                    <TrialActionsMenu
-                      membershipId={row.membershipId}
-                      studentId={row.studentId}
-                      studentName={row.studentName}
-                      groupType={row.groupType}
-                      hasAttendance={row.attendanceStatus === "attended" || row.attendanceStatus === "absent"}
-                      lostReasons={lostReasons}
-                      availableGroups={otherGroups}
-                      currentGroupPublicId={row.groupPublicId}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            return (
+              <TableRow key={row.membershipId}>
+                <TableCell className="font-mono">{row.crmCode}</TableCell>
+                <TableCell>
+                  <Link href={`/students/${row.studentId}`} className="font-medium text-primary hover:underline">
+                    {row.studentName}
+                  </Link>
+                </TableCell>
+                <TableCell>{row.phone}</TableCell>
+                <TableCell>
+                  <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
+                    {row.groupPublicId}
+                  </Link>
+                  <span className="ml-1 text-xs text-muted-foreground">
+                    {daysLabel} {row.groupStartTime}
+                  </span>
+                </TableCell>
+                <TableCell>{formatDate(row.lessonDate)}</TableCell>
+                <TableCell>
+                  <AttendanceBadge status={row.attendanceStatus} />
+                </TableCell>
+                <TableCell>
+                  <TrialActionsMenu
+                    membershipId={row.membershipId}
+                    studentId={row.studentId}
+                    studentName={row.studentName}
+                    groupType={row.groupType}
+                    hasAttendance={row.attendanceStatus === "attended" || row.attendanceStatus === "absent"}
+                    lostReasons={lostReasons}
+                    availableGroups={otherGroups}
+                    currentGroupPublicId={row.groupPublicId}
+                  />
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }

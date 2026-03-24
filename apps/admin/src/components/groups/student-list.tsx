@@ -331,7 +331,6 @@ export function StudentList({
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-muted/50 border-b">
-                <th className="px-3 py-2 text-left font-medium">#</th>
                 <th className="px-3 py-2 text-left font-medium">CRM</th>
                 <th className="px-3 py-2 text-left font-medium">Start</th>
                 <th className="px-3 py-2 text-left font-medium">Name</th>
@@ -344,7 +343,7 @@ export function StudentList({
                 <th className="px-3 py-2 text-left font-medium">
                   Lessons Paid
                 </th>
-                <th className="px-3 py-2 text-left font-medium">Status</th>
+                <th className="px-3 py-2 text-left font-medium">Trial</th>
                 <th className="px-3 py-2 text-left font-medium">Comment</th>
                 <th className="px-3 py-2 text-left font-medium">Actions</th>
               </tr>
@@ -360,9 +359,6 @@ export function StudentList({
                     key={m.id}
                     className={`border-t ${stale ? "bg-amber-50" : ""}`}
                   >
-                    <td className="text-muted-foreground px-3 py-2">
-                      {index + 1}
-                    </td>
                     <td className="px-3 py-2 font-mono">{m.student.crmCode}</td>
                     <td className="px-3 py-2">
                       {new Date(m.joinDate).toLocaleDateString("en-GB", {
@@ -411,26 +407,18 @@ export function StudentList({
                       )}
                     </td>
                     <td className="px-3 py-2">
-                      <div className="flex items-center gap-1.5">
-                        {m.isTrial && (
-                          <Badge
-                            variant="outline"
-                            className={
-                              stale
-                                ? "border-amber-400 bg-amber-100 text-amber-800"
-                                : "border-blue-200 bg-blue-50 text-blue-700"
-                            }
-                          >
-                            Trial{stale ? " (stale)" : ""}
-                          </Badge>
-                        )}
-                        {!m.isTrial && (
-                          <StatusBadge
-                            type="student"
-                            value={m.student.status}
-                          />
-                        )}
-                      </div>
+                      {m.isTrial && (
+                        <Badge
+                          variant="outline"
+                          className={
+                            stale
+                              ? "border-amber-400 bg-amber-100 text-amber-800"
+                              : "border-blue-200 bg-blue-50 text-blue-700"
+                          }
+                        >
+                          Trial{stale ? " (stale)" : ""}
+                        </Badge>
+                      )}
                     </td>
                     <td className="text-muted-foreground max-w-[150px] truncate px-3 py-2">
                       {m.comment ?? ""}

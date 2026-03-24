@@ -1,16 +1,17 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getTeacherById, getTeacherTrialHistory } from "@/lib/queries/teachers";
+import { getTeacherById, getTeacherTrialHistory, getTeacherDocuments, getCurrentPriceLimits } from "@/lib/queries/teachers";
 import { getTeacherUnavailability } from "@/lib/queries/lessons";
 import { getTeacherPaymentHistory } from "@/lib/queries/teacher-payments";
 import { AvailabilityEditor } from "@/components/teachers/availability-editor";
 import { RateHistory } from "@/components/teachers/rate-history";
 import { TrialHistory } from "@/components/teachers/trial-history";
 import { UnavailabilitySection } from "@/components/teachers/unavailability-section";
+import { TeacherDocumentsSection } from "@/components/teachers/teacher-documents-section";
+import { PaymentHistoryTable } from "@/components/teachers/payment-history-table";
 import { TeacherActions } from "@/components/teachers/teacher-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
@@ -34,11 +35,13 @@ export default async function TeacherDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [teacher, unavailabilities, paymentHistory, trialHistory] = await Promise.all([
+  const [teacher, unavailabilities, paymentHistory, trialHistory, documents, priceLimits] = await Promise.all([
     getTeacherById(id),
     getTeacherUnavailability(id),
     getTeacherPaymentHistory(id),
     getTeacherTrialHistory(id),
+    getTeacherDocuments(id),
+    getCurrentPriceLimits(),
   ]);
   if (!teacher) notFound();
 
@@ -149,7 +152,12 @@ export default async function TeacherDetailPage({
       <Separator />
 
       {/* Rate History */}
-      <RateHistory teacherId={id} rates={teacher.rateChanges} />
+      <RateHistory teacherId={id} rates={teacher.rateChanges} priceLimits={priceLimits} />
+
+      <Separator />
+
+      {/* Documents */}
+      <TeacherDocumentsSection teacherId={id} documents={documents} />
 
       {/* Payment History */}
       {paymentHistory.length > 0 && (
@@ -157,42 +165,7 @@ export default async function TeacherDetailPage({
           <Separator />
           <div className="space-y-3">
             <h3 className="text-lg font-medium">Payment History</h3>
-            <div className="rounded-md border">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b bg-muted/50">
-                    <th className="px-3 py-2 text-left font-medium">Period</th>
-                    <th className="px-3 py-2 text-left font-medium">Group</th>
-                    <th className="px-3 py-2 text-left font-medium">Lessons</th>
-                    <th className="px-3 py-2 text-left font-medium">Std-Lessons</th>
-                    <th className="px-3 py-2 text-left font-medium">Rate</th>
-                    <th className="px-3 py-2 text-left font-medium">Amount</th>
-                    <th className="px-3 py-2 text-left font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paymentHistory.map((p) => (
-                    <tr key={p.id} className="border-t">
-                      <td className="px-3 py-2">
-                        {p.periodMonth}/{p.periodYear}
-                      </td>
-                      <td className="px-3 py-2">
-                        <Link href={`/groups/${p.group.id}`} className="hover:underline">
-                          {p.group.publicId}
-                        </Link>
-                      </td>
-                      <td className="px-3 py-2">{p.lessonsCompleted}</td>
-                      <td className="px-3 py-2">{p.totalStudentLessons}</td>
-                      <td className="px-3 py-2">{p.rate.toLocaleString("en-US")}</td>
-                      <td className="px-3 py-2">{p.amount.toLocaleString("en-US")} UZS</td>
-                      <td className="px-3 py-2">
-                        <StatusBadge type="teacherPay" value={p.status} className="text-xs" />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <PaymentHistoryTable payments={paymentHistory} />
           </div>
         </>
       )}

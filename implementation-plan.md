@@ -1315,7 +1315,7 @@ Not in the initial build. Tracked here so nothing is forgotten.
 - [ ] **Bulk student actions** — mass payment recording, mass SMS, mass transfer
 - [ ] **Content management** — deferred, teachers use physical textbooks
 - [ ] **Payment gateway integration** — Click, Payme (currently manual recording only)
-- [ ] **Teacher file uploads** — contract and passport document storage per teacher. Requires file storage infrastructure (S3/Cloudflare R2), upload API endpoints, file management UI on teacher detail page. Add `TeacherDocument` model (teacherId, type: CONTRACT/PASSPORT/OTHER, fileName, fileUrl, uploadedAt, uploadedById). Display as a list on teacher detail page with upload/download/delete actions.
+- [x] **Teacher file uploads** — Implemented in Phase F. `TeacherDocument` model, R2 storage via AWS SDK, `TeacherDocumentsSection` on teacher detail page.
 
 
 ---
@@ -1349,6 +1349,30 @@ Completed. Changes:
 - [x] **MONTH_NAMES consolidation** — `MONTH_NAMES` (short) and `MONTH_NAMES_FULL` (long) extracted to `src/lib/constants.ts`, replacing 8 inline definitions.
 
 **Files changed:** `reception-table.tsx`, `student-table.tsx`, `student-list.tsx`, `schedule-grid.tsx`, `teacher-table.tsx`, `groups/[id]/page.tsx`, `teachers/page.tsx`, `constants.ts`, `helpers/date.ts` (new), `queries/reception.ts`, `queries/groups.ts`, plus 7 files updated for MONTH_NAMES imports.
+
+### Phase E: Reception Workflow ✅
+
+Completed. Reception page now has pill-tabbed views:
+
+- [x] **#1 — Add Student button** — Links to `/students/new?returnTo=/reception`. `createStudent` accepts optional `redirectTo` (whitelisted to `/reception`). Breadcrumb adapts based on origin.
+- [x] **#2 — First Lessons tab** — New `getFirstLessonsData()` query fetches active trial memberships, batch-finds first lesson per student, checks attendance via `getTrialMembershipAttendance`. `FirstLessons` component displays attendance badges + reuses `TrialActionsMenu` for actions.
+- [x] **#3 — Second Lessons tab** — New `getSecondLessonsData()` query fetches committed-from-trial students with unpaid current-month billing + attended lesson counts. `SecondLessons` component shows red highlight for 2+ lessons attended.
+- [x] **Pill tab wrapper** — `ReceptionView` component with Reception/First Lessons/Second Lessons toggle (counts in pills).
+
+**Code review fixes:** `getTrialMembershipAttendance` parallelized (sequential → `Promise.all`). Attendance query always includes `lessonId` to prevent cross-matching. `getGroupsForTransfer` param made optional.
+
+**Files changed:** `reception/page.tsx`, `students/new/page.tsx`, `student-form.tsx`, `actions/students.ts`, `queries/reception.ts`, `queries/students.ts`, `queries/transfers.ts`. New: `reception-view.tsx`, `first-lessons.tsx`, `second-lessons.tsx`.
+
+### Phase F: Teacher Management ✅
+
+Completed. Three items: availability redesign, rate history editing, teacher file uploads.
+
+- [x] **#10 — Availability redesign** — Full rewrite of `availability-editor.tsx`. Per-day checkboxes (Mon–Sun) replaced with "Mon, Wed, Fri" / "Tue, Thu, Sat" pattern toggles. Free-form `<Input type="time">` replaced with `TIME_SLOTS` `<Select>` dropdowns. Both patterns can be active simultaneously, each with multiple time ranges. Display mode shows pattern label + time badges. Hydration merges legacy per-day data into patterns. Unavailability form (`unavailability-form.tsx`) time inputs also swapped to TIME_SLOTS selects. No schema or action changes — purely UI.
+- [x] **#12 — Rate history editing** — Inline edit per rate row (pencil icon → editable inputs → save/cancel). Min(1) validation added to `rateChangeSchema`. New `updateRateChangeSchema`. Server-side `validateRateLimits()` queries `getCurrentPriceLimits()` (max PriceSetting price across GENERAL/IELTS per group type) to cap rates. Price limits shown as helper text ("Max: X UZS") + `max` attribute on inputs. New `updateRateChange()` action in `actions/teachers.ts`. Existing `addRateChange` also now validates against PriceSetting caps.
+- [x] **#12 — Delete UNPAID payment records** — New `deleteTeacherPaymentPeriod()` action in `actions/teacher-payments.ts` (guards PAID records). Payment history table extracted from inline server component to `PaymentHistoryTable` client component with trash icon + `ConfirmationDialog` on UNPAID rows. PAID rows have no action. Correction flow: edit rate → delete UNPAID record → "Generate Pay" recreates with corrected rate via `skipDuplicates`.
+- [x] **#18 — Teacher file uploads** — `TeacherDocument` model added to Prisma schema. AWS SDK deps added. `TeacherDocumentsSection` component on teacher detail page.
+
+**Files changed:** `availability-editor.tsx` (rewrite), `unavailability-form.tsx`, `rate-history.tsx`, `teachers/[id]/page.tsx`, `actions/teachers.ts`, `actions/teacher-payments.ts`, `queries/teachers.ts`, `schemas/teacher.ts`, `schemas/teacher-payment.ts`, `schema.prisma`. New: `payment-history-table.tsx`.
 
 ---
 

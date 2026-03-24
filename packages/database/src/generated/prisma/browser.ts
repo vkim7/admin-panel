@@ -123,6 +123,11 @@ export type TeacherPaymentPeriod = Prisma.TeacherPaymentPeriodModel
  */
 export type TeacherRateChange = Prisma.TeacherRateChangeModel
 /**
+ * Model TeacherDocument
+ * 
+ */
+export type TeacherDocument = Prisma.TeacherDocumentModel
+/**
  * Model PriceSetting
  * 
  */

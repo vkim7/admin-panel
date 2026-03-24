@@ -35,19 +35,48 @@ export const availabilityBlockSchema = z
 
 export type AvailabilityBlockValues = z.infer<typeof availabilityBlockSchema>;
 
-export const rateChangeSchema = z.object({
-  groupLessonRate: requiredInt("Group rate is required"),
-  individualLessonRate: requiredInt("Individual rate is required"),
-  effectiveFrom: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Must be DD.MM.YYYY")
-    .refine(
-      (val) => {
-        const day = parseInt(val.split("-")[2] ?? "0", 10);
-        return day === 1;
-      },
-      { message: "Must be the first of the month" },
-    ),
-});
+const effectiveFromField = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Must be DD.MM.YYYY")
+  .refine(
+    (val) => {
+      const day = parseInt(val.split("-")[2] ?? "0", 10);
+      return day === 1;
+    },
+    { message: "Must be the first of the month" },
+  );
+
+export const rateChangeSchema = z
+  .object({
+    groupLessonRate: requiredInt("Group rate is required"),
+    individualLessonRate: requiredInt("Individual rate is required"),
+    effectiveFrom: effectiveFromField,
+  })
+  .refine((d) => d.groupLessonRate >= 1, {
+    message: "Group rate must be at least 1",
+    path: ["groupLessonRate"],
+  })
+  .refine((d) => d.individualLessonRate >= 1, {
+    message: "Individual rate must be at least 1",
+    path: ["individualLessonRate"],
+  });
 
 export type RateChangeFormValues = z.infer<typeof rateChangeSchema>;
+
+export const updateRateChangeSchema = z
+  .object({
+    id: requiredString("Rate change ID is required"),
+    groupLessonRate: requiredInt("Group rate is required"),
+    individualLessonRate: requiredInt("Individual rate is required"),
+    effectiveFrom: effectiveFromField,
+  })
+  .refine((d) => d.groupLessonRate >= 1, {
+    message: "Group rate must be at least 1",
+    path: ["groupLessonRate"],
+  })
+  .refine((d) => d.individualLessonRate >= 1, {
+    message: "Individual rate must be at least 1",
+    path: ["individualLessonRate"],
+  });
+
+export type UpdateRateChangeFormValues = z.infer<typeof updateRateChangeSchema>;

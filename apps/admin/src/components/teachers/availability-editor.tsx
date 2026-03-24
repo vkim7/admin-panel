@@ -3,22 +3,30 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Pencil, Plus, X } from "lucide-react";
 import { setAvailability } from "@/lib/actions/teachers";
+import { TIME_SLOTS } from "@/lib/constants";
 
-const DAYS = [
-  { value: 1, label: "Monday" },
-  { value: 2, label: "Tuesday" },
-  { value: 3, label: "Wednesday" },
-  { value: 4, label: "Thursday" },
-  { value: 5, label: "Friday" },
-  { value: 6, label: "Saturday" },
-  { value: 7, label: "Sunday" },
-] as const;
+type PatternKey = "MWF" | "TTS";
 
-const DEFAULT_START = "14:00";
+const DAY_LABEL: Record<number, string> = {
+  1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6: "Sat",
+};
+
+const PATTERNS: Record<PatternKey, { label: string; days: readonly number[] }> = {
+  MWF: { label: "Mon, Wed, Fri", days: [1, 3, 5] },
+  TTS: { label: "Tue, Thu, Sat", days: [2, 4, 6] },
+};
+
+const DEFAULT_START = "14:30";
 const DEFAULT_END = "22:00";
 
 type Block = {
@@ -28,38 +36,65 @@ type Block = {
   endTime: string;
 };
 
-type TimeRange = {
-  startTime: string;
-  endTime: string;
-};
+type TimeRange = { startTime: string; endTime: string };
 
-type DayState = {
-  dayOfWeek: number;
-  label: string;
+type PatternState = {
   enabled: boolean;
   ranges: TimeRange[];
 };
 
-function buildDayStates(existingBlocks: Block[]): DayState[] {
+/** Build pattern states from existing DB blocks */
+function buildPatternStates(
+  blocks: Block[],
+): Record<PatternKey, PatternState> {
   const blocksByDay = new Map<number, Block[]>();
-  for (const b of existingBlocks) {
+  for (const b of blocks) {
     const list = blocksByDay.get(b.dayOfWeek) ?? [];
     list.push(b);
     blocksByDay.set(b.dayOfWeek, list);
   }
 
-  return DAYS.map((day) => {
-    const existing = blocksByDay.get(day.value);
+  function buildForPattern(days: readonly number[]): PatternState {
+    // Collect all ranges from any day in the pattern
+    const rangeSet = new Map<string, TimeRange>();
+    let hasAny = false;
+    for (const day of days) {
+      const dayBlocks = blocksByDay.get(day);
+      if (dayBlocks) {
+        hasAny = true;
+        for (const b of dayBlocks) {
+          const key = `${b.startTime}-${b.endTime}`;
+          if (!rangeSet.has(key)) {
+            rangeSet.set(key, { startTime: b.startTime, endTime: b.endTime });
+          }
+        }
+      }
+    }
+
     return {
-      dayOfWeek: day.value,
-      label: day.label,
-      enabled: !!existing,
-      ranges: existing?.map((b) => ({
-        startTime: b.startTime,
-        endTime: b.endTime,
-      })) ?? [{ startTime: DEFAULT_START, endTime: DEFAULT_END }],
+      enabled: hasAny,
+      ranges: hasAny
+        ? [...rangeSet.values()].sort((a, b) => a.startTime.localeCompare(b.startTime))
+        : [{ startTime: DEFAULT_START, endTime: DEFAULT_END }],
     };
-  });
+  }
+
+  return {
+    MWF: buildForPattern(PATTERNS.MWF.days),
+    TTS: buildForPattern(PATTERNS.TTS.days),
+  };
+}
+
+/** Detect patterns from blocks for display mode */
+function detectPatternDisplay(blocks: Block[]): { key: PatternKey; ranges: TimeRange[] }[] {
+  const states = buildPatternStates(blocks);
+  const result: { key: PatternKey; ranges: TimeRange[] }[] = [];
+  for (const key of ["MWF", "TTS"] as PatternKey[]) {
+    if (states[key].enabled) {
+      result.push({ key, ranges: states[key].ranges });
+    }
+  }
+  return result;
 }
 
 export function AvailabilityEditor({
@@ -71,67 +106,51 @@ export function AvailabilityEditor({
 }) {
   const [isPending, startTransition] = useTransition();
   const [showEditor, setShowEditor] = useState(false);
-  const [dayStates, setDayStates] = useState<DayState[]>(() =>
-    buildDayStates(blocks),
+  const [patterns, setPatterns] = useState<Record<PatternKey, PatternState>>(
+    () => buildPatternStates(blocks),
   );
 
-  function updateDay(
-    dayOfWeek: number,
-    update: Partial<Pick<DayState, "enabled" | "ranges">>,
-  ) {
-    setDayStates((prev) =>
-      prev.map((d) => (d.dayOfWeek === dayOfWeek ? { ...d, ...update } : d)),
-    );
+  function updatePattern(key: PatternKey, update: Partial<PatternState>) {
+    setPatterns((prev) => ({ ...prev, [key]: { ...prev[key], ...update } }));
   }
 
-  function updateRange(
-    dayOfWeek: number,
-    rangeIndex: number,
-    update: Partial<TimeRange>,
-  ) {
-    setDayStates((prev) =>
-      prev.map((d) => {
-        if (d.dayOfWeek !== dayOfWeek) return d;
-        const ranges = d.ranges.map((r, i) =>
-          i === rangeIndex ? { ...r, ...update } : r,
-        );
-        return { ...d, ranges };
-      }),
-    );
+  function updateRange(key: PatternKey, index: number, update: Partial<TimeRange>) {
+    setPatterns((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        ranges: prev[key].ranges.map((r, i) =>
+          i === index ? { ...r, ...update } : r,
+        ),
+      },
+    }));
   }
 
-  function addRange(dayOfWeek: number) {
-    setDayStates((prev) =>
-      prev.map((d) => {
-        if (d.dayOfWeek !== dayOfWeek) return d;
-        return {
-          ...d,
-          ranges: [
-            ...d.ranges,
-            { startTime: DEFAULT_START, endTime: DEFAULT_END },
-          ],
-        };
-      }),
-    );
+  function addRange(key: PatternKey) {
+    setPatterns((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        ranges: [...prev[key].ranges, { startTime: DEFAULT_START, endTime: DEFAULT_END }],
+      },
+    }));
   }
 
-  function removeRange(dayOfWeek: number, rangeIndex: number) {
-    setDayStates((prev) =>
-      prev.map((d) => {
-        if (d.dayOfWeek !== dayOfWeek) return d;
-        return {
-          ...d,
-          ranges: d.ranges.filter((_, i) => i !== rangeIndex),
-        };
-      }),
-    );
+  function removeRange(key: PatternKey, index: number) {
+    setPatterns((prev) => ({
+      ...prev,
+      [key]: {
+        ...prev[key],
+        ranges: prev[key].ranges.filter((_, i) => i !== index),
+      },
+    }));
   }
 
-  function findOverlap(day: DayState): [number, number] | null {
-    for (let i = 0; i < day.ranges.length; i++) {
-      for (let j = i + 1; j < day.ranges.length; j++) {
-        const a = day.ranges[i]!;
-        const b = day.ranges[j]!;
+  function findOverlap(ranges: TimeRange[]): [number, number] | null {
+    for (let i = 0; i < ranges.length; i++) {
+      for (let j = i + 1; j < ranges.length; j++) {
+        const a = ranges[i]!;
+        const b = ranges[j]!;
         if (a.startTime < b.endTime && a.endTime > b.startTime) {
           return [i, j];
         }
@@ -141,31 +160,38 @@ export function AvailabilityEditor({
   }
 
   function handleSave() {
-    const enabledDays = dayStates.filter((d) => d.enabled);
+    const allBlocks: { dayOfWeek: number; startTime: string; endTime: string }[] = [];
 
-    for (const day of enabledDays) {
-      const overlap = findOverlap(day);
+    for (const key of ["MWF", "TTS"] as PatternKey[]) {
+      const pattern = patterns[key];
+      if (!pattern.enabled) continue;
+
+      // Check overlaps within this pattern
+      const overlap = findOverlap(pattern.ranges);
       if (overlap) {
         const [i, j] = overlap;
-        const a = day.ranges[i]!;
-        const b = day.ranges[j]!;
+        const a = pattern.ranges[i]!;
+        const b = pattern.ranges[j]!;
         toast.error(
-          `${day.label}: ${a.startTime}–${a.endTime} overlaps with ${b.startTime}–${b.endTime}`,
+          `${key}: ${a.startTime}–${a.endTime} overlaps with ${b.startTime}–${b.endTime}`,
         );
         return;
       }
+
+      // Emit blocks for each day in the pattern
+      for (const day of PATTERNS[key].days) {
+        for (const range of pattern.ranges) {
+          allBlocks.push({
+            dayOfWeek: day,
+            startTime: range.startTime,
+            endTime: range.endTime,
+          });
+        }
+      }
     }
 
-    const data = enabledDays.flatMap((d) =>
-      d.ranges.map((r) => ({
-        dayOfWeek: d.dayOfWeek,
-        startTime: r.startTime,
-        endTime: r.endTime,
-      })),
-    );
-
     startTransition(async () => {
-      const result = await setAvailability(teacherId, data);
+      const result = await setAvailability(teacherId, allBlocks);
       if (result?.error) {
         toast.error(result.error);
       } else {
@@ -175,6 +201,9 @@ export function AvailabilityEditor({
     });
   }
 
+  const endTimeSlots = (startTime: string) =>
+    TIME_SLOTS.filter((slot) => slot > startTime);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -183,7 +212,7 @@ export function AvailabilityEditor({
           variant="outline"
           size="sm"
           onClick={() => {
-            setDayStates(buildDayStates(blocks));
+            setPatterns(buildPatternStates(blocks));
             setShowEditor(!showEditor);
           }}
         >
@@ -203,78 +232,89 @@ export function AvailabilityEditor({
 
       {showEditor && (
         <div className="space-y-5 rounded-md border p-4">
-          <div className="space-y-2">
-            {dayStates.map((day) => (
-              <div key={day.dayOfWeek} className="flex gap-3">
-                <div className="flex items-start gap-3 pt-2">
+          <div className="space-y-4">
+            {(["MWF", "TTS"] as PatternKey[]).map((key) => (
+              <div key={key} className="space-y-2">
+                <div className="flex items-center gap-3">
                   <Checkbox
-                    id={`day-${day.dayOfWeek}`}
-                    checked={day.enabled}
+                    id={`pattern-${key}`}
+                    checked={patterns[key].enabled}
                     onCheckedChange={(checked) =>
-                      updateDay(day.dayOfWeek, { enabled: !!checked })
+                      updatePattern(key, { enabled: !!checked })
                     }
                   />
                   <label
-                    htmlFor={`day-${day.dayOfWeek}`}
-                    className="w-24 text-sm font-medium"
+                    htmlFor={`pattern-${key}`}
+                    className="text-sm font-medium"
                   >
-                    {day.label}
+                    {PATTERNS[key].label}
                   </label>
                 </div>
-                <div className="flex flex-col gap-2">
-                  {day.ranges.map((range, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <Input
-                        type="time"
-                        step={900}
-                        value={range.startTime}
-                        onChange={(e) =>
-                          updateRange(day.dayOfWeek, i, {
-                            startTime: e.target.value,
-                          })
-                        }
-                        disabled={!day.enabled}
-                        className="w-[110px]"
-                      />
-                      <span className="text-muted-foreground text-sm">–</span>
-                      <Input
-                        type="time"
-                        step={900}
-                        value={range.endTime}
-                        onChange={(e) =>
-                          updateRange(day.dayOfWeek, i, {
-                            endTime: e.target.value,
-                          })
-                        }
-                        disabled={!day.enabled}
-                        className="w-[110px]"
-                      />
-                      {day.ranges.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeRange(day.dayOfWeek, i)}
-                          disabled={!day.enabled}
-                          className="text-muted-foreground hover:text-destructive disabled:opacity-50"
+
+                {patterns[key].enabled && (
+                  <div className="ml-7 space-y-2">
+                    {patterns[key].ranges.map((range, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Select
+                          value={range.startTime}
+                          onValueChange={(v) => updateRange(key, i, { startTime: v })}
                         >
-                          <X className="size-4" />
-                        </button>
-                      )}
-                      {i === day.ranges.length - 1 && (
-                        <button
-                          type="button"
-                          onClick={() => addRange(day.dayOfWeek)}
-                          disabled={!day.enabled}
-                          className="text-muted-foreground hover:text-foreground disabled:opacity-50"
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="Start" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {TIME_SLOTS.map((slot) => (
+                              <SelectItem key={slot} value={slot}>
+                                {slot}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <span className="text-muted-foreground text-sm">–</span>
+
+                        <Select
+                          value={range.endTime}
+                          onValueChange={(v) => updateRange(key, i, { endTime: v })}
                         >
-                          <Plus className="size-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                          <SelectTrigger className="w-[100px]">
+                            <SelectValue placeholder="End" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {endTimeSlots(range.startTime).map((slot) => (
+                              <SelectItem key={slot} value={slot}>
+                                {slot}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        {patterns[key].ranges.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeRange(key, i)}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            <X className="size-4" />
+                          </button>
+                        )}
+                        {i === patterns[key].ranges.length - 1 && (
+                          <button
+                            type="button"
+                            onClick={() => addRange(key)}
+                            className="text-muted-foreground hover:text-foreground"
+                          >
+                            <Plus className="size-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
+
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -298,25 +338,21 @@ export function AvailabilityEditor({
         blocks.length > 0 &&
         !showEditor && (
           <div className="space-y-2">
-            {DAYS.map((day) => {
-              const dayBlocks = blocks.filter((b) => b.dayOfWeek === day.value);
-              if (dayBlocks.length === 0) return null;
-              return (
-                <div key={day.value} className="flex items-center gap-3">
-                  <span className="w-24 text-sm font-medium">{day.label}</span>
-                  <div className="flex flex-wrap gap-2">
-                    {dayBlocks.map((block) => (
-                      <span
-                        key={block.id}
-                        className="bg-muted/50 rounded-md border px-2.5 py-1 text-sm"
-                      >
-                        {block.startTime}–{block.endTime}
-                      </span>
-                    ))}
-                  </div>
+            {detectPatternDisplay(blocks).map(({ key, ranges }) => (
+              <div key={key} className="flex items-center gap-3">
+                <span className="text-sm font-medium">{PATTERNS[key].label}</span>
+                <div className="flex flex-wrap gap-2">
+                  {ranges.map((range, i) => (
+                    <span
+                      key={i}
+                      className="bg-muted/50 rounded-md border px-2.5 py-1 text-sm"
+                    >
+                      {range.startTime}–{range.endTime}
+                    </span>
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         )
       )}

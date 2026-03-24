@@ -15,3 +15,7 @@ export const markTeacherPaidSchema = z.object({
 export const markGroupPayPaidSchema = z.object({
   id: requiredString(),
 });
+
+export const deleteTeacherPaymentSchema = z.object({
+  id: requiredString(),
+});

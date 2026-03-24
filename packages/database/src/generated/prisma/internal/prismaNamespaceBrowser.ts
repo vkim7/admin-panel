@@ -72,6 +72,7 @@ export const ModelName = {
   Refund: 'Refund',
   TeacherPaymentPeriod: 'TeacherPaymentPeriod',
   TeacherRateChange: 'TeacherRateChange',
+  TeacherDocument: 'TeacherDocument',
   PriceSetting: 'PriceSetting',
   Promotion: 'Promotion',
   StudentPromotion: 'StudentPromotion',
@@ -465,6 +466,19 @@ export const TeacherRateChangeScalarFieldEnum = {
 } as const
 
 export type TeacherRateChangeScalarFieldEnum = (typeof TeacherRateChangeScalarFieldEnum)[keyof typeof TeacherRateChangeScalarFieldEnum]
+
+
+export const TeacherDocumentScalarFieldEnum = {
+  id: 'id',
+  teacherId: 'teacherId',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileSize: 'fileSize',
+  uploadedAt: 'uploadedAt',
+  uploadedById: 'uploadedById'
+} as const
+
+export type TeacherDocumentScalarFieldEnum = (typeof TeacherDocumentScalarFieldEnum)[keyof typeof TeacherDocumentScalarFieldEnum]
 
 
 export const PriceSettingScalarFieldEnum = {

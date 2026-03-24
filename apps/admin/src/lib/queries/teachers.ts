@@ -146,3 +146,39 @@ export async function getTeacherById(id: string) {
 
   return teacher;
 }
+
+export type TeacherDocumentRecord = Awaited<ReturnType<typeof getTeacherDocuments>>[number];
+
+/** Max teacher rate caps based on current PriceSetting values */
+export async function getCurrentPriceLimits() {
+  const now = new Date();
+  const settings = await prisma.priceSetting.findMany({
+    where: { effectiveFrom: { lte: now } },
+    orderBy: { effectiveFrom: "desc" },
+  });
+
+  const seen = new Set<string>();
+  let maxGroupRate = 0;
+  let maxIndividualRate = 0;
+
+  for (const s of settings) {
+    const key = `${s.levelCategory}:${s.groupType}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    if (s.groupType === "GROUP") maxGroupRate = Math.max(maxGroupRate, s.pricePerLesson);
+    else maxIndividualRate = Math.max(maxIndividualRate, s.pricePerLesson);
+  }
+
+  if (maxGroupRate === 0 && maxIndividualRate === 0) return null;
+  return { maxGroupRate, maxIndividualRate };
+}
+
+export async function getTeacherDocuments(teacherId: string) {
+  return prisma.teacherDocument.findMany({
+    where: { teacherId },
+    include: {
+      uploadedBy: { select: { firstName: true, lastName: true } },
+    },
+    orderBy: { uploadedAt: "desc" },
+  });
+}

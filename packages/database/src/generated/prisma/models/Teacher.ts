@@ -279,6 +279,7 @@ export type TeacherWhereInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryListRelationFilter
   rateChanges?: Prisma.TeacherRateChangeListRelationFilter
   trialMemberships?: Prisma.GroupMembershipListRelationFilter
+  documents?: Prisma.TeacherDocumentListRelationFilter
 }
 
 export type TeacherOrderByWithRelationInput = {
@@ -305,6 +306,7 @@ export type TeacherOrderByWithRelationInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryOrderByRelationAggregateInput
   rateChanges?: Prisma.TeacherRateChangeOrderByRelationAggregateInput
   trialMemberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
+  documents?: Prisma.TeacherDocumentOrderByRelationAggregateInput
 }
 
 export type TeacherWhereUniqueInput = Prisma.AtLeast<{
@@ -334,6 +336,7 @@ export type TeacherWhereUniqueInput = Prisma.AtLeast<{
   groupTeacherHistory?: Prisma.GroupTeacherHistoryListRelationFilter
   rateChanges?: Prisma.TeacherRateChangeListRelationFilter
   trialMemberships?: Prisma.GroupMembershipListRelationFilter
+  documents?: Prisma.TeacherDocumentListRelationFilter
 }, "id" | "phone" | "telegramId">
 
 export type TeacherOrderByWithAggregationInput = {
@@ -397,6 +400,7 @@ export type TeacherCreateInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateInput = {
@@ -422,6 +426,7 @@ export type TeacherUncheckedCreateInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUpdateInput = {
@@ -447,6 +452,7 @@ export type TeacherUpdateInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateInput = {
@@ -472,6 +478,7 @@ export type TeacherUncheckedUpdateInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateManyInput = {
@@ -798,6 +805,20 @@ export type TeacherUpdateOneRequiredWithoutRateChangesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutRateChangesInput, Prisma.TeacherUpdateWithoutRateChangesInput>, Prisma.TeacherUncheckedUpdateWithoutRateChangesInput>
 }
 
+export type TeacherCreateNestedOneWithoutDocumentsInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDocumentsInput, Prisma.TeacherUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDocumentsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+}
+
+export type TeacherUpdateOneRequiredWithoutDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.TeacherCreateWithoutDocumentsInput, Prisma.TeacherUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.TeacherCreateOrConnectWithoutDocumentsInput
+  upsert?: Prisma.TeacherUpsertWithoutDocumentsInput
+  connect?: Prisma.TeacherWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TeacherUpdateToOneWithWhereWithoutDocumentsInput, Prisma.TeacherUpdateWithoutDocumentsInput>, Prisma.TeacherUncheckedUpdateWithoutDocumentsInput>
+}
+
 export type TeacherCreateWithoutDeactivatedByInput = {
   id?: string
   firstName: string
@@ -820,6 +841,7 @@ export type TeacherCreateWithoutDeactivatedByInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutDeactivatedByInput = {
@@ -844,6 +866,7 @@ export type TeacherUncheckedCreateWithoutDeactivatedByInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutDeactivatedByInput = {
@@ -912,6 +935,7 @@ export type TeacherCreateWithoutAvailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutAvailabilityInput = {
@@ -936,6 +960,7 @@ export type TeacherUncheckedCreateWithoutAvailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutAvailabilityInput = {
@@ -976,6 +1001,7 @@ export type TeacherUpdateWithoutAvailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutAvailabilityInput = {
@@ -1000,6 +1026,7 @@ export type TeacherUncheckedUpdateWithoutAvailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutUnavailabilityInput = {
@@ -1024,6 +1051,7 @@ export type TeacherCreateWithoutUnavailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutUnavailabilityInput = {
@@ -1048,6 +1076,7 @@ export type TeacherUncheckedCreateWithoutUnavailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutUnavailabilityInput = {
@@ -1088,6 +1117,7 @@ export type TeacherUpdateWithoutUnavailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutUnavailabilityInput = {
@@ -1112,6 +1142,7 @@ export type TeacherUncheckedUpdateWithoutUnavailabilityInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutScheduleSlotsInput = {
@@ -1136,6 +1167,7 @@ export type TeacherCreateWithoutScheduleSlotsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutScheduleSlotsInput = {
@@ -1160,6 +1192,7 @@ export type TeacherUncheckedCreateWithoutScheduleSlotsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutScheduleSlotsInput = {
@@ -1200,6 +1233,7 @@ export type TeacherUpdateWithoutScheduleSlotsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutScheduleSlotsInput = {
@@ -1224,6 +1258,7 @@ export type TeacherUncheckedUpdateWithoutScheduleSlotsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutGroupsInput = {
@@ -1248,6 +1283,7 @@ export type TeacherCreateWithoutGroupsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutGroupsInput = {
@@ -1272,6 +1308,7 @@ export type TeacherUncheckedCreateWithoutGroupsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutGroupsInput = {
@@ -1312,6 +1349,7 @@ export type TeacherUpdateWithoutGroupsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutGroupsInput = {
@@ -1336,6 +1374,7 @@ export type TeacherUncheckedUpdateWithoutGroupsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutGroupTeacherHistoryInput = {
@@ -1360,6 +1399,7 @@ export type TeacherCreateWithoutGroupTeacherHistoryInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutGroupTeacherHistoryInput = {
@@ -1384,6 +1424,7 @@ export type TeacherUncheckedCreateWithoutGroupTeacherHistoryInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutGroupTeacherHistoryInput = {
@@ -1424,6 +1465,7 @@ export type TeacherUpdateWithoutGroupTeacherHistoryInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutGroupTeacherHistoryInput = {
@@ -1448,6 +1490,7 @@ export type TeacherUncheckedUpdateWithoutGroupTeacherHistoryInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutTrialMembershipsInput = {
@@ -1472,6 +1515,7 @@ export type TeacherCreateWithoutTrialMembershipsInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutTeacherInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutTrialMembershipsInput = {
@@ -1496,6 +1540,7 @@ export type TeacherUncheckedCreateWithoutTrialMembershipsInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutTeacherInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutTrialMembershipsInput = {
@@ -1536,6 +1581,7 @@ export type TeacherUpdateWithoutTrialMembershipsInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutTeacherNestedInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutTrialMembershipsInput = {
@@ -1560,6 +1606,7 @@ export type TeacherUncheckedUpdateWithoutTrialMembershipsInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutLessonsInput = {
@@ -1584,6 +1631,7 @@ export type TeacherCreateWithoutLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutLessonsInput = {
@@ -1608,6 +1656,7 @@ export type TeacherUncheckedCreateWithoutLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutLessonsInput = {
@@ -1637,6 +1686,7 @@ export type TeacherCreateWithoutOriginalLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutOriginalLessonsInput = {
@@ -1661,6 +1711,7 @@ export type TeacherUncheckedCreateWithoutOriginalLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutOriginalLessonsInput = {
@@ -1701,6 +1752,7 @@ export type TeacherUpdateWithoutLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutLessonsInput = {
@@ -1725,6 +1777,7 @@ export type TeacherUncheckedUpdateWithoutLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUpsertWithoutOriginalLessonsInput = {
@@ -1760,6 +1813,7 @@ export type TeacherUpdateWithoutOriginalLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutOriginalLessonsInput = {
@@ -1784,6 +1838,7 @@ export type TeacherUncheckedUpdateWithoutOriginalLessonsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutPaymentPeriodsInput = {
@@ -1808,6 +1863,7 @@ export type TeacherCreateWithoutPaymentPeriodsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutPaymentPeriodsInput = {
@@ -1832,6 +1888,7 @@ export type TeacherUncheckedCreateWithoutPaymentPeriodsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutPaymentPeriodsInput = {
@@ -1872,6 +1929,7 @@ export type TeacherUpdateWithoutPaymentPeriodsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutPaymentPeriodsInput = {
@@ -1896,6 +1954,7 @@ export type TeacherUncheckedUpdateWithoutPaymentPeriodsInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherCreateWithoutRateChangesInput = {
@@ -1920,6 +1979,7 @@ export type TeacherCreateWithoutRateChangesInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutTeacherInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherUncheckedCreateWithoutRateChangesInput = {
@@ -1944,6 +2004,7 @@ export type TeacherUncheckedCreateWithoutRateChangesInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutTeacherInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
   trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+  documents?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutTeacherInput
 }
 
 export type TeacherCreateOrConnectWithoutRateChangesInput = {
@@ -1984,6 +2045,7 @@ export type TeacherUpdateWithoutRateChangesInput = {
   paymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutTeacherNestedInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutRateChangesInput = {
@@ -2007,6 +2069,123 @@ export type TeacherUncheckedUpdateWithoutRateChangesInput = {
   originalLessons?: Prisma.LessonUncheckedUpdateManyWithoutOriginalTeacherNestedInput
   paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
+  trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
+}
+
+export type TeacherCreateWithoutDocumentsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
+  teachingLanguage: $Enums.PreferredLanguage
+  isActive?: boolean
+  deactivatedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutDeactivatedTeachersInput
+  availability?: Prisma.TeacherAvailabilityCreateNestedManyWithoutTeacherInput
+  unavailability?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutTeacherInput
+  groups?: Prisma.GroupCreateNestedManyWithoutTeacherInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutTeacherInput
+  lessons?: Prisma.LessonCreateNestedManyWithoutTeacherInput
+  originalLessons?: Prisma.LessonCreateNestedManyWithoutOriginalTeacherInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutTeacherInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutTeacherInput
+  rateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutTeacherInput
+  trialMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutTrialTeacherInput
+}
+
+export type TeacherUncheckedCreateWithoutDocumentsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  levels?: Prisma.TeacherCreatelevelsInput | $Enums.Level[]
+  teachingLanguage: $Enums.PreferredLanguage
+  isActive?: boolean
+  deactivatedAt?: Date | string | null
+  deactivatedById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  availability?: Prisma.TeacherAvailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  unavailability?: Prisma.TeacherUnavailabilityUncheckedCreateNestedManyWithoutTeacherInput
+  groups?: Prisma.GroupUncheckedCreateNestedManyWithoutTeacherInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutTeacherInput
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutTeacherInput
+  originalLessons?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalTeacherInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutTeacherInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutTeacherInput
+  rateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutTeacherInput
+  trialMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutTrialTeacherInput
+}
+
+export type TeacherCreateOrConnectWithoutDocumentsInput = {
+  where: Prisma.TeacherWhereUniqueInput
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutDocumentsInput, Prisma.TeacherUncheckedCreateWithoutDocumentsInput>
+}
+
+export type TeacherUpsertWithoutDocumentsInput = {
+  update: Prisma.XOR<Prisma.TeacherUpdateWithoutDocumentsInput, Prisma.TeacherUncheckedUpdateWithoutDocumentsInput>
+  create: Prisma.XOR<Prisma.TeacherCreateWithoutDocumentsInput, Prisma.TeacherUncheckedCreateWithoutDocumentsInput>
+  where?: Prisma.TeacherWhereInput
+}
+
+export type TeacherUpdateToOneWithWhereWithoutDocumentsInput = {
+  where?: Prisma.TeacherWhereInput
+  data: Prisma.XOR<Prisma.TeacherUpdateWithoutDocumentsInput, Prisma.TeacherUncheckedUpdateWithoutDocumentsInput>
+}
+
+export type TeacherUpdateWithoutDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deactivatedBy?: Prisma.AdminUserUpdateOneWithoutDeactivatedTeachersNestedInput
+  availability?: Prisma.TeacherAvailabilityUpdateManyWithoutTeacherNestedInput
+  unavailability?: Prisma.TeacherUnavailabilityUpdateManyWithoutTeacherNestedInput
+  groups?: Prisma.GroupUpdateManyWithoutTeacherNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutTeacherNestedInput
+  lessons?: Prisma.LessonUpdateManyWithoutTeacherNestedInput
+  originalLessons?: Prisma.LessonUpdateManyWithoutOriginalTeacherNestedInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutTeacherNestedInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
+  rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
+  trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+}
+
+export type TeacherUncheckedUpdateWithoutDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  levels?: Prisma.TeacherUpdatelevelsInput | $Enums.Level[]
+  teachingLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  availability?: Prisma.TeacherAvailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+  unavailability?: Prisma.TeacherUnavailabilityUncheckedUpdateManyWithoutTeacherNestedInput
+  groups?: Prisma.GroupUncheckedUpdateManyWithoutTeacherNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutTeacherNestedInput
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutTeacherNestedInput
+  originalLessons?: Prisma.LessonUncheckedUpdateManyWithoutOriginalTeacherNestedInput
+  paymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutTeacherNestedInput
+  groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
+  rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
 }
 
@@ -2046,6 +2225,7 @@ export type TeacherUpdateWithoutDeactivatedByInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateWithoutDeactivatedByInput = {
@@ -2070,6 +2250,7 @@ export type TeacherUncheckedUpdateWithoutDeactivatedByInput = {
   groupTeacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutTeacherNestedInput
   rateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutTeacherNestedInput
   trialMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutTrialTeacherNestedInput
+  documents?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutTeacherNestedInput
 }
 
 export type TeacherUncheckedUpdateManyWithoutDeactivatedByInput = {
@@ -2102,6 +2283,7 @@ export type TeacherCountOutputType = {
   groupTeacherHistory: number
   rateChanges: number
   trialMemberships: number
+  documents: number
 }
 
 export type TeacherCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2115,6 +2297,7 @@ export type TeacherCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   groupTeacherHistory?: boolean | TeacherCountOutputTypeCountGroupTeacherHistoryArgs
   rateChanges?: boolean | TeacherCountOutputTypeCountRateChangesArgs
   trialMemberships?: boolean | TeacherCountOutputTypeCountTrialMembershipsArgs
+  documents?: boolean | TeacherCountOutputTypeCountDocumentsArgs
 }
 
 /**
@@ -2197,6 +2380,13 @@ export type TeacherCountOutputTypeCountTrialMembershipsArgs<ExtArgs extends runt
   where?: Prisma.GroupMembershipWhereInput
 }
 
+/**
+ * TeacherCountOutputType without action
+ */
+export type TeacherCountOutputTypeCountDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TeacherDocumentWhereInput
+}
+
 
 export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2222,6 +2412,7 @@ export type TeacherSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   groupTeacherHistory?: boolean | Prisma.Teacher$groupTeacherHistoryArgs<ExtArgs>
   rateChanges?: boolean | Prisma.Teacher$rateChangesArgs<ExtArgs>
   trialMemberships?: boolean | Prisma.Teacher$trialMembershipsArgs<ExtArgs>
+  documents?: boolean | Prisma.Teacher$documentsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["teacher"]>
 
@@ -2285,6 +2476,7 @@ export type TeacherInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   groupTeacherHistory?: boolean | Prisma.Teacher$groupTeacherHistoryArgs<ExtArgs>
   rateChanges?: boolean | Prisma.Teacher$rateChangesArgs<ExtArgs>
   trialMemberships?: boolean | Prisma.Teacher$trialMembershipsArgs<ExtArgs>
+  documents?: boolean | Prisma.Teacher$documentsArgs<ExtArgs>
   _count?: boolean | Prisma.TeacherCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TeacherIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2308,6 +2500,7 @@ export type $TeacherPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     groupTeacherHistory: Prisma.$GroupTeacherHistoryPayload<ExtArgs>[]
     rateChanges: Prisma.$TeacherRateChangePayload<ExtArgs>[]
     trialMemberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
+    documents: Prisma.$TeacherDocumentPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2727,6 +2920,7 @@ export interface Prisma__TeacherClient<T, Null = never, ExtArgs extends runtime.
   groupTeacherHistory<T extends Prisma.Teacher$groupTeacherHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$groupTeacherHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupTeacherHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rateChanges<T extends Prisma.Teacher$rateChangesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$rateChangesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherRateChangePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   trialMemberships<T extends Prisma.Teacher$trialMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$trialMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documents<T extends Prisma.Teacher$documentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Teacher$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3420,6 +3614,30 @@ export type Teacher$trialMembershipsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.GroupMembershipScalarFieldEnum | Prisma.GroupMembershipScalarFieldEnum[]
+}
+
+/**
+ * Teacher.documents
+ */
+export type Teacher$documentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TeacherDocument
+   */
+  select?: Prisma.TeacherDocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TeacherDocument
+   */
+  omit?: Prisma.TeacherDocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TeacherDocumentInclude<ExtArgs> | null
+  where?: Prisma.TeacherDocumentWhereInput
+  orderBy?: Prisma.TeacherDocumentOrderByWithRelationInput | Prisma.TeacherDocumentOrderByWithRelationInput[]
+  cursor?: Prisma.TeacherDocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TeacherDocumentScalarFieldEnum | Prisma.TeacherDocumentScalarFieldEnum[]
 }
 
 /**

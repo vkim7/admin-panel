@@ -4,7 +4,6 @@ import { useMemo, useState } from "react";
 import type { ScheduleTeacherRow } from "@/lib/queries/schedule";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { ScheduleGrid } from "./schedule-grid";
-import { Separator } from "@/components/ui/separator";
 
 const LANGUAGE_OPTIONS = [
   { value: "UZ", label: "UZ" },
@@ -20,6 +19,7 @@ const LEVEL_OPTIONS = [
   { value: "IELTS", label: "IELTS" },
 ] as const;
 
+type DayPattern = "mwf" | "tts";
 type LanguageFilter = "UZ" | "RU" | null;
 
 interface ScheduleFiltersProps {
@@ -75,7 +75,13 @@ function filterTeachers(
     .filter((t): t is ScheduleTeacherRow => t !== null);
 }
 
+const DAY_PATTERN_OPTIONS: { value: DayPattern; label: string }[] = [
+  { value: "mwf", label: "Mon · Wed · Fri" },
+  { value: "tts", label: "Tue · Thu · Sat" },
+];
+
 export function ScheduleWithFilters({ mwf, tts }: ScheduleFiltersProps) {
+  const [dayPattern, setDayPattern] = useState<DayPattern>("mwf");
   const [selectedLanguage, setSelectedLanguage] = useState<LanguageFilter>(null);
   const [selectedLevels, setSelectedLevels] = useState<Set<string>>(new Set());
 
@@ -101,6 +107,9 @@ export function ScheduleWithFilters({ mwf, tts }: ScheduleFiltersProps) {
   }
 
   const hasFilters = selectedLanguage !== null || selectedLevels.size > 0;
+
+  const activeTeachers = dayPattern === "mwf" ? filteredMwf : filteredTts;
+  const activeDays = dayPattern === "mwf" ? "1,3,5" : "2,4,6";
 
   return (
     <div className="space-y-8">
@@ -153,10 +162,37 @@ export function ScheduleWithFilters({ mwf, tts }: ScheduleFiltersProps) {
         </div>
       </div>
 
-      {/* Grids */}
-      <ScheduleGrid teachers={filteredMwf} label="Mon / Wed / Fri" days="1,3,5" />
-      <Separator />
-      <ScheduleGrid teachers={filteredTts} label="Tue / Thu / Sat" days="2,4,6" />
+      {/* Day pattern title + Grid */}
+      <div className="space-y-3">
+        <h2 className="flex items-center gap-3 text-lg font-semibold">
+          {DAY_PATTERN_OPTIONS.map((opt, i) => {
+            const isActive = dayPattern === opt.value;
+            return (
+              <span key={opt.value} className="flex items-center gap-3">
+                {i > 0 && <span className="h-5 w-px bg-border" />}
+                <button
+                  type="button"
+                  onClick={() => setDayPattern(opt.value)}
+                  className={`relative transition-colors ${
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground/50 hover:text-muted-foreground"
+                  }`}
+                >
+                  {isActive && (
+                    <>
+                      <span className="absolute -bottom-0.5 left-0 h-[3px] w-full -rotate-1 rounded-sm bg-orange-400/60" />
+                      <span className="absolute -bottom-[5px] left-[4px] h-[2px] w-[85%] rotate-[0.5deg] rounded-sm bg-orange-400/40" />
+                    </>
+                  )}
+                  {opt.label}
+                </button>
+              </span>
+            );
+          })}
+        </h2>
+        <ScheduleGrid teachers={activeTeachers} days={activeDays} />
+      </div>
     </div>
   );
 }

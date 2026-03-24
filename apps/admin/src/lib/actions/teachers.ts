@@ -9,7 +9,9 @@ import {
   teacherSchema,
   availabilityBlockSchema,
   rateChangeSchema,
+  updateRateChangeSchema,
 } from "@/schemas/teacher";
+import { getCurrentPriceLimits } from "@/lib/queries/teachers";
 
 export async function createTeacher(data: unknown) {
   await requireAdmin();
@@ -152,12 +154,33 @@ export async function setAvailability(teacherId: string, data: unknown) {
 
 // ─── Rates ────────────────────────────────────────────────────────────────────
 
+async function validateRateLimits(
+  groupLessonRate: number,
+  individualLessonRate: number,
+): Promise<string | null> {
+  const limits = await getCurrentPriceLimits();
+  if (!limits) return null;
+  if (groupLessonRate > limits.maxGroupRate) {
+    return `Group rate cannot exceed ${limits.maxGroupRate.toLocaleString("en-US")} UZS (current max student price)`;
+  }
+  if (individualLessonRate > limits.maxIndividualRate) {
+    return `Individual rate cannot exceed ${limits.maxIndividualRate.toLocaleString("en-US")} UZS (current max student price)`;
+  }
+  return null;
+}
+
 export async function addRateChange(teacherId: string, data: unknown) {
   const admin = await requireAdmin();
   const parsed = rateChangeSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
+
+  const limitError = await validateRateLimits(
+    parsed.data.groupLessonRate,
+    parsed.data.individualLessonRate,
+  );
+  if (limitError) return { error: limitError };
 
   try {
     await prisma.teacherRateChange.create({
@@ -170,6 +193,48 @@ export async function addRateChange(teacherId: string, data: unknown) {
       },
     });
     revalidatePath(`/teachers/${teacherId}`);
+    return { success: true };
+  } catch (e: unknown) {
+    if (
+      typeof e === "object" &&
+      e !== null &&
+      "code" in e &&
+      (e as { code: string }).code === "P2002"
+    ) {
+      return { error: "A rate entry already exists for this date" };
+    }
+    throw e;
+  }
+}
+
+export async function updateRateChange(id: string, data: unknown) {
+  const admin = await requireAdmin();
+  const parsed = updateRateChangeSchema.safeParse({ id, ...data as object });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  const limitError = await validateRateLimits(
+    parsed.data.groupLessonRate,
+    parsed.data.individualLessonRate,
+  );
+  if (limitError) return { error: limitError };
+
+  // Get the existing record to know the teacherId for revalidation
+  const existing = await prisma.teacherRateChange.findUnique({ where: { id } });
+  if (!existing) return { error: "Rate entry not found" };
+
+  try {
+    await prisma.teacherRateChange.update({
+      where: { id },
+      data: {
+        groupLessonRate: parsed.data.groupLessonRate,
+        individualLessonRate: parsed.data.individualLessonRate,
+        effectiveFrom: new Date(parsed.data.effectiveFrom),
+        changedById: admin.id,
+      },
+    });
+    revalidatePath(`/teachers/${existing.teacherId}`);
     return { success: true };
   } catch (e: unknown) {
     if (

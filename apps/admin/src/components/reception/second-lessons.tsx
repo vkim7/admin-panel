@@ -2,6 +2,14 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { SecondLessonRow } from "@/lib/queries/reception";
 
 function formatUZS(amount: number) {
@@ -25,56 +33,56 @@ export function SecondLessons({ data }: SecondLessonsProps) {
   }
 
   return (
-    <div>
-      <div className="rounded-md border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50 text-left text-xs text-muted-foreground">
-              <th className="px-3 py-2">CRM</th>
-              <th className="px-3 py-2">Student</th>
-              <th className="px-3 py-2">Group</th>
-              <th className="px-3 py-2">Lessons</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2 text-right">Remaining</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row) => {
-              const isUrgent = row.lessonsAttended >= 2;
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>CRM</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Group</TableHead>
+            <TableHead>Lessons</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Remaining</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((row) => {
+            const isUrgent = row.lessonsAttended >= 2;
 
-              return (
-                <tr
-                  key={row.membershipId}
-                  className={`border-b last:border-b-0 ${isUrgent ? "bg-destructive/10" : ""}`}
-                >
-                  <td className="px-3 py-2 text-muted-foreground">{row.crmCode}</td>
-                  <td className="px-3 py-2">
-                    <Link href={`/students/${row.studentId}`} className="text-primary hover:underline">
-                      {row.studentName}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">
-                    <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
-                      {row.groupPublicId}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">
-                    <span className={isUrgent ? "font-medium text-destructive" : ""}>
-                      {row.lessonsAttended}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">
-                    <PaymentStatusBadge status={row.paymentStatus} />
-                  </td>
-                  <td className="px-3 py-2 text-right font-medium text-destructive">
-                    {formatUZS(row.remaining)} UZS
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+            return (
+              <TableRow
+                key={row.membershipId}
+                className={isUrgent ? "bg-destructive/10" : ""}
+              >
+                <TableCell className="font-mono">{row.crmCode}</TableCell>
+                <TableCell>
+                  <Link href={`/students/${row.studentId}`} className="font-medium text-primary hover:underline">
+                    {row.studentName}
+                  </Link>
+                </TableCell>
+                <TableCell>{row.phone}</TableCell>
+                <TableCell>
+                  <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
+                    {row.groupPublicId}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <span className={isUrgent ? "font-medium text-destructive" : ""}>
+                    {row.lessonsAttended}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <PaymentStatusBadge status={row.paymentStatus} />
+                </TableCell>
+                <TableCell className="text-right font-medium text-destructive">
+                  {formatUZS(row.remaining)} UZS
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }

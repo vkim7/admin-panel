@@ -7,6 +7,7 @@ import {
   generateTeacherPaySchema,
   markTeacherPaidSchema,
   markGroupPayPaidSchema,
+  deleteTeacherPaymentSchema,
 } from "@/schemas/teacher-payment";
 import { MONTH_NAMES_FULL } from "@/lib/constants";
 
@@ -214,6 +215,38 @@ export async function markGroupPayPaid(data: unknown) {
   await prisma.teacherPaymentPeriod.update({
     where: { id: parsed.data.id },
     data: { status: "PAID", paidAt: new Date() },
+  });
+
+  revalidatePath("/teacher-payments");
+  revalidatePath("/teachers");
+  return { success: true };
+}
+
+/**
+ * Delete a single UNPAID TeacherPaymentPeriod record.
+ * Admin can then regenerate with corrected rate via "Generate Pay".
+ */
+export async function deleteTeacherPaymentPeriod(data: unknown) {
+  await requireAdmin();
+  const parsed = deleteTeacherPaymentSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  const record = await prisma.teacherPaymentPeriod.findUnique({
+    where: { id: parsed.data.id },
+  });
+
+  if (!record) {
+    return { error: "Payment record not found" };
+  }
+
+  if (record.status === "PAID") {
+    return { error: "Cannot delete a paid record" };
+  }
+
+  await prisma.teacherPaymentPeriod.delete({
+    where: { id: parsed.data.id },
   });
 
   revalidatePath("/teacher-payments");

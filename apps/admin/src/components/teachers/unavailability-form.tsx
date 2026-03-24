@@ -11,11 +11,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { recordTeacherUnavailability } from "@/lib/actions/teacher-unavailability";
 import { Plus } from "lucide-react";
+import { TIME_SLOTS } from "@/lib/constants";
 
 interface UnavailabilityFormProps {
   teacherId: string;
@@ -81,22 +89,36 @@ export function UnavailabilityForm({ teacherId }: UnavailabilityFormProps) {
             </div>
 
             {!wholeDay && (
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="flex gap-4">
+                <div className="flex-1 space-y-2">
                   <Label>From</Label>
-                  <Input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                  />
+                  <Select value={startTime} onValueChange={setStartTime}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select time..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.map((slot) => (
+                        <SelectItem key={slot} value={slot}>
+                          {slot}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-                <div className="space-y-2">
+                <div className="flex-1 space-y-2">
                   <Label>To (optional)</Label>
-                  <Input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                  />
+                  <Select value={endTime} onValueChange={setEndTime}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select time..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {TIME_SLOTS.filter((slot) => !startTime || slot > startTime).map((slot) => (
+                        <SelectItem key={slot} value={slot}>
+                          {slot}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             )}
