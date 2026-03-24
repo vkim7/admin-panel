@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { getTeachers } from "@/lib/queries/teachers";
+import { getAllTeachers } from "@/lib/queries/teachers";
 import { TeacherTable } from "@/components/teachers/teacher-table";
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
 export default async function TeachersPage() {
-  const teachers = await getTeachers();
+  const teachers = await getAllTeachers(true);
 
   return (
     <div className="space-y-6">

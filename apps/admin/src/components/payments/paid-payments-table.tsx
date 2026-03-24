@@ -5,6 +5,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
+import { MONTH_NAMES } from "@/lib/constants";
 import type { PaidPayment } from "@/lib/queries/payments";
 
 const METHOD_LABEL: Record<string, string> = {
@@ -13,11 +14,6 @@ const METHOD_LABEL: Record<string, string> = {
   cash: "Cash",
   bank_transfer: "Bank Transfer",
 };
-
-const MONTH_NAMES = [
-  "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
 
 function formatUZS(amount: number) {
   return amount.toLocaleString("en-US");

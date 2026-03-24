@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { getPaidPayments } from "@/lib/queries/payments";
 import { PaidPaymentsTable } from "@/components/payments/paid-payments-table";
-
-const MONTH_NAMES = [
-  "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
+import { MONTH_NAMES } from "@/lib/constants";
 
 const PAYMENT_METHODS = [
   { value: "", label: "All Methods" },

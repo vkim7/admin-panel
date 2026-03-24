@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
@@ -10,6 +11,7 @@ type TeacherRow = {
   firstName: string;
   lastName: string;
   phone: string;
+  isActive: boolean;
   levels: string[];
   teachingLanguage: string;
   groups: { id: string; type: string }[];
@@ -24,6 +26,8 @@ const LEVEL_SHORT: Record<string, string> = {
   IELTS: "IELTS",
 };
 
+type FilterValue = "active" | "deactivated" | "all";
+
 const columns: ColumnDef<TeacherRow>[] = [
   {
     accessorFn: (row) => `${row.firstName} ${row.lastName}`,
@@ -32,9 +36,14 @@ const columns: ColumnDef<TeacherRow>[] = [
     cell: ({ row }) => (
       <Link
         href={`/teachers/${row.original.id}`}
-        className="font-medium text-primary hover:underline"
+        className={`font-medium hover:underline ${row.original.isActive ? "text-primary" : "text-muted-foreground"}`}
       >
         {row.original.firstName} {row.original.lastName}
+        {!row.original.isActive && (
+          <Badge variant="outline" className="ml-2 text-xs text-muted-foreground">
+            Deactivated
+          </Badge>
+        )}
       </Link>
     ),
   },
@@ -81,12 +90,46 @@ const columns: ColumnDef<TeacherRow>[] = [
 ];
 
 export function TeacherTable({ data }: { data: TeacherRow[] }) {
+  const [filter, setFilter] = useState<FilterValue>("active");
+
+  const filtered = data.filter((t) => {
+    if (filter === "active") return t.isActive;
+    if (filter === "deactivated") return !t.isActive;
+    return true;
+  });
+
+  const filters: { value: FilterValue; label: string }[] = [
+    { value: "active", label: "Active" },
+    { value: "deactivated", label: "Deactivated" },
+    { value: "all", label: "All" },
+  ];
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchKey="name"
-      searchPlaceholder="Search teachers..."
-    />
+    <div className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="flex gap-1">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              onClick={() => setFilter(f.value)}
+              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                filter === f.value
+                  ? "border-primary bg-primary/5 text-primary"
+                  : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <DataTable
+        columns={columns}
+        data={filtered}
+        searchKey="name"
+        searchPlaceholder="Search by name..."
+      />
+    </div>
   );
 }

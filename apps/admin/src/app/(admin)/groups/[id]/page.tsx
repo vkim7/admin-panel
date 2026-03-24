@@ -32,7 +32,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil, AlertTriangle } from "lucide-react";
-import { DAY_SHORT, LEVEL_LABEL } from "@/lib/constants";
+import { DAY_SHORT, LEVEL_LABEL, MONTH_NAMES } from "@/lib/constants";
 
 export default async function GroupDetailPage({
   params,
@@ -73,6 +73,19 @@ export default async function GroupDetailPage({
   );
 
   const total = lessons.length;
+
+  // Group lessons by month for the breakdown
+  const lessonsByMonth: { label: string; count: number }[] = [];
+  const monthMap = new Map<string, number>();
+  for (const lesson of lessons) {
+    const d = new Date(lesson.lessonDate);
+    const key = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+    monthMap.set(key, (monthMap.get(key) ?? 0) + 1);
+  }
+  for (const [key, count] of [...monthMap.entries()].sort()) {
+    const [y, m] = key.split("-");
+    lessonsByMonth.push({ label: `${MONTH_NAMES[parseInt(m!, 10)]} ${y}`, count });
+  }
 
   // Compute progress stage dynamically
   const progressStage = getProgressStage(group.startDate, group.endDate);
@@ -220,7 +233,14 @@ export default async function GroupDetailPage({
         </div>
         <div>
           <p className="text-xs font-medium text-muted-foreground">Lessons</p>
-          <p className="mt-1 text-sm">{total} total</p>
+          <div className="mt-1 space-y-0.5 text-sm">
+            {lessonsByMonth.map((m) => (
+              <p key={m.label}>
+                {m.label} — {m.count}
+              </p>
+            ))}
+            <p className="text-muted-foreground">{total} total</p>
+          </div>
         </div>
         {group.zoomLink && (
           <div>

@@ -13,11 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-const MONTH_NAMES = [
-  "", "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import { MONTH_NAMES_FULL } from "@/lib/constants";
 
 interface GeneratePayDialogProps {
   year: number;
@@ -59,7 +55,7 @@ export function GeneratePayDialog({ year, month, trigger }: GeneratePayDialogPro
           <DialogTitle>Generate Teacher Pay</DialogTitle>
           <DialogDescription>
             Generate payment records for all teachers with completed lessons in{" "}
-            <strong>{MONTH_NAMES[month]} {year}</strong>. Existing records will be skipped.
+            <strong>{MONTH_NAMES_FULL[month]} {year}</strong>. Existing records will be skipped.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

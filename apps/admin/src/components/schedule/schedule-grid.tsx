@@ -46,7 +46,12 @@ export function ScheduleGrid({
             {teachers.map((teacher) => (
               <TableRow key={teacher.id}>
                 <TableCell className="sticky left-0 z-10 bg-background font-medium">
-                  {teacher.name}
+                  <Link
+                    href={`/teachers/${teacher.id}`}
+                    className="text-primary hover:underline"
+                  >
+                    {teacher.name}
+                  </Link>
                 </TableCell>
                 {TIME_SLOTS.map((slot) => {
                   const cell = teacher.slots[slot];

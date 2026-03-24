@@ -6,12 +6,8 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import { RecordPaymentDialog } from "./record-payment-dialog";
 import { PeriodEditor } from "./period-editor";
+import { MONTH_NAMES } from "@/lib/constants";
 import type { StudentPaymentPeriodWithDetails } from "@/lib/queries/payments";
-
-const MONTH_NAMES = [
-  "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
 
 const METHOD_LABEL: Record<string, string> = {
   click: "Click",

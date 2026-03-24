@@ -9,6 +9,7 @@ export async function getReceptionStudents() {
       firstName: true,
       lastName: true,
       phone: true,
+      dateOfBirth: true,
       level: true,
       progressStage: true,
       createdAt: true,
@@ -16,6 +17,7 @@ export async function getReceptionStudents() {
       preferredTimeSlots: true,
       preferredLanguage: true,
       comment: true,
+      family: { select: { parentPhone: true } },
     },
     orderBy: { createdAt: "asc" }, // oldest first — longest-waiting students at top
   });

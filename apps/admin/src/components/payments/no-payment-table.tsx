@@ -8,6 +8,7 @@ import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RecordPaymentDialog } from "./record-payment-dialog";
+import { MONTH_NAMES } from "@/lib/constants";
 import type { UnpaidPeriod } from "@/lib/queries/payments";
 
 const LEVEL_SHORT: Record<string, string> = {
@@ -18,11 +19,6 @@ const LEVEL_SHORT: Record<string, string> = {
   UPPER_INTERMEDIATE: "Upper-Int",
   IELTS: "IELTS",
 };
-
-const MONTH_NAMES = [
-  "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
 
 function formatUZS(amount: number) {
   return amount.toLocaleString("en-US");

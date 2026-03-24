@@ -51,6 +51,17 @@ export const DAY_SHORT: Record<number, string> = {
   7: "Sun",
 };
 
+// Month names (1-indexed: MONTH_NAMES[1] = "Jan", MONTH_NAMES[12] = "Dec")
+export const MONTH_NAMES = [
+  "", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+] as const;
+
+export const MONTH_NAMES_FULL = [
+  "", "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+] as const;
+
 // Short stage labels for compact displays
 export const STAGE_SHORT: Record<string, string> = {
   BEGINNING: "BEG",

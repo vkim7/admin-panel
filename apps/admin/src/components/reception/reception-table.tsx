@@ -7,6 +7,7 @@ import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LEVEL_SHORT, STAGE_SHORT, DAYS_LABEL } from "@/lib/constants";
+import { getAge } from "@/lib/helpers/date";
 import {
   AssignDialog,
   type GroupOption,
@@ -20,6 +21,7 @@ type ReceptionStudent = {
   firstName: string;
   lastName: string;
   phone: string;
+  dateOfBirth: Date;
   level: string;
   progressStage: string;
   createdAt: Date;
@@ -27,6 +29,7 @@ type ReceptionStudent = {
   preferredTimeSlots: string[];
   preferredLanguage: string;
   comment: string | null;
+  family: { parentPhone: string | null } | null;
 };
 
 function getDaysLabel(days: number[]) {
@@ -66,6 +69,14 @@ function makeColumns(
     {
       accessorKey: "phone",
       header: "Phone",
+    },
+    {
+      id: "age",
+      header: "Age",
+      accessorFn: (row) => getAge(row.dateOfBirth),
+      cell: ({ getValue }) => (
+        <span className="text-sm">{getValue<number>()}</span>
+      ),
     },
     {
       accessorKey: "level",
@@ -128,7 +139,7 @@ function makeColumns(
         if (!comment) return null;
         return (
           <span
-            className="max-w-[200px] truncate text-sm text-muted-foreground"
+            className="max-w-[200px] truncate text-sm text-foreground"
             title={comment}
           >
             {comment}
@@ -163,6 +174,7 @@ interface ReceptionTableProps {
 export function ReceptionTable({ data, groups }: ReceptionTableProps) {
   const [selectedStudent, setSelectedStudent] =
     useState<StudentForAssign | null>(null);
+  const [search, setSearch] = useState("");
 
   function handleAssign(student: ReceptionStudent) {
     setSelectedStudent({
@@ -179,14 +191,31 @@ export function ReceptionTable({ data, groups }: ReceptionTableProps) {
 
   const columns = makeColumns(handleAssign);
 
+  const filtered = search
+    ? data.filter((s) => {
+        const q = search.toLowerCase();
+        const name = `${s.firstName} ${s.lastName}`.toLowerCase();
+        const phone = s.phone.toLowerCase();
+        const parentPhone = s.family?.parentPhone?.toLowerCase() ?? "";
+        return name.includes(q) || phone.includes(q) || parentPhone.includes(q);
+      })
+    : data;
+
   return (
     <>
-      <DataTable
-        columns={columns}
-        data={data}
-        searchKey="name"
-        searchPlaceholder="Search by name..."
-      />
+      <div className="space-y-4">
+        <input
+          type="text"
+          placeholder="Search by name or phone..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-9 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+        <DataTable
+          columns={columns}
+          data={filtered}
+        />
+      </div>
       {selectedStudent && (
         <AssignDialog
           student={selectedStudent}

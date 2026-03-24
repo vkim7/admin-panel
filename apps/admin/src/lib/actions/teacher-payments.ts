@@ -8,11 +8,7 @@ import {
   markTeacherPaidSchema,
   markGroupPayPaidSchema,
 } from "@/schemas/teacher-payment";
-
-const MONTH_NAMES = [
-  "", "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import { MONTH_NAMES_FULL } from "@/lib/constants";
 
 export async function generateTeacherPay(data: unknown) {
   const admin = await requireAdmin();
@@ -29,7 +25,7 @@ export async function generateTeacherPay(data: unknown) {
   today.setUTCHours(0, 0, 0, 0);
 
   if (lastDayOfMonth >= today) {
-    return { error: `Cannot generate pay for ${MONTH_NAMES[month]} ${year} — the month hasn't ended yet` };
+    return { error: `Cannot generate pay for ${MONTH_NAMES_FULL[month]} ${year} — the month hasn't ended yet` };
   }
 
   const periodStart = new Date(Date.UTC(year, month - 1, 1));
@@ -49,7 +45,7 @@ export async function generateTeacherPay(data: unknown) {
   });
 
   if (lessons.length === 0) {
-    return { error: `No completed lessons found for ${MONTH_NAMES[month]} ${year}` };
+    return { error: `No completed lessons found for ${MONTH_NAMES_FULL[month]} ${year}` };
   }
 
   // 2. Group in-memory by (teacherId, groupId)

@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
+import { getAge } from "@/lib/helpers/date";
 
 type StudentRow = {
   id: string;
@@ -12,8 +14,10 @@ type StudentRow = {
   firstName: string;
   lastName: string;
   phone: string;
+  dateOfBirth: Date;
   level: string;
   status: string;
+  family: { parentPhone: string | null } | null;
   groupMemberships: {
     id: string;
     group: { id: string; publicId: string; type: string; level: string };
@@ -59,6 +63,14 @@ const columns: ColumnDef<StudentRow>[] = [
     header: "Phone",
   },
   {
+    id: "age",
+    header: "Age",
+    accessorFn: (row) => getAge(row.dateOfBirth),
+    cell: ({ getValue }) => (
+      <span className="text-sm">{getValue<number>()}</span>
+    ),
+  },
+  {
     accessorKey: "level",
     header: "Level",
     cell: ({ row }) => (
@@ -97,12 +109,28 @@ const columns: ColumnDef<StudentRow>[] = [
 ];
 
 export function StudentTable({ data }: { data: StudentRow[] }) {
+  const [search, setSearch] = useState("");
+
+  const filtered = search
+    ? data.filter((s) => {
+        const q = search.toLowerCase();
+        const name = `${s.firstName} ${s.lastName}`.toLowerCase();
+        const phone = s.phone.toLowerCase();
+        const parentPhone = s.family?.parentPhone?.toLowerCase() ?? "";
+        return name.includes(q) || phone.includes(q) || parentPhone.includes(q);
+      })
+    : data;
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchKey="name"
-      searchPlaceholder="Search by name..."
-    />
+    <div className="space-y-4">
+      <input
+        type="text"
+        placeholder="Search by name or phone..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="h-9 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      />
+      <DataTable columns={columns} data={filtered} />
+    </div>
   );
 }

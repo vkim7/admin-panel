@@ -30,6 +30,7 @@ export async function getGroupById(id: string) {
               firstName: true,
               lastName: true,
               phone: true,
+              dateOfBirth: true,
               status: true,
               isUncertain: true,
             },

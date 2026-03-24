@@ -3,11 +3,7 @@
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const MONTH_NAMES = [
-  "", "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import { MONTH_NAMES_FULL } from "@/lib/constants";
 
 interface MonthSelectorProps {
   year: number;
@@ -43,7 +39,7 @@ export function MonthSelector({ year, month }: MonthSelectorProps) {
         <ChevronLeft className="size-4" />
       </Button>
       <span className="min-w-[140px] text-center text-sm font-medium">
-        {MONTH_NAMES[month]} {year}
+        {MONTH_NAMES_FULL[month]} {year}
       </span>
       <Button variant="outline" size="icon" className="size-8" onClick={handleNext}>
         <ChevronRight className="size-4" />

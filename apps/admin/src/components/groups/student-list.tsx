@@ -34,6 +34,7 @@ import { Label } from "@/components/ui/label";
 import { TrialActionsMenu } from "./trial-resolution-dialog";
 import { TransferDialog } from "@/components/transfers/transfer-dialog";
 import { toggleUncertain, sendToReassignment, sendToLostList } from "@/lib/actions/students";
+import { getAge } from "@/lib/helpers/date";
 import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
 
 type LostReason = {
@@ -56,6 +57,7 @@ type MembershipRow = {
     firstName: string;
     lastName: string;
     phone: string;
+    dateOfBirth: Date;
     status: string;
     isUncertain: boolean;
   };
@@ -334,6 +336,7 @@ export function StudentList({
                 <th className="px-3 py-2 text-left font-medium">Start</th>
                 <th className="px-3 py-2 text-left font-medium">Name</th>
                 <th className="px-3 py-2 text-left font-medium">Phone</th>
+                <th className="px-3 py-2 text-left font-medium">Age</th>
                 <th className="px-3 py-2 text-left font-medium">Uncertain</th>
                 <th className="px-3 py-2 text-left font-medium">
                   Lessons Start
@@ -376,6 +379,7 @@ export function StudentList({
                       </Link>
                     </td>
                     <td className="px-3 py-2">{m.student.phone}</td>
+                    <td className="px-3 py-2">{getAge(m.student.dateOfBirth)}</td>
                     <td className="px-3 py-2">
                       <UncertainToggle
                         studentId={m.student.id}
