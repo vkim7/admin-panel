@@ -73,9 +73,7 @@ const navSections: NavSection[] = [
   },
   {
     title: "Reference",
-    items: [
-      { label: "Promotions", href: "/promotions", icon: Tag },
-    ],
+    items: [{ label: "Promotions", href: "/promotions", icon: Tag }],
   },
 ];
 
@@ -147,14 +145,13 @@ export function AppSidebar({
       </Link>
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto">
         {navSections.map((section, sectionIdx) => (
-          <div key={section.title} className={sectionIdx > 0 ? "mt-4" : ""}>
-            <p className="mb-1 px-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/60">
-              {section.title}
-            </p>
+          <div key={section.title}>
+            {sectionIdx > 0 && (
+              <div className="border-border/60 mx-3 my-3.5 border-t" />
+            )}
             {section.items.map((item) => {
               const isActive =
-                pathname === item.href ||
-                pathname.startsWith(item.href + "/");
+                pathname === item.href || pathname.startsWith(item.href + "/");
               const isPending = resolvedPending === item.href;
               const Icon = item.icon;
               const badgeKey = badgeConfig[item.href];
@@ -192,7 +189,7 @@ export function AppSidebar({
           </div>
         ))}
       </nav>
-      <div className="border-t pt-3">
+      <div className="border-t border-border/60 pt-3">
         <div className="text-muted-foreground px-3 text-xs">{adminName}</div>
         <button
           onClick={handleLogout}
