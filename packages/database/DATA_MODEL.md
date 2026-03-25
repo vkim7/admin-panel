@@ -334,7 +334,7 @@ Tracks which students are in which groups (both GROUP and INDIVIDUAL types), inc
 
 **A student can rejoin a group** — no unique constraint on `[studentId, groupId]`. But a partial unique index prevents two SIMULTANEOUS active memberships for the same student+group (see `data_integrity_constraints.sql`).
 
-**A student can be in multiple groups at once** — e.g., a GROUP lesson and an INDIVIDUAL lesson simultaneously. Each is a separate membership with independent billing periods. The unique constraint is scoped to `(studentId, groupId)` not `(studentId)` globally. Schedule conflict detection prevents overlapping time slots (see C#40).
+**A student can be in at most 1 GROUP + 1 INDIVIDUAL lesson simultaneously.** Each is a separate membership with independent billing periods. The `active_membership_unique` constraint prevents duplicate memberships for the same student+group pair. The type limit (max 1 of each GroupType) is enforced in application logic across all entry points: `addStudentsToGroup`, `transferStudent`, and `transferTrialStudent`. Transfer actions exclude the source group being left from the count. Schedule conflict detection also prevents overlapping time slots (see C#40).
 
 **`leaveDate` is set for ALL membership endings** — transfers, dropouts, merges, graduations, and program completion. It always means "student is no longer active in this group." The reason for leaving is inferred from context:
 - `transferReasonId` set → **Transfer** (student moved to another group)
@@ -767,6 +767,7 @@ Links a student to a promotion. Created when a student receives a discount.
 | appliedAt | When the promotion was given to this student |
 | expiresAt | Calculated from Promotion.validityDays. Null = never. |
 | monthsUsed | For recurring promos — how many months it's been applied |
+| comment | Required for manual assignments (APOLOGY/REWARD). Null for auto-applied promotions. |
 
 ### AppliedPromotion
 Audit trail: which promotions actually discounted which billing period, and by how much.

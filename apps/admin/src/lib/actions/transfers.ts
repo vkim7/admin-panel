@@ -98,6 +98,23 @@ export async function transferStudent(data: unknown) {
     return { error: "Student is already active in the destination group" };
   }
 
+  // Membership type limit: max 1 GROUP + 1 INDIVIDUAL (exclude source group being left)
+  const otherActive = await prisma.groupMembership.findMany({
+    where: {
+      studentId: membership.studentId,
+      leaveDate: null,
+      groupId: { notIn: [membership.groupId, destinationGroupId] },
+    },
+    include: { group: { select: { type: true, publicId: true } } },
+  });
+  const sameType = otherActive.find((m) => m.group.type === destGroup.type);
+  if (sameType) {
+    const label = destGroup.type === "GROUP" ? "group" : "individual";
+    return {
+      error: `${membership.student.firstName} ${membership.student.lastName} already has an active ${label} lesson (${sameType.group.publicId}). Students can have at most one group and one individual lesson.`,
+    };
+  }
+
   // C#40: Schedule conflict (exclude source group since student is leaving)
   const conflict = await checkScheduleConflicts(
     membership.studentId,

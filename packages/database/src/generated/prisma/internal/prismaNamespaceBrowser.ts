@@ -556,6 +556,7 @@ export const StudentPromotionScalarFieldEnum = {
   appliedAt: 'appliedAt',
   expiresAt: 'expiresAt',
   monthsUsed: 'monthsUsed',
+  comment: 'comment',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

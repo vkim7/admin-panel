@@ -45,6 +45,8 @@ import {
 import { UncertainReasonDialog } from "@/components/uncertain/uncertain-reason-dialog";
 import { getAge } from "@/lib/helpers/date";
 import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
+import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
+import { updateMembershipComment } from "@/lib/actions/group-memberships";
 
 type LostReason = {
   id: string;
@@ -489,8 +491,12 @@ export function StudentList({
                         </Badge>
                       )}
                     </td>
-                    <td className="text-muted-foreground max-w-[150px] truncate px-3 py-2">
-                      {m.comment ?? ""}
+                    <td className="px-3 py-2">
+                      <EditCommentDialog
+                        currentComment={m.comment}
+                        onSave={(c) => updateMembershipComment(m.id, c)}
+                        title="Edit Membership Comment"
+                      />
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1">

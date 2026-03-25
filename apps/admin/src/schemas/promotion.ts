@@ -73,6 +73,7 @@ export const promotionSchema = promotionBaseSchema.refine(
 export const assignPromotionSchema = z.object({
   studentId: requiredString("Student is required"),
   promotionId: requiredString("Promotion is required"),
+  comment: requiredString("Comment is required").max(500, "Comment must be 500 characters or fewer"),
 });
 
 export type AssignPromotionValues = z.infer<typeof assignPromotionSchema>;

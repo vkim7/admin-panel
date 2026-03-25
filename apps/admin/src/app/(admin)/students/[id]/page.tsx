@@ -8,12 +8,12 @@ import { StudentActions } from "@/components/students/student-actions";
 import { PaymentHistory } from "@/components/payments/payment-history";
 import { AssignPromotionDialog } from "@/components/promotions/assign-dialog";
 import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
-import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
+import { StudentCommentEdit } from "@/components/students/student-comment-edit";
 
 const LEVEL_LABEL: Record<string, string> = {
   BEGINNER: "Beginner",
@@ -87,34 +87,32 @@ export default async function StudentDetailPage({
   return (
     <div className="space-y-8">
       {/* Header */}
-      <PageHeader
-        title={`${student.firstName} ${student.lastName}`}
-        breadcrumbs={[
-          { label: "Students", href: "/students" },
-          { label: `${student.firstName} ${student.lastName}` },
-        ]}
-        actions={
+      <div className="space-y-1">
+        <nav className="flex items-center gap-1 text-sm text-muted-foreground">
+          <Link href="/students" className="hover:text-foreground transition-colors">Students</Link>
+          <span className="text-foreground">/ {student.firstName} {student.lastName}</span>
+        </nav>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {student.firstName} {student.lastName}
+            </h1>
+            <span className="text-sm font-medium text-muted-foreground">#{student.crmCode}</span>
+            <StatusBadge type="student" value={student.status} />
+            {student.isUncertain && (
+              <Badge variant="outline" className="border-amber-400 bg-amber-50 text-amber-800" title={student.uncertainComment ?? undefined}>
+                Uncertain{student.uncertainReason ? `: ${student.uncertainReason.name}` : ""}
+              </Badge>
+            )}
+          </div>
           <Button variant="outline" size="sm" asChild>
             <Link href={`/students/${id}/edit`}>
               <Pencil className="mr-1 size-4" />
               Edit
             </Link>
           </Button>
-        }
-      />
-      <div className="flex items-center gap-3">
-        <StatusBadge type="student" value={student.status} />
-        {student.isUncertain && (
-          <Badge
-            variant="outline"
-            className="border-amber-400 bg-amber-50 text-amber-800"
-            title={student.uncertainComment ?? undefined}
-          >
-            Uncertain{student.uncertainReason ? `: ${student.uncertainReason.name}` : ""}
-          </Badge>
-        )}
-        <span className="text-sm text-muted-foreground">CRM: {student.crmCode}</span>
-        <span className="text-sm text-muted-foreground">{student.phone}</span>
+        </div>
+        <span className="text-sm font-medium">{student.phone}</span>
       </div>
 
       {/* Profile Info */}
@@ -176,6 +174,12 @@ export default async function StudentDetailPage({
           </p>
           <p className="mt-1 text-sm">{activeMemberships.length}</p>
         </div>
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">Comment</p>
+          <div className="mt-1">
+            <StudentCommentEdit studentId={id} currentComment={student.comment} />
+          </div>
+        </div>
       </div>
 
       {/* Family Info */}
@@ -209,17 +213,6 @@ export default async function StudentDetailPage({
                 </div>
               )}
             </div>
-          </div>
-        </>
-      )}
-
-      {/* Comment */}
-      {student.comment && (
-        <>
-          <Separator />
-          <div className="space-y-2">
-            <h3 className="text-lg font-medium">Notes</h3>
-            <p className="text-sm text-muted-foreground">{student.comment}</p>
           </div>
         </>
       )}
@@ -413,6 +406,7 @@ export default async function StudentDetailPage({
                   <th className="px-3 py-2 text-left font-medium">Applied</th>
                   <th className="px-3 py-2 text-left font-medium">Expires</th>
                   <th className="px-3 py-2 text-left font-medium">Used</th>
+                  <th className="px-3 py-2 text-left font-medium">Comment</th>
                 </tr>
               </thead>
               <tbody>
@@ -439,6 +433,9 @@ export default async function StudentDetailPage({
                     </td>
                     <td className="px-3 py-2">
                       {sp._count.appliedPromotions} period{sp._count.appliedPromotions !== 1 ? "s" : ""}
+                    </td>
+                    <td className="px-3 py-2 text-muted-foreground">
+                      {sp.comment ?? "—"}
                     </td>
                   </tr>
                 ))}

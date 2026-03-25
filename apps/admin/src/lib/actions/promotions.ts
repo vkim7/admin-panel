@@ -100,7 +100,7 @@ export async function assignPromotionToStudent(data: unknown) {
 
   const promotion = await prisma.promotion.findUnique({
     where: { id: parsed.data.promotionId },
-    select: { validityDays: true, isActive: true },
+    select: { type: true, validityDays: true, isActive: true },
   });
 
   if (!promotion) {
@@ -111,6 +111,10 @@ export async function assignPromotionToStudent(data: unknown) {
     return { error: "Promotion is not active" };
   }
 
+  if (promotion.type !== "APOLOGY" && promotion.type !== "REWARD") {
+    return { error: "Only Apology and Reward promotions can be manually assigned" };
+  }
+
   const expiresAt = promotion.validityDays
     ? new Date(Date.now() + promotion.validityDays * 24 * 60 * 60 * 1000)
     : null;
@@ -119,6 +123,7 @@ export async function assignPromotionToStudent(data: unknown) {
     data: {
       studentId: parsed.data.studentId,
       promotionId: parsed.data.promotionId,
+      comment: parsed.data.comment,
       expiresAt,
     },
   });

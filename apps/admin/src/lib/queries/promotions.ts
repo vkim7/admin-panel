@@ -19,7 +19,7 @@ export async function getPromotionById(id: string) {
 
 export async function getActivePromotions() {
   return prisma.promotion.findMany({
-    where: { isActive: true },
+    where: { isActive: true, type: { in: ["APOLOGY", "REWARD"] } },
     orderBy: { name: "asc" },
   });
 }

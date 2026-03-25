@@ -14,6 +14,8 @@ import {
   type StudentForAssign,
 } from "./assign-dialog";
 import { ArrowRight } from "lucide-react";
+import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
+import { updateStudentComment } from "@/lib/actions/students";
 
 type ReceptionStudent = {
   id: string;
@@ -134,18 +136,12 @@ function makeColumns(
     {
       accessorKey: "comment",
       header: "Comment",
-      cell: ({ row }) => {
-        const comment = row.original.comment;
-        if (!comment) return null;
-        return (
-          <span
-            className="max-w-[200px] truncate text-sm text-foreground"
-            title={comment}
-          >
-            {comment}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EditCommentDialog
+          currentComment={row.original.comment}
+          onSave={(c) => updateStudentComment(row.original.id, c)}
+        />
+      ),
       enableSorting: false,
     },
     {

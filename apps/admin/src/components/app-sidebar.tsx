@@ -50,7 +50,15 @@ interface AppSidebarProps {
   lostCount?: number;
 }
 
-export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount, lostCount }: AppSidebarProps) {
+export function AppSidebar({
+  adminName,
+  receptionCount,
+  reassignmentCount,
+  uncertainCount,
+  pendingResolutionCount,
+  pendingRefundCount,
+  lostCount,
+}: AppSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [isNavPending, startNavTransition] = useTransition();
@@ -72,9 +80,12 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
   }
 
   return (
-    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r bg-muted/40 p-4">
-      <Link href="/schedule" className="mb-6 block px-2 text-lg font-semibold tracking-tight">
-        Eng Admin
+    <aside className="bg-muted/40 sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r p-4">
+      <Link
+        href="/schedule"
+        className="mb-6 block px-2 text-lg font-semibold tracking-tight"
+      >
+        Admin Panel
       </Link>
       <nav className="flex flex-1 flex-col gap-1">
         {navItems.map((item) => {
@@ -87,7 +98,7 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
               key={item.href}
               onClick={() => handleNav(item.href)}
               disabled={isNavPending}
-              className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors text-left ${
+              className={`flex items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm transition-colors ${
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : isPending
@@ -102,32 +113,32 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
               )}
               {item.label}
               {item.href === "/reception" && receptionCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {receptionCount}
                 </span>
               ) : null}
               {item.href === "/reassignment" && reassignmentCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {reassignmentCount}
                 </span>
               ) : null}
               {item.href === "/uncertain" && uncertainCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {uncertainCount}
                 </span>
               ) : null}
               {item.href === "/pending-lessons" && pendingResolutionCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {pendingResolutionCount}
                 </span>
               ) : null}
               {item.href === "/refunds" && pendingRefundCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {pendingRefundCount}
                 </span>
               ) : null}
               {item.href === "/lost" && lostCount ? (
-                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-white">
+                <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
                   {lostCount}
                 </span>
               ) : null}
@@ -136,11 +147,11 @@ export function AppSidebar({ adminName, receptionCount, reassignmentCount, uncer
         })}
       </nav>
       <div className="border-t pt-3">
-        <div className="px-3 text-xs text-muted-foreground">{adminName}</div>
+        <div className="text-muted-foreground px-3 text-xs">{adminName}</div>
         <button
           onClick={handleLogout}
           disabled={isLogoutPending}
-          className="mt-1 flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-left text-sm text-muted-foreground hover:bg-muted disabled:opacity-50"
+          className="text-muted-foreground hover:bg-muted mt-1 flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-left text-sm disabled:opacity-50"
         >
           <LogOut className="size-3.5" />
           {isLogoutPending ? "Signing out..." : "Sign out"}

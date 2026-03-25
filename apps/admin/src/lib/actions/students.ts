@@ -635,3 +635,24 @@ export async function resolveUncertain(studentId: string) {
   return { success: true };
 }
 
+export async function updateStudentComment(studentId: string, comment: string | null) {
+  await requireAdmin();
+
+  if (comment !== null && comment.length > 500) {
+    return { error: "Comment must be 500 characters or fewer" };
+  }
+
+  const student = await prisma.student.findUnique({ where: { id: studentId }, select: { id: true } });
+  if (!student) return { error: "Student not found" };
+
+  await prisma.student.update({
+    where: { id: studentId },
+    data: { comment: comment?.trim() || null },
+  });
+
+  revalidatePath(`/students/${studentId}`);
+  revalidatePath("/reception");
+  revalidatePath("/reassignment");
+  return { success: true };
+}
+

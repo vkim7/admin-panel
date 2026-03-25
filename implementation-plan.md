@@ -34,12 +34,14 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | B | Trial Resolution Overhaul ✅ | A | feedback.md #13,14,15 |
 | C | Payment Controls & Visibility ✅ | B | feedback.md #16,17,21 |
 | D | Small UI Polish ✅ | C | feedback.md #4,5,9,11,23,30 |
-| E | Reception Workflow | D | feedback.md #1,2,3 |
-| F | Teacher Management | D | feedback.md #10,12,18 |
-| G | Uncertain Students | D | feedback.md #24,25 |
-| H | Promotions, Comments & Constraints | D | feedback.md #7,28,33 |
-| I | Exams, Holidays & Scheduling | D | feedback.md #29,31 |
+| E | Reception Workflow ✅ | D | feedback.md #1,2,3 |
+| F | Teacher Management ✅ | D | feedback.md #10,12,18 |
+| G | Uncertain Students ✅ | D | feedback.md #24,25 |
+| H | Promotions, Comments & Constraints ✅ | D | feedback.md #7,28,33 |
+| I | Exams & Scheduling | D | feedback.md #29 |
 | J | Deferred/Complex | — | feedback.md #26 |
+| K | Holidays Management | D | feedback.md #31 |
+| L | Test Suite Revisit | All | — |
 
 ```
 Phase 0 ─── Phase 1 (Teachers) ───┐
@@ -396,7 +398,7 @@ Also modified: `schemas/group.ts` (startTime validation against TIME_SLOTS), `co
   - On assign: reuses `addStudentsToGroup` → activates student (AWAITING_ASSIGNMENT → ACTIVE) regardless of trial status → triggers billing for non-trial only
   - Student disappears from Reception immediately, revalidates /reception path
 - [x] **Count badge**: total awaiting students shown in sidebar badge (amber pill) + page header count
-- [x] **Sidebar "Eng Admin" title**: clicking redirects to /schedule (the primary operational view)
+- [x] **Sidebar "Admin Panel" title**: clicking redirects to /schedule (the primary operational view)
 
 ### Files
 
@@ -407,7 +409,7 @@ src/components/reception/reception-table.tsx
 src/components/reception/assign-dialog.tsx
 ```
 
-Also modified: `app-sidebar.tsx` (badge prop, "Eng Admin" links to /schedule), `layout.tsx` (fetches reception count), `actions/group-memberships.ts` (revalidate /reception, language hard-enforcement, trial student activation), `actions/students.ts` (revalidate /reception on status changes). No separate `actions/reception.ts` needed — reuses existing `addStudentsToGroup`.
+Also modified: `app-sidebar.tsx` (badge prop, "Admin Panel" links to /schedule), `layout.tsx` (fetches reception count), `actions/group-memberships.ts` (revalidate /reception, language hard-enforcement, trial student activation), `actions/students.ts` (revalidate /reception on status changes). No separate `actions/reception.ts` needed — reuses existing `addStudentsToGroup`.
 
 ---
 

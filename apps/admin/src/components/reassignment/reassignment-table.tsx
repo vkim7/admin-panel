@@ -30,8 +30,9 @@ import {
   type GroupOption,
   type StudentForAssign,
 } from "@/components/reception/assign-dialog";
-import { deactivateStudent } from "@/lib/actions/students";
+import { deactivateStudent, updateStudentComment } from "@/lib/actions/students";
 import { ArrowRight, UserMinus } from "lucide-react";
+import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
 
 type LostReason = {
   id: string;
@@ -159,18 +160,12 @@ function makeColumns(
     {
       accessorKey: "comment",
       header: "Comment",
-      cell: ({ row }) => {
-        const comment = row.original.comment;
-        if (!comment) return null;
-        return (
-          <span
-            className="max-w-[200px] truncate text-sm text-muted-foreground"
-            title={comment}
-          >
-            {comment}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EditCommentDialog
+          currentComment={row.original.comment}
+          onSave={(c) => updateStudentComment(row.original.id, c)}
+        />
+      ),
       enableSorting: false,
     },
     {

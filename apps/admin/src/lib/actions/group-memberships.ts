@@ -59,6 +59,12 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     return { error: `${duplicates.length} student${duplicates.length === 1 ? " is" : "s are"} already active in this group.` };
   }
 
+  // Fetch students early — needed for error messages in multiple checks below
+  const students = await prisma.student.findMany({
+    where: { id: { in: studentIds } },
+    select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true, familyId: true },
+  });
+
   // C#40: Schedule conflict detection — check if any student is already in a group
   // with overlapping schedule (same days AND overlapping time window)
   for (const studentId of studentIds) {
@@ -73,11 +79,21 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     if (conflict) return conflict;
   }
 
-  // Language mismatch: warn but allow assignment for all levels
-  const students = await prisma.student.findMany({
-    where: { id: { in: studentIds } },
-    select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true, familyId: true },
-  });
+  // Membership type limit: max 1 GROUP + 1 INDIVIDUAL simultaneously
+  for (const studentId of studentIds) {
+    const otherActive = await prisma.groupMembership.findMany({
+      where: { studentId, leaveDate: null, groupId: { not: groupId } },
+      include: { group: { select: { type: true, publicId: true } } },
+    });
+    const sameType = otherActive.find((m) => m.group.type === group.type);
+    if (sameType) {
+      const s = students.find((st) => st.id === studentId);
+      const label = group.type === "GROUP" ? "group" : "individual";
+      return {
+        error: `${s?.firstName} ${s?.lastName} already has an active ${label} lesson (${sameType.group.publicId}). Students can have at most one group and one individual lesson.`,
+      };
+    }
+  }
 
   const teacher = await prisma.teacher.findUnique({
     where: { id: group.teacherId },
@@ -551,6 +567,23 @@ export async function transferTrialStudent(membershipId: string, data: unknown) 
   );
   if (conflict) return conflict;
 
+  // Membership type limit: max 1 GROUP + 1 INDIVIDUAL (exclude source group being left)
+  const otherActive = await prisma.groupMembership.findMany({
+    where: {
+      studentId: membership.studentId,
+      leaveDate: null,
+      groupId: { notIn: [membership.groupId, destinationGroupId] },
+    },
+    include: { group: { select: { type: true, publicId: true } } },
+  });
+  const sameType = otherActive.find((m) => m.group.type === destGroup.type);
+  if (sameType) {
+    const label = destGroup.type === "GROUP" ? "group" : "individual";
+    return {
+      error: `Student already has an active ${label} lesson (${sameType.group.publicId}). Students can have at most one group and one individual lesson.`,
+    };
+  }
+
   // Check trial attempts remaining for destination group type
   const trialLimit = destGroup.type === "GROUP" ? 2 : 1;
   const trialCount = await prisma.groupMembership.count({
@@ -600,5 +633,30 @@ export async function transferTrialStudent(membershipId: string, data: unknown) 
   revalidatePath("/reception");
   revalidatePath("/reassignment");
   revalidatePath(`/students/${membership.studentId}`);
+  return { success: true };
+}
+
+export async function updateMembershipComment(membershipId: string, comment: string | null) {
+  await requireAdmin();
+
+  if (comment !== null && comment.length > 500) {
+    return { error: "Comment must be 500 characters or fewer" };
+  }
+
+  const membership = await prisma.groupMembership.findUnique({
+    where: { id: membershipId },
+    select: { groupId: true },
+  });
+
+  if (!membership) {
+    return { error: "Membership not found" };
+  }
+
+  await prisma.groupMembership.update({
+    where: { id: membershipId },
+    data: { comment: comment?.trim() || null },
+  });
+
+  revalidatePath(`/groups/${membership.groupId}`);
   return { success: true };
 }

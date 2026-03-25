@@ -41,6 +41,7 @@ export type StudentPromotionMinAggregateOutputType = {
   appliedAt: Date | null
   expiresAt: Date | null
   monthsUsed: number | null
+  comment: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +53,7 @@ export type StudentPromotionMaxAggregateOutputType = {
   appliedAt: Date | null
   expiresAt: Date | null
   monthsUsed: number | null
+  comment: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -63,6 +65,7 @@ export type StudentPromotionCountAggregateOutputType = {
   appliedAt: number
   expiresAt: number
   monthsUsed: number
+  comment: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -84,6 +87,7 @@ export type StudentPromotionMinAggregateInputType = {
   appliedAt?: true
   expiresAt?: true
   monthsUsed?: true
+  comment?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,6 +99,7 @@ export type StudentPromotionMaxAggregateInputType = {
   appliedAt?: true
   expiresAt?: true
   monthsUsed?: true
+  comment?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +111,7 @@ export type StudentPromotionCountAggregateInputType = {
   appliedAt?: true
   expiresAt?: true
   monthsUsed?: true
+  comment?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -204,6 +210,7 @@ export type StudentPromotionGroupByOutputType = {
   appliedAt: Date
   expiresAt: Date | null
   monthsUsed: number
+  comment: string | null
   createdAt: Date
   updatedAt: Date
   _count: StudentPromotionCountAggregateOutputType | null
@@ -238,6 +245,7 @@ export type StudentPromotionWhereInput = {
   appliedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   expiresAt?: Prisma.DateTimeNullableFilter<"StudentPromotion"> | Date | string | null
   monthsUsed?: Prisma.IntFilter<"StudentPromotion"> | number
+  comment?: Prisma.StringNullableFilter<"StudentPromotion"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
@@ -252,6 +260,7 @@ export type StudentPromotionOrderByWithRelationInput = {
   appliedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   monthsUsed?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
@@ -269,6 +278,7 @@ export type StudentPromotionWhereUniqueInput = Prisma.AtLeast<{
   appliedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   expiresAt?: Prisma.DateTimeNullableFilter<"StudentPromotion"> | Date | string | null
   monthsUsed?: Prisma.IntFilter<"StudentPromotion"> | number
+  comment?: Prisma.StringNullableFilter<"StudentPromotion"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
@@ -283,6 +293,7 @@ export type StudentPromotionOrderByWithAggregationInput = {
   appliedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   monthsUsed?: Prisma.SortOrder
+  comment?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.StudentPromotionCountOrderByAggregateInput
@@ -302,6 +313,7 @@ export type StudentPromotionScalarWhereWithAggregatesInput = {
   appliedAt?: Prisma.DateTimeWithAggregatesFilter<"StudentPromotion"> | Date | string
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"StudentPromotion"> | Date | string | null
   monthsUsed?: Prisma.IntWithAggregatesFilter<"StudentPromotion"> | number
+  comment?: Prisma.StringNullableWithAggregatesFilter<"StudentPromotion"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"StudentPromotion"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"StudentPromotion"> | Date | string
 }
@@ -311,6 +323,7 @@ export type StudentPromotionCreateInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutStudentPromotionsInput
@@ -325,6 +338,7 @@ export type StudentPromotionUncheckedCreateInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedCreateNestedManyWithoutStudentPromotionInput
@@ -335,6 +349,7 @@ export type StudentPromotionUpdateInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutStudentPromotionsNestedInput
@@ -349,6 +364,7 @@ export type StudentPromotionUncheckedUpdateInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedUpdateManyWithoutStudentPromotionNestedInput
@@ -361,6 +377,7 @@ export type StudentPromotionCreateManyInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -370,6 +387,7 @@ export type StudentPromotionUpdateManyMutationInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -381,6 +399,7 @@ export type StudentPromotionUncheckedUpdateManyInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -402,6 +421,7 @@ export type StudentPromotionCountOrderByAggregateInput = {
   appliedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   monthsUsed?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -417,6 +437,7 @@ export type StudentPromotionMaxOrderByAggregateInput = {
   appliedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   monthsUsed?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -428,6 +449,7 @@ export type StudentPromotionMinOrderByAggregateInput = {
   appliedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   monthsUsed?: Prisma.SortOrder
+  comment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -544,6 +566,7 @@ export type StudentPromotionCreateWithoutStudentInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   promotion: Prisma.PromotionCreateNestedOneWithoutStudentPromotionsInput
@@ -556,6 +579,7 @@ export type StudentPromotionUncheckedCreateWithoutStudentInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedCreateNestedManyWithoutStudentPromotionInput
@@ -597,6 +621,7 @@ export type StudentPromotionScalarWhereInput = {
   appliedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   expiresAt?: Prisma.DateTimeNullableFilter<"StudentPromotion"> | Date | string | null
   monthsUsed?: Prisma.IntFilter<"StudentPromotion"> | number
+  comment?: Prisma.StringNullableFilter<"StudentPromotion"> | string | null
   createdAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"StudentPromotion"> | Date | string
 }
@@ -606,6 +631,7 @@ export type StudentPromotionCreateWithoutPromotionInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutStudentPromotionsInput
@@ -618,6 +644,7 @@ export type StudentPromotionUncheckedCreateWithoutPromotionInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedCreateNestedManyWithoutStudentPromotionInput
@@ -654,6 +681,7 @@ export type StudentPromotionCreateWithoutAppliedPromotionsInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   student: Prisma.StudentCreateNestedOneWithoutStudentPromotionsInput
@@ -667,6 +695,7 @@ export type StudentPromotionUncheckedCreateWithoutAppliedPromotionsInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -692,6 +721,7 @@ export type StudentPromotionUpdateWithoutAppliedPromotionsInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutStudentPromotionsNestedInput
@@ -705,6 +735,7 @@ export type StudentPromotionUncheckedUpdateWithoutAppliedPromotionsInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -715,6 +746,7 @@ export type StudentPromotionCreateManyStudentInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -724,6 +756,7 @@ export type StudentPromotionUpdateWithoutStudentInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   promotion?: Prisma.PromotionUpdateOneRequiredWithoutStudentPromotionsNestedInput
@@ -736,6 +769,7 @@ export type StudentPromotionUncheckedUpdateWithoutStudentInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedUpdateManyWithoutStudentPromotionNestedInput
@@ -747,6 +781,7 @@ export type StudentPromotionUncheckedUpdateManyWithoutStudentInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -757,6 +792,7 @@ export type StudentPromotionCreateManyPromotionInput = {
   appliedAt?: Date | string
   expiresAt?: Date | string | null
   monthsUsed?: number
+  comment?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -766,6 +802,7 @@ export type StudentPromotionUpdateWithoutPromotionInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneRequiredWithoutStudentPromotionsNestedInput
@@ -778,6 +815,7 @@ export type StudentPromotionUncheckedUpdateWithoutPromotionInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   appliedPromotions?: Prisma.AppliedPromotionUncheckedUpdateManyWithoutStudentPromotionNestedInput
@@ -789,6 +827,7 @@ export type StudentPromotionUncheckedUpdateManyWithoutPromotionInput = {
   appliedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   monthsUsed?: Prisma.IntFieldUpdateOperationsInput | number
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -831,6 +870,7 @@ export type StudentPromotionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   appliedAt?: boolean
   expiresAt?: boolean
   monthsUsed?: boolean
+  comment?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -846,6 +886,7 @@ export type StudentPromotionSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   appliedAt?: boolean
   expiresAt?: boolean
   monthsUsed?: boolean
+  comment?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -859,6 +900,7 @@ export type StudentPromotionSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   appliedAt?: boolean
   expiresAt?: boolean
   monthsUsed?: boolean
+  comment?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
@@ -872,11 +914,12 @@ export type StudentPromotionSelectScalar = {
   appliedAt?: boolean
   expiresAt?: boolean
   monthsUsed?: boolean
+  comment?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type StudentPromotionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "promotionId" | "appliedAt" | "expiresAt" | "monthsUsed" | "createdAt" | "updatedAt", ExtArgs["result"]["studentPromotion"]>
+export type StudentPromotionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "promotionId" | "appliedAt" | "expiresAt" | "monthsUsed" | "comment" | "createdAt" | "updatedAt", ExtArgs["result"]["studentPromotion"]>
 export type StudentPromotionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
   promotion?: boolean | Prisma.PromotionDefaultArgs<ExtArgs>
@@ -906,6 +949,7 @@ export type $StudentPromotionPayload<ExtArgs extends runtime.Types.Extensions.In
     appliedAt: Date
     expiresAt: Date | null
     monthsUsed: number
+    comment: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["studentPromotion"]>
@@ -1340,6 +1384,7 @@ export interface StudentPromotionFieldRefs {
   readonly appliedAt: Prisma.FieldRef<"StudentPromotion", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"StudentPromotion", 'DateTime'>
   readonly monthsUsed: Prisma.FieldRef<"StudentPromotion", 'Int'>
+  readonly comment: Prisma.FieldRef<"StudentPromotion", 'String'>
   readonly createdAt: Prisma.FieldRef<"StudentPromotion", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"StudentPromotion", 'DateTime'>
 }
