@@ -387,35 +387,6 @@ describe("deactivation & reactivation", () => {
     expect(result.error).toMatch(/active group membership/i);
   });
 
-  it("reactivates inactive student → AWAITING_ASSIGNMENT, lost fields cleared", async () => {
-    const { reactivateStudent } = await importStudents();
-    const lostReason = await prisma.lostReason.findFirst();
-
-    const student = await createTestStudent({
-      status: "INACTIVE",
-    });
-    // Set inactivation fields directly
-    await prisma.student.update({
-      where: { id: student.id },
-      data: {
-        inactivatedAt: new Date(),
-        inactivatedById: TEST_ADMIN_ID,
-        lostReasonId: lostReason!.id,
-      },
-    });
-
-    const result = await reactivateStudent(student.id);
-    expect(result).toEqual({ success: true });
-
-    const updated = await prisma.student.findUnique({
-      where: { id: student.id },
-    });
-    expect(updated!.status).toBe("AWAITING_ASSIGNMENT");
-    expect(updated!.lostReasonId).toBeNull();
-    expect(updated!.inactivatedAt).toBeNull();
-    expect(updated!.inactivatedById).toBeNull();
-  });
-
   it("sends active student to reassignment → AWAITING_REASSIGNMENT", async () => {
     const { sendToReassignment } = await importStudents();
     const student = await createTestStudent({ status: "ACTIVE" });

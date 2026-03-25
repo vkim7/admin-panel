@@ -155,9 +155,9 @@ export function ScheduleWithFilters({ mwf, tts }: ScheduleFiltersProps) {
               setSelectedLanguage(null);
               setSelectedLevels(new Set());
             }}
-            className="text-sm text-muted-foreground hover:text-foreground"
+            className="text-sm font-medium text-foreground underline decoration-muted-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground"
           >
-            Clear
+            Clear filters
           </button>
         </div>
       </div>

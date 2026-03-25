@@ -321,6 +321,23 @@ export type EnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
 }
 
+export type EnumUncertainFlagSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel> | $Enums.UncertainFlagSource
+}
+
+export type EnumUncertainFlagSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUncertainFlagSourceWithAggregatesFilter<$PrismaModel> | $Enums.UncertainFlagSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel>
+}
+
 export type IntNullableFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel> | null
@@ -864,6 +881,23 @@ export type NestedEnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumUncertainFlagSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel> | $Enums.UncertainFlagSource
+}
+
+export type NestedEnumUncertainFlagSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumUncertainFlagSourceWithAggregatesFilter<$PrismaModel> | $Enums.UncertainFlagSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumUncertainFlagSourceFilter<$PrismaModel>
 }
 
 export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {

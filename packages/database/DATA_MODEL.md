@@ -127,7 +127,8 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 | referralCode | Unique code for referral tracking |
 | isUncertain | Manual flag — teacher/admin gut feeling that student may leave |
 | uncertainFlaggedBy | Who flagged: TEACHER or ADMIN |
-| uncertainComment | Optional note explaining why flagged |
+| uncertainReasonId | Links to UncertainReason reference table (structured reason for the flag) |
+| uncertainComment | Free text when the uncertain reason is "Other" |
 | comment | General admin notes on the student |
 | amoCrmLeadId | Dedup key for amoCRM polling integration |
 | activatedAt | When status changed to ACTIVE (assigned to first group) |
@@ -372,6 +373,29 @@ Seeded with: Teacher dissatisfaction, Classmates dissatisfaction, Level too low,
 Admin-manageable list of reasons a student leaves the school.
 
 Seeded with: Taking a break, Too expensive, Didn't like online format, Other, Trial no-show (Group), Trial no-show — final attempt (Group), Trial no-show (Individual), Trial — didn't continue (Group), Trial — didn't continue (Individual).
+
+### UncertainReason (Reference Table)
+Admin-manageable list of reasons a student is flagged as uncertain (at-risk of leaving).
+
+Seeded with: Late to lessons, Misses classes, Declining engagement, Frequent rescheduling, Doesn't do homework, Lack of progress, Complaints about difficulty, Ignoring tests, Asking for discounts, Payment delays, Questions about refunds, Ignores messages, Change of environment, Group conflict, Other.
+
+`isOther = true` on the "Other" entry means the UI must show a free-text input (stored in `Student.uncertainComment`).
+
+### UncertainHistory
+Audit trail for uncertain flag lifecycle. Each record tracks one flag-resolve cycle.
+
+| Field | Purpose |
+|-------|---------|
+| studentId | The flagged student |
+| uncertainReasonId | Links to UncertainReason |
+| otherReason | Free text when reason is "Other" |
+| flaggedBy | TEACHER or ADMIN (enum) |
+| flaggedAt | When the flag was set |
+| flaggedById | Which admin flagged (null if teacher-flagged) |
+| resolvedAt | When the flag was cleared (null if still active) |
+| resolvedById | Which admin resolved |
+
+A student may have multiple history records (flagged, resolved, flagged again). The most recent record with `resolvedAt = null` is the active flag.
 
 ### CancellationReason (Reference Table)
 Admin-manageable list of reasons a lesson is cancelled.

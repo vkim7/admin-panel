@@ -22,6 +22,7 @@ export async function getStudentById(id: string) {
     include: {
       family: true,
       lostReason: true,
+      uncertainReason: { select: { name: true } },
       activatedBy: { select: { firstName: true, lastName: true } },
       inactivatedBy: { select: { firstName: true, lastName: true } },
       groupMemberships: {
@@ -71,6 +72,7 @@ export async function getUncertainStudents() {
       status: "ACTIVE",
     },
     include: {
+      uncertainReason: { select: { id: true, name: true, isOther: true } },
       groupMemberships: {
         where: { leaveDate: null },
         select: {
@@ -82,6 +84,15 @@ export async function getUncertainStudents() {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function getUncertainReasons() {
+  return prisma.uncertainReason.findMany({
+    where: { isActive: true },
+    orderBy: { sortOrder: "asc" },
+  });
+}
+
+export type UncertainReason = Awaited<ReturnType<typeof getUncertainReasons>>[number];
 
 export async function getUncertainCount() {
   return prisma.student.count({

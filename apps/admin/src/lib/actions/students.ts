@@ -2,11 +2,37 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { PrismaClient } from "@eng/database";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import { studentSchema, deactivateStudentSchema } from "@/schemas/student";
+import { markUncertainSchema } from "@/schemas/uncertain";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
+
+type TxClient = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
+
+/** Fields to clear when resolving the uncertain flag */
+const UNCERTAIN_CLEAR_FIELDS = {
+  isUncertain: false,
+  uncertainFlaggedBy: null,
+  uncertainReasonId: null,
+  uncertainComment: null,
+} as const;
+
+/** Close the most recent open UncertainHistory record for a student */
+async function resolveUncertainHistory(tx: TxClient, studentId: string, adminId: string) {
+  const openHistory = await tx.uncertainHistory.findFirst({
+    where: { studentId, resolvedAt: null },
+    orderBy: { flaggedAt: "desc" },
+  });
+  if (openHistory) {
+    await tx.uncertainHistory.update({
+      where: { id: openHistory.id },
+      data: { resolvedAt: new Date(), resolvedById: adminId },
+    });
+  }
+}
 
 export async function createStudent(data: unknown, redirectTo?: string) {
   await requireAdmin();
@@ -391,23 +417,35 @@ export async function sendToReassignment(studentId: string, membershipId?: strin
       (m) => m.id !== membershipId,
     ).length;
 
-    // Set status based on remaining memberships
+    // Combine status + uncertain changes into a single update
     if (remainingActive === 0) {
       // Keep inactivation fields intact for INACTIVE → AWAITING_REASSIGNMENT.
       // lostReasonId != null at activation time = WIN_BACK student (came from Lost List).
       // Fields are cleared at the final activation point in addStudentsToGroup.
       await tx.student.update({
         where: { id: studentId },
-        data: { status: "AWAITING_REASSIGNMENT" },
+        data: {
+          status: "AWAITING_REASSIGNMENT",
+          ...(student.isUncertain ? UNCERTAIN_CLEAR_FIELDS : {}),
+        },
+      });
+    } else if (student.isUncertain) {
+      await tx.student.update({
+        where: { id: studentId },
+        data: UNCERTAIN_CLEAR_FIELDS,
       });
     }
-    // If student has other active memberships, keep them ACTIVE
+
+    if (student.isUncertain) {
+      await resolveUncertainHistory(tx, studentId, admin.id);
+    }
   });
 
   revalidatePath(`/students/${studentId}`);
   revalidatePath("/students");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  revalidatePath("/uncertain");
   if (closedGroupId) {
     revalidatePath(`/groups/${closedGroupId}`);
   }
@@ -499,7 +537,7 @@ export async function sendToLostList(
       (m) => m.id !== membershipId,
     ).length;
 
-    // Only deactivate if no other active memberships
+    // Combine deactivation + uncertain changes into a single update
     if (remainingActive === 0) {
       await tx.student.update({
         where: { id: studentId },
@@ -509,10 +547,20 @@ export async function sendToLostList(
           inactivatedById: admin.id,
           lostReasonId: parsed.data.lostReasonId,
           otherLostReason: parsed.data.otherLostReason,
+          ...(student.isUncertain ? UNCERTAIN_CLEAR_FIELDS : {}),
         },
       });
 
       await removeFamilyIfNeeded({ familyId: student.familyId, tx });
+    } else if (student.isUncertain) {
+      await tx.student.update({
+        where: { id: studentId },
+        data: UNCERTAIN_CLEAR_FIELDS,
+      });
+    }
+
+    if (student.isUncertain) {
+      await resolveUncertainHistory(tx, studentId, admin.id);
     }
   });
 
@@ -520,55 +568,70 @@ export async function sendToLostList(
   revalidatePath("/students");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  revalidatePath("/uncertain");
   revalidatePath(`/groups/${membership.group.id}`);
   return { success: true };
 }
 
-export async function toggleUncertain(studentId: string, isUncertain: boolean) {
-  await requireAdmin();
+export async function markUncertain(studentId: string, data: unknown) {
+  const admin = await requireAdmin();
 
-  await prisma.student.update({
-    where: { id: studentId },
-    data: {
-      isUncertain,
-      uncertainFlaggedBy: isUncertain ? "ADMIN" : null,
-      uncertainComment: isUncertain ? undefined : null,
-    },
+  const parsed = markUncertainSchema.safeParse(data);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  const { uncertainReasonId, otherReason } = parsed.data;
+
+  const reason = await prisma.uncertainReason.findUnique({
+    where: { id: uncertainReasonId },
+  });
+  if (!reason || !reason.isActive) {
+    return { error: "Invalid uncertain reason" };
+  }
+  if (reason.isOther && !otherReason) {
+    return { error: "Please specify a reason" };
+  }
+
+  await prisma.$transaction([
+    prisma.student.update({
+      where: { id: studentId },
+      data: {
+        isUncertain: true,
+        uncertainFlaggedBy: "ADMIN",
+        uncertainReasonId,
+        uncertainComment: reason.isOther ? otherReason : null,
+      },
+    }),
+    prisma.uncertainHistory.create({
+      data: {
+        studentId,
+        uncertainReasonId,
+        otherReason: reason.isOther ? otherReason : null,
+        flaggedBy: "ADMIN",
+        flaggedById: admin.id,
+      },
+    }),
+  ]);
+
+  revalidatePath("/groups");
+  revalidatePath("/uncertain");
+  return { success: true };
+}
+
+export async function resolveUncertain(studentId: string) {
+  const admin = await requireAdmin();
+
+  await prisma.$transaction(async (tx) => {
+    await tx.student.update({
+      where: { id: studentId },
+      data: UNCERTAIN_CLEAR_FIELDS,
+    });
+    await resolveUncertainHistory(tx, studentId, admin.id);
   });
 
   revalidatePath("/groups");
+  revalidatePath("/uncertain");
   return { success: true };
 }
 
-export async function reactivateStudent(id: string) {
-  await requireAdmin();
-
-  const student = await prisma.student.findUnique({ where: { id } });
-
-  if (!student) {
-    return { error: "Student not found" };
-  }
-
-  if (student.status !== "INACTIVE") {
-    return { error: "Only inactive students can be reactivated" };
-  }
-
-  await prisma.student.update({
-    where: { id },
-    data: {
-      status: "AWAITING_ASSIGNMENT",
-      isUncertain: false,
-      uncertainComment: null,
-      inactivatedAt: null,
-      inactivatedById: null,
-      lostReasonId: null,
-      otherLostReason: null,
-    },
-  });
-
-  revalidatePath(`/students/${id}`);
-  revalidatePath("/students");
-  revalidatePath("/reception");
-  revalidatePath("/lost");
-  return { success: true };
-}

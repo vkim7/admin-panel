@@ -17,7 +17,7 @@ import {
   getGroupsForTransfer,
 } from "@/lib/queries/transfers";
 import { getGroupsForMerge } from "@/lib/queries/group-merge";
-import { getLostReasons } from "@/lib/queries/students";
+import { getLostReasons, getUncertainReasons } from "@/lib/queries/students";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
 import { canGraduate } from "@/lib/helpers/level-progression";
 import { StudentList } from "@/components/groups/student-list";
@@ -43,7 +43,7 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
@@ -53,6 +53,7 @@ export default async function GroupDetailPage({
     getGroupsForTransfer(id),
     getGroupsForMerge(id),
     getLostReasons(),
+    getUncertainReasons(),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -273,6 +274,7 @@ export default async function GroupDetailPage({
         availableGroups={transferGroups}
         trialMembershipIdsWithAttendance={trialMembershipIdsWithAttendance}
         lostReasons={lostReasons}
+        uncertainReasons={uncertainReasons}
       />
 
       <Separator />

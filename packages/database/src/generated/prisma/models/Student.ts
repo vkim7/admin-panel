@@ -55,6 +55,7 @@ export type StudentMinAggregateOutputType = {
   referralCode: string | null
   isUncertain: boolean | null
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
+  uncertainReasonId: string | null
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
@@ -85,6 +86,7 @@ export type StudentMaxAggregateOutputType = {
   referralCode: string | null
   isUncertain: boolean | null
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
+  uncertainReasonId: string | null
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
@@ -117,6 +119,7 @@ export type StudentCountAggregateOutputType = {
   referralCode: number
   isUncertain: number
   uncertainFlaggedBy: number
+  uncertainReasonId: number
   uncertainComment: number
   comment: number
   amoCrmLeadId: number
@@ -161,6 +164,7 @@ export type StudentMinAggregateInputType = {
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
+  uncertainReasonId?: true
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
@@ -191,6 +195,7 @@ export type StudentMaxAggregateInputType = {
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
+  uncertainReasonId?: true
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
@@ -223,6 +228,7 @@ export type StudentCountAggregateInputType = {
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
+  uncertainReasonId?: true
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
@@ -342,6 +348,7 @@ export type StudentGroupByOutputType = {
   referralCode: string | null
   isUncertain: boolean
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
+  uncertainReasonId: string | null
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
@@ -397,6 +404,7 @@ export type StudentWhereInput = {
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.StringNullableFilter<"Student"> | string | null
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
   comment?: Prisma.StringNullableFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableFilter<"Student"> | string | null
@@ -412,6 +420,8 @@ export type StudentWhereInput = {
   activatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   inactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   lostReason?: Prisma.XOR<Prisma.LostReasonNullableScalarRelationFilter, Prisma.LostReasonWhereInput> | null
+  uncertainReason?: Prisma.XOR<Prisma.UncertainReasonNullableScalarRelationFilter, Prisma.UncertainReasonWhereInput> | null
+  uncertainHistories?: Prisma.UncertainHistoryListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
   attendanceRecords?: Prisma.AttendanceListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -443,6 +453,7 @@ export type StudentOrderByWithRelationInput = {
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  uncertainReasonId?: Prisma.SortOrderInput | Prisma.SortOrder
   uncertainComment?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -458,6 +469,8 @@ export type StudentOrderByWithRelationInput = {
   activatedBy?: Prisma.AdminUserOrderByWithRelationInput
   inactivatedBy?: Prisma.AdminUserOrderByWithRelationInput
   lostReason?: Prisma.LostReasonOrderByWithRelationInput
+  uncertainReason?: Prisma.UncertainReasonOrderByWithRelationInput
+  uncertainHistories?: Prisma.UncertainHistoryOrderByRelationAggregateInput
   groupMemberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
   attendanceRecords?: Prisma.AttendanceOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
@@ -493,6 +506,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.StringNullableFilter<"Student"> | string | null
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
   comment?: Prisma.StringNullableFilter<"Student"> | string | null
   activatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -507,6 +521,8 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   activatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   inactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   lostReason?: Prisma.XOR<Prisma.LostReasonNullableScalarRelationFilter, Prisma.LostReasonWhereInput> | null
+  uncertainReason?: Prisma.XOR<Prisma.UncertainReasonNullableScalarRelationFilter, Prisma.UncertainReasonWhereInput> | null
+  uncertainHistories?: Prisma.UncertainHistoryListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
   attendanceRecords?: Prisma.AttendanceListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
@@ -538,6 +554,7 @@ export type StudentOrderByWithAggregationInput = {
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  uncertainReasonId?: Prisma.SortOrderInput | Prisma.SortOrder
   uncertainComment?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -578,6 +595,7 @@ export type StudentScalarWhereWithAggregatesInput = {
   referralCode?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolWithAggregatesFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableWithAggregatesFilter<"Student"> | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   uncertainComment?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   comment?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
@@ -621,6 +639,8 @@ export type StudentCreateInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -652,6 +672,7 @@ export type StudentUncheckedCreateInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -663,6 +684,7 @@ export type StudentUncheckedCreateInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -704,6 +726,8 @@ export type StudentUpdateInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -735,6 +759,7 @@ export type StudentUncheckedUpdateInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -746,6 +771,7 @@ export type StudentUncheckedUpdateInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -777,6 +803,7 @@ export type StudentCreateManyInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -836,6 +863,7 @@ export type StudentUncheckedUpdateManyInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -894,6 +922,7 @@ export type StudentCountOrderByAggregateInput = {
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
+  uncertainReasonId?: Prisma.SortOrder
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
@@ -930,6 +959,7 @@ export type StudentMaxOrderByAggregateInput = {
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
+  uncertainReasonId?: Prisma.SortOrder
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
@@ -960,6 +990,7 @@ export type StudentMinOrderByAggregateInput = {
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
+  uncertainReasonId?: Prisma.SortOrder
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
@@ -1194,6 +1225,62 @@ export type StudentUncheckedUpdateManyWithoutLostReasonNestedInput = {
   deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
 }
 
+export type StudentCreateNestedManyWithoutUncertainReasonInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput> | Prisma.StudentCreateWithoutUncertainReasonInput[] | Prisma.StudentUncheckedCreateWithoutUncertainReasonInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainReasonInput | Prisma.StudentCreateOrConnectWithoutUncertainReasonInput[]
+  createMany?: Prisma.StudentCreateManyUncertainReasonInputEnvelope
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+}
+
+export type StudentUncheckedCreateNestedManyWithoutUncertainReasonInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput> | Prisma.StudentCreateWithoutUncertainReasonInput[] | Prisma.StudentUncheckedCreateWithoutUncertainReasonInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainReasonInput | Prisma.StudentCreateOrConnectWithoutUncertainReasonInput[]
+  createMany?: Prisma.StudentCreateManyUncertainReasonInputEnvelope
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+}
+
+export type StudentUpdateManyWithoutUncertainReasonNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput> | Prisma.StudentCreateWithoutUncertainReasonInput[] | Prisma.StudentUncheckedCreateWithoutUncertainReasonInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainReasonInput | Prisma.StudentCreateOrConnectWithoutUncertainReasonInput[]
+  upsert?: Prisma.StudentUpsertWithWhereUniqueWithoutUncertainReasonInput | Prisma.StudentUpsertWithWhereUniqueWithoutUncertainReasonInput[]
+  createMany?: Prisma.StudentCreateManyUncertainReasonInputEnvelope
+  set?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  disconnect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  delete?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  update?: Prisma.StudentUpdateWithWhereUniqueWithoutUncertainReasonInput | Prisma.StudentUpdateWithWhereUniqueWithoutUncertainReasonInput[]
+  updateMany?: Prisma.StudentUpdateManyWithWhereWithoutUncertainReasonInput | Prisma.StudentUpdateManyWithWhereWithoutUncertainReasonInput[]
+  deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+}
+
+export type StudentUncheckedUpdateManyWithoutUncertainReasonNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput> | Prisma.StudentCreateWithoutUncertainReasonInput[] | Prisma.StudentUncheckedCreateWithoutUncertainReasonInput[]
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainReasonInput | Prisma.StudentCreateOrConnectWithoutUncertainReasonInput[]
+  upsert?: Prisma.StudentUpsertWithWhereUniqueWithoutUncertainReasonInput | Prisma.StudentUpsertWithWhereUniqueWithoutUncertainReasonInput[]
+  createMany?: Prisma.StudentCreateManyUncertainReasonInputEnvelope
+  set?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  disconnect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  delete?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  connect?: Prisma.StudentWhereUniqueInput | Prisma.StudentWhereUniqueInput[]
+  update?: Prisma.StudentUpdateWithWhereUniqueWithoutUncertainReasonInput | Prisma.StudentUpdateWithWhereUniqueWithoutUncertainReasonInput[]
+  updateMany?: Prisma.StudentUpdateManyWithWhereWithoutUncertainReasonInput | Prisma.StudentUpdateManyWithWhereWithoutUncertainReasonInput[]
+  deleteMany?: Prisma.StudentScalarWhereInput | Prisma.StudentScalarWhereInput[]
+}
+
+export type StudentCreateNestedOneWithoutUncertainHistoriesInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedCreateWithoutUncertainHistoriesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainHistoriesInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutUncertainHistoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedCreateWithoutUncertainHistoriesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutUncertainHistoriesInput
+  upsert?: Prisma.StudentUpsertWithoutUncertainHistoriesInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutUncertainHistoriesInput, Prisma.StudentUpdateWithoutUncertainHistoriesInput>, Prisma.StudentUncheckedUpdateWithoutUncertainHistoriesInput>
+}
+
 export type StudentCreateNestedOneWithoutGroupMembershipsInput = {
   create?: Prisma.XOR<Prisma.StudentCreateWithoutGroupMembershipsInput, Prisma.StudentUncheckedCreateWithoutGroupMembershipsInput>
   connectOrCreate?: Prisma.StudentCreateOrConnectWithoutGroupMembershipsInput
@@ -1363,6 +1450,8 @@ export type StudentCreateWithoutActivatedByInput = {
   family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -1394,6 +1483,7 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -1404,6 +1494,7 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -1455,6 +1546,8 @@ export type StudentCreateWithoutInactivatedByInput = {
   family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -1486,6 +1579,7 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -1496,6 +1590,7 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -1556,6 +1651,7 @@ export type StudentScalarWhereInput = {
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.StringNullableFilter<"Student"> | string | null
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
   comment?: Prisma.StringNullableFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableFilter<"Student"> | string | null
@@ -1614,6 +1710,8 @@ export type StudentCreateWithoutFamilyInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -1644,6 +1742,7 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -1655,6 +1754,7 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -1722,6 +1822,8 @@ export type StudentCreateWithoutLostReasonInput = {
   family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -1753,6 +1855,7 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -1763,6 +1866,7 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -1801,6 +1905,305 @@ export type StudentUpdateManyWithWhereWithoutLostReasonInput = {
   data: Prisma.XOR<Prisma.StudentUpdateManyMutationInput, Prisma.StudentUncheckedUpdateManyWithoutLostReasonInput>
 }
 
+export type StudentCreateWithoutUncertainReasonInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  inactivatedAt?: Date | string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
+  activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
+  inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
+  lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
+}
+
+export type StudentUncheckedCreateWithoutUncertainReasonInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  familyId?: string | null
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  activatedById?: string | null
+  inactivatedAt?: Date | string | null
+  inactivatedById?: string | null
+  lostReasonId?: string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
+}
+
+export type StudentCreateOrConnectWithoutUncertainReasonInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput>
+}
+
+export type StudentCreateManyUncertainReasonInputEnvelope = {
+  data: Prisma.StudentCreateManyUncertainReasonInput | Prisma.StudentCreateManyUncertainReasonInput[]
+  skipDuplicates?: boolean
+}
+
+export type StudentUpsertWithWhereUniqueWithoutUncertainReasonInput = {
+  where: Prisma.StudentWhereUniqueInput
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutUncertainReasonInput, Prisma.StudentUncheckedUpdateWithoutUncertainReasonInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutUncertainReasonInput, Prisma.StudentUncheckedCreateWithoutUncertainReasonInput>
+}
+
+export type StudentUpdateWithWhereUniqueWithoutUncertainReasonInput = {
+  where: Prisma.StudentWhereUniqueInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutUncertainReasonInput, Prisma.StudentUncheckedUpdateWithoutUncertainReasonInput>
+}
+
+export type StudentUpdateManyWithWhereWithoutUncertainReasonInput = {
+  where: Prisma.StudentScalarWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateManyMutationInput, Prisma.StudentUncheckedUpdateManyWithoutUncertainReasonInput>
+}
+
+export type StudentCreateWithoutUncertainHistoriesInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  inactivatedAt?: Date | string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
+  activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
+  inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
+  lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
+}
+
+export type StudentUncheckedCreateWithoutUncertainHistoriesInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  familyId?: string | null
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  activatedById?: string | null
+  inactivatedAt?: Date | string | null
+  inactivatedById?: string | null
+  lostReasonId?: string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
+}
+
+export type StudentCreateOrConnectWithoutUncertainHistoriesInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedCreateWithoutUncertainHistoriesInput>
+}
+
+export type StudentUpsertWithoutUncertainHistoriesInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedUpdateWithoutUncertainHistoriesInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedCreateWithoutUncertainHistoriesInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutUncertainHistoriesInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutUncertainHistoriesInput, Prisma.StudentUncheckedUpdateWithoutUncertainHistoriesInput>
+}
+
+export type StudentUpdateWithoutUncertainHistoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
+  activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
+  inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
+  lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutUncertainHistoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lostReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+}
+
 export type StudentCreateWithoutGroupMembershipsInput = {
   id?: string
   crmCode?: string
@@ -1831,6 +2234,8 @@ export type StudentCreateWithoutGroupMembershipsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
@@ -1861,6 +2266,7 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -1872,6 +2278,7 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
@@ -1928,6 +2335,8 @@ export type StudentUpdateWithoutGroupMembershipsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
@@ -1958,6 +2367,7 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1969,6 +2379,7 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
@@ -2010,6 +2421,8 @@ export type StudentCreateWithoutAttendanceRecordsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
@@ -2040,6 +2453,7 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2051,6 +2465,7 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
@@ -2107,6 +2522,8 @@ export type StudentUpdateWithoutAttendanceRecordsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
@@ -2137,6 +2554,7 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2148,6 +2566,7 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
@@ -2189,6 +2608,8 @@ export type StudentCreateWithoutPaymentPeriodsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2219,6 +2640,7 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2230,6 +2652,7 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -2286,6 +2709,8 @@ export type StudentUpdateWithoutPaymentPeriodsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2316,6 +2741,7 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2327,6 +2753,7 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -2368,6 +2795,8 @@ export type StudentCreateWithoutPaymentsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
@@ -2398,6 +2827,7 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2409,6 +2839,7 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
@@ -2465,6 +2896,8 @@ export type StudentUpdateWithoutPaymentsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
@@ -2495,6 +2928,7 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2506,6 +2940,7 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
@@ -2547,6 +2982,8 @@ export type StudentCreateWithoutRefundsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2577,6 +3014,7 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2588,6 +3026,7 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -2644,6 +3083,8 @@ export type StudentUpdateWithoutRefundsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2674,6 +3115,7 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2685,6 +3127,7 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -2726,6 +3169,8 @@ export type StudentCreateWithoutStudentPromotionsInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2756,6 +3201,7 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2767,6 +3213,7 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -2823,6 +3270,8 @@ export type StudentUpdateWithoutStudentPromotionsInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2853,6 +3302,7 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2864,6 +3314,7 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -2905,6 +3356,8 @@ export type StudentCreateWithoutReferralsMadeInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2935,6 +3388,7 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -2946,6 +3400,7 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -2992,6 +3447,8 @@ export type StudentCreateWithoutReferralReceivedInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -3022,6 +3479,7 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3033,6 +3491,7 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -3089,6 +3548,8 @@ export type StudentUpdateWithoutReferralsMadeInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3119,6 +3580,7 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3130,6 +3592,7 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3181,6 +3644,8 @@ export type StudentUpdateWithoutReferralReceivedInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3211,6 +3676,7 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3222,6 +3688,7 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3263,6 +3730,8 @@ export type StudentCreateWithoutCallHistoryInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -3293,6 +3762,7 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3304,6 +3774,7 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -3360,6 +3831,8 @@ export type StudentUpdateWithoutCallHistoryInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3390,6 +3863,7 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3401,6 +3875,7 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3442,6 +3917,8 @@ export type StudentCreateWithoutSmsHistoryInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -3472,6 +3949,7 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3483,6 +3961,7 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   otherLostReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
@@ -3539,6 +4018,8 @@ export type StudentUpdateWithoutSmsHistoryInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3569,6 +4050,7 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3580,6 +4062,7 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3610,6 +4093,7 @@ export type StudentCreateManyActivatedByInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3641,6 +4125,7 @@ export type StudentCreateManyInactivatedByInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3681,6 +4166,8 @@ export type StudentUpdateWithoutActivatedByInput = {
   family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3712,6 +4199,7 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3722,6 +4210,7 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3753,6 +4242,7 @@ export type StudentUncheckedUpdateManyWithoutActivatedByInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3793,6 +4283,8 @@ export type StudentUpdateWithoutInactivatedByInput = {
   family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3824,6 +4316,7 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3834,6 +4327,7 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -3865,6 +4359,7 @@ export type StudentUncheckedUpdateManyWithoutInactivatedByInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3895,6 +4390,7 @@ export type StudentCreateManyFamilyInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -3936,6 +4432,8 @@ export type StudentUpdateWithoutFamilyInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -3966,6 +4464,7 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3977,6 +4476,7 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -4007,6 +4507,7 @@ export type StudentUncheckedUpdateManyWithoutFamilyInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4039,6 +4540,7 @@ export type StudentCreateManyLostReasonInput = {
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
@@ -4079,6 +4581,8 @@ export type StudentUpdateWithoutLostReasonInput = {
   family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -4110,6 +4614,7 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4120,6 +4625,7 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
@@ -4151,6 +4657,7 @@ export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4163,12 +4670,162 @@ export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type StudentCreateManyUncertainReasonInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  familyId?: string | null
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  activatedById?: string | null
+  inactivatedAt?: Date | string | null
+  inactivatedById?: string | null
+  lostReasonId?: string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type StudentUpdateWithoutUncertainReasonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
+  activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
+  inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
+  lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutUncertainReasonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lostReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+}
+
+export type StudentUncheckedUpdateManyWithoutUncertainReasonInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lostReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 /**
  * Count Type StudentCountOutputType
  */
 
 export type StudentCountOutputType = {
+  uncertainHistories: number
   groupMemberships: number
   attendanceRecords: number
   payments: number
@@ -4181,6 +4838,7 @@ export type StudentCountOutputType = {
 }
 
 export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  uncertainHistories?: boolean | StudentCountOutputTypeCountUncertainHistoriesArgs
   groupMemberships?: boolean | StudentCountOutputTypeCountGroupMembershipsArgs
   attendanceRecords?: boolean | StudentCountOutputTypeCountAttendanceRecordsArgs
   payments?: boolean | StudentCountOutputTypeCountPaymentsArgs
@@ -4200,6 +4858,13 @@ export type StudentCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
    * Select specific fields to fetch from the StudentCountOutputType
    */
   select?: Prisma.StudentCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountUncertainHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UncertainHistoryWhereInput
 }
 
 /**
@@ -4285,6 +4950,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
+  uncertainReasonId?: boolean
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
@@ -4300,6 +4966,8 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  uncertainHistories?: boolean | Prisma.Student$uncertainHistoriesArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.Student$groupMembershipsArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Student$attendanceRecordsArgs<ExtArgs>
   payments?: boolean | Prisma.Student$paymentsArgs<ExtArgs>
@@ -4332,6 +5000,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
+  uncertainReasonId?: boolean
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
@@ -4347,6 +5016,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -4368,6 +5038,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
+  uncertainReasonId?: boolean
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
@@ -4383,6 +5054,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectScalar = {
@@ -4404,6 +5076,7 @@ export type StudentSelectScalar = {
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
+  uncertainReasonId?: boolean
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
@@ -4417,12 +5090,14 @@ export type StudentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "progressStage" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainComment" | "comment" | "amoCrmLeadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "progressStage" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainReasonId" | "uncertainComment" | "comment" | "amoCrmLeadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.Student$familyArgs<ExtArgs>
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  uncertainHistories?: boolean | Prisma.Student$uncertainHistoriesArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.Student$groupMembershipsArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Student$attendanceRecordsArgs<ExtArgs>
   payments?: boolean | Prisma.Student$paymentsArgs<ExtArgs>
@@ -4440,12 +5115,14 @@ export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
 }
 export type StudentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.Student$familyArgs<ExtArgs>
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
+  uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
 }
 
 export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4455,6 +5132,8 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     activatedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     inactivatedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     lostReason: Prisma.$LostReasonPayload<ExtArgs> | null
+    uncertainReason: Prisma.$UncertainReasonPayload<ExtArgs> | null
+    uncertainHistories: Prisma.$UncertainHistoryPayload<ExtArgs>[]
     groupMemberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
     attendanceRecords: Prisma.$AttendancePayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
@@ -4485,6 +5164,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     referralCode: string | null
     isUncertain: boolean
     uncertainFlaggedBy: $Enums.UncertainFlagSource | null
+    uncertainReasonId: string | null
     uncertainComment: string | null
     comment: string | null
     amoCrmLeadId: string | null
@@ -4894,6 +5574,8 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   activatedBy<T extends Prisma.Student$activatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$activatedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   inactivatedBy<T extends Prisma.Student$inactivatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$inactivatedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   lostReason<T extends Prisma.Student$lostReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$lostReasonArgs<ExtArgs>>): Prisma.Prisma__LostReasonClient<runtime.Types.Result.GetResult<Prisma.$LostReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  uncertainReason<T extends Prisma.Student$uncertainReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$uncertainReasonArgs<ExtArgs>>): Prisma.Prisma__UncertainReasonClient<runtime.Types.Result.GetResult<Prisma.$UncertainReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  uncertainHistories<T extends Prisma.Student$uncertainHistoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$uncertainHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UncertainHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groupMemberships<T extends Prisma.Student$groupMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$groupMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceRecords<T extends Prisma.Student$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.Student$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4951,6 +5633,7 @@ export interface StudentFieldRefs {
   readonly referralCode: Prisma.FieldRef<"Student", 'String'>
   readonly isUncertain: Prisma.FieldRef<"Student", 'Boolean'>
   readonly uncertainFlaggedBy: Prisma.FieldRef<"Student", 'UncertainFlagSource'>
+  readonly uncertainReasonId: Prisma.FieldRef<"Student", 'String'>
   readonly uncertainComment: Prisma.FieldRef<"Student", 'String'>
   readonly comment: Prisma.FieldRef<"Student", 'String'>
   readonly amoCrmLeadId: Prisma.FieldRef<"Student", 'String'>
@@ -5431,6 +6114,49 @@ export type Student$lostReasonArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.LostReasonInclude<ExtArgs> | null
   where?: Prisma.LostReasonWhereInput
+}
+
+/**
+ * Student.uncertainReason
+ */
+export type Student$uncertainReasonArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UncertainReason
+   */
+  select?: Prisma.UncertainReasonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UncertainReason
+   */
+  omit?: Prisma.UncertainReasonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UncertainReasonInclude<ExtArgs> | null
+  where?: Prisma.UncertainReasonWhereInput
+}
+
+/**
+ * Student.uncertainHistories
+ */
+export type Student$uncertainHistoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UncertainHistory
+   */
+  select?: Prisma.UncertainHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UncertainHistory
+   */
+  omit?: Prisma.UncertainHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UncertainHistoryInclude<ExtArgs> | null
+  where?: Prisma.UncertainHistoryWhereInput
+  orderBy?: Prisma.UncertainHistoryOrderByWithRelationInput | Prisma.UncertainHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.UncertainHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UncertainHistoryScalarFieldEnum | Prisma.UncertainHistoryScalarFieldEnum[]
 }
 
 /**

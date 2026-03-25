@@ -33,6 +33,7 @@ export async function getGroupById(id: string) {
               dateOfBirth: true,
               status: true,
               isUncertain: true,
+              uncertainReason: { select: { name: true } },
             },
           },
           paymentPeriods: {

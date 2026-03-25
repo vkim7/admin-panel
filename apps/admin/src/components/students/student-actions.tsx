@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { deactivateStudent, reactivateStudent } from "@/lib/actions/students";
+import { deactivateStudent } from "@/lib/actions/students";
 
 type LostReason = {
   id: string;
@@ -45,28 +45,6 @@ export function StudentActions({
   const [isPending, startTransition] = useTransition();
 
   const selectedReason = lostReasons.find((r) => r.id === selectedReasonId);
-
-  if (status === "INACTIVE") {
-    return (
-      <Button
-        variant="outline"
-        size="sm"
-        disabled={isPending}
-        onClick={() => {
-          startTransition(async () => {
-            const result = await reactivateStudent(studentId);
-            if (result?.error) {
-              toast.error(result.error);
-            } else {
-              toast.success("Student reactivated");
-            }
-          });
-        }}
-      >
-        Reactivate
-      </Button>
-    );
-  }
 
   const showDeactivateButton =
     status === "ACTIVE" ||

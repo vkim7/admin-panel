@@ -428,6 +428,8 @@ model AdminUser {
   generatedTeacherPayments TeacherPaymentPeriod[]    @relation("GeneratedByAdmin")
   deactivatedTeachers      Teacher[]                 @relation("DeactivatedTeacher")
   uploadedDocuments        TeacherDocument[]         @relation("UploadedDocument")
+  flaggedUncertain         UncertainHistory[]        @relation("FlaggedUncertain")
+  resolvedUncertain        UncertainHistory[]        @relation("ResolvedUncertain")
 }
 
 model Teacher {
@@ -511,7 +513,8 @@ model Student {
   // Uncertain flag — teacher or admin can flag a student as uncertain
   isUncertain        Boolean              @default(false)
   uncertainFlaggedBy UncertainFlagSource?
-  uncertainComment   String?
+  uncertainReasonId  String?
+  uncertainComment   String? // Free text when reason isOther
 
   comment      String?
   amoCrmLeadId String? @unique // Dedup for amoCRM polling
@@ -531,6 +534,8 @@ model Student {
   activatedBy       AdminUser?             @relation("ActivatedByAdmin", fields: [activatedById], references: [id], onDelete: Restrict)
   inactivatedBy     AdminUser?             @relation("InactivatedByAdmin", fields: [inactivatedById], references: [id], onDelete: Restrict)
   lostReason        LostReason?            @relation(fields: [lostReasonId], references: [id], onDelete: Restrict)
+  uncertainReason   UncertainReason?       @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
+  uncertainHistories UncertainHistory[]
   groupMemberships  GroupMembership[]
   attendanceRecords Attendance[]
   payments          Payment[]
@@ -743,6 +748,38 @@ model CancellationReason {
   createdAt DateTime @default(now())
 
   lessons Lesson[]
+}
+
+model UncertainReason {
+  id        String  @id @default(cuid())
+  name      String  @unique // e.g. "Late to lessons", "Misses classes"
+  isOther   Boolean @default(false)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  students           Student[]
+  uncertainHistories UncertainHistory[]
+}
+
+model UncertainHistory {
+  id                String              @id @default(cuid())
+  studentId         String
+  uncertainReasonId String
+  otherReason       String?
+  flaggedBy         UncertainFlagSource
+  flaggedAt         DateTime            @default(now())
+  flaggedById       String?
+  resolvedAt        DateTime?
+  resolvedById      String?
+
+  student         Student          @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  uncertainReason UncertainReason  @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
+  flaggedByAdmin  AdminUser?       @relation("FlaggedUncertain", fields: [flaggedById], references: [id], onDelete: Restrict)
+  resolvedByAdmin AdminUser?       @relation("ResolvedUncertain", fields: [resolvedById], references: [id], onDelete: Restrict)
+
+  @@index([studentId])
 }
 
 // ─── Group Membership ───────────────────────────────────────────────────────────

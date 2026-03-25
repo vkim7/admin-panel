@@ -396,6 +396,8 @@ export const ModelName = {
   TransferReason: 'TransferReason',
   LostReason: 'LostReason',
   CancellationReason: 'CancellationReason',
+  UncertainReason: 'UncertainReason',
+  UncertainHistory: 'UncertainHistory',
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
@@ -430,7 +432,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1319,6 +1321,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CancellationReasonCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CancellationReasonCountAggregateOutputType> | number
+        }
+      }
+    }
+    UncertainReason: {
+      payload: Prisma.$UncertainReasonPayload<ExtArgs>
+      fields: Prisma.UncertainReasonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UncertainReasonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UncertainReasonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        findFirst: {
+          args: Prisma.UncertainReasonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UncertainReasonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        findMany: {
+          args: Prisma.UncertainReasonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>[]
+        }
+        create: {
+          args: Prisma.UncertainReasonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        createMany: {
+          args: Prisma.UncertainReasonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UncertainReasonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>[]
+        }
+        delete: {
+          args: Prisma.UncertainReasonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        update: {
+          args: Prisma.UncertainReasonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        deleteMany: {
+          args: Prisma.UncertainReasonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UncertainReasonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UncertainReasonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>[]
+        }
+        upsert: {
+          args: Prisma.UncertainReasonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainReasonPayload>
+        }
+        aggregate: {
+          args: Prisma.UncertainReasonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUncertainReason>
+        }
+        groupBy: {
+          args: Prisma.UncertainReasonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UncertainReasonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UncertainReasonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UncertainReasonCountAggregateOutputType> | number
+        }
+      }
+    }
+    UncertainHistory: {
+      payload: Prisma.$UncertainHistoryPayload<ExtArgs>
+      fields: Prisma.UncertainHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UncertainHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UncertainHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.UncertainHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UncertainHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.UncertainHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.UncertainHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.UncertainHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UncertainHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.UncertainHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        update: {
+          args: Prisma.UncertainHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.UncertainHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UncertainHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UncertainHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.UncertainHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UncertainHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.UncertainHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUncertainHistory>
+        }
+        groupBy: {
+          args: Prisma.UncertainHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UncertainHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UncertainHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UncertainHistoryCountAggregateOutputType> | number
         }
       }
     }
@@ -2833,6 +2983,7 @@ export const StudentScalarFieldEnum = {
   referralCode: 'referralCode',
   isUncertain: 'isUncertain',
   uncertainFlaggedBy: 'uncertainFlaggedBy',
+  uncertainReasonId: 'uncertainReasonId',
   uncertainComment: 'uncertainComment',
   comment: 'comment',
   amoCrmLeadId: 'amoCrmLeadId',
@@ -2959,6 +3110,33 @@ export const CancellationReasonScalarFieldEnum = {
 } as const
 
 export type CancellationReasonScalarFieldEnum = (typeof CancellationReasonScalarFieldEnum)[keyof typeof CancellationReasonScalarFieldEnum]
+
+
+export const UncertainReasonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isOther: 'isOther',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type UncertainReasonScalarFieldEnum = (typeof UncertainReasonScalarFieldEnum)[keyof typeof UncertainReasonScalarFieldEnum]
+
+
+export const UncertainHistoryScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  uncertainReasonId: 'uncertainReasonId',
+  otherReason: 'otherReason',
+  flaggedBy: 'flaggedBy',
+  flaggedAt: 'flaggedAt',
+  flaggedById: 'flaggedById',
+  resolvedAt: 'resolvedAt',
+  resolvedById: 'resolvedById'
+} as const
+
+export type UncertainHistoryScalarFieldEnum = (typeof UncertainHistoryScalarFieldEnum)[keyof typeof UncertainHistoryScalarFieldEnum]
 
 
 export const GroupMembershipScalarFieldEnum = {
@@ -3741,6 +3919,8 @@ export type GlobalOmitConfig = {
   transferReason?: Prisma.TransferReasonOmit
   lostReason?: Prisma.LostReasonOmit
   cancellationReason?: Prisma.CancellationReasonOmit
+  uncertainReason?: Prisma.UncertainReasonOmit
+  uncertainHistory?: Prisma.UncertainHistoryOmit
   groupMembership?: Prisma.GroupMembershipOmit
   lesson?: Prisma.LessonOmit
   attendance?: Prisma.AttendanceOmit

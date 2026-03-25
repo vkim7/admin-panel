@@ -94,23 +94,25 @@ export default async function StudentDetailPage({
           { label: `${student.firstName} ${student.lastName}` },
         ]}
         actions={
-          <>
-            <Button variant="outline" size="sm" asChild>
-              <Link href={`/students/${id}/edit`}>
-                <Pencil className="mr-1 size-4" />
-                Edit
-              </Link>
-            </Button>
-            <StudentActions
-              studentId={id}
-              status={student.status}
-              lostReasons={lostReasons}
-            />
-          </>
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/students/${id}/edit`}>
+              <Pencil className="mr-1 size-4" />
+              Edit
+            </Link>
+          </Button>
         }
       />
       <div className="flex items-center gap-3">
         <StatusBadge type="student" value={student.status} />
+        {student.isUncertain && (
+          <Badge
+            variant="outline"
+            className="border-amber-400 bg-amber-50 text-amber-800"
+            title={student.uncertainComment ?? undefined}
+          >
+            Uncertain{student.uncertainReason ? `: ${student.uncertainReason.name}` : ""}
+          </Badge>
+        )}
         <span className="text-sm text-muted-foreground">CRM: {student.crmCode}</span>
         <span className="text-sm text-muted-foreground">{student.phone}</span>
       </div>
@@ -557,6 +559,14 @@ export default async function StudentDetailPage({
           </div>
         </>
       )}
+
+      {/* Danger zone */}
+      <Separator />
+      <StudentActions
+        studentId={id}
+        status={student.status}
+        lostReasons={lostReasons}
+      />
     </div>
   );
 }

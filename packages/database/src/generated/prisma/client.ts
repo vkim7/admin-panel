@@ -102,6 +102,16 @@ export type LostReason = Prisma.LostReasonModel
  */
 export type CancellationReason = Prisma.CancellationReasonModel
 /**
+ * Model UncertainReason
+ * 
+ */
+export type UncertainReason = Prisma.UncertainReasonModel
+/**
+ * Model UncertainHistory
+ * 
+ */
+export type UncertainHistory = Prisma.UncertainHistoryModel
+/**
  * Model GroupMembership
  * 
  */

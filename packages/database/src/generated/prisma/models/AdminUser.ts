@@ -273,6 +273,8 @@ export type AdminUserWhereInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodListRelationFilter
   deactivatedTeachers?: Prisma.TeacherListRelationFilter
   uploadedDocuments?: Prisma.TeacherDocumentListRelationFilter
+  flaggedUncertain?: Prisma.UncertainHistoryListRelationFilter
+  resolvedUncertain?: Prisma.UncertainHistoryListRelationFilter
 }
 
 export type AdminUserOrderByWithRelationInput = {
@@ -303,6 +305,8 @@ export type AdminUserOrderByWithRelationInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodOrderByRelationAggregateInput
   deactivatedTeachers?: Prisma.TeacherOrderByRelationAggregateInput
   uploadedDocuments?: Prisma.TeacherDocumentOrderByRelationAggregateInput
+  flaggedUncertain?: Prisma.UncertainHistoryOrderByRelationAggregateInput
+  resolvedUncertain?: Prisma.UncertainHistoryOrderByRelationAggregateInput
 }
 
 export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
@@ -336,6 +340,8 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodListRelationFilter
   deactivatedTeachers?: Prisma.TeacherListRelationFilter
   uploadedDocuments?: Prisma.TeacherDocumentListRelationFilter
+  flaggedUncertain?: Prisma.UncertainHistoryListRelationFilter
+  resolvedUncertain?: Prisma.UncertainHistoryListRelationFilter
 }, "id" | "email" | "telegramId">
 
 export type AdminUserOrderByWithAggregationInput = {
@@ -400,6 +406,8 @@ export type AdminUserCreateInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateInput = {
@@ -430,6 +438,8 @@ export type AdminUserUncheckedCreateInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUpdateInput = {
@@ -460,6 +470,8 @@ export type AdminUserUpdateInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateInput = {
@@ -490,6 +502,8 @@ export type AdminUserUncheckedUpdateInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateManyInput = {
@@ -694,6 +708,38 @@ export type AdminUserUpdateOneWithoutGroupTeacherChangesNestedInput = {
   delete?: Prisma.AdminUserWhereInput | boolean
   connect?: Prisma.AdminUserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutGroupTeacherChangesInput, Prisma.AdminUserUpdateWithoutGroupTeacherChangesInput>, Prisma.AdminUserUncheckedUpdateWithoutGroupTeacherChangesInput>
+}
+
+export type AdminUserCreateNestedOneWithoutFlaggedUncertainInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutFlaggedUncertainInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutFlaggedUncertainInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserCreateNestedOneWithoutResolvedUncertainInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutResolvedUncertainInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutResolvedUncertainInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserUpdateOneWithoutFlaggedUncertainNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutFlaggedUncertainInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutFlaggedUncertainInput
+  upsert?: Prisma.AdminUserUpsertWithoutFlaggedUncertainInput
+  disconnect?: Prisma.AdminUserWhereInput | boolean
+  delete?: Prisma.AdminUserWhereInput | boolean
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutFlaggedUncertainInput, Prisma.AdminUserUpdateWithoutFlaggedUncertainInput>, Prisma.AdminUserUncheckedUpdateWithoutFlaggedUncertainInput>
+}
+
+export type AdminUserUpdateOneWithoutResolvedUncertainNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutResolvedUncertainInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutResolvedUncertainInput
+  upsert?: Prisma.AdminUserUpsertWithoutResolvedUncertainInput
+  disconnect?: Prisma.AdminUserWhereInput | boolean
+  delete?: Prisma.AdminUserWhereInput | boolean
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutResolvedUncertainInput, Prisma.AdminUserUpdateWithoutResolvedUncertainInput>, Prisma.AdminUserUncheckedUpdateWithoutResolvedUncertainInput>
 }
 
 export type AdminUserCreateNestedOneWithoutAssignedMembershipsInput = {
@@ -909,6 +955,8 @@ export type AdminUserCreateWithoutDeactivatedTeachersInput = {
   priceSettings?: Prisma.PriceSettingCreateNestedManyWithoutChangedByInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutDeactivatedTeachersInput = {
@@ -938,6 +986,8 @@ export type AdminUserUncheckedCreateWithoutDeactivatedTeachersInput = {
   priceSettings?: Prisma.PriceSettingUncheckedCreateNestedManyWithoutChangedByInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutDeactivatedTeachersInput = {
@@ -983,6 +1033,8 @@ export type AdminUserUpdateWithoutDeactivatedTeachersInput = {
   priceSettings?: Prisma.PriceSettingUpdateManyWithoutChangedByNestedInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutDeactivatedTeachersInput = {
@@ -1012,6 +1064,8 @@ export type AdminUserUncheckedUpdateWithoutDeactivatedTeachersInput = {
   priceSettings?: Prisma.PriceSettingUncheckedUpdateManyWithoutChangedByNestedInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutActivatedStudentsInput = {
@@ -1041,6 +1095,8 @@ export type AdminUserCreateWithoutActivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutActivatedStudentsInput = {
@@ -1070,6 +1126,8 @@ export type AdminUserUncheckedCreateWithoutActivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutActivatedStudentsInput = {
@@ -1104,6 +1162,8 @@ export type AdminUserCreateWithoutInactivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutInactivatedStudentsInput = {
@@ -1133,6 +1193,8 @@ export type AdminUserUncheckedCreateWithoutInactivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutInactivatedStudentsInput = {
@@ -1178,6 +1240,8 @@ export type AdminUserUpdateWithoutActivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutActivatedStudentsInput = {
@@ -1207,6 +1271,8 @@ export type AdminUserUncheckedUpdateWithoutActivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUpsertWithoutInactivatedStudentsInput = {
@@ -1247,6 +1313,8 @@ export type AdminUserUpdateWithoutInactivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutInactivatedStudentsInput = {
@@ -1276,6 +1344,8 @@ export type AdminUserUncheckedUpdateWithoutInactivatedStudentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutTeacherUnavailabilitiesInput = {
@@ -1305,6 +1375,8 @@ export type AdminUserCreateWithoutTeacherUnavailabilitiesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutTeacherUnavailabilitiesInput = {
@@ -1334,6 +1406,8 @@ export type AdminUserUncheckedCreateWithoutTeacherUnavailabilitiesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutTeacherUnavailabilitiesInput = {
@@ -1379,6 +1453,8 @@ export type AdminUserUpdateWithoutTeacherUnavailabilitiesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutTeacherUnavailabilitiesInput = {
@@ -1408,6 +1484,8 @@ export type AdminUserUncheckedUpdateWithoutTeacherUnavailabilitiesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutGroupTeacherChangesInput = {
@@ -1437,6 +1515,8 @@ export type AdminUserCreateWithoutGroupTeacherChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutGroupTeacherChangesInput = {
@@ -1466,6 +1546,8 @@ export type AdminUserUncheckedCreateWithoutGroupTeacherChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutGroupTeacherChangesInput = {
@@ -1511,6 +1593,8 @@ export type AdminUserUpdateWithoutGroupTeacherChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutGroupTeacherChangesInput = {
@@ -1540,6 +1624,288 @@ export type AdminUserUncheckedUpdateWithoutGroupTeacherChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
+}
+
+export type AdminUserCreateWithoutFlaggedUncertainInput = {
+  id?: string
+  email: string
+  telegramId?: bigint | number | null
+  firstName: string
+  lastName: string
+  username?: string | null
+  role?: $Enums.AdminRole
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordedPayments?: Prisma.PaymentCreateNestedManyWithoutRecordedByInput
+  callsMade?: Prisma.CallHistoryCreateNestedManyWithoutCalledByInput
+  smsSent?: Prisma.SmsHistoryCreateNestedManyWithoutSentByInput
+  assignedMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutAssignedByInput
+  activatedStudents?: Prisma.StudentCreateNestedManyWithoutActivatedByInput
+  inactivatedStudents?: Prisma.StudentCreateNestedManyWithoutInactivatedByInput
+  cancelledLessons?: Prisma.LessonCreateNestedManyWithoutCancelledByInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutChangedByInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentCreateNestedManyWithoutAdjustedByInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutCreatedByInput
+  refundsInitiated?: Prisma.RefundCreateNestedManyWithoutInitiatedByInput
+  refundsProcessed?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
+  teacherRateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutChangedByInput
+  priceSettings?: Prisma.PriceSettingCreateNestedManyWithoutChangedByInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
+  deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
+  uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
+}
+
+export type AdminUserUncheckedCreateWithoutFlaggedUncertainInput = {
+  id?: string
+  email: string
+  telegramId?: bigint | number | null
+  firstName: string
+  lastName: string
+  username?: string | null
+  role?: $Enums.AdminRole
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordedPayments?: Prisma.PaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  callsMade?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutCalledByInput
+  smsSent?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutSentByInput
+  assignedMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutAssignedByInput
+  activatedStudents?: Prisma.StudentUncheckedCreateNestedManyWithoutActivatedByInput
+  inactivatedStudents?: Prisma.StudentUncheckedCreateNestedManyWithoutInactivatedByInput
+  cancelledLessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCancelledByInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUncheckedCreateNestedManyWithoutAdjustedByInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUncheckedCreateNestedManyWithoutCreatedByInput
+  refundsInitiated?: Prisma.RefundUncheckedCreateNestedManyWithoutInitiatedByInput
+  refundsProcessed?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutChangedByInput
+  priceSettings?: Prisma.PriceSettingUncheckedCreateNestedManyWithoutChangedByInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
+  deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
+  uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
+}
+
+export type AdminUserCreateOrConnectWithoutFlaggedUncertainInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutFlaggedUncertainInput>
+}
+
+export type AdminUserCreateWithoutResolvedUncertainInput = {
+  id?: string
+  email: string
+  telegramId?: bigint | number | null
+  firstName: string
+  lastName: string
+  username?: string | null
+  role?: $Enums.AdminRole
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordedPayments?: Prisma.PaymentCreateNestedManyWithoutRecordedByInput
+  callsMade?: Prisma.CallHistoryCreateNestedManyWithoutCalledByInput
+  smsSent?: Prisma.SmsHistoryCreateNestedManyWithoutSentByInput
+  assignedMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutAssignedByInput
+  activatedStudents?: Prisma.StudentCreateNestedManyWithoutActivatedByInput
+  inactivatedStudents?: Prisma.StudentCreateNestedManyWithoutInactivatedByInput
+  cancelledLessons?: Prisma.LessonCreateNestedManyWithoutCancelledByInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutChangedByInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentCreateNestedManyWithoutAdjustedByInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityCreateNestedManyWithoutCreatedByInput
+  refundsInitiated?: Prisma.RefundCreateNestedManyWithoutInitiatedByInput
+  refundsProcessed?: Prisma.RefundCreateNestedManyWithoutProcessedByInput
+  teacherRateChanges?: Prisma.TeacherRateChangeCreateNestedManyWithoutChangedByInput
+  priceSettings?: Prisma.PriceSettingCreateNestedManyWithoutChangedByInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
+  deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
+  uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+}
+
+export type AdminUserUncheckedCreateWithoutResolvedUncertainInput = {
+  id?: string
+  email: string
+  telegramId?: bigint | number | null
+  firstName: string
+  lastName: string
+  username?: string | null
+  role?: $Enums.AdminRole
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  recordedPayments?: Prisma.PaymentUncheckedCreateNestedManyWithoutRecordedByInput
+  callsMade?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutCalledByInput
+  smsSent?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutSentByInput
+  assignedMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutAssignedByInput
+  activatedStudents?: Prisma.StudentUncheckedCreateNestedManyWithoutActivatedByInput
+  inactivatedStudents?: Prisma.StudentUncheckedCreateNestedManyWithoutInactivatedByInput
+  cancelledLessons?: Prisma.LessonUncheckedCreateNestedManyWithoutCancelledByInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutChangedByInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUncheckedCreateNestedManyWithoutAdjustedByInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUncheckedCreateNestedManyWithoutCreatedByInput
+  refundsInitiated?: Prisma.RefundUncheckedCreateNestedManyWithoutInitiatedByInput
+  refundsProcessed?: Prisma.RefundUncheckedCreateNestedManyWithoutProcessedByInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUncheckedCreateNestedManyWithoutChangedByInput
+  priceSettings?: Prisma.PriceSettingUncheckedCreateNestedManyWithoutChangedByInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
+  deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
+  uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+}
+
+export type AdminUserCreateOrConnectWithoutResolvedUncertainInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutResolvedUncertainInput>
+}
+
+export type AdminUserUpsertWithoutFlaggedUncertainInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedUpdateWithoutFlaggedUncertainInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutFlaggedUncertainInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutFlaggedUncertainInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutFlaggedUncertainInput, Prisma.AdminUserUncheckedUpdateWithoutFlaggedUncertainInput>
+}
+
+export type AdminUserUpdateWithoutFlaggedUncertainInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedPayments?: Prisma.PaymentUpdateManyWithoutRecordedByNestedInput
+  callsMade?: Prisma.CallHistoryUpdateManyWithoutCalledByNestedInput
+  smsSent?: Prisma.SmsHistoryUpdateManyWithoutSentByNestedInput
+  assignedMemberships?: Prisma.GroupMembershipUpdateManyWithoutAssignedByNestedInput
+  activatedStudents?: Prisma.StudentUpdateManyWithoutActivatedByNestedInput
+  inactivatedStudents?: Prisma.StudentUpdateManyWithoutInactivatedByNestedInput
+  cancelledLessons?: Prisma.LessonUpdateManyWithoutCancelledByNestedInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUpdateManyWithoutChangedByNestedInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUpdateManyWithoutAdjustedByNestedInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUpdateManyWithoutCreatedByNestedInput
+  refundsInitiated?: Prisma.RefundUpdateManyWithoutInitiatedByNestedInput
+  refundsProcessed?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutChangedByNestedInput
+  priceSettings?: Prisma.PriceSettingUpdateManyWithoutChangedByNestedInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
+  deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
+  uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutFlaggedUncertainInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedPayments?: Prisma.PaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  callsMade?: Prisma.CallHistoryUncheckedUpdateManyWithoutCalledByNestedInput
+  smsSent?: Prisma.SmsHistoryUncheckedUpdateManyWithoutSentByNestedInput
+  assignedMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutAssignedByNestedInput
+  activatedStudents?: Prisma.StudentUncheckedUpdateManyWithoutActivatedByNestedInput
+  inactivatedStudents?: Prisma.StudentUncheckedUpdateManyWithoutInactivatedByNestedInput
+  cancelledLessons?: Prisma.LessonUncheckedUpdateManyWithoutCancelledByNestedInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUncheckedUpdateManyWithoutAdjustedByNestedInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUncheckedUpdateManyWithoutCreatedByNestedInput
+  refundsInitiated?: Prisma.RefundUncheckedUpdateManyWithoutInitiatedByNestedInput
+  refundsProcessed?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutChangedByNestedInput
+  priceSettings?: Prisma.PriceSettingUncheckedUpdateManyWithoutChangedByNestedInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
+  deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
+  uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
+}
+
+export type AdminUserUpsertWithoutResolvedUncertainInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedUpdateWithoutResolvedUncertainInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedCreateWithoutResolvedUncertainInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutResolvedUncertainInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutResolvedUncertainInput, Prisma.AdminUserUncheckedUpdateWithoutResolvedUncertainInput>
+}
+
+export type AdminUserUpdateWithoutResolvedUncertainInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedPayments?: Prisma.PaymentUpdateManyWithoutRecordedByNestedInput
+  callsMade?: Prisma.CallHistoryUpdateManyWithoutCalledByNestedInput
+  smsSent?: Prisma.SmsHistoryUpdateManyWithoutSentByNestedInput
+  assignedMemberships?: Prisma.GroupMembershipUpdateManyWithoutAssignedByNestedInput
+  activatedStudents?: Prisma.StudentUpdateManyWithoutActivatedByNestedInput
+  inactivatedStudents?: Prisma.StudentUpdateManyWithoutInactivatedByNestedInput
+  cancelledLessons?: Prisma.LessonUpdateManyWithoutCancelledByNestedInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUpdateManyWithoutChangedByNestedInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUpdateManyWithoutAdjustedByNestedInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUpdateManyWithoutCreatedByNestedInput
+  refundsInitiated?: Prisma.RefundUpdateManyWithoutInitiatedByNestedInput
+  refundsProcessed?: Prisma.RefundUpdateManyWithoutProcessedByNestedInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUpdateManyWithoutChangedByNestedInput
+  priceSettings?: Prisma.PriceSettingUpdateManyWithoutChangedByNestedInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
+  deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
+  uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutResolvedUncertainInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.EnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recordedPayments?: Prisma.PaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+  callsMade?: Prisma.CallHistoryUncheckedUpdateManyWithoutCalledByNestedInput
+  smsSent?: Prisma.SmsHistoryUncheckedUpdateManyWithoutSentByNestedInput
+  assignedMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutAssignedByNestedInput
+  activatedStudents?: Prisma.StudentUncheckedUpdateManyWithoutActivatedByNestedInput
+  inactivatedStudents?: Prisma.StudentUncheckedUpdateManyWithoutInactivatedByNestedInput
+  cancelledLessons?: Prisma.LessonUncheckedUpdateManyWithoutCancelledByNestedInput
+  groupTeacherChanges?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutChangedByNestedInput
+  paymentPeriodAdjustments?: Prisma.PaymentPeriodAdjustmentUncheckedUpdateManyWithoutAdjustedByNestedInput
+  teacherUnavailabilities?: Prisma.TeacherUnavailabilityUncheckedUpdateManyWithoutCreatedByNestedInput
+  refundsInitiated?: Prisma.RefundUncheckedUpdateManyWithoutInitiatedByNestedInput
+  refundsProcessed?: Prisma.RefundUncheckedUpdateManyWithoutProcessedByNestedInput
+  teacherRateChanges?: Prisma.TeacherRateChangeUncheckedUpdateManyWithoutChangedByNestedInput
+  priceSettings?: Prisma.PriceSettingUncheckedUpdateManyWithoutChangedByNestedInput
+  generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
+  deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
+  uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutAssignedMembershipsInput = {
@@ -1569,6 +1935,8 @@ export type AdminUserCreateWithoutAssignedMembershipsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutAssignedMembershipsInput = {
@@ -1598,6 +1966,8 @@ export type AdminUserUncheckedCreateWithoutAssignedMembershipsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutAssignedMembershipsInput = {
@@ -1643,6 +2013,8 @@ export type AdminUserUpdateWithoutAssignedMembershipsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutAssignedMembershipsInput = {
@@ -1672,6 +2044,8 @@ export type AdminUserUncheckedUpdateWithoutAssignedMembershipsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutCancelledLessonsInput = {
@@ -1701,6 +2075,8 @@ export type AdminUserCreateWithoutCancelledLessonsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutCancelledLessonsInput = {
@@ -1730,6 +2106,8 @@ export type AdminUserUncheckedCreateWithoutCancelledLessonsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutCancelledLessonsInput = {
@@ -1775,6 +2153,8 @@ export type AdminUserUpdateWithoutCancelledLessonsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutCancelledLessonsInput = {
@@ -1804,6 +2184,8 @@ export type AdminUserUncheckedUpdateWithoutCancelledLessonsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutRecordedPaymentsInput = {
@@ -1833,6 +2215,8 @@ export type AdminUserCreateWithoutRecordedPaymentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutRecordedPaymentsInput = {
@@ -1862,6 +2246,8 @@ export type AdminUserUncheckedCreateWithoutRecordedPaymentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutRecordedPaymentsInput = {
@@ -1907,6 +2293,8 @@ export type AdminUserUpdateWithoutRecordedPaymentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutRecordedPaymentsInput = {
@@ -1936,6 +2324,8 @@ export type AdminUserUncheckedUpdateWithoutRecordedPaymentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutPaymentPeriodAdjustmentsInput = {
@@ -1965,6 +2355,8 @@ export type AdminUserCreateWithoutPaymentPeriodAdjustmentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutPaymentPeriodAdjustmentsInput = {
@@ -1994,6 +2386,8 @@ export type AdminUserUncheckedCreateWithoutPaymentPeriodAdjustmentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutPaymentPeriodAdjustmentsInput = {
@@ -2039,6 +2433,8 @@ export type AdminUserUpdateWithoutPaymentPeriodAdjustmentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutPaymentPeriodAdjustmentsInput = {
@@ -2068,6 +2464,8 @@ export type AdminUserUncheckedUpdateWithoutPaymentPeriodAdjustmentsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutRefundsInitiatedInput = {
@@ -2097,6 +2495,8 @@ export type AdminUserCreateWithoutRefundsInitiatedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutRefundsInitiatedInput = {
@@ -2126,6 +2526,8 @@ export type AdminUserUncheckedCreateWithoutRefundsInitiatedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutRefundsInitiatedInput = {
@@ -2160,6 +2562,8 @@ export type AdminUserCreateWithoutRefundsProcessedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutRefundsProcessedInput = {
@@ -2189,6 +2593,8 @@ export type AdminUserUncheckedCreateWithoutRefundsProcessedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutRefundsProcessedInput = {
@@ -2234,6 +2640,8 @@ export type AdminUserUpdateWithoutRefundsInitiatedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutRefundsInitiatedInput = {
@@ -2263,6 +2671,8 @@ export type AdminUserUncheckedUpdateWithoutRefundsInitiatedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUpsertWithoutRefundsProcessedInput = {
@@ -2303,6 +2713,8 @@ export type AdminUserUpdateWithoutRefundsProcessedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutRefundsProcessedInput = {
@@ -2332,6 +2744,8 @@ export type AdminUserUncheckedUpdateWithoutRefundsProcessedInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutGeneratedTeacherPaymentsInput = {
@@ -2361,6 +2775,8 @@ export type AdminUserCreateWithoutGeneratedTeacherPaymentsInput = {
   priceSettings?: Prisma.PriceSettingCreateNestedManyWithoutChangedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutGeneratedTeacherPaymentsInput = {
@@ -2390,6 +2806,8 @@ export type AdminUserUncheckedCreateWithoutGeneratedTeacherPaymentsInput = {
   priceSettings?: Prisma.PriceSettingUncheckedCreateNestedManyWithoutChangedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutGeneratedTeacherPaymentsInput = {
@@ -2435,6 +2853,8 @@ export type AdminUserUpdateWithoutGeneratedTeacherPaymentsInput = {
   priceSettings?: Prisma.PriceSettingUpdateManyWithoutChangedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutGeneratedTeacherPaymentsInput = {
@@ -2464,6 +2884,8 @@ export type AdminUserUncheckedUpdateWithoutGeneratedTeacherPaymentsInput = {
   priceSettings?: Prisma.PriceSettingUncheckedUpdateManyWithoutChangedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutTeacherRateChangesInput = {
@@ -2493,6 +2915,8 @@ export type AdminUserCreateWithoutTeacherRateChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutTeacherRateChangesInput = {
@@ -2522,6 +2946,8 @@ export type AdminUserUncheckedCreateWithoutTeacherRateChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutTeacherRateChangesInput = {
@@ -2567,6 +2993,8 @@ export type AdminUserUpdateWithoutTeacherRateChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutTeacherRateChangesInput = {
@@ -2596,6 +3024,8 @@ export type AdminUserUncheckedUpdateWithoutTeacherRateChangesInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutUploadedDocumentsInput = {
@@ -2625,6 +3055,8 @@ export type AdminUserCreateWithoutUploadedDocumentsInput = {
   priceSettings?: Prisma.PriceSettingCreateNestedManyWithoutChangedByInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutUploadedDocumentsInput = {
@@ -2654,6 +3086,8 @@ export type AdminUserUncheckedCreateWithoutUploadedDocumentsInput = {
   priceSettings?: Prisma.PriceSettingUncheckedCreateNestedManyWithoutChangedByInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutUploadedDocumentsInput = {
@@ -2699,6 +3133,8 @@ export type AdminUserUpdateWithoutUploadedDocumentsInput = {
   priceSettings?: Prisma.PriceSettingUpdateManyWithoutChangedByNestedInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutUploadedDocumentsInput = {
@@ -2728,6 +3164,8 @@ export type AdminUserUncheckedUpdateWithoutUploadedDocumentsInput = {
   priceSettings?: Prisma.PriceSettingUncheckedUpdateManyWithoutChangedByNestedInput
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutPriceSettingsInput = {
@@ -2757,6 +3195,8 @@ export type AdminUserCreateWithoutPriceSettingsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutPriceSettingsInput = {
@@ -2786,6 +3226,8 @@ export type AdminUserUncheckedCreateWithoutPriceSettingsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutPriceSettingsInput = {
@@ -2831,6 +3273,8 @@ export type AdminUserUpdateWithoutPriceSettingsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutPriceSettingsInput = {
@@ -2860,6 +3304,8 @@ export type AdminUserUncheckedUpdateWithoutPriceSettingsInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutCallsMadeInput = {
@@ -2889,6 +3335,8 @@ export type AdminUserCreateWithoutCallsMadeInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutCallsMadeInput = {
@@ -2918,6 +3366,8 @@ export type AdminUserUncheckedCreateWithoutCallsMadeInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutCallsMadeInput = {
@@ -2963,6 +3413,8 @@ export type AdminUserUpdateWithoutCallsMadeInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutCallsMadeInput = {
@@ -2992,6 +3444,8 @@ export type AdminUserUncheckedUpdateWithoutCallsMadeInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserCreateWithoutSmsSentInput = {
@@ -3021,6 +3475,8 @@ export type AdminUserCreateWithoutSmsSentInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserUncheckedCreateWithoutSmsSentInput = {
@@ -3050,6 +3506,8 @@ export type AdminUserUncheckedCreateWithoutSmsSentInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGeneratedByInput
   deactivatedTeachers?: Prisma.TeacherUncheckedCreateNestedManyWithoutDeactivatedByInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutFlaggedByAdminInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutResolvedByAdminInput
 }
 
 export type AdminUserCreateOrConnectWithoutSmsSentInput = {
@@ -3095,6 +3553,8 @@ export type AdminUserUpdateWithoutSmsSentInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutSmsSentInput = {
@@ -3124,6 +3584,8 @@ export type AdminUserUncheckedUpdateWithoutSmsSentInput = {
   generatedTeacherPayments?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGeneratedByNestedInput
   deactivatedTeachers?: Prisma.TeacherUncheckedUpdateManyWithoutDeactivatedByNestedInput
   uploadedDocuments?: Prisma.TeacherDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  flaggedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutFlaggedByAdminNestedInput
+  resolvedUncertain?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutResolvedByAdminNestedInput
 }
 
 
@@ -3149,6 +3611,8 @@ export type AdminUserCountOutputType = {
   generatedTeacherPayments: number
   deactivatedTeachers: number
   uploadedDocuments: number
+  flaggedUncertain: number
+  resolvedUncertain: number
 }
 
 export type AdminUserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3169,6 +3633,8 @@ export type AdminUserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensi
   generatedTeacherPayments?: boolean | AdminUserCountOutputTypeCountGeneratedTeacherPaymentsArgs
   deactivatedTeachers?: boolean | AdminUserCountOutputTypeCountDeactivatedTeachersArgs
   uploadedDocuments?: boolean | AdminUserCountOutputTypeCountUploadedDocumentsArgs
+  flaggedUncertain?: boolean | AdminUserCountOutputTypeCountFlaggedUncertainArgs
+  resolvedUncertain?: boolean | AdminUserCountOutputTypeCountResolvedUncertainArgs
 }
 
 /**
@@ -3300,6 +3766,20 @@ export type AdminUserCountOutputTypeCountUploadedDocumentsArgs<ExtArgs extends r
   where?: Prisma.TeacherDocumentWhereInput
 }
 
+/**
+ * AdminUserCountOutputType without action
+ */
+export type AdminUserCountOutputTypeCountFlaggedUncertainArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UncertainHistoryWhereInput
+}
+
+/**
+ * AdminUserCountOutputType without action
+ */
+export type AdminUserCountOutputTypeCountResolvedUncertainArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UncertainHistoryWhereInput
+}
+
 
 export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3329,6 +3809,8 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   generatedTeacherPayments?: boolean | Prisma.AdminUser$generatedTeacherPaymentsArgs<ExtArgs>
   deactivatedTeachers?: boolean | Prisma.AdminUser$deactivatedTeachersArgs<ExtArgs>
   uploadedDocuments?: boolean | Prisma.AdminUser$uploadedDocumentsArgs<ExtArgs>
+  flaggedUncertain?: boolean | Prisma.AdminUser$flaggedUncertainArgs<ExtArgs>
+  resolvedUncertain?: boolean | Prisma.AdminUser$resolvedUncertainArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["adminUser"]>
 
@@ -3390,6 +3872,8 @@ export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalAr
   generatedTeacherPayments?: boolean | Prisma.AdminUser$generatedTeacherPaymentsArgs<ExtArgs>
   deactivatedTeachers?: boolean | Prisma.AdminUser$deactivatedTeachersArgs<ExtArgs>
   uploadedDocuments?: boolean | Prisma.AdminUser$uploadedDocumentsArgs<ExtArgs>
+  flaggedUncertain?: boolean | Prisma.AdminUser$flaggedUncertainArgs<ExtArgs>
+  resolvedUncertain?: boolean | Prisma.AdminUser$resolvedUncertainArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AdminUserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3415,6 +3899,8 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     generatedTeacherPayments: Prisma.$TeacherPaymentPeriodPayload<ExtArgs>[]
     deactivatedTeachers: Prisma.$TeacherPayload<ExtArgs>[]
     uploadedDocuments: Prisma.$TeacherDocumentPayload<ExtArgs>[]
+    flaggedUncertain: Prisma.$UncertainHistoryPayload<ExtArgs>[]
+    resolvedUncertain: Prisma.$UncertainHistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3838,6 +4324,8 @@ export interface Prisma__AdminUserClient<T, Null = never, ExtArgs extends runtim
   generatedTeacherPayments<T extends Prisma.AdminUser$generatedTeacherPaymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$generatedTeacherPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherPaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deactivatedTeachers<T extends Prisma.AdminUser$deactivatedTeachersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$deactivatedTeachersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   uploadedDocuments<T extends Prisma.AdminUser$uploadedDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$uploadedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  flaggedUncertain<T extends Prisma.AdminUser$flaggedUncertainArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$flaggedUncertainArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UncertainHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resolvedUncertain<T extends Prisma.AdminUser$resolvedUncertainArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$resolvedUncertainArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UncertainHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4670,6 +5158,54 @@ export type AdminUser$uploadedDocumentsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.TeacherDocumentScalarFieldEnum | Prisma.TeacherDocumentScalarFieldEnum[]
+}
+
+/**
+ * AdminUser.flaggedUncertain
+ */
+export type AdminUser$flaggedUncertainArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UncertainHistory
+   */
+  select?: Prisma.UncertainHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UncertainHistory
+   */
+  omit?: Prisma.UncertainHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UncertainHistoryInclude<ExtArgs> | null
+  where?: Prisma.UncertainHistoryWhereInput
+  orderBy?: Prisma.UncertainHistoryOrderByWithRelationInput | Prisma.UncertainHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.UncertainHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UncertainHistoryScalarFieldEnum | Prisma.UncertainHistoryScalarFieldEnum[]
+}
+
+/**
+ * AdminUser.resolvedUncertain
+ */
+export type AdminUser$resolvedUncertainArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UncertainHistory
+   */
+  select?: Prisma.UncertainHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UncertainHistory
+   */
+  omit?: Prisma.UncertainHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UncertainHistoryInclude<ExtArgs> | null
+  where?: Prisma.UncertainHistoryWhereInput
+  orderBy?: Prisma.UncertainHistoryOrderByWithRelationInput | Prisma.UncertainHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.UncertainHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UncertainHistoryScalarFieldEnum | Prisma.UncertainHistoryScalarFieldEnum[]
 }
 
 /**

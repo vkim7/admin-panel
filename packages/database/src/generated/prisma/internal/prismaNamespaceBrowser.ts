@@ -63,6 +63,8 @@ export const ModelName = {
   TransferReason: 'TransferReason',
   LostReason: 'LostReason',
   CancellationReason: 'CancellationReason',
+  UncertainReason: 'UncertainReason',
+  UncertainHistory: 'UncertainHistory',
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
@@ -166,6 +168,7 @@ export const StudentScalarFieldEnum = {
   referralCode: 'referralCode',
   isUncertain: 'isUncertain',
   uncertainFlaggedBy: 'uncertainFlaggedBy',
+  uncertainReasonId: 'uncertainReasonId',
   uncertainComment: 'uncertainComment',
   comment: 'comment',
   amoCrmLeadId: 'amoCrmLeadId',
@@ -292,6 +295,33 @@ export const CancellationReasonScalarFieldEnum = {
 } as const
 
 export type CancellationReasonScalarFieldEnum = (typeof CancellationReasonScalarFieldEnum)[keyof typeof CancellationReasonScalarFieldEnum]
+
+
+export const UncertainReasonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isOther: 'isOther',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type UncertainReasonScalarFieldEnum = (typeof UncertainReasonScalarFieldEnum)[keyof typeof UncertainReasonScalarFieldEnum]
+
+
+export const UncertainHistoryScalarFieldEnum = {
+  id: 'id',
+  studentId: 'studentId',
+  uncertainReasonId: 'uncertainReasonId',
+  otherReason: 'otherReason',
+  flaggedBy: 'flaggedBy',
+  flaggedAt: 'flaggedAt',
+  flaggedById: 'flaggedById',
+  resolvedAt: 'resolvedAt',
+  resolvedById: 'resolvedById'
+} as const
+
+export type UncertainHistoryScalarFieldEnum = (typeof UncertainHistoryScalarFieldEnum)[keyof typeof UncertainHistoryScalarFieldEnum]
 
 
 export const GroupMembershipScalarFieldEnum = {

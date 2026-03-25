@@ -1316,6 +1316,7 @@ Not in the initial build. Tracked here so nothing is forgotten.
 - [ ] **Content management** — deferred, teachers use physical textbooks
 - [ ] **Payment gateway integration** — Click, Payme (currently manual recording only)
 - [x] **Teacher file uploads** — Implemented in Phase F. `TeacherDocument` model, R2 storage via AWS SDK, `TeacherDocumentsSection` on teacher detail page.
+- [ ] **Uncertain history UI** — Display `UncertainHistory` records on the student detail page (e.g., timeline/history section showing flag date, reason, resolution date). Data is stored from Phase G but has no display UI yet.
 
 
 ---
@@ -1373,6 +1374,17 @@ Completed. Three items: availability redesign, rate history editing, teacher fil
 - [x] **#18 — Teacher file uploads** — `TeacherDocument` model added to Prisma schema. AWS SDK deps added. `TeacherDocumentsSection` component on teacher detail page.
 
 **Files changed:** `availability-editor.tsx` (rewrite), `unavailability-form.tsx`, `rate-history.tsx`, `teachers/[id]/page.tsx`, `actions/teachers.ts`, `actions/teacher-payments.ts`, `queries/teachers.ts`, `schemas/teacher.ts`, `schemas/teacher-payment.ts`, `schema.prisma`. New: `payment-history-table.tsx`.
+
+### Phase G: Uncertain Students ✅
+
+Completed. Structured uncertain reasons + history tracking + actions on the uncertain page.
+
+- [x] **#24 — Uncertain reason dialog** — New `UncertainReason` reference table (14 reasons + Other) and `UncertainHistory` model for audit trail. `markUncertain` action replaces the old `toggleUncertain` — opens a dialog with reason dropdown + optional "Other" textarea. `resolveUncertain` action clears the flag and closes the history record. `UncertainToggle` in group student list now opens the dialog when flagging, and directly calls `resolveUncertain` when clearing.
+- [x] **#25 — Uncertain page actions** — `UncertainTable` rewritten with dropdown action menu per row: Remove uncertain mark, Transfer, Send to Reassignment, Send to Lost list. Multi-membership students get a group selector step inside action dialogs. `sendToReassignment` and `sendToLostList` now auto-clear the uncertain flag + resolve history when the student was uncertain. Uncertain page fetches transfer reasons, lost reasons, and available groups for the action dialogs.
+
+**Schema changes:** New `UncertainReason` model, new `UncertainHistory` model, `uncertainReasonId` field added to `Student`. Migration: `20260325120000_add_uncertain_reason_and_history`.
+
+**Files changed:** `schema.prisma`, `seed.ts`, `actions/students.ts`, `queries/students.ts`, `schemas/uncertain.ts` (new), `uncertain-reason-dialog.tsx` (new), `uncertain-table.tsx` (rewrite), `uncertain/page.tsx`, `groups/student-list.tsx`, `groups/[id]/page.tsx`, `__tests__/helpers/db.ts`.
 
 ---
 

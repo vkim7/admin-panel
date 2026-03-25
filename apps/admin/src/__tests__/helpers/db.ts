@@ -39,6 +39,7 @@ const ALL_TABLES = [
   "Teacher",
   "StudentPromotion",
   "Referral",
+  "UncertainHistory",
   "Student",
   "Family",
   "CallHistory",
@@ -49,6 +50,7 @@ const ALL_TABLES = [
   "TransferReason",
   "LostReason",
   "CancellationReason",
+  "UncertainReason",
   "AdminUser",
 ];
 
@@ -73,6 +75,7 @@ const DATA_TABLES = [
   "Teacher",
   "StudentPromotion",
   "Referral",
+  "UncertainHistory",
   "Student",
   "Family",
   "CallHistory",
@@ -145,6 +148,16 @@ export async function seedEssentials() {
       { name: "Trial no-show (Individual)", sortOrder: 12 },
       { name: "Trial — didn't continue (Group)", sortOrder: 13 },
       { name: "Trial — didn't continue (Individual)", sortOrder: 14 },
+    ],
+  });
+
+  // ─── Uncertain Reasons ───────────────────────────────────────────────
+  await prisma.uncertainReason.createMany({
+    data: [
+      { name: "Late to lessons", sortOrder: 1 },
+      { name: "Misses classes", sortOrder: 2 },
+      { name: "Declining engagement", sortOrder: 3 },
+      { name: "Other", isOther: true, sortOrder: 4 },
     ],
   });
 

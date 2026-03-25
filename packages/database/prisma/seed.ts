@@ -106,6 +106,33 @@ async function main() {
     console.log(`Cancellation reasons already exist (${existingCancellationReasons}), skipping`);
   }
 
+  // ─── Uncertain Reasons ─────────────────────────────────────────────────
+  const existingUncertainReasons = await prisma.uncertainReason.count();
+  if (existingUncertainReasons === 0) {
+    await Promise.all(
+      [
+        { name: "Late to lessons", sortOrder: 1 },
+        { name: "Misses classes", sortOrder: 2 },
+        { name: "Declining engagement", sortOrder: 3 },
+        { name: "Frequent rescheduling", sortOrder: 4 },
+        { name: "Doesn't do homework", sortOrder: 5 },
+        { name: "Lack of progress", sortOrder: 6 },
+        { name: "Complaints about difficulty", sortOrder: 7 },
+        { name: "Ignoring tests", sortOrder: 8 },
+        { name: "Asking for discounts", sortOrder: 9 },
+        { name: "Payment delays", sortOrder: 10 },
+        { name: "Questions about refunds", sortOrder: 11 },
+        { name: "Ignores messages", sortOrder: 12 },
+        { name: "Change of environment", sortOrder: 13 },
+        { name: "Group conflict", sortOrder: 14 },
+        { name: "Other", isOther: true, sortOrder: 15 },
+      ].map(r => prisma.uncertainReason.create({ data: r }))
+    );
+    console.log("Created 15 uncertain reasons");
+  } else {
+    console.log(`Uncertain reasons already exist (${existingUncertainReasons}), skipping`);
+  }
+
   // ─── Admin Users ───────────────────────────────────────────────────────
   const existingAdmins = await prisma.adminUser.count();
   if (existingAdmins === 0) {

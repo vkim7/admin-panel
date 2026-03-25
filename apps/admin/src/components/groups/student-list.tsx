@@ -7,7 +7,10 @@ import { MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
+import {
+  TrialStatusBadge,
+  getTrialStatus,
+} from "@/components/ui/trial-status-badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,11 +36,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { TrialActionsMenu } from "./trial-resolution-dialog";
 import { TransferDialog } from "@/components/transfers/transfer-dialog";
-import { toggleUncertain, sendToReassignment, sendToLostList } from "@/lib/actions/students";
+import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import {
+  resolveUncertain,
+  sendToReassignment,
+  sendToLostList,
+} from "@/lib/actions/students";
+import { UncertainReasonDialog } from "@/components/uncertain/uncertain-reason-dialog";
 import { getAge } from "@/lib/helpers/date";
 import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
 
 type LostReason = {
+  id: string;
+  name: string;
+  isOther: boolean;
+};
+
+type UncertainReasonOption = {
   id: string;
   name: string;
   isOther: boolean;
@@ -60,6 +75,7 @@ type MembershipRow = {
     dateOfBirth: Date;
     status: string;
     isUncertain: boolean;
+    uncertainReason: { name: string } | null;
   };
   paymentPeriods: {
     periodYear: number;
@@ -87,35 +103,65 @@ function getCurrentMonthPaymentInfo(periods: MembershipRow["paymentPeriods"]) {
 
 function UncertainToggle({
   studentId,
+  studentName,
   isUncertain,
+  uncertainReasonName,
+  uncertainReasons,
 }: {
   studentId: string;
+  studentName: string;
   isUncertain: boolean;
+  uncertainReasonName: string | null;
+  uncertainReasons?: UncertainReasonOption[];
 }) {
-  const [isPending, startTransition] = useTransition();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
-    <button
-      type="button"
-      disabled={isPending}
-      onClick={() => {
-        startTransition(async () => {
-          await toggleUncertain(studentId, !isUncertain);
-        });
-      }}
-      className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
-        isUncertain
-          ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
-          : "text-muted-foreground hover:bg-muted"
-      }`}
-      title={
-        isUncertain
-          ? "Click to clear uncertain flag"
-          : "Click to mark as uncertain"
-      }
-    >
-      {isPending ? "..." : isUncertain ? "Yes" : "—"}
-    </button>
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          if (isUncertain) {
+            setConfirmOpen(true);
+          } else {
+            setDialogOpen(true);
+          }
+        }}
+        className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+          isUncertain
+            ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+            : "text-muted-foreground hover:bg-muted"
+        }`}
+        title={
+          isUncertain
+            ? "Click to clear uncertain flag"
+            : "Click to mark as uncertain"
+        }
+      >
+        {isUncertain ? (uncertainReasonName ?? "Yes") : "—"}
+      </button>
+      {uncertainReasons && (
+        <UncertainReasonDialog
+          studentId={studentId}
+          studentName={studentName}
+          uncertainReasons={uncertainReasons}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Remove Uncertain Mark"
+        description={`Clear the uncertain flag for ${studentName}?`}
+        confirmLabel="Remove Mark"
+        variant="default"
+        onConfirm={async () => {
+          await resolveUncertain(studentId);
+        }}
+      />
+    </>
   );
 }
 
@@ -189,7 +235,9 @@ function MemberActionsMenu({
           <DialogHeader>
             <DialogTitle>Send to Reassignment</DialogTitle>
             <DialogDescription>
-              {studentName} will be removed from this group. If they have no other active groups, their status will change to Awaiting Reassignment.
+              {studentName} will be removed from this group. If they have no
+              other active groups, their status will change to Awaiting
+              Reassignment.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -200,7 +248,10 @@ function MemberActionsMenu({
               disabled={isPending}
               onClick={() => {
                 startTransition(async () => {
-                  const result = await sendToReassignment(studentId, membershipId);
+                  const result = await sendToReassignment(
+                    studentId,
+                    membershipId,
+                  );
                   if (result?.error) {
                     toast.error(result.error);
                   } else {
@@ -231,14 +282,18 @@ function MemberActionsMenu({
           <DialogHeader>
             <DialogTitle>Send to Lost list</DialogTitle>
             <DialogDescription>
-              {studentName} will be removed from this group. If they have no other active groups, they will be deactivated.
+              {studentName} will be removed from this group. If they have no
+              other active groups, they will be deactivated.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <Label>Reason for leaving</Label>
-              <Select onValueChange={setSelectedReasonId} value={selectedReasonId}>
+              <Select
+                onValueChange={setSelectedReasonId}
+                value={selectedReasonId}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a reason..." />
                 </SelectTrigger>
@@ -305,6 +360,7 @@ export function StudentList({
   availableGroups,
   trialMembershipIdsWithAttendance,
   lostReasons,
+  uncertainReasons,
 }: {
   memberships: MembershipRow[];
   groupId: string;
@@ -314,6 +370,7 @@ export function StudentList({
   availableGroups?: TransferGroup[];
   trialMembershipIdsWithAttendance?: Set<string>;
   lostReasons?: LostReason[];
+  uncertainReasons?: UncertainReasonOption[];
 }) {
   const active = memberships.filter((m) => !m.leaveDate);
   const past = memberships.filter((m) => m.leaveDate);
@@ -337,9 +394,6 @@ export function StudentList({
                 <th className="px-3 py-2 text-left font-medium">Phone</th>
                 <th className="px-3 py-2 text-left font-medium">Age</th>
                 <th className="px-3 py-2 text-left font-medium">Uncertain</th>
-                <th className="px-3 py-2 text-left font-medium">
-                  Lessons Start
-                </th>
                 <th className="px-3 py-2 text-left font-medium">
                   Lessons Paid
                 </th>
@@ -365,6 +419,12 @@ export function StudentList({
                         day: "2-digit",
                         month: "short",
                       })}
+                      {m.lessonsStart != null && (
+                        <span className="text-muted-foreground">
+                          {" "}
+                          (#{m.lessonsStart})
+                        </span>
+                      )}
                     </td>
                     <td className="px-3 py-2">
                       <Link
@@ -375,14 +435,20 @@ export function StudentList({
                       </Link>
                     </td>
                     <td className="px-3 py-2">{m.student.phone}</td>
-                    <td className="px-3 py-2">{getAge(m.student.dateOfBirth)}</td>
+                    <td className="px-3 py-2">
+                      {getAge(m.student.dateOfBirth)}
+                    </td>
                     <td className="px-3 py-2">
                       <UncertainToggle
                         studentId={m.student.id}
+                        studentName={`${m.student.firstName} ${m.student.lastName}`}
                         isUncertain={m.student.isUncertain}
+                        uncertainReasonName={
+                          m.student.uncertainReason?.name ?? null
+                        }
+                        uncertainReasons={uncertainReasons}
                       />
                     </td>
-                    <td className="px-3 py-2">{m.lessonsStart ?? "—"}</td>
                     <td className="px-3 py-2">
                       {m.isTrial ? (
                         "—"
@@ -394,9 +460,12 @@ export function StudentList({
                           />
                           {currentPeriod.paymentStatus !== "PAID" &&
                             (() => {
-                              const rem = currentPeriod.amountDue - currentPeriod.discountAmount - currentPeriod.amountPaid;
+                              const rem =
+                                currentPeriod.amountDue -
+                                currentPeriod.discountAmount -
+                                currentPeriod.amountPaid;
                               return rem > 0 ? (
-                                <span className="text-xs text-destructive">
+                                <span className="text-destructive text-xs">
                                   {rem.toLocaleString("en-US")}
                                 </span>
                               ) : null;
@@ -431,7 +500,10 @@ export function StudentList({
                             studentId={m.student.id}
                             studentName={`${m.student.firstName} ${m.student.lastName}`}
                             groupType={groupType}
-                            hasAttendance={trialMembershipIdsWithAttendance?.has(m.id) ?? false}
+                            hasAttendance={
+                              trialMembershipIdsWithAttendance?.has(m.id) ??
+                              false
+                            }
                             lostReasons={lostReasons}
                             availableGroups={availableGroups}
                             currentGroupPublicId={currentGroupPublicId}
@@ -500,7 +572,8 @@ export function StudentList({
                         <TrialStatusBadge
                           status={getTrialStatus(
                             m.isTrial,
-                            trialMembershipIdsWithAttendance?.has(m.id) ?? false,
+                            trialMembershipIdsWithAttendance?.has(m.id) ??
+                              false,
                           )}
                         />
                       )}
