@@ -38,7 +38,7 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | F | Teacher Management ✅ | D | feedback.md #10,12,18 |
 | G | Uncertain Students ✅ | D | feedback.md #24,25 |
 | H | Promotions, Comments & Constraints ✅ | D | feedback.md #7,28,33 |
-| I | Exams & Scheduling | D | feedback.md #29 |
+| I | Exams & Scheduling ✅ | D | feedback.md #29 |
 | J | Deferred/Complex | — | feedback.md #26 |
 | K | Holidays Management | D | feedback.md #31 |
 | L | Test Suite Revisit | All | — |

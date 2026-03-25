@@ -10,6 +10,7 @@ import {
   generateLessonDates,
   getLevelCategory,
 } from "@/lib/helpers/lesson-generation";
+import { calculateExamDates } from "@/lib/helpers/exam-calculation";
 import { findNextValidDate } from "@/lib/helpers/lesson-scheduling";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
@@ -183,6 +184,17 @@ export async function graduateGroup(data: unknown) {
       },
     });
 
+    // Create Exam records (mid + final)
+    const examDates = calculateExamDates(lessons);
+    if (examDates) {
+      await tx.exam.createMany({
+        data: [
+          { groupId: newGroup.id, type: "MID", scheduledDate: examDates.mid },
+          { groupId: newGroup.id, type: "FINAL", scheduledDate: examDates.final },
+        ],
+      });
+    }
+
     // (b) Per-student decisions
     for (const m of activeMemberships) {
       const decision = decisionMap.get(m.student.id)!;
@@ -280,6 +292,7 @@ export async function graduateGroup(data: unknown) {
   revalidatePath("/reception");
   revalidatePath("/reassignment");
   revalidatePath("/lost");
+  revalidatePath("/exams");
 
   return {
     success: true,

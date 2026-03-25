@@ -833,14 +833,16 @@ Payment reminder texts. Used to track "did we already text this parent?" and whe
 ---
 
 ### Exam
-Mid and final exams per group (both GROUP and INDIVIDUAL types). Set by the teacher based on curriculum progress.
+Mid and final exams per group (both GROUP and INDIVIDUAL types). Auto-created during group creation (both `createGroup` and `graduateGroup`).
 
 | Field | Purpose |
 |-------|---------|
 | groupId | Which group (required) |
 | type | MID or FINAL |
 | scheduledDate | When the exam is planned |
-| comment | Notes about the exam |
+| comment | Notes about the exam (unused, reserved for future) |
+
+**Auto-calculation:** Mid exam = lesson at position `Math.floor(totalLessons / 2)`. Final exam = 3rd lesson from the end (`totalLessons - 2`). Groups with fewer than 5 lessons skip exam creation. Helper: `exam-calculation.ts`.
 
 ---
 

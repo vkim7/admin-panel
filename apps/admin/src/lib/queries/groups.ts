@@ -62,6 +62,14 @@ export async function getGroupById(id: string) {
           lessonDate: true,
         },
       },
+      exams: {
+        select: {
+          id: true,
+          type: true,
+          scheduledDate: true,
+        },
+        orderBy: { scheduledDate: "asc" },
+      },
     },
   });
 }

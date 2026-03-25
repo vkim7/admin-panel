@@ -245,6 +245,22 @@ export default async function GroupDetailPage({
             ))}
           </div>
         </div>
+        {group.exams.length > 0 && (
+          <div>
+            <p className="text-xs font-medium text-muted-foreground">Exams</p>
+            <div className="mt-1 flex flex-wrap gap-1.5">
+              {group.exams.map((exam) => (
+                <span
+                  key={exam.id}
+                  className="rounded-md bg-muted px-1.5 py-0.5 text-xs"
+                >
+                  {exam.type === "MID" ? "Mid" : "Final"} ·{" "}
+                  {new Date(exam.scheduledDate).toLocaleDateString("en-GB")}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         {group.zoomLink && (
           <div>
             <p className="text-xs font-medium text-muted-foreground">

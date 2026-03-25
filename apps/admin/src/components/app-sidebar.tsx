@@ -21,6 +21,7 @@ import {
   Tag,
   UserX,
   Loader2,
+  BookOpen,
 } from "lucide-react";
 
 const navItems = [
@@ -33,6 +34,7 @@ const navItems = [
   { label: "Payment History", href: "/payment-history", icon: Receipt },
   { label: "Students", href: "/students", icon: GraduationCap },
   { label: "Groups", href: "/groups", icon: Layers },
+  { label: "Exams", href: "/exams", icon: BookOpen },
   { label: "Teachers", href: "/teachers", icon: Users },
   { label: "Teacher Pay", href: "/teacher-payments", icon: Banknote },
   { label: "Refunds", href: "/refunds", icon: ReceiptText },

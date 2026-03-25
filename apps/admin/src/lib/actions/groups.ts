@@ -10,6 +10,7 @@ import {
   generateLessonDates,
   getLevelCategory,
 } from "@/lib/helpers/lesson-generation";
+import { calculateExamDates } from "@/lib/helpers/exam-calculation";
 
 export async function createGroup(data: unknown) {
   await requireAdmin();
@@ -135,9 +136,21 @@ export async function createGroup(data: unknown) {
       },
     });
 
+    // 5. Create Exam records (mid + final)
+    const examDates = calculateExamDates(lessons);
+    if (examDates) {
+      await tx.exam.createMany({
+        data: [
+          { groupId: newGroup.id, type: "MID", scheduledDate: examDates.mid },
+          { groupId: newGroup.id, type: "FINAL", scheduledDate: examDates.final },
+        ],
+      });
+    }
+
     return newGroup;
   });
 
+  revalidatePath("/exams");
   redirect(`/groups/${group.id}`);
 }
 
