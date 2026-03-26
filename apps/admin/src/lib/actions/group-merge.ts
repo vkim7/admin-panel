@@ -97,7 +97,7 @@ export async function mergeGroup(data: unknown) {
   }
 
   // Per-student checks
-  const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
+  const languageWarnings: string[] = [];
 
   for (const m of activeMemberships) {
     // Schedule conflict (exclude source group since students are leaving it)
@@ -112,16 +112,13 @@ export async function mergeGroup(data: unknown) {
     );
     if (conflict) return conflict;
 
-    // Language enforcement for BEGINNER/ELEMENTARY
-    if (LANGUAGE_HARD_LEVELS.has(m.student.level)) {
-      const lang = m.student.preferredLanguage;
-      if (lang !== "ANY" && dest.teacher) {
-        if (dest.teacher.teachingLanguage !== "ANY" && lang !== dest.teacher.teachingLanguage) {
-          const langLabel = lang === "UZBEK" ? "Uzbek" : "Russian";
-          return {
-            error: `Student ${m.student.firstName} ${m.student.lastName} requires ${langLabel} instruction at ${m.student.level} level, but destination teacher cannot teach in ${langLabel}`,
-          };
-        }
+    // Language mismatch warning (informational, not blocking)
+    if (m.student.preferredLanguage !== "ANY" && dest.teacher) {
+      if (dest.teacher.teachingLanguage !== "ANY" && m.student.preferredLanguage !== dest.teacher.teachingLanguage) {
+        const langLabel = m.student.preferredLanguage === "UZBEK" ? "Uzbek" : "Russian";
+        languageWarnings.push(
+          `${m.student.firstName} ${m.student.lastName} prefers ${langLabel} instruction but destination teacher doesn't teach in ${langLabel}`,
+        );
       }
     }
 
@@ -253,7 +250,11 @@ export async function mergeGroup(data: unknown) {
     revalidatePath(`/students/${m.student.id}`);
   }
 
-  return { success: true, movedCount: activeMemberships.length };
+  return {
+    success: true,
+    movedCount: activeMemberships.length,
+    ...(languageWarnings.length > 0 && { warning: languageWarnings.join(". ") }),
+  };
 }
 
 /**

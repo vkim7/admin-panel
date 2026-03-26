@@ -81,6 +81,9 @@ export function MergeDialog({
         toast.success(
           `Group ${sourceGroupPublicId} merged successfully. ${result.movedCount} student(s) moved.`,
         );
+        if ("warning" in result && result.warning) {
+          toast.warning(result.warning);
+        }
         setOpen(false);
         resetForm();
       }

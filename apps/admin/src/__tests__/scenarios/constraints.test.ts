@@ -63,7 +63,7 @@ describe("C#3: group capacity", () => {
     });
 
     expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/capacity|slot/i);
+    expect((result as { error: string }).error).toMatch(/capacity|slot/i);
   });
 });
 
@@ -104,7 +104,7 @@ describe("C#40: schedule conflicts", () => {
     });
 
     expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/already in group.*at this time/i);
+    expect((result as { error: string }).error).toMatch(/already in group.*at this time/i);
   });
 
   it("allows adding student to non-overlapping group (different days)", async () => {
@@ -141,10 +141,10 @@ describe("C#40: schedule conflicts", () => {
   });
 });
 
-// ─── C#40: Language Enforcement ─────────────────────────────────────────────
+// ─── Language Mismatch Warning ──────────────────────────────────────────────
 
-describe("C#40: language enforcement", () => {
-  it("rejects BEGINNER student (UZBEK) assigned to RUSSIAN-only teacher", async () => {
+describe("language mismatch warning", () => {
+  it("warns when BEGINNER student (UZBEK) assigned to RUSSIAN-only teacher", async () => {
     const { addStudentsToGroup } = await importMemberships();
 
     const teacher = await createTestTeacher({
@@ -167,11 +167,12 @@ describe("C#40: language enforcement", () => {
       comment: null,
     });
 
-    expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/uzbek/i);
+    expect(result).toHaveProperty("success", true);
+    expect(result).toHaveProperty("warning");
+    expect((result as { warning: string }).warning).toMatch(/uzbek/i);
   });
 
-  it("allows INTERMEDIATE student regardless of language preference (soft only)", async () => {
+  it("warns for INTERMEDIATE student with language mismatch too", async () => {
     const { addStudentsToGroup } = await importMemberships();
 
     const teacher = await createTestTeacher({
@@ -194,7 +195,9 @@ describe("C#40: language enforcement", () => {
       comment: null,
     });
 
-    expect(result).toEqual({ success: true });
+    expect(result).toHaveProperty("success", true);
+    expect(result).toHaveProperty("warning");
+    expect((result as { warning: string }).warning).toMatch(/uzbek/i);
   });
 });
 

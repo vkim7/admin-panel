@@ -290,7 +290,7 @@ describe("merge validation", () => {
     });
 
     expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/same level/i);
+    expect((result as { error: string }).error).toMatch(/same level/i);
   });
 
   it("source has unresolved trials → error (C#2)", async () => {
@@ -316,7 +316,7 @@ describe("merge validation", () => {
     });
 
     expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/unresolved trial/i);
+    expect((result as { error: string }).error).toMatch(/unresolved trial/i);
   });
 
   it("destination capacity exceeded → error (C#3)", async () => {
@@ -343,7 +343,7 @@ describe("merge validation", () => {
     });
 
     expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/cannot accommodate/i);
+    expect((result as { error: string }).error).toMatch(/cannot accommodate/i);
   });
 });
 
@@ -397,7 +397,7 @@ describe("merge execution", () => {
     });
 
     expect(result).toHaveProperty("success", true);
-    expect(result.movedCount).toBe(2);
+    expect((result as { movedCount: number }).movedCount).toBe(2);
 
     // Source memberships closed
     const sourceMemberships = await prisma.groupMembership.findMany({

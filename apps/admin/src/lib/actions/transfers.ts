@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import { transferStudentSchema } from "@/schemas/transfer";
-import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
+import {
+  getLevelCategory,
+  calculateLessonsStart,
+} from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
@@ -24,14 +27,25 @@ export async function transferStudent(data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { membershipId, destinationGroupId, transferReasonId, otherTransferReason } = parsed.data;
+  const {
+    membershipId,
+    destinationGroupId,
+    transferReasonId,
+    otherTransferReason,
+  } = parsed.data;
 
   // Load source membership
   const membership = await prisma.groupMembership.findUnique({
     where: { id: membershipId },
     include: {
       student: {
-        select: { id: true, firstName: true, lastName: true, level: true, preferredLanguage: true },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          level: true,
+          preferredLanguage: true,
+        },
       },
       group: {
         select: {
@@ -60,7 +74,9 @@ export async function transferStudent(data: unknown) {
   }
 
   if (membership.isTrial) {
-    return { error: "Cannot transfer a trial student. Resolve the trial first." };
+    return {
+      error: "Cannot transfer a trial student. Resolve the trial first.",
+    };
   }
 
   // Load destination group
@@ -127,17 +143,15 @@ export async function transferStudent(data: unknown) {
   );
   if (conflict) return conflict;
 
-  // Language enforcement for BEGINNER/ELEMENTARY
-  const LANGUAGE_HARD_LEVELS = new Set(["BEGINNER", "ELEMENTARY"]);
-  if (LANGUAGE_HARD_LEVELS.has(membership.student.level)) {
-    const lang = membership.student.preferredLanguage;
-    if (lang !== "ANY" && destGroup.teacher) {
-      if (destGroup.teacher.teachingLanguage !== "ANY" && lang !== destGroup.teacher.teachingLanguage) {
-        const langLabel = lang === "UZBEK" ? "Uzbek" : "Russian";
-        return {
-          error: `Student requires ${langLabel} instruction at ${membership.student.level} level, but destination teacher cannot teach in ${langLabel}`,
-        };
-      }
+  // Language mismatch warning (informational, not blocking)
+  let languageWarning: string | undefined;
+  if (membership.student.preferredLanguage !== "ANY" && destGroup.teacher) {
+    if (
+      destGroup.teacher.teachingLanguage !== "ANY" &&
+      membership.student.preferredLanguage !== destGroup.teacher.teachingLanguage
+    ) {
+      const langLabel = membership.student.preferredLanguage === "UZBEK" ? "Uzbek" : "Russian";
+      languageWarning = `${membership.student.firstName} ${membership.student.lastName} prefers ${langLabel} instruction but destination teacher doesn't teach in ${langLabel}`;
     }
   }
 
@@ -270,7 +284,12 @@ export async function transferStudent(data: unknown) {
   revalidatePath("/payments");
   revalidatePath("/schedule");
 
-  return { success: true, transferCredit: result.transferCredit, refundAmount: result.refundAmount };
+  return {
+    success: true,
+    transferCredit: result.transferCredit,
+    refundAmount: result.refundAmount,
+    ...(languageWarning && { warning: languageWarning }),
+  };
 }
 
 /**

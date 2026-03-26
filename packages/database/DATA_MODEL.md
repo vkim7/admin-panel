@@ -77,7 +77,7 @@ Teachers who conduct lessons via Zoom.
 | phone | Teacher's phone number |
 | telegramId | Optional — for future teacher app auth |
 | levels[] | Which levels they can teach (Postgres array) |
-| teachingLanguage | Teaching language capability: UZBEK, RUSSIAN, or ANY (both). Reuses the PreferredLanguage enum. Used for hard enforcement at BEGINNER/ELEMENTARY — student can't be assigned to a group whose teacher doesn't speak their preferred language. |
+| teachingLanguage | Teaching language capability: UZBEK, RUSSIAN, or ANY (both). Reuses the PreferredLanguage enum. A mismatch between student's preferred language and teacher's teaching language triggers a warning (not a blocker) — admin can still proceed with the assignment. |
 | isActive | Soft-delete flag |
 | deactivatedAt | When isActive was set to false (audit trail) |
 | deactivatedById | Which admin deactivated this teacher |
@@ -123,7 +123,7 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 | familyId | Links to Family for minors (under 18 at enrollment). Null for adults. |
 | preferredDays[] | Scheduling preference, e.g., [1, 3, 5] for Mon/Wed/Fri |
 | preferredTimeSlots[] | Time slot preferences, e.g., ["14:30", "16:00"] — subset of fixed TIME_SLOTS |
-| preferredLanguage | UZBEK, RUSSIAN, or ANY. Defaults to ANY for new students. **Hard enforcement** at BEGINNER and ELEMENTARY: student cannot be assigned to a group whose teacher can't teach in the selected language (blocked at server action level and excluded from assign dialog suggestions). **Soft preference** at PRE_INTERMEDIATE+: used for sorting/boosting in suggestions but doesn't block assignment. |
+| preferredLanguage | UZBEK, RUSSIAN, or ANY. Defaults to ANY for new students. A mismatch with the group teacher's language triggers a warning (all levels) — admin can still proceed. Used for sorting/boosting in assign dialog suggestions. |
 | referralCode | Unique code for referral tracking |
 | isUncertain | Manual flag — teacher/admin gut feeling that student may leave |
 | uncertainFlaggedBy | Who flagged: TEACHER or ADMIN |

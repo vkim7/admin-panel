@@ -105,6 +105,9 @@ export function TransferDialog({
         if (credit) msg += `. Transfer credit: ${formatUZS(credit)}`;
         if (refund) msg += `. Pending refund: ${formatUZS(refund)}`;
         toast.success(msg);
+        if ("warning" in result && result.warning) {
+          toast.warning(result.warning);
+        }
         setOpen(false);
         resetForm();
       }
