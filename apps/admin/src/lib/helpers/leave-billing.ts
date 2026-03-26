@@ -80,9 +80,20 @@ export async function performLeaveBilling({
 
     const newTotalLessons = lessonsUpToLeave;
     const newAmountDue = newTotalLessons * currentPeriod.pricePerLesson;
+
+    // Recalculate discount from AppliedPromotion records against the new amountDue.
+    // Percentage-based promotions (non-TRIAL) were calculated on the original amountDue
+    // and must be re-derived so the discount doesn't exceed the smaller period.
+    const newDiscountAmount = await recalculateDiscount(
+      currentPeriod.id,
+      newAmountDue,
+      currentPeriod.pricePerLesson,
+      tx,
+    );
+
     const newStatus = calculatePaymentStatus(
       newAmountDue,
-      currentPeriod.discountAmount,
+      newDiscountAmount,
       currentPeriod.amountPaid,
     );
 
@@ -96,7 +107,7 @@ export async function performLeaveBilling({
         previousDiscountAmount: currentPeriod.discountAmount,
         newTotalLessons,
         newAmountDue,
-        newDiscountAmount: currentPeriod.discountAmount,
+        newDiscountAmount,
         adjustedById: adminId,
       },
     });
@@ -107,6 +118,7 @@ export async function performLeaveBilling({
       data: {
         totalLessons: newTotalLessons,
         amountDue: newAmountDue,
+        discountAmount: newDiscountAmount,
         paymentStatus: newStatus,
         isPartialPeriod: true,
       },
@@ -115,7 +127,7 @@ export async function performLeaveBilling({
     adjustedPeriodId = currentPeriod.id;
 
     // Calculate overpayment on current period
-    const effectiveDue = newAmountDue - currentPeriod.discountAmount;
+    const effectiveDue = Math.max(0, newAmountDue - newDiscountAmount);
     overpayment = Math.max(0, currentPeriod.amountPaid - effectiveDue);
   }
 
@@ -168,4 +180,74 @@ export async function performLeaveBilling({
     adjustedPeriodId,
     futurePeriodsDeleted: futureResult.count,
   };
+}
+
+/**
+ * Recalculate discount for a billing period after totalLessons/amountDue changed.
+ *
+ * Re-derives each AppliedPromotion's discount using the promotion's original rules
+ * (percentage vs fixed, TRIAL base = pricePerLesson vs amountDue). Updates each
+ * AppliedPromotion record and returns the new total, clamped to newAmountDue.
+ */
+async function recalculateDiscount(
+  periodId: string,
+  newAmountDue: number,
+  pricePerLesson: number,
+  tx: TxClient,
+): Promise<number> {
+  const appliedPromotions = await tx.appliedPromotion.findMany({
+    where: { studentPaymentPeriodId: periodId },
+    include: {
+      studentPromotion: {
+        include: { promotion: true },
+      },
+    },
+  });
+
+  if (appliedPromotions.length === 0) return 0;
+
+  let totalDiscount = 0;
+  const updates: { id: string; discountAmount: number }[] = [];
+
+  for (const ap of appliedPromotions) {
+    const promo = ap.studentPromotion.promotion;
+
+    let discount: number;
+    if (promo.discountType === "PERCENTAGE") {
+      // Mirror the logic in promotions.ts: TRIAL uses pricePerLesson, others use amountDue
+      const base = promo.type === "TRIAL" ? pricePerLesson : newAmountDue;
+      discount = Math.floor((base * (promo.discountPercent ?? 0)) / 100);
+    } else {
+      discount = promo.discountAmount ?? 0;
+    }
+
+    discount = Math.max(0, discount);
+    totalDiscount += discount;
+    updates.push({ id: ap.id, discountAmount: discount });
+  }
+
+  // Clamp total to newAmountDue, proportionally reduce if needed
+  const clampedTotal = Math.min(totalDiscount, newAmountDue);
+  if (clampedTotal < totalDiscount && totalDiscount > 0) {
+    const ratio = clampedTotal / totalDiscount;
+    let distributed = 0;
+    for (let i = 0; i < updates.length; i++) {
+      if (i === updates.length - 1) {
+        updates[i]!.discountAmount = clampedTotal - distributed;
+      } else {
+        updates[i]!.discountAmount = Math.floor(updates[i]!.discountAmount * ratio);
+        distributed += updates[i]!.discountAmount;
+      }
+    }
+  }
+
+  // Persist updated AppliedPromotion amounts
+  for (const u of updates) {
+    await tx.appliedPromotion.update({
+      where: { id: u.id },
+      data: { discountAmount: u.discountAmount },
+    });
+  }
+
+  return clampedTotal;
 }
