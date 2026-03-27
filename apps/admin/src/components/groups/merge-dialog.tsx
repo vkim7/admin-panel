@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/dialog";
 import { Merge, Check, AlertTriangle } from "lucide-react";
 import { DAYS_LABEL, LEVEL_SHORT, STAGE_SHORT } from "@/lib/constants";
+import { EffectiveDatePicker } from "@/components/shared/effective-date-picker";
+import { getUzbekistanTodayStr } from "@/lib/helpers/date";
 
 interface MergeDialogProps {
   sourceGroupId: string;
@@ -43,6 +45,7 @@ export function MergeDialog({
   const [search, setSearch] = useState("");
   const [billingPreview, setBillingPreview] = useState<BillingPreview>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [effectiveDate, setEffectiveDate] = useState("");
   const [confirmed, setConfirmed] = useState(false);
 
   // Fetch billing preview when destination selected
@@ -68,18 +71,26 @@ export function MergeDialog({
     };
   }, [sourceGroupId, selectedGroupId]);
 
+  const isFutureDate = effectiveDate > getUzbekistanTodayStr();
+
   function handleMerge() {
     startTransition(async () => {
       const result = await mergeGroup({
         sourceGroupId,
         destinationGroupId: selectedGroupId,
+        effectiveDate,
       });
 
       if ("error" in result) {
         toast.error(result.error);
+      } else if ("scheduled" in result && result.scheduled) {
+        toast.success(`Merge of ${sourceGroupPublicId} scheduled for ${effectiveDate}`);
+        setOpen(false);
+        resetForm();
       } else {
+        const count = "movedCount" in result ? result.movedCount : 0;
         toast.success(
-          `Group ${sourceGroupPublicId} merged successfully. ${result.movedCount} student(s) moved.`,
+          `Group ${sourceGroupPublicId} merged successfully. ${count} student(s) moved.`,
         );
         if ("warning" in result && result.warning) {
           toast.warning(result.warning);
@@ -92,6 +103,7 @@ export function MergeDialog({
 
   function resetForm() {
     setSelectedGroupId("");
+    setEffectiveDate("");
     setSearch("");
     setBillingPreview(null);
     setConfirmed(false);
@@ -119,7 +131,7 @@ export function MergeDialog({
     ? selectedGroup._count.memberships + activeStudentCount <= selectedGroup.maxStudents
     : false;
 
-  const canSubmit = selectedGroupId && hasCapacity && confirmed;
+  const canSubmit = selectedGroupId && hasCapacity && effectiveDate && confirmed;
 
   return (
     <Dialog
@@ -205,8 +217,15 @@ export function MergeDialog({
             </div>
           </div>
 
-          {/* Billing preview */}
-          {selectedGroupId && (
+          {/* Effective date */}
+          <EffectiveDatePicker
+            value={effectiveDate}
+            onChange={setEffectiveDate}
+            disabled={isPending}
+          />
+
+          {/* Billing preview (only for today) */}
+          {selectedGroupId && !isFutureDate && (
             <div className="space-y-2 rounded-md border p-3">
               <p className="text-sm font-medium">Billing Impact</p>
               {previewLoading ? (
@@ -242,6 +261,12 @@ export function MergeDialog({
             </div>
           )}
 
+          {isFutureDate && selectedGroupId && (
+            <p className="text-muted-foreground text-sm">
+              Billing will be calculated on the effective date.
+            </p>
+          )}
+
           {/* Confirmation */}
           {selectedGroupId && selectedGroup && !previewLoading && (
             <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3">
@@ -274,7 +299,7 @@ export function MergeDialog({
             onClick={handleMerge}
             disabled={!canSubmit || isPending}
           >
-            {isPending ? "Merging..." : "Merge Group"}
+            {isPending ? "Merging..." : isFutureDate ? "Schedule Merge" : "Merge Group"}
           </Button>
         </DialogFooter>
       </DialogContent>

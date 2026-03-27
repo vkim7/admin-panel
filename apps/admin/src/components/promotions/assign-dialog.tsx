@@ -90,7 +90,7 @@ export function AssignPromotionDialog({ studentId, promotions }: AssignDialogPro
           <div className="space-y-2">
             <Label>Promotion</Label>
             <Select value={promotionId} onValueChange={setPromotionId}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a promotion" />
               </SelectTrigger>
               <SelectContent>

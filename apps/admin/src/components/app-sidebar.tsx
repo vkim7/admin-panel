@@ -23,6 +23,7 @@ import {
   UserX,
   Loader2,
   BookOpen,
+  Clock,
 } from "lucide-react";
 
 interface NavItem {
@@ -46,6 +47,7 @@ const navSections: NavSection[] = [
       { label: "Uncertain", href: "/uncertain", icon: AlertTriangle },
       { label: "Lost", href: "/lost", icon: UserX },
       { label: "Substitutions", href: "/pending-lessons", icon: AlertCircle },
+      { label: "Scheduled", href: "/scheduled-actions", icon: Clock },
     ],
   },
   {
@@ -85,6 +87,7 @@ interface AppSidebarProps {
   pendingResolutionCount?: number;
   pendingRefundCount?: number;
   lostCount?: number;
+  scheduledCount?: number;
 }
 
 const badgeConfig: Record<string, keyof Omit<AppSidebarProps, "adminName">> = {
@@ -94,6 +97,7 @@ const badgeConfig: Record<string, keyof Omit<AppSidebarProps, "adminName">> = {
   "/pending-lessons": "pendingResolutionCount",
   "/refunds": "pendingRefundCount",
   "/lost": "lostCount",
+  "/scheduled-actions": "scheduledCount",
 };
 
 export function AppSidebar({
@@ -104,6 +108,7 @@ export function AppSidebar({
   pendingResolutionCount,
   pendingRefundCount,
   lostCount,
+  scheduledCount,
 }: AppSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -119,6 +124,7 @@ export function AppSidebar({
     pendingResolutionCount,
     pendingRefundCount,
     lostCount,
+    scheduledCount,
   };
 
   function handleNav(href: string) {

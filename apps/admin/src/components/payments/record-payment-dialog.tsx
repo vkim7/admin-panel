@@ -117,7 +117,7 @@ export function RecordPaymentDialog({
             <div className="space-y-2">
               <Label htmlFor="method">Payment Method</Label>
               <Select value={method} onValueChange={setMethod} required>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select method" />
                 </SelectTrigger>
                 <SelectContent>

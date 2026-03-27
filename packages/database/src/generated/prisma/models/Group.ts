@@ -357,6 +357,8 @@ export type GroupWhereInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodListRelationFilter
   scheduleSlots?: Prisma.TeacherScheduleSlotListRelationFilter
   teacherHistory?: Prisma.GroupTeacherHistoryListRelationFilter
+  scheduledActionsAsSource?: Prisma.ScheduledActionListRelationFilter
+  scheduledActionsAsDest?: Prisma.ScheduledActionListRelationFilter
 }
 
 export type GroupOrderByWithRelationInput = {
@@ -393,6 +395,8 @@ export type GroupOrderByWithRelationInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodOrderByRelationAggregateInput
   scheduleSlots?: Prisma.TeacherScheduleSlotOrderByRelationAggregateInput
   teacherHistory?: Prisma.GroupTeacherHistoryOrderByRelationAggregateInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionOrderByRelationAggregateInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionOrderByRelationAggregateInput
 }
 
 export type GroupWhereUniqueInput = Prisma.AtLeast<{
@@ -432,6 +436,8 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodListRelationFilter
   scheduleSlots?: Prisma.TeacherScheduleSlotListRelationFilter
   teacherHistory?: Prisma.GroupTeacherHistoryListRelationFilter
+  scheduledActionsAsSource?: Prisma.ScheduledActionListRelationFilter
+  scheduledActionsAsDest?: Prisma.ScheduledActionListRelationFilter
 }, "id" | "publicId" | "sequenceNumber">
 
 export type GroupOrderByWithAggregationInput = {
@@ -519,6 +525,8 @@ export type GroupCreateInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateInput = {
@@ -552,6 +560,8 @@ export type GroupUncheckedCreateInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUpdateInput = {
@@ -584,6 +594,8 @@ export type GroupUpdateInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateInput = {
@@ -617,6 +629,8 @@ export type GroupUncheckedUpdateInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateManyInput = {
@@ -1068,6 +1082,38 @@ export type GroupUpdateOneRequiredWithoutExamsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutExamsInput, Prisma.GroupUpdateWithoutExamsInput>, Prisma.GroupUncheckedUpdateWithoutExamsInput>
 }
 
+export type GroupCreateNestedOneWithoutScheduledActionsAsSourceInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsSourceInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutScheduledActionsAsSourceInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupCreateNestedOneWithoutScheduledActionsAsDestInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsDestInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutScheduledActionsAsDestInput
+  connect?: Prisma.GroupWhereUniqueInput
+}
+
+export type GroupUpdateOneWithoutScheduledActionsAsSourceNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsSourceInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutScheduledActionsAsSourceInput
+  upsert?: Prisma.GroupUpsertWithoutScheduledActionsAsSourceInput
+  disconnect?: Prisma.GroupWhereInput | boolean
+  delete?: Prisma.GroupWhereInput | boolean
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutScheduledActionsAsSourceInput, Prisma.GroupUpdateWithoutScheduledActionsAsSourceInput>, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput>
+}
+
+export type GroupUpdateOneWithoutScheduledActionsAsDestNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsDestInput>
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutScheduledActionsAsDestInput
+  upsert?: Prisma.GroupUpsertWithoutScheduledActionsAsDestInput
+  disconnect?: Prisma.GroupWhereInput | boolean
+  delete?: Prisma.GroupWhereInput | boolean
+  connect?: Prisma.GroupWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutScheduledActionsAsDestInput, Prisma.GroupUpdateWithoutScheduledActionsAsDestInput>, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsDestInput>
+}
+
 export type GroupCreateWithoutTeacherInput = {
   id?: string
   publicId?: string
@@ -1098,6 +1144,8 @@ export type GroupCreateWithoutTeacherInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutTeacherInput = {
@@ -1130,6 +1178,8 @@ export type GroupUncheckedCreateWithoutTeacherInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutTeacherInput = {
@@ -1214,6 +1264,8 @@ export type GroupCreateWithoutScheduleSlotsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutScheduleSlotsInput = {
@@ -1246,6 +1298,8 @@ export type GroupUncheckedCreateWithoutScheduleSlotsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutScheduleSlotsInput = {
@@ -1293,6 +1347,8 @@ export type GroupUpdateWithoutScheduleSlotsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutScheduleSlotsInput = {
@@ -1325,6 +1381,8 @@ export type GroupUncheckedUpdateWithoutScheduleSlotsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutMergedFromGroupsInput = {
@@ -1357,6 +1415,8 @@ export type GroupCreateWithoutMergedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMergedFromGroupsInput = {
@@ -1389,6 +1449,8 @@ export type GroupUncheckedCreateWithoutMergedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMergedFromGroupsInput = {
@@ -1426,6 +1488,8 @@ export type GroupCreateWithoutMergedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMergedIntoGroupInput = {
@@ -1458,6 +1522,8 @@ export type GroupUncheckedCreateWithoutMergedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMergedIntoGroupInput = {
@@ -1500,6 +1566,8 @@ export type GroupCreateWithoutGraduatedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutGraduatedFromGroupsInput = {
@@ -1532,6 +1600,8 @@ export type GroupUncheckedCreateWithoutGraduatedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutGraduatedFromGroupsInput = {
@@ -1569,6 +1639,8 @@ export type GroupCreateWithoutGraduatedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutGraduatedIntoGroupInput = {
@@ -1601,6 +1673,8 @@ export type GroupUncheckedCreateWithoutGraduatedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutGraduatedIntoGroupInput = {
@@ -1653,6 +1727,8 @@ export type GroupUpdateWithoutMergedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMergedFromGroupsInput = {
@@ -1685,6 +1761,8 @@ export type GroupUncheckedUpdateWithoutMergedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUpsertWithWhereUniqueWithoutMergedIntoGroupInput = {
@@ -1743,6 +1821,8 @@ export type GroupUpdateWithoutGraduatedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutGraduatedFromGroupsInput = {
@@ -1775,6 +1855,8 @@ export type GroupUncheckedUpdateWithoutGraduatedFromGroupsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUpsertWithWhereUniqueWithoutGraduatedIntoGroupInput = {
@@ -1823,6 +1905,8 @@ export type GroupCreateWithoutTeacherHistoryInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutTeacherHistoryInput = {
@@ -1855,6 +1939,8 @@ export type GroupUncheckedCreateWithoutTeacherHistoryInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutTeacherHistoryInput = {
@@ -1902,6 +1988,8 @@ export type GroupUpdateWithoutTeacherHistoryInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutTeacherHistoryInput = {
@@ -1934,6 +2022,8 @@ export type GroupUncheckedUpdateWithoutTeacherHistoryInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutMembershipsInput = {
@@ -1966,6 +2056,8 @@ export type GroupCreateWithoutMembershipsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutMembershipsInput = {
@@ -1998,6 +2090,8 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutMembershipsInput = {
@@ -2045,6 +2139,8 @@ export type GroupUpdateWithoutMembershipsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMembershipsInput = {
@@ -2077,6 +2173,8 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutLessonsInput = {
@@ -2109,6 +2207,8 @@ export type GroupCreateWithoutLessonsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutLessonsInput = {
@@ -2141,6 +2241,8 @@ export type GroupUncheckedCreateWithoutLessonsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutLessonsInput = {
@@ -2188,6 +2290,8 @@ export type GroupUpdateWithoutLessonsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutLessonsInput = {
@@ -2220,6 +2324,8 @@ export type GroupUncheckedUpdateWithoutLessonsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutAttendanceRecordsInput = {
@@ -2252,6 +2358,8 @@ export type GroupCreateWithoutAttendanceRecordsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutAttendanceRecordsInput = {
@@ -2284,6 +2392,8 @@ export type GroupUncheckedCreateWithoutAttendanceRecordsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutAttendanceRecordsInput = {
@@ -2331,6 +2441,8 @@ export type GroupUpdateWithoutAttendanceRecordsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutAttendanceRecordsInput = {
@@ -2363,6 +2475,8 @@ export type GroupUncheckedUpdateWithoutAttendanceRecordsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutStudentPaymentPeriodsInput = {
@@ -2395,6 +2509,8 @@ export type GroupCreateWithoutStudentPaymentPeriodsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutStudentPaymentPeriodsInput = {
@@ -2427,6 +2543,8 @@ export type GroupUncheckedCreateWithoutStudentPaymentPeriodsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutStudentPaymentPeriodsInput = {
@@ -2474,6 +2592,8 @@ export type GroupUpdateWithoutStudentPaymentPeriodsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutStudentPaymentPeriodsInput = {
@@ -2506,6 +2626,8 @@ export type GroupUncheckedUpdateWithoutStudentPaymentPeriodsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutTeacherPaymentPeriodsInput = {
@@ -2538,6 +2660,8 @@ export type GroupCreateWithoutTeacherPaymentPeriodsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutTeacherPaymentPeriodsInput = {
@@ -2570,6 +2694,8 @@ export type GroupUncheckedCreateWithoutTeacherPaymentPeriodsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutTeacherPaymentPeriodsInput = {
@@ -2617,6 +2743,8 @@ export type GroupUpdateWithoutTeacherPaymentPeriodsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutTeacherPaymentPeriodsInput = {
@@ -2649,6 +2777,8 @@ export type GroupUncheckedUpdateWithoutTeacherPaymentPeriodsInput = {
   studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupCreateWithoutExamsInput = {
@@ -2681,6 +2811,8 @@ export type GroupCreateWithoutExamsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupUncheckedCreateWithoutExamsInput = {
@@ -2713,6 +2845,8 @@ export type GroupUncheckedCreateWithoutExamsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
 }
 
 export type GroupCreateOrConnectWithoutExamsInput = {
@@ -2760,6 +2894,8 @@ export type GroupUpdateWithoutExamsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutExamsInput = {
@@ -2792,6 +2928,310 @@ export type GroupUncheckedUpdateWithoutExamsInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
+}
+
+export type GroupCreateWithoutScheduledActionsAsSourceInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  skipAutoGraduation?: boolean
+  zoomLink?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
+  mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
+  graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
+}
+
+export type GroupUncheckedCreateWithoutScheduledActionsAsSourceInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  teacherId: string
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  mergedIntoGroupId?: string | null
+  skipAutoGraduation?: boolean
+  graduatedIntoGroupId?: string | null
+  zoomLink?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamUncheckedCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
+}
+
+export type GroupCreateOrConnectWithoutScheduledActionsAsSourceInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsSourceInput>
+}
+
+export type GroupCreateWithoutScheduledActionsAsDestInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  skipAutoGraduation?: boolean
+  zoomLink?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
+  mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
+  graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+}
+
+export type GroupUncheckedCreateWithoutScheduledActionsAsDestInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  teacherId: string
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  mergedIntoGroupId?: string | null
+  skipAutoGraduation?: boolean
+  graduatedIntoGroupId?: string | null
+  zoomLink?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamUncheckedCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+}
+
+export type GroupCreateOrConnectWithoutScheduledActionsAsDestInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsDestInput>
+}
+
+export type GroupUpsertWithoutScheduledActionsAsSourceInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsSourceInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutScheduledActionsAsSourceInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutScheduledActionsAsSourceInput, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput>
+}
+
+export type GroupUpdateWithoutScheduledActionsAsSourceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
+  mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
+  graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUncheckedUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
+}
+
+export type GroupUpsertWithoutScheduledActionsAsDestInput = {
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsDestInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedCreateWithoutScheduledActionsAsDestInput>
+  where?: Prisma.GroupWhereInput
+}
+
+export type GroupUpdateToOneWithWhereWithoutScheduledActionsAsDestInput = {
+  where?: Prisma.GroupWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutScheduledActionsAsDestInput, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsDestInput>
+}
+
+export type GroupUpdateWithoutScheduledActionsAsDestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
+  mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
+  graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutScheduledActionsAsDestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUncheckedUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
 }
 
 export type GroupCreateManyTeacherInput = {
@@ -2845,6 +3285,8 @@ export type GroupUpdateWithoutTeacherInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutTeacherInput = {
@@ -2877,6 +3319,8 @@ export type GroupUncheckedUpdateWithoutTeacherInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutTeacherInput = {
@@ -2974,6 +3418,8 @@ export type GroupUpdateWithoutMergedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutMergedIntoGroupInput = {
@@ -3006,6 +3452,8 @@ export type GroupUncheckedUpdateWithoutMergedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutMergedIntoGroupInput = {
@@ -3059,6 +3507,8 @@ export type GroupUpdateWithoutGraduatedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateWithoutGraduatedIntoGroupInput = {
@@ -3091,6 +3541,8 @@ export type GroupUncheckedUpdateWithoutGraduatedIntoGroupInput = {
   teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
   scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
 }
 
 export type GroupUncheckedUpdateManyWithoutGraduatedIntoGroupInput = {
@@ -3131,6 +3583,8 @@ export type GroupCountOutputType = {
   teacherPaymentPeriods: number
   scheduleSlots: number
   teacherHistory: number
+  scheduledActionsAsSource: number
+  scheduledActionsAsDest: number
 }
 
 export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3144,6 +3598,8 @@ export type GroupCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   teacherPaymentPeriods?: boolean | GroupCountOutputTypeCountTeacherPaymentPeriodsArgs
   scheduleSlots?: boolean | GroupCountOutputTypeCountScheduleSlotsArgs
   teacherHistory?: boolean | GroupCountOutputTypeCountTeacherHistoryArgs
+  scheduledActionsAsSource?: boolean | GroupCountOutputTypeCountScheduledActionsAsSourceArgs
+  scheduledActionsAsDest?: boolean | GroupCountOutputTypeCountScheduledActionsAsDestArgs
 }
 
 /**
@@ -3226,6 +3682,20 @@ export type GroupCountOutputTypeCountTeacherHistoryArgs<ExtArgs extends runtime.
   where?: Prisma.GroupTeacherHistoryWhereInput
 }
 
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountScheduledActionsAsSourceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScheduledActionWhereInput
+}
+
+/**
+ * GroupCountOutputType without action
+ */
+export type GroupCountOutputTypeCountScheduledActionsAsDestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScheduledActionWhereInput
+}
+
 
 export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3261,6 +3731,8 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   teacherPaymentPeriods?: boolean | Prisma.Group$teacherPaymentPeriodsArgs<ExtArgs>
   scheduleSlots?: boolean | Prisma.Group$scheduleSlotsArgs<ExtArgs>
   teacherHistory?: boolean | Prisma.Group$teacherHistoryArgs<ExtArgs>
+  scheduledActionsAsSource?: boolean | Prisma.Group$scheduledActionsAsSourceArgs<ExtArgs>
+  scheduledActionsAsDest?: boolean | Prisma.Group$scheduledActionsAsDestArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
 
@@ -3354,6 +3826,8 @@ export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   teacherPaymentPeriods?: boolean | Prisma.Group$teacherPaymentPeriodsArgs<ExtArgs>
   scheduleSlots?: boolean | Prisma.Group$scheduleSlotsArgs<ExtArgs>
   teacherHistory?: boolean | Prisma.Group$teacherHistoryArgs<ExtArgs>
+  scheduledActionsAsSource?: boolean | Prisma.Group$scheduledActionsAsSourceArgs<ExtArgs>
+  scheduledActionsAsDest?: boolean | Prisma.Group$scheduledActionsAsDestArgs<ExtArgs>
   _count?: boolean | Prisma.GroupCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3383,6 +3857,8 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     teacherPaymentPeriods: Prisma.$TeacherPaymentPeriodPayload<ExtArgs>[]
     scheduleSlots: Prisma.$TeacherScheduleSlotPayload<ExtArgs>[]
     teacherHistory: Prisma.$GroupTeacherHistoryPayload<ExtArgs>[]
+    scheduledActionsAsSource: Prisma.$ScheduledActionPayload<ExtArgs>[]
+    scheduledActionsAsDest: Prisma.$ScheduledActionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3812,6 +4288,8 @@ export interface Prisma__GroupClient<T, Null = never, ExtArgs extends runtime.Ty
   teacherPaymentPeriods<T extends Prisma.Group$teacherPaymentPeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$teacherPaymentPeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherPaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   scheduleSlots<T extends Prisma.Group$scheduleSlotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$scheduleSlotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeacherScheduleSlotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   teacherHistory<T extends Prisma.Group$teacherHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$teacherHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupTeacherHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scheduledActionsAsSource<T extends Prisma.Group$scheduledActionsAsSourceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$scheduledActionsAsSourceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scheduledActionsAsDest<T extends Prisma.Group$scheduledActionsAsDestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$scheduledActionsAsDestArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4532,6 +5010,54 @@ export type Group$teacherHistoryArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.GroupTeacherHistoryScalarFieldEnum | Prisma.GroupTeacherHistoryScalarFieldEnum[]
+}
+
+/**
+ * Group.scheduledActionsAsSource
+ */
+export type Group$scheduledActionsAsSourceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScheduledAction
+   */
+  select?: Prisma.ScheduledActionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScheduledAction
+   */
+  omit?: Prisma.ScheduledActionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScheduledActionInclude<ExtArgs> | null
+  where?: Prisma.ScheduledActionWhereInput
+  orderBy?: Prisma.ScheduledActionOrderByWithRelationInput | Prisma.ScheduledActionOrderByWithRelationInput[]
+  cursor?: Prisma.ScheduledActionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScheduledActionScalarFieldEnum | Prisma.ScheduledActionScalarFieldEnum[]
+}
+
+/**
+ * Group.scheduledActionsAsDest
+ */
+export type Group$scheduledActionsAsDestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScheduledAction
+   */
+  select?: Prisma.ScheduledActionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScheduledAction
+   */
+  omit?: Prisma.ScheduledActionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScheduledActionInclude<ExtArgs> | null
+  where?: Prisma.ScheduledActionWhereInput
+  orderBy?: Prisma.ScheduledActionOrderByWithRelationInput | Prisma.ScheduledActionOrderByWithRelationInput[]
+  cursor?: Prisma.ScheduledActionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScheduledActionScalarFieldEnum | Prisma.ScheduledActionScalarFieldEnum[]
 }
 
 /**

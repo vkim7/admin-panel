@@ -33,6 +33,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Check } from "lucide-react";
 import { DAYS_LABEL, LEVEL_SHORT, STAGE_SHORT } from "@/lib/constants";
+import { EffectiveDatePicker } from "@/components/shared/effective-date-picker";
+import { getUzbekistanTodayStr } from "@/lib/helpers/date";
 
 type LostReason = {
   id: string;
@@ -70,6 +72,7 @@ export function TrialActionsMenu({
   const [lostManualOpen, setLostManualOpen] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState("");
   // Transfer trial
   const [transferOpen, setTransferOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState("");
@@ -77,6 +80,7 @@ export function TrialActionsMenu({
 
   const isGroup = groupType === "GROUP";
   const selectedReason = lostReasons?.find((r) => r.id === selectedReasonId);
+  const isFutureDate = effectiveDate > getUzbekistanTodayStr();
 
   function handleCommit() {
     startTransition(async () => {
@@ -107,26 +111,39 @@ export function TrialActionsMenu({
       const result = await sendToLostList(studentId, membershipId, {
         lostReasonId: selectedReasonId,
         otherLostReason: otherReason || null,
+        effectiveDate,
       });
       if (result?.error) {
         toast.error(result.error);
+      } else if ("scheduled" in result && result.scheduled) {
+        toast.success(`Lost list action for ${studentName} scheduled for ${effectiveDate}`);
+        setLostManualOpen(false);
+        setSelectedReasonId("");
+        setOtherReason("");
+        setEffectiveDate("");
       } else if ("success" in result) {
         toast.success(`${studentName} sent to lost list`);
         setLostManualOpen(false);
         setSelectedReasonId("");
         setOtherReason("");
+        setEffectiveDate("");
       }
     });
   }
 
   function handleReassign() {
     startTransition(async () => {
-      const result = await sendToReassignment(studentId, membershipId);
+      const result = await sendToReassignment(studentId, membershipId, effectiveDate || undefined);
       if (result?.error) {
         toast.error(result.error);
+      } else if ("scheduled" in result && result.scheduled) {
+        toast.success(`Reassignment for ${studentName} scheduled for ${effectiveDate}`);
+        setReassignOpen(false);
+        setEffectiveDate("");
       } else {
         toast.success(`${studentName} sent to reassignment`);
         setReassignOpen(false);
+        setEffectiveDate("");
       }
     });
   }
@@ -258,6 +275,7 @@ export function TrialActionsMenu({
           if (!v) {
             setSelectedReasonId("");
             setOtherReason("");
+            setEffectiveDate("");
           }
         }}
       >
@@ -297,6 +315,12 @@ export function TrialActionsMenu({
                 />
               </div>
             )}
+
+            <EffectiveDatePicker
+              value={effectiveDate}
+              onChange={setEffectiveDate}
+              disabled={isPending}
+            />
           </div>
 
           <DialogFooter>
@@ -305,17 +329,23 @@ export function TrialActionsMenu({
             </Button>
             <Button
               variant="destructive"
-              disabled={!selectedReasonId || isPending}
+              disabled={!selectedReasonId || !effectiveDate || isPending}
               onClick={handleLostManual}
             >
-              {isPending ? "..." : "Send to Lost list"}
+              {isPending ? "..." : isFutureDate ? "Schedule Lost" : "Send to Lost list"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Send to Reassignment confirmation */}
-      <Dialog open={reassignOpen} onOpenChange={setReassignOpen}>
+      <Dialog
+        open={reassignOpen}
+        onOpenChange={(v) => {
+          setReassignOpen(v);
+          if (!v) setEffectiveDate("");
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Send to Reassignment — {studentName}</DialogTitle>
@@ -323,12 +353,17 @@ export function TrialActionsMenu({
               {studentName} will be removed from this group. If they have no other active groups, their status will change to Awaiting Reassignment.
             </DialogDescription>
           </DialogHeader>
+          <EffectiveDatePicker
+            value={effectiveDate}
+            onChange={setEffectiveDate}
+            disabled={isPending}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setReassignOpen(false)}>
               Cancel
             </Button>
-            <Button onClick={handleReassign} disabled={isPending}>
-              {isPending ? "..." : "Send to Reassignment"}
+            <Button onClick={handleReassign} disabled={!effectiveDate || isPending}>
+              {isPending ? "..." : isFutureDate ? "Schedule Reassignment" : "Send to Reassignment"}
             </Button>
           </DialogFooter>
         </DialogContent>

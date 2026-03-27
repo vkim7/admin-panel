@@ -1,8 +1,24 @@
 <!-- TODO -->
-1. refund - calculate the price for the first trial lesson - for full price
-2. при рефанде не учитывать скидку как возврат средств, например Нигора Азимова в рефанде
-3. [exists_already???] но пеймент добавить общую сумму remaining value
-4. регистрировать academic support и прикреплять к группам
+1. [DONE] refund - calculate the price for the first trial lesson - for full price
+2. [exists_already???] но пеймент добавить общую сумму remaining value
+3. регистрировать academic support и прикреплять к группам
+4. LANGUAGE_HARD_LEVELS
+
+5. When transferring students(possibly other actions as well) we rely on the "completed" lessons count to know how many lessons the student has taken(later logic builds on top of this count if i recall correctly) - what happens if teacher/admin forgot to complete a lesson though?
+
+6. what happens if student has exhausted his free trials? 
+- he should still have a trial lesson but he's no longer eligible for a trial lesson discount
+
+
+let's please double check our refund implementation - i think we've missed something in the implementation. Let's take this scenario for example:
+- there are 12 lessons in a given month
+- student A joins at the first lesson of the month and takes a trial lesson in a GROUP lesson
+- trial lessons in a GROUP are free
+- lessons in a GROUP cost 100000 uzs each
+- the student liked the lesson and is ready to commit, he commits
+- student then makes a payment for the remaining 11 lessons in the month
+- after taking the second lesson however student for some reason decideds he no longer wants to take classes with us and we have to refund the student
+- since first lesson was free and student has paid for 11 lessons and he only took 1 besides the trial lesson - we should refund him for that 1 lesson, correct? - i think currently that's not what we do - we refund the student for both the trial lesson and the first lesson after the trial - please double check that
 
 
 # Feedback Items
@@ -271,7 +287,7 @@ Note: The reason list will be supplied separately. May need a new `UncertainReas
 
 ---
 
-## 26. Effective date for actions
+## 26. Effective date for actions [DONE]
 
 **Current:** All actions (transfer, send to lost, send to reassignment, merge groups) execute immediately with `new Date()` as the timestamp. No way to schedule an action for a future date or backdate.
 
@@ -550,11 +566,123 @@ All items completed.
 |---|------|--------|
 | 29 | Exam dates auto-calculated on group creation + Exams page with month filter | ✅ Done |
 
-## Phase J: Deferred/Complex
+## Phase J: Scheduled Actions (Effective Date) ✅
 
-| # | Item | Size |
-|---|------|------|
-| 26 | Effective date for actions (transfer/lost/reassignment/merge) — needs design discussion | Large |
+### Design decisions (from discussion 2026-03-26)
+
+#### Problem
+All actions (transfer, send to lost, send to reassignment, deactivate, merge groups) execute immediately with `new Date()`. Admins need to schedule actions for future dates — e.g. "student says starting next week I won't be attending" or "transfer me to Group B next Monday."
+
+#### Approach: Vercel Cron + `ScheduledAction` model
+
+**Rejected alternatives:**
+- **Date override (execute now, use future date for billing):** Creates a limbo state — student appears removed from group but billing runs until the future date. Operationally confusing.
+- **Visual reminder + manual execution (Approach D):** Relies on admin clicking a button on the right day. Fragile.
+- **Backdate-only (no future dates):** Doesn't solve the core use case — future scheduling is the common need.
+
+**Chosen approach:** A `ScheduledAction` model stores pending actions. A daily Vercel Cron job executes actions whose `effectiveDate <= today`. This infrastructure will also be reused for the planned amoCRM polling (5-10 min intervals).
+
+#### Conflict resolution: Block at creation time (Strategy C)
+
+All conflicts are resolved by **blocking** — no auto-cancel, no re-targeting, no magic. Admin always resolves conflicts explicitly.
+
+| Situation | Rule |
+|---|---|
+| Immediate student action (transfer/reassign/lost) + pending scheduled action on **same membership** | **Block** immediate action. Admin must resolve (cancel or execute) the scheduled action first. |
+| Immediate deactivate + **any** pending scheduled action for that student | **Block**. Admin must resolve all scheduled actions first. |
+| Creating a scheduled action + another already exists on **same membership** | **Block**. One scheduled action per membership at a time. |
+| Scheduled merge + another scheduled merge on **same group** | **Block**. One at a time. |
+| Immediate merge + student scheduled actions with **earlier** effective dates | **No conflict.** Student actions execute first in natural chronological order. |
+| Immediate merge + student scheduled actions with **later** effective dates | **Block** merge. Admin must resolve student-level actions first (cancel, execute early, or reschedule the merge to after them). |
+
+**Rationale for merge blocking:** If a group is merging on March 10 but Student A has a scheduled transfer on March 15, the admin must decide: does Student A transfer now (execute early), stay and get merged (cancel the scheduled action, re-create later for the new group), or does the merge wait? This is a human decision — the system shouldn't guess.
+
+#### Data model
+
+```
+ScheduledAction {
+  id            String   @id @default(cuid())
+  type          ScheduledActionType  // TRANSFER, SEND_TO_REASSIGNMENT, SEND_TO_LOST, DEACTIVATE, MERGE_GROUP
+  status        ScheduledActionStatus // PENDING, COMPLETED, FAILED, CANCELLED
+  effectiveDate DateTime @db.Date
+
+  // Student-level actions (transfer/reassign/lost/deactivate)
+  studentId     String?  → Student
+  membershipId  String?  → GroupMembership  // which membership the action targets
+
+  // Merge actions
+  sourceGroupId String?  → Group
+  destGroupId   String?  → Group
+
+  // Action-specific parameters
+  payload       Json     // { destinationGroupId, lostReasonId, transferReasonId, etc. }
+
+  // Audit
+  createdById   String   → Admin
+  createdAt     DateTime @default(now())
+  executedAt    DateTime?
+  cancelledAt   DateTime?
+  cancelReason  String?
+  failureReason String?
+}
+```
+
+#### Timezone handling
+
+All date comparisons use Tashkent time (`Asia/Tashkent`), not UTC. This prevents a mismatch where an admin working late (e.g. 1 AM Tashkent = 20:00 UTC previous day) picks "today" but the server interprets it as tomorrow.
+
+Shared helper for deriving "today" in Tashkent:
+```ts
+function getUzbekistanToday(): Date {
+  const formatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tashkent' });
+  const todayStr = formatter.format(new Date()); // "YYYY-MM-DD" in Tashkent
+  return new Date(todayStr + 'T00:00:00Z');
+}
+```
+
+Used in two places:
+1. **Immediate vs. scheduled decision** — if `effectiveDate === uzbekistanToday`, execute immediately; if future, create scheduled action.
+2. **Cron handler** — `WHERE effectiveDate <= uzbekistanToday` query.
+
+#### Execution flow
+
+1. **Admin picks an effective date** (required field, no default) on transfer/lost/reassignment/deactivate/merge dialogs.
+2. **If effective date = today (Tashkent):** action executes immediately (same as current behavior). No `ScheduledAction` record created.
+3. **If effective date > today (Tashkent):** `ScheduledAction` record created with `status: PENDING`. Conflict check blocks if conflicts exist (see table above).
+4. **Daily cron** (`/api/cron/execute-scheduled-actions`, runs at 00:00 UTC = 05:00 Tashkent via `vercel.json`):
+   - Query all `PENDING` actions where `effectiveDate <= uzbekistanToday`
+   - For each: validate preconditions (membership still active, group still exists, etc.) using the same validation the immediate actions already have
+   - Execute by calling extracted core logic helpers (same business logic as immediate actions)
+   - Mark `COMPLETED` or `FAILED` with reason
+   - Each action try/caught independently — one failure doesn't block others
+   - Race condition safety: re-check `status: PENDING` in the atomic update
+5. **Admin can cancel** a pending action at any time from the Scheduled Actions list.
+6. **Admin can execute early** — "Execute Now" button on pending actions for when plans change.
+
+#### Refactoring approach
+
+Existing server actions (`transferStudent`, `sendToLostList`, etc.) combine auth + business logic + cache invalidation. The cron handler can't call them directly (no session, no client to revalidate). **Solution:** extract core transaction logic from each action into a shared helper that accepts `adminId` + optional `effectiveDate`. Both the server action and the cron call the same helper.
+
+#### UI additions
+
+- **Required date picker** on transfer/lost/reassignment/deactivate/merge dialogs — "Effective date" field, `<input type="date">`, no default value, `min={today}`. Admin must explicitly choose when the action takes effect.
+- **Scheduled Actions page** (`/scheduled-actions`) — sidebar entry with pending count badge. DataTable: type, student/group, source, destination, effective date, status badge, created by, failure reason. Status filter tabs. Cancel + Execute Now buttons on PENDING rows.
+- **Blocking warnings** — when an immediate action is blocked by a scheduled action, show: *"This student has a scheduled transfer to GR-12 on April 1. Cancel or execute it first."*
+- **Billing preview hidden for future dates** — transfer/merge preview sections show "Billing will be calculated on the effective date" when a future date is selected.
+
+#### Implementation breakdown
+
+| # | Item | Size | Status |
+|---|------|------|--------|
+| 26a | `ScheduledAction` model + migration + reverse relations | Small | Done |
+| 26b | Tashkent timezone helper (`getUzbekistanToday`) | Small | Done |
+| 26c | Extract core logic from 5 actions into shared helpers (`execute-*.ts`) — existing actions become thin wrappers | Medium-Large | Done |
+| 26d | Conflict detection helper (`scheduled-action-conflicts.ts`) — 4 check functions + message formatter | Small-Medium | Done |
+| 26e | Add conflict checks to all 5 existing immediate actions | Small | Done |
+| 26f | Scheduled action CRUD server actions (`createScheduledAction`, `cancelScheduledAction`, `executeScheduledActionNow`) + Zod schemas | Medium | Done |
+| 26g | Vercel Cron setup (`vercel.json` + CRON_SECRET) + cron route handler | Small-Medium | Done |
+| 26h | Required date picker on transfer/lost/reassignment/deactivate/merge dialogs — today = immediate, future = scheduled | Medium | Done |
+| 26i | Scheduled Actions list page + sidebar entry with badge | Medium | Done |
 
 ## Phase K: Holidays Management
 
@@ -562,7 +690,7 @@ All items completed.
 
 The `Holiday` model is a simple table (`date` unique, `name` text) seeded with Uzbekistan 2026 public holidays. Holidays are **consumed at lesson-generation time only** — they have no retroactive effect on existing data.
 
-**Where holidays are checked:**
+**Where holidays are checked:**]
 1. **Group creation** — `generateLessonDates()` in `lesson-generation.ts` skips any date in the `holidayDates` set when pre-creating Lesson + TeacherScheduleSlot records from `startDate` through `endDate`.
 2. **End date calculation** — `calculateEndDate()` in the same file accounts for skipped holidays, so the group extends further to reach the target lesson count.
 3. **Cancellation replacement** — `findNextValidDate()` in `lesson-scheduling.ts` finds the next day matching the group's day pattern that is NOT a holiday. Used when appending a replacement lesson after a cancellation.

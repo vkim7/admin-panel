@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { ArrowRightLeft, Check } from "lucide-react";
 import { DAYS_LABEL, LEVEL_SHORT, STAGE_SHORT } from "@/lib/constants";
+import { EffectiveDatePicker } from "@/components/shared/effective-date-picker";
+import { getUzbekistanTodayStr } from "@/lib/helpers/date";
 
 interface TransferDialogProps {
   membershipId: string;
@@ -60,6 +62,7 @@ export function TransferDialog({
   const [reasonId, setReasonId] = useState<string>("");
   const [otherReason, setOtherReason] = useState("");
   const [search, setSearch] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState("");
   const [billingPreview, setBillingPreview] = useState<BillingPreview>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
 
@@ -87,6 +90,8 @@ export function TransferDialog({
     };
   }, [membershipId, selectedGroupId]);
 
+  const isFutureDate = effectiveDate > getUzbekistanTodayStr();
+
   function handleTransfer() {
     startTransition(async () => {
       const result = await transferStudent({
@@ -94,13 +99,18 @@ export function TransferDialog({
         destinationGroupId: selectedGroupId,
         transferReasonId: reasonId,
         otherTransferReason: selectedReason?.isOther ? otherReason : null,
+        effectiveDate,
       });
 
       if ("error" in result) {
         toast.error(result.error);
+      } else if ("scheduled" in result && result.scheduled) {
+        toast.success(`Transfer for ${studentName} scheduled for ${effectiveDate}`);
+        setOpen(false);
+        resetForm();
       } else {
-        const credit = result.transferCredit;
-        const refund = result.refundAmount;
+        const credit = "transferCredit" in result ? result.transferCredit : 0;
+        const refund = "refundAmount" in result ? result.refundAmount : 0;
         let msg = `${studentName} transferred successfully`;
         if (credit) msg += `. Transfer credit: ${formatUZS(credit)}`;
         if (refund) msg += `. Pending refund: ${formatUZS(refund)}`;
@@ -118,6 +128,7 @@ export function TransferDialog({
     setSelectedGroupId("");
     setReasonId("");
     setOtherReason("");
+    setEffectiveDate("");
     setSearch("");
     setBillingPreview(null);
   }
@@ -141,7 +152,7 @@ export function TransferDialog({
   });
 
   const canSubmit =
-    selectedGroupId && reasonId && (!selectedReason?.isOther || otherReason.trim());
+    selectedGroupId && reasonId && effectiveDate && (!selectedReason?.isOther || otherReason.trim());
 
   return (
     <Dialog
@@ -232,7 +243,7 @@ export function TransferDialog({
           <div className="space-y-2">
             <label className="text-sm font-medium">Transfer Reason</label>
             <Select value={reasonId} onValueChange={setReasonId}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select reason..." />
               </SelectTrigger>
               <SelectContent>
@@ -258,8 +269,15 @@ export function TransferDialog({
             </div>
           )}
 
-          {/* Billing preview */}
-          {selectedGroupId && (
+          {/* Effective date */}
+          <EffectiveDatePicker
+            value={effectiveDate}
+            onChange={setEffectiveDate}
+            disabled={isPending}
+          />
+
+          {/* Billing preview (only for today) */}
+          {selectedGroupId && !isFutureDate && (
             <div className="space-y-2 rounded-md border p-3">
               <p className="text-sm font-medium">Billing Impact</p>
               {previewLoading ? (
@@ -324,6 +342,12 @@ export function TransferDialog({
               )}
             </div>
           )}
+
+          {isFutureDate && selectedGroupId && (
+            <p className="text-muted-foreground text-sm">
+              Billing will be calculated on the effective date.
+            </p>
+          )}
         </div>
 
         <DialogFooter>
@@ -331,7 +355,7 @@ export function TransferDialog({
             Cancel
           </Button>
           <Button onClick={handleTransfer} disabled={!canSubmit || isPending}>
-            {isPending ? "Transferring..." : "Transfer"}
+            {isPending ? "Transferring..." : isFutureDate ? "Schedule Transfer" : "Transfer"}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -2,37 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { PrismaClient } from "@eng/database";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import { studentSchema, deactivateStudentSchema } from "@/schemas/student";
 import { markUncertainSchema } from "@/schemas/uncertain";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
-import { performLeaveBilling } from "@/lib/helpers/leave-billing";
-
-type TxClient = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
-
-/** Fields to clear when resolving the uncertain flag */
-const UNCERTAIN_CLEAR_FIELDS = {
-  isUncertain: false,
-  uncertainFlaggedBy: null,
-  uncertainReasonId: null,
-  uncertainComment: null,
-} as const;
-
-/** Close the most recent open UncertainHistory record for a student */
-async function resolveUncertainHistory(tx: TxClient, studentId: string, adminId: string) {
-  const openHistory = await tx.uncertainHistory.findFirst({
-    where: { studentId, resolvedAt: null },
-    orderBy: { flaggedAt: "desc" },
-  });
-  if (openHistory) {
-    await tx.uncertainHistory.update({
-      where: { id: openHistory.id },
-      data: { resolvedAt: new Date(), resolvedById: adminId },
-    });
-  }
-}
+import { UNCERTAIN_CLEAR_FIELDS, resolveUncertainHistory } from "@/lib/helpers/uncertain";
+import { executeDeactivate } from "@/lib/helpers/execute-deactivate";
+import { executeReassignment } from "@/lib/helpers/execute-reassignment";
+import { executeSendToLost } from "@/lib/helpers/execute-send-to-lost";
+import { getUzbekistanToday } from "@/lib/helpers/date";
+import { checkImmediateStudentActionConflict, checkImmediateDeactivateConflict, checkScheduledActionConflict } from "@/lib/helpers/scheduled-action-conflicts";
 
 export async function createStudent(data: unknown, redirectTo?: string) {
   await requireAdmin();
@@ -235,103 +215,50 @@ export async function deactivateStudent(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const student = await prisma.student.findUnique({
-    where: { id },
-    include: {
-      groupMemberships: {
-        where: { leaveDate: null },
-        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
-      },
-    },
-  });
+  const effectiveDate = new Date(parsed.data.effectiveDate + "T00:00:00Z");
+  const today = getUzbekistanToday();
 
-  if (!student) {
-    return { error: "Student not found" };
+  if (effectiveDate.getTime() < today.getTime()) {
+    return { error: "Effective date cannot be in the past" };
   }
 
-  if (student.status === "INACTIVE") {
-    return { error: "Student is already inactive" };
+  if (effectiveDate.getTime() === today.getTime()) {
+    const deactivateConflict = await checkImmediateDeactivateConflict(id);
+    if (deactivateConflict) return { error: deactivateConflict };
+
+    const result = await executeDeactivate({
+      studentId: id,
+      lostReasonId: parsed.data.lostReasonId,
+      otherLostReason: parsed.data.otherLostReason,
+      adminId: admin.id,
+      effectiveDate,
+    });
+    if ("error" in result) return { error: result.error };
+
+    for (const path of result.revalidatePaths) revalidatePath(path);
+    return { success: true };
   }
 
-  // C#17: Validate that otherLostReason is provided if the reason isOther
-  const reason = await prisma.lostReason.findUnique({
-    where: { id: parsed.data.lostReasonId },
-  });
+  // Future date — create scheduled action
+  // For deactivate, check if student has any pending scheduled action
+  const conflict = await checkScheduledActionConflict("DEACTIVATE", undefined, undefined, id);
+  if (conflict) return { error: conflict };
 
-  if (!reason) {
-    return { error: "Invalid lost reason" };
-  }
-
-  if (reason.isOther && !parsed.data.otherLostReason) {
-    return { error: "Please specify the reason" };
-  }
-
-  const groupIds = new Set<string>();
-
-  await prisma.$transaction(async (tx) => {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    // Close all active memberships + leave billing
-    for (const m of student.groupMemberships) {
-      groupIds.add(m.group.id);
-
-      await tx.groupMembership.update({
-        where: { id: m.id },
-        data: { leaveDate: today },
-      });
-
-      // Run leave billing for non-trial memberships
-      if (!m.isTrial) {
-        const result = await performLeaveBilling({
-          membershipId: m.id,
-          leaveDate: today,
-          adjustmentType: "DROPOUT",
-          adminId: admin.id,
-          tx,
-        });
-
-        // Create pending refund if overpayment exists
-        if (result.overpayment > 0 && result.adjustedPeriodId) {
-          await tx.refund.create({
-            data: {
-              studentId: id,
-              studentPaymentPeriodId: result.adjustedPeriodId,
-              amount: result.overpayment,
-              status: "PENDING",
-              initiatedById: admin.id,
-              note: `Deactivation from ${m.group.publicId}`,
-            },
-          });
-        }
-      }
-    }
-
-    await tx.student.update({
-      where: { id },
-      data: {
-        status: "INACTIVE",
-        inactivatedAt: new Date(),
-        inactivatedById: admin.id,
+  await prisma.scheduledAction.create({
+    data: {
+      type: "DEACTIVATE",
+      effectiveDate,
+      studentId: id,
+      payload: {
         lostReasonId: parsed.data.lostReasonId,
         otherLostReason: parsed.data.otherLostReason,
       },
-    });
-
-    // FAMILY auto-removal: if family drops below 2 active members,
-    // expire FAMILY promotions and remove discounts from future periods
-    await removeFamilyIfNeeded({ familyId: student.familyId, tx });
+      createdById: admin.id,
+    },
   });
 
-  revalidatePath(`/students/${id}`);
-  revalidatePath("/students");
-  revalidatePath("/reception");
-  revalidatePath("/reassignment");
-  revalidatePath("/lost");
-  for (const gId of groupIds) {
-    revalidatePath(`/groups/${gId}`);
-  }
-  return { success: true };
+  revalidatePath("/scheduled-actions");
+  return { success: true, scheduled: true };
 }
 
 /**
@@ -341,115 +268,59 @@ export async function deactivateStudent(id: string, data: unknown) {
  * then sets AWAITING_REASSIGNMENT if no other active memberships remain.
  *
  * When called without membershipId (orphan case or INACTIVE→AWAITING_REASSIGNMENT):
- * just changes status.
+ * just changes status (effectiveDateStr not required).
  */
-export async function sendToReassignment(studentId: string, membershipId?: string) {
+export async function sendToReassignment(studentId: string, membershipId?: string, effectiveDateStr?: string) {
   const admin = await requireAdmin();
 
-  const student = await prisma.student.findUnique({
-    where: { id: studentId },
-    include: {
-      groupMemberships: {
-        where: { leaveDate: null },
-        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
-      },
+  const today = getUzbekistanToday();
+  const effectiveDate = effectiveDateStr
+    ? new Date(effectiveDateStr + "T00:00:00Z")
+    : today;
+
+  if (effectiveDate.getTime() < today.getTime()) {
+    return { error: "Effective date cannot be in the past" };
+  }
+
+  if (effectiveDate.getTime() === today.getTime()) {
+    if (membershipId) {
+      const conflict = await checkImmediateStudentActionConflict(membershipId);
+      if (conflict) return { error: conflict };
+    }
+
+    const result = await executeReassignment({
+      studentId,
+      membershipId,
+      adminId: admin.id,
+      effectiveDate,
+    });
+    if ("error" in result) return { error: result.error };
+
+    for (const path of result.revalidatePaths) revalidatePath(path);
+    return { success: true };
+  }
+
+  // Future date — create scheduled action
+  if (!membershipId) {
+    return { error: "Cannot schedule reassignment without a membership" };
+  }
+
+  const conflict = await checkScheduledActionConflict("SEND_TO_REASSIGNMENT", membershipId);
+  if (conflict) return { error: conflict };
+
+  await prisma.scheduledAction.create({
+    data: {
+      type: "SEND_TO_REASSIGNMENT",
+      effectiveDate,
+      studentId,
+      membershipId,
+      payload: {},
+      createdById: admin.id,
     },
   });
 
-  if (!student) {
-    return { error: "Student not found" };
-  }
-
-  if (student.status !== "ACTIVE" && student.status !== "INACTIVE") {
-    return { error: "Only active or inactive students can be sent to reassignment" };
-  }
-
-  // Validate membership before entering the transaction
-  const targetMembership = membershipId
-    ? student.groupMemberships.find((m) => m.id === membershipId)
-    : null;
-  if (membershipId && !targetMembership) {
-    return { error: "Membership not found or already closed" };
-  }
-
-  let closedGroupId: string | null = null;
-
-  await prisma.$transaction(async (tx) => {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    // Close specific membership if provided
-    if (membershipId && targetMembership) {
-      closedGroupId = targetMembership.group.id;
-
-      await tx.groupMembership.update({
-        where: { id: membershipId },
-        data: { leaveDate: today },
-      });
-
-      // Run leave billing for non-trial memberships
-      if (!targetMembership.isTrial) {
-        const result = await performLeaveBilling({
-          membershipId,
-          leaveDate: today,
-          adjustmentType: "DROPOUT",
-          adminId: admin.id,
-          tx,
-        });
-
-        if (result.overpayment > 0 && result.adjustedPeriodId) {
-          await tx.refund.create({
-            data: {
-              studentId,
-              studentPaymentPeriodId: result.adjustedPeriodId,
-              amount: result.overpayment,
-              status: "PENDING",
-              initiatedById: admin.id,
-              note: `Reassignment from ${targetMembership.group.publicId}`,
-            },
-          });
-        }
-      }
-    }
-
-    // Check remaining active memberships (excluding the one we just closed)
-    const remainingActive = student.groupMemberships.filter(
-      (m) => m.id !== membershipId,
-    ).length;
-
-    // Combine status + uncertain changes into a single update
-    if (remainingActive === 0) {
-      // Keep inactivation fields intact for INACTIVE → AWAITING_REASSIGNMENT.
-      // lostReasonId != null at activation time = WIN_BACK student (came from Lost List).
-      // Fields are cleared at the final activation point in addStudentsToGroup.
-      await tx.student.update({
-        where: { id: studentId },
-        data: {
-          status: "AWAITING_REASSIGNMENT",
-          ...(student.isUncertain ? UNCERTAIN_CLEAR_FIELDS : {}),
-        },
-      });
-    } else if (student.isUncertain) {
-      await tx.student.update({
-        where: { id: studentId },
-        data: UNCERTAIN_CLEAR_FIELDS,
-      });
-    }
-
-    if (student.isUncertain) {
-      await resolveUncertainHistory(tx, studentId, admin.id);
-    }
-  });
-
-  revalidatePath(`/students/${studentId}`);
-  revalidatePath("/students");
-  revalidatePath("/reassignment");
-  revalidatePath("/lost");
-  revalidatePath("/uncertain");
-  if (closedGroupId) {
-    revalidatePath(`/groups/${closedGroupId}`);
-  }
-  return { success: true };
+  revalidatePath("/scheduled-actions");
+  return { success: true, scheduled: true };
 }
 
 /**
@@ -467,110 +338,51 @@ export async function sendToLostList(
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const student = await prisma.student.findUnique({
-    where: { id: studentId },
-    include: {
-      groupMemberships: {
-        where: { leaveDate: null },
-        select: { id: true, isTrial: true, group: { select: { id: true, publicId: true } } },
+  const effectiveDate = new Date(parsed.data.effectiveDate + "T00:00:00Z");
+  const today = getUzbekistanToday();
+
+  if (effectiveDate.getTime() < today.getTime()) {
+    return { error: "Effective date cannot be in the past" };
+  }
+
+  if (effectiveDate.getTime() === today.getTime()) {
+    const conflict = await checkImmediateStudentActionConflict(membershipId);
+    if (conflict) return { error: conflict };
+
+    const result = await executeSendToLost({
+      studentId,
+      membershipId,
+      lostReasonId: parsed.data.lostReasonId,
+      otherLostReason: parsed.data.otherLostReason,
+      adminId: admin.id,
+      effectiveDate,
+    });
+    if ("error" in result) return { error: result.error };
+
+    for (const path of result.revalidatePaths) revalidatePath(path);
+    return { success: true };
+  }
+
+  // Future date — create scheduled action
+  const conflict = await checkScheduledActionConflict("SEND_TO_LOST", membershipId);
+  if (conflict) return { error: conflict };
+
+  await prisma.scheduledAction.create({
+    data: {
+      type: "SEND_TO_LOST",
+      effectiveDate,
+      studentId,
+      membershipId,
+      payload: {
+        lostReasonId: parsed.data.lostReasonId,
+        otherLostReason: parsed.data.otherLostReason,
       },
+      createdById: admin.id,
     },
   });
 
-  if (!student) {
-    return { error: "Student not found" };
-  }
-
-  const membership = student.groupMemberships.find((m) => m.id === membershipId);
-  if (!membership) {
-    return { error: "Membership not found or already closed" };
-  }
-
-  const reason = await prisma.lostReason.findUnique({
-    where: { id: parsed.data.lostReasonId },
-  });
-
-  if (!reason) {
-    return { error: "Invalid lost reason" };
-  }
-
-  if (reason.isOther && !parsed.data.otherLostReason) {
-    return { error: "Please specify the reason" };
-  }
-
-  await prisma.$transaction(async (tx) => {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-
-    // Close this membership
-    await tx.groupMembership.update({
-      where: { id: membershipId },
-      data: { leaveDate: today },
-    });
-
-    // Run leave billing for non-trial memberships
-    if (!membership.isTrial) {
-      const result = await performLeaveBilling({
-        membershipId,
-        leaveDate: today,
-        adjustmentType: "DROPOUT",
-        adminId: admin.id,
-        tx,
-      });
-
-      if (result.overpayment > 0 && result.adjustedPeriodId) {
-        await tx.refund.create({
-          data: {
-            studentId,
-            studentPaymentPeriodId: result.adjustedPeriodId,
-            amount: result.overpayment,
-            status: "PENDING",
-            initiatedById: admin.id,
-            note: `Left group ${membership.group.publicId}`,
-          },
-        });
-      }
-    }
-
-    // Check remaining active memberships
-    const remainingActive = student.groupMemberships.filter(
-      (m) => m.id !== membershipId,
-    ).length;
-
-    // Combine deactivation + uncertain changes into a single update
-    if (remainingActive === 0) {
-      await tx.student.update({
-        where: { id: studentId },
-        data: {
-          status: "INACTIVE",
-          inactivatedAt: new Date(),
-          inactivatedById: admin.id,
-          lostReasonId: parsed.data.lostReasonId,
-          otherLostReason: parsed.data.otherLostReason,
-          ...(student.isUncertain ? UNCERTAIN_CLEAR_FIELDS : {}),
-        },
-      });
-
-      await removeFamilyIfNeeded({ familyId: student.familyId, tx });
-    } else if (student.isUncertain) {
-      await tx.student.update({
-        where: { id: studentId },
-        data: UNCERTAIN_CLEAR_FIELDS,
-      });
-    }
-
-    if (student.isUncertain) {
-      await resolveUncertainHistory(tx, studentId, admin.id);
-    }
-  });
-
-  revalidatePath(`/students/${studentId}`);
-  revalidatePath("/students");
-  revalidatePath("/reassignment");
-  revalidatePath("/lost");
-  revalidatePath("/uncertain");
-  revalidatePath(`/groups/${membership.group.id}`);
-  return { success: true };
+  revalidatePath("/scheduled-actions");
+  return { success: true, scheduled: true };
 }
 
 export async function markUncertain(studentId: string, data: unknown) {
@@ -655,4 +467,3 @@ export async function updateStudentComment(studentId: string, comment: string | 
   revalidatePath("/reassignment");
   return { success: true };
 }
-

@@ -171,3 +171,24 @@ export const SmsStatus = {
 } as const
 
 export type SmsStatus = (typeof SmsStatus)[keyof typeof SmsStatus]
+
+
+export const ScheduledActionType = {
+  TRANSFER: 'TRANSFER',
+  SEND_TO_REASSIGNMENT: 'SEND_TO_REASSIGNMENT',
+  SEND_TO_LOST: 'SEND_TO_LOST',
+  DEACTIVATE: 'DEACTIVATE',
+  MERGE_GROUP: 'MERGE_GROUP'
+} as const
+
+export type ScheduledActionType = (typeof ScheduledActionType)[keyof typeof ScheduledActionType]
+
+
+export const ScheduledActionStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ScheduledActionStatus = (typeof ScheduledActionStatus)[keyof typeof ScheduledActionStatus]

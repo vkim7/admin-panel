@@ -21,7 +21,8 @@ Student
   ├── StudentPromotion* (active promotions for this student)
   ├── Referral* (as referrer or as referred)
   ├── CallHistory* (reception follow-up calls)
-  └── SmsHistory* (payment reminder texts)
+  ├── SmsHistory* (payment reminder texts)
+  └── ScheduledAction* (future-dated operations targeting this student)
 
 Teacher
   ├── TeacherAvailability* (which days/times they can work — recurring weekly pattern)
@@ -50,6 +51,12 @@ Group (unified: both group lessons and individual lessons)
 Promotion
   └── StudentPromotion* (which students have this promotion)
         └── AppliedPromotion* (which billing periods it actually discounted)
+
+ScheduledAction (future-dated operations executed by daily cron)
+  ├── Student? (target student, if applicable)
+  ├── GroupMembership? (target membership, for transfer/reassignment/lost)
+  ├── Group? ×2 (source + destination, for merge/transfer)
+  └── AdminUser (who created it)
 ```
 
 ---
@@ -844,6 +851,52 @@ Mid and final exams per group (both GROUP and INDIVIDUAL types). Auto-created du
 | comment | Notes about the exam (unused, reserved for future) |
 
 **Auto-calculation:** Mid exam = lesson at position `Math.floor(totalLessons / 2)`. Final exam = 3rd lesson from the end (`totalLessons - 2`). Groups with fewer than 5 lessons skip exam creation. Helper: `exam-calculation.ts`.
+
+---
+
+## Scheduled Actions
+
+Allows admins to schedule future-dated operations (transfer, reassignment, lost list, deactivate, merge) that execute automatically via a daily Vercel Cron job.
+
+### ScheduledAction
+
+| Field | Purpose |
+|-------|---------|
+| type | `TRANSFER`, `SEND_TO_REASSIGNMENT`, `SEND_TO_LOST`, `DEACTIVATE`, `MERGE_GROUP` |
+| status | `PENDING` → `COMPLETED` / `FAILED` / `CANCELLED` |
+| effectiveDate | Date when the action should execute (stored as `@db.Date`) |
+| studentId | Target student (nullable — not set for `MERGE_GROUP`) |
+| membershipId | Target membership (for transfer/reassignment/lost) |
+| sourceGroupId | Source group (for merge, also set for transfer) |
+| destGroupId | Destination group (for merge/transfer) |
+| payload | JSON bag with action-specific params (e.g. `transferReasonId`, `lostReasonId`) |
+| createdById | Admin who created the scheduled action |
+| executedAt | Timestamp when executed (null until completion) |
+| cancelledAt | Timestamp when cancelled |
+| cancelReason | Optional reason for cancellation |
+| failureReason | Error message if execution failed |
+
+### Lifecycle
+
+1. Admin picks a future effective date in any action dialog → `PENDING` record created
+2. Daily cron (`/api/cron/execute-scheduled-actions`, 00:00 UTC / 05:00 Tashkent) picks up `PENDING` actions where `effectiveDate <= today`
+3. Each action dispatched to the same core logic helpers used by immediate execution
+4. On success → `COMPLETED` + `executedAt`. On business error → `FAILED` + `failureReason`
+5. Admins can also Cancel (sets `CANCELLED`) or Execute Now from the `/scheduled-actions` page
+
+### Conflict rules (Strategy C — blocking, no auto-cancel)
+
+- **Immediate student action** (transfer/reassign/lost): blocked if same membership has a PENDING scheduled action
+- **Immediate deactivate**: blocked if student has ANY PENDING scheduled action
+- **Immediate merge**: blocked if source group has a PENDING merge OR any student in source group has a PENDING action
+- **New scheduled action**: blocked if same membership/group already has one PENDING
+
+### Indexes
+
+- `(status, effectiveDate)` — cron query
+- `(studentId, status)` — deactivate conflict check
+- `(membershipId, status)` — student action conflict check
+- `(sourceGroupId, status)` — merge conflict check
 
 ---
 

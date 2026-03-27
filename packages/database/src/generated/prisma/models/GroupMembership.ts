@@ -324,6 +324,7 @@ export type GroupMembershipWhereInput = {
   previousMembership?: Prisma.XOR<Prisma.GroupMembershipNullableScalarRelationFilter, Prisma.GroupMembershipWhereInput> | null
   continuedAsMemberships?: Prisma.GroupMembershipListRelationFilter
   paymentPeriods?: Prisma.StudentPaymentPeriodListRelationFilter
+  scheduledActions?: Prisma.ScheduledActionListRelationFilter
 }
 
 export type GroupMembershipOrderByWithRelationInput = {
@@ -352,6 +353,7 @@ export type GroupMembershipOrderByWithRelationInput = {
   previousMembership?: Prisma.GroupMembershipOrderByWithRelationInput
   continuedAsMemberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
   paymentPeriods?: Prisma.StudentPaymentPeriodOrderByRelationAggregateInput
+  scheduledActions?: Prisma.ScheduledActionOrderByRelationAggregateInput
 }
 
 export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
@@ -383,6 +385,7 @@ export type GroupMembershipWhereUniqueInput = Prisma.AtLeast<{
   previousMembership?: Prisma.XOR<Prisma.GroupMembershipNullableScalarRelationFilter, Prisma.GroupMembershipWhereInput> | null
   continuedAsMemberships?: Prisma.GroupMembershipListRelationFilter
   paymentPeriods?: Prisma.StudentPaymentPeriodListRelationFilter
+  scheduledActions?: Prisma.ScheduledActionListRelationFilter
 }, "id">
 
 export type GroupMembershipOrderByWithAggregationInput = {
@@ -453,6 +456,7 @@ export type GroupMembershipCreateInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateInput = {
@@ -475,6 +479,7 @@ export type GroupMembershipUncheckedCreateInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUpdateInput = {
@@ -497,6 +502,7 @@ export type GroupMembershipUpdateInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateInput = {
@@ -519,6 +525,7 @@ export type GroupMembershipUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipCreateManyInput = {
@@ -955,6 +962,22 @@ export type GroupMembershipUpdateOneRequiredWithoutPaymentPeriodsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupMembershipUpdateToOneWithWhereWithoutPaymentPeriodsInput, Prisma.GroupMembershipUpdateWithoutPaymentPeriodsInput>, Prisma.GroupMembershipUncheckedUpdateWithoutPaymentPeriodsInput>
 }
 
+export type GroupMembershipCreateNestedOneWithoutScheduledActionsInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedCreateWithoutScheduledActionsInput>
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutScheduledActionsInput
+  connect?: Prisma.GroupMembershipWhereUniqueInput
+}
+
+export type GroupMembershipUpdateOneWithoutScheduledActionsNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupMembershipCreateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedCreateWithoutScheduledActionsInput>
+  connectOrCreate?: Prisma.GroupMembershipCreateOrConnectWithoutScheduledActionsInput
+  upsert?: Prisma.GroupMembershipUpsertWithoutScheduledActionsInput
+  disconnect?: Prisma.GroupMembershipWhereInput | boolean
+  delete?: Prisma.GroupMembershipWhereInput | boolean
+  connect?: Prisma.GroupMembershipWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GroupMembershipUpdateToOneWithWhereWithoutScheduledActionsInput, Prisma.GroupMembershipUpdateWithoutScheduledActionsInput>, Prisma.GroupMembershipUncheckedUpdateWithoutScheduledActionsInput>
+}
+
 export type GroupMembershipCreateWithoutAssignedByInput = {
   id?: string
   joinDate: Date | string
@@ -974,6 +997,7 @@ export type GroupMembershipCreateWithoutAssignedByInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutAssignedByInput = {
@@ -995,6 +1019,7 @@ export type GroupMembershipUncheckedCreateWithoutAssignedByInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutAssignedByInput = {
@@ -1065,6 +1090,7 @@ export type GroupMembershipCreateWithoutTrialTeacherInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutTrialTeacherInput = {
@@ -1086,6 +1112,7 @@ export type GroupMembershipUncheckedCreateWithoutTrialTeacherInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutTrialTeacherInput = {
@@ -1133,6 +1160,7 @@ export type GroupMembershipCreateWithoutStudentInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutStudentInput = {
@@ -1154,6 +1182,7 @@ export type GroupMembershipUncheckedCreateWithoutStudentInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutStudentInput = {
@@ -1201,6 +1230,7 @@ export type GroupMembershipCreateWithoutGroupInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutGroupInput = {
@@ -1222,6 +1252,7 @@ export type GroupMembershipUncheckedCreateWithoutGroupInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutGroupInput = {
@@ -1269,6 +1300,7 @@ export type GroupMembershipCreateWithoutTransferReasonInput = {
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutTransferReasonInput = {
@@ -1290,6 +1322,7 @@ export type GroupMembershipUncheckedCreateWithoutTransferReasonInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutTransferReasonInput = {
@@ -1337,6 +1370,7 @@ export type GroupMembershipCreateWithoutContinuedAsMembershipsInput = {
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutContinuedAsMembershipsInput = {
@@ -1358,6 +1392,7 @@ export type GroupMembershipUncheckedCreateWithoutContinuedAsMembershipsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutContinuedAsMembershipsInput = {
@@ -1384,6 +1419,7 @@ export type GroupMembershipCreateWithoutPreviousMembershipInput = {
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutPreviousMembershipInput = {
@@ -1405,6 +1441,7 @@ export type GroupMembershipUncheckedCreateWithoutPreviousMembershipInput = {
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutPreviousMembershipInput = {
@@ -1447,6 +1484,7 @@ export type GroupMembershipUpdateWithoutContinuedAsMembershipsInput = {
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutContinuedAsMembershipsInput = {
@@ -1468,6 +1506,7 @@ export type GroupMembershipUncheckedUpdateWithoutContinuedAsMembershipsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUpsertWithWhereUniqueWithoutPreviousMembershipInput = {
@@ -1505,6 +1544,7 @@ export type GroupMembershipCreateWithoutPaymentPeriodsInput = {
   assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
   previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
   continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipUncheckedCreateWithoutPaymentPeriodsInput = {
@@ -1526,6 +1566,7 @@ export type GroupMembershipUncheckedCreateWithoutPaymentPeriodsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutMembershipInput
 }
 
 export type GroupMembershipCreateOrConnectWithoutPaymentPeriodsInput = {
@@ -1563,6 +1604,7 @@ export type GroupMembershipUpdateWithoutPaymentPeriodsInput = {
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutPaymentPeriodsInput = {
@@ -1584,6 +1626,111 @@ export type GroupMembershipUncheckedUpdateWithoutPaymentPeriodsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
+}
+
+export type GroupMembershipCreateWithoutScheduledActionsInput = {
+  id?: string
+  joinDate: Date | string
+  leaveDate?: Date | string | null
+  isTrial?: boolean
+  wasTrialOriginally?: boolean
+  otherTransferReason?: string | null
+  comment?: string | null
+  lessonsStart?: number | null
+  lessonsCompleted?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student: Prisma.StudentCreateNestedOneWithoutGroupMembershipsInput
+  group: Prisma.GroupCreateNestedOneWithoutMembershipsInput
+  trialTeacher?: Prisma.TeacherCreateNestedOneWithoutTrialMembershipsInput
+  transferReason?: Prisma.TransferReasonCreateNestedOneWithoutGroupMembershipsInput
+  assignedBy?: Prisma.AdminUserCreateNestedOneWithoutAssignedMembershipsInput
+  previousMembership?: Prisma.GroupMembershipCreateNestedOneWithoutContinuedAsMembershipsInput
+  continuedAsMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutPreviousMembershipInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupMembershipInput
+}
+
+export type GroupMembershipUncheckedCreateWithoutScheduledActionsInput = {
+  id?: string
+  studentId: string
+  groupId: string
+  joinDate: Date | string
+  leaveDate?: Date | string | null
+  isTrial?: boolean
+  wasTrialOriginally?: boolean
+  trialTeacherId?: string | null
+  transferReasonId?: string | null
+  otherTransferReason?: string | null
+  comment?: string | null
+  lessonsStart?: number | null
+  lessonsCompleted?: number | null
+  assignedById?: string | null
+  previousMembershipId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  continuedAsMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutPreviousMembershipInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupMembershipInput
+}
+
+export type GroupMembershipCreateOrConnectWithoutScheduledActionsInput = {
+  where: Prisma.GroupMembershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupMembershipCreateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedCreateWithoutScheduledActionsInput>
+}
+
+export type GroupMembershipUpsertWithoutScheduledActionsInput = {
+  update: Prisma.XOR<Prisma.GroupMembershipUpdateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedUpdateWithoutScheduledActionsInput>
+  create: Prisma.XOR<Prisma.GroupMembershipCreateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedCreateWithoutScheduledActionsInput>
+  where?: Prisma.GroupMembershipWhereInput
+}
+
+export type GroupMembershipUpdateToOneWithWhereWithoutScheduledActionsInput = {
+  where?: Prisma.GroupMembershipWhereInput
+  data: Prisma.XOR<Prisma.GroupMembershipUpdateWithoutScheduledActionsInput, Prisma.GroupMembershipUncheckedUpdateWithoutScheduledActionsInput>
+}
+
+export type GroupMembershipUpdateWithoutScheduledActionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneRequiredWithoutGroupMembershipsNestedInput
+  group?: Prisma.GroupUpdateOneRequiredWithoutMembershipsNestedInput
+  trialTeacher?: Prisma.TeacherUpdateOneWithoutTrialMembershipsNestedInput
+  transferReason?: Prisma.TransferReasonUpdateOneWithoutGroupMembershipsNestedInput
+  assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
+  previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
+  continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+}
+
+export type GroupMembershipUncheckedUpdateWithoutScheduledActionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  joinDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  leaveDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isTrial?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  wasTrialOriginally?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  trialTeacherId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  transferReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherTransferReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lessonsStart?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  lessonsCompleted?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  assignedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  previousMembershipId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
 }
 
 export type GroupMembershipCreateManyAssignedByInput = {
@@ -1624,6 +1771,7 @@ export type GroupMembershipUpdateWithoutAssignedByInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutAssignedByInput = {
@@ -1645,6 +1793,7 @@ export type GroupMembershipUncheckedUpdateWithoutAssignedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutAssignedByInput = {
@@ -1704,6 +1853,7 @@ export type GroupMembershipUpdateWithoutTrialTeacherInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutTrialTeacherInput = {
@@ -1725,6 +1875,7 @@ export type GroupMembershipUncheckedUpdateWithoutTrialTeacherInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutTrialTeacherInput = {
@@ -1784,6 +1935,7 @@ export type GroupMembershipUpdateWithoutStudentInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutStudentInput = {
@@ -1805,6 +1957,7 @@ export type GroupMembershipUncheckedUpdateWithoutStudentInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutStudentInput = {
@@ -1864,6 +2017,7 @@ export type GroupMembershipUpdateWithoutGroupInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutGroupInput = {
@@ -1885,6 +2039,7 @@ export type GroupMembershipUncheckedUpdateWithoutGroupInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutGroupInput = {
@@ -1944,6 +2099,7 @@ export type GroupMembershipUpdateWithoutTransferReasonInput = {
   previousMembership?: Prisma.GroupMembershipUpdateOneWithoutContinuedAsMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutTransferReasonInput = {
@@ -1965,6 +2121,7 @@ export type GroupMembershipUncheckedUpdateWithoutTransferReasonInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutTransferReasonInput = {
@@ -2024,6 +2181,7 @@ export type GroupMembershipUpdateWithoutPreviousMembershipInput = {
   assignedBy?: Prisma.AdminUserUpdateOneWithoutAssignedMembershipsNestedInput
   continuedAsMemberships?: Prisma.GroupMembershipUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateWithoutPreviousMembershipInput = {
@@ -2045,6 +2203,7 @@ export type GroupMembershipUncheckedUpdateWithoutPreviousMembershipInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   continuedAsMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupMembershipNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
 export type GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipInput = {
@@ -2074,11 +2233,13 @@ export type GroupMembershipUncheckedUpdateManyWithoutPreviousMembershipInput = {
 export type GroupMembershipCountOutputType = {
   continuedAsMemberships: number
   paymentPeriods: number
+  scheduledActions: number
 }
 
 export type GroupMembershipCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   continuedAsMemberships?: boolean | GroupMembershipCountOutputTypeCountContinuedAsMembershipsArgs
   paymentPeriods?: boolean | GroupMembershipCountOutputTypeCountPaymentPeriodsArgs
+  scheduledActions?: boolean | GroupMembershipCountOutputTypeCountScheduledActionsArgs
 }
 
 /**
@@ -2103,6 +2264,13 @@ export type GroupMembershipCountOutputTypeCountContinuedAsMembershipsArgs<ExtArg
  */
 export type GroupMembershipCountOutputTypeCountPaymentPeriodsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.StudentPaymentPeriodWhereInput
+}
+
+/**
+ * GroupMembershipCountOutputType without action
+ */
+export type GroupMembershipCountOutputTypeCountScheduledActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ScheduledActionWhereInput
 }
 
 
@@ -2132,6 +2300,7 @@ export type GroupMembershipSelect<ExtArgs extends runtime.Types.Extensions.Inter
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
   continuedAsMemberships?: boolean | Prisma.GroupMembership$continuedAsMembershipsArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.GroupMembership$paymentPeriodsArgs<ExtArgs>
+  scheduledActions?: boolean | Prisma.GroupMembership$scheduledActionsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["groupMembership"]>
 
@@ -2217,6 +2386,7 @@ export type GroupMembershipInclude<ExtArgs extends runtime.Types.Extensions.Inte
   previousMembership?: boolean | Prisma.GroupMembership$previousMembershipArgs<ExtArgs>
   continuedAsMemberships?: boolean | Prisma.GroupMembership$continuedAsMembershipsArgs<ExtArgs>
   paymentPeriods?: boolean | Prisma.GroupMembership$paymentPeriodsArgs<ExtArgs>
+  scheduledActions?: boolean | Prisma.GroupMembership$scheduledActionsArgs<ExtArgs>
   _count?: boolean | Prisma.GroupMembershipCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GroupMembershipIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2247,6 +2417,7 @@ export type $GroupMembershipPayload<ExtArgs extends runtime.Types.Extensions.Int
     previousMembership: Prisma.$GroupMembershipPayload<ExtArgs> | null
     continuedAsMemberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
     paymentPeriods: Prisma.$StudentPaymentPeriodPayload<ExtArgs>[]
+    scheduledActions: Prisma.$ScheduledActionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2668,6 +2839,7 @@ export interface Prisma__GroupMembershipClient<T, Null = never, ExtArgs extends 
   previousMembership<T extends Prisma.GroupMembership$previousMembershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$previousMembershipArgs<ExtArgs>>): Prisma.Prisma__GroupMembershipClient<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   continuedAsMemberships<T extends Prisma.GroupMembership$continuedAsMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$continuedAsMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paymentPeriods<T extends Prisma.GroupMembership$paymentPeriodsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$paymentPeriodsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StudentPaymentPeriodPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  scheduledActions<T extends Prisma.GroupMembership$scheduledActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupMembership$scheduledActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3231,6 +3403,30 @@ export type GroupMembership$paymentPeriodsArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.StudentPaymentPeriodScalarFieldEnum | Prisma.StudentPaymentPeriodScalarFieldEnum[]
+}
+
+/**
+ * GroupMembership.scheduledActions
+ */
+export type GroupMembership$scheduledActionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ScheduledAction
+   */
+  select?: Prisma.ScheduledActionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ScheduledAction
+   */
+  omit?: Prisma.ScheduledActionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ScheduledActionInclude<ExtArgs> | null
+  where?: Prisma.ScheduledActionWhereInput
+  orderBy?: Prisma.ScheduledActionOrderByWithRelationInput | Prisma.ScheduledActionOrderByWithRelationInput[]
+  cursor?: Prisma.ScheduledActionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ScheduledActionScalarFieldEnum | Prisma.ScheduledActionScalarFieldEnum[]
 }
 
 /**

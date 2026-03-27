@@ -99,7 +99,7 @@ export function ProcessRefundDialog({ refund }: ProcessRefundDialogProps) {
           <div className="space-y-2">
             <label className="text-sm font-medium">Payment Method</label>
             <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger>
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select method..." />
               </SelectTrigger>
               <SelectContent>

@@ -104,6 +104,25 @@ const refundStatusMap: Record<string, StatusConfig> = {
   },
 };
 
+const scheduledActionStatusMap: Record<string, StatusConfig> = {
+  PENDING: {
+    label: "Pending",
+    className: "bg-amber-100 text-amber-800 border-amber-200",
+  },
+  COMPLETED: {
+    label: "Completed",
+    className: "bg-green-100 text-green-800 border-green-200",
+  },
+  FAILED: {
+    label: "Failed",
+    className: "bg-red-100 text-red-800 border-red-200",
+  },
+  CANCELLED: {
+    label: "Cancelled",
+    className: "bg-gray-100 text-gray-600 border-gray-200",
+  },
+};
+
 const statusMaps = {
   student: studentStatusMap,
   payment: paymentStatusMap,
@@ -111,6 +130,7 @@ const statusMaps = {
   group: groupStatusMap,
   teacherPay: teacherPayStatusMap,
   refund: refundStatusMap,
+  scheduledAction: scheduledActionStatusMap,
 } as const;
 
 interface StatusBadgeProps {

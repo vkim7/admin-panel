@@ -86,6 +86,7 @@ export const studentSchema = z
 export const deactivateStudentSchema = z.object({
   lostReasonId: requiredString("Lost reason is required"),
   otherLostReason: z.string().nullable(),
+  effectiveDate: requiredIsoDate("Effective date is required"),
 });
 
 export type DeactivateStudentValues = z.infer<typeof deactivateStudentSchema>;

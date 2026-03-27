@@ -39,7 +39,7 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | G | Uncertain Students ✅ | D | feedback.md #24,25 |
 | H | Promotions, Comments & Constraints ✅ | D | feedback.md #7,28,33 |
 | I | Exams & Scheduling ✅ | D | feedback.md #29 |
-| J | Scheduled Actions (Effective Date) ✅ designed | I | feedback.md #26 (design complete, ready to implement) |
+| J | Scheduled Actions (Effective Date) ✅ | I | feedback.md #26 |
 | K | Holidays Management | D | feedback.md #31 |
 | L | Test Suite Revisit | All | — |
 

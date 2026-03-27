@@ -124,7 +124,7 @@ export function PromotionForm({ defaultValues, promotionId }: PromotionFormProps
                 <FormLabel>Type</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
                   </FormControl>
@@ -162,7 +162,7 @@ export function PromotionForm({ defaultValues, promotionId }: PromotionFormProps
                   value={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                   </FormControl>

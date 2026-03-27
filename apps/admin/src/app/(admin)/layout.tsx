@@ -6,12 +6,13 @@ import { getUncertainCount } from "@/lib/queries/students";
 import { getPendingResolutionCount } from "@/lib/queries/lessons";
 import { getPendingRefundCount } from "@/lib/queries/refunds";
 import { getLostCount } from "@/lib/queries/lost";
+import { getScheduledActionCount } from "@/lib/queries/scheduled-actions";
 
 export default async function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   // This will redirect to /login if not authenticated
-  const [admin, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount, lostCount] = await Promise.all([
+  const [admin, receptionCount, reassignmentCount, uncertainCount, pendingResolutionCount, pendingRefundCount, lostCount, scheduledCount] = await Promise.all([
     requireAdmin(),
     getReceptionCount(),
     getReassignmentCount(),
@@ -19,6 +20,7 @@ export default async function AdminLayout({
     getPendingResolutionCount(),
     getPendingRefundCount(),
     getLostCount(),
+    getScheduledActionCount(),
   ]);
 
   return (
@@ -31,6 +33,7 @@ export default async function AdminLayout({
         pendingResolutionCount={pendingResolutionCount}
         pendingRefundCount={pendingRefundCount}
         lostCount={lostCount}
+        scheduledCount={scheduledCount}
       />
       <main className="min-w-0 flex-1 p-6">{children}</main>
     </div>

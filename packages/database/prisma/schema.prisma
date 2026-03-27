@@ -397,6 +397,21 @@ enum SmsStatus {
   FAILED
 }
 
+enum ScheduledActionType {
+  TRANSFER
+  SEND_TO_REASSIGNMENT
+  SEND_TO_LOST
+  DEACTIVATE
+  MERGE_GROUP
+}
+
+enum ScheduledActionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 // ─── Core Entities ──────────────────────────────────────────────────────────────
 
 model AdminUser {
@@ -430,6 +445,7 @@ model AdminUser {
   uploadedDocuments        TeacherDocument[]         @relation("UploadedDocument")
   flaggedUncertain         UncertainHistory[]        @relation("FlaggedUncertain")
   resolvedUncertain        UncertainHistory[]        @relation("ResolvedUncertain")
+  scheduledActions         ScheduledAction[]         @relation("ScheduledActionCreatedBy")
 }
 
 model Teacher {
@@ -546,6 +562,7 @@ model Student {
   refunds           Refund[]
   referralsMade     Referral[]             @relation("Referrer")
   referralReceived  Referral?              @relation("Referred")
+  scheduledActions  ScheduledAction[]
 
   @@index([status])
   @@index([level])
@@ -674,8 +691,10 @@ model Group {
   exams                 Exam[]
   studentPaymentPeriods StudentPaymentPeriod[]
   teacherPaymentPeriods TeacherPaymentPeriod[]
-  scheduleSlots         TeacherScheduleSlot[]
-  teacherHistory        GroupTeacherHistory[]
+  scheduleSlots             TeacherScheduleSlot[]
+  teacherHistory            GroupTeacherHistory[]
+  scheduledActionsAsSource  ScheduledAction[]       @relation("ScheduledActionSource")
+  scheduledActionsAsDest    ScheduledAction[]       @relation("ScheduledActionDest")
 
   @@index([teacherId])
   @@index([isActive, type])
@@ -825,6 +844,7 @@ model GroupMembership {
   previousMembership     GroupMembership?       @relation("MembershipContinuation", fields: [previousMembershipId], references: [id], onDelete: Restrict)
   continuedAsMemberships GroupMembership[]      @relation("MembershipContinuation")
   paymentPeriods         StudentPaymentPeriod[]
+  scheduledActions       ScheduledAction[]
 
   // No unique on [studentId, groupId] — a student can rejoin a group
   @@index([studentId])
@@ -1313,4 +1333,54 @@ model Exam {
   group Group @relation(fields: [groupId], references: [id], onDelete: Restrict)
 
   @@index([groupId])
+}
+
+// ─── Scheduled Actions ──────────────────────────────────────────────────────────
+//
+// Stores future-dated actions (transfer, reassignment, lost, deactivate, merge)
+// that admins schedule to take effect on a specific date. A daily Vercel Cron job
+// at 00:00 UTC executes PENDING actions whose effectiveDate <= today (Uzbekistan time).
+//
+// Conflict rules (all enforced at creation time):
+// - One pending action per membership (student-level actions)
+// - One pending merge per source group
+// - Immediate actions blocked if a pending scheduled action exists on the same membership
+// - Immediate merge blocked if students in source group have later-dated pending actions
+
+model ScheduledAction {
+  id            String                @id @default(cuid())
+  type          ScheduledActionType
+  status        ScheduledActionStatus @default(PENDING)
+  effectiveDate DateTime              @db.Date
+
+  // Student-level actions (transfer/reassign/lost/deactivate)
+  studentId    String?
+  membershipId String?
+
+  // Merge actions
+  sourceGroupId String?
+  destGroupId   String?
+
+  // Action-specific parameters (destinationGroupId, lostReasonId, transferReasonId, etc.)
+  payload Json
+
+  // Audit
+  createdById   String
+  createdAt     DateTime  @default(now())
+  executedAt    DateTime?
+  cancelledAt   DateTime?
+  cancelReason  String?
+  failureReason String?
+
+  // Relations
+  student     Student?         @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  membership  GroupMembership? @relation(fields: [membershipId], references: [id], onDelete: Restrict)
+  sourceGroup Group?           @relation("ScheduledActionSource", fields: [sourceGroupId], references: [id], onDelete: Restrict)
+  destGroup   Group?           @relation("ScheduledActionDest", fields: [destGroupId], references: [id], onDelete: Restrict)
+  createdBy   AdminUser        @relation("ScheduledActionCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@index([status, effectiveDate])
+  @@index([studentId, status])
+  @@index([membershipId, status])
+  @@index([sourceGroupId, status])
 }

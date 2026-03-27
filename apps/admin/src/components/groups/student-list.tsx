@@ -43,7 +43,8 @@ import {
   sendToLostList,
 } from "@/lib/actions/students";
 import { UncertainReasonDialog } from "@/components/uncertain/uncertain-reason-dialog";
-import { getAge } from "@/lib/helpers/date";
+import { EffectiveDatePicker } from "@/components/shared/effective-date-picker";
+import { getAge, getUzbekistanTodayStr } from "@/lib/helpers/date";
 import type { TransferReason, TransferGroup } from "@/lib/queries/transfers";
 import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
 import { updateMembershipComment } from "@/lib/actions/group-memberships";
@@ -190,8 +191,10 @@ function MemberActionsMenu({
   const [lostOpen, setLostOpen] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState("");
 
   const selectedReason = lostReasons?.find((r) => r.id === selectedReasonId);
+  const isFutureDate = effectiveDate > getUzbekistanTodayStr();
 
   return (
     <>
@@ -232,7 +235,13 @@ function MemberActionsMenu({
       )}
 
       {/* Reassignment confirmation */}
-      <Dialog open={reassignOpen} onOpenChange={setReassignOpen}>
+      <Dialog
+        open={reassignOpen}
+        onOpenChange={(v) => {
+          setReassignOpen(v);
+          if (!v) setEffectiveDate("");
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Send to Reassignment</DialogTitle>
@@ -242,20 +251,29 @@ function MemberActionsMenu({
               Reassignment.
             </DialogDescription>
           </DialogHeader>
+          <EffectiveDatePicker
+            value={effectiveDate}
+            onChange={setEffectiveDate}
+            disabled={isPending}
+          />
           <DialogFooter>
             <Button variant="outline" onClick={() => setReassignOpen(false)}>
               Cancel
             </Button>
             <Button
-              disabled={isPending}
+              disabled={!effectiveDate || isPending}
               onClick={() => {
                 startTransition(async () => {
                   const result = await sendToReassignment(
                     studentId,
                     membershipId,
+                    effectiveDate,
                   );
                   if (result?.error) {
                     toast.error(result.error);
+                  } else if ("scheduled" in result && result.scheduled) {
+                    toast.success(`Reassignment for ${studentName} scheduled for ${effectiveDate}`);
+                    setReassignOpen(false);
                   } else {
                     toast.success(`${studentName} sent to reassignment`);
                     setReassignOpen(false);
@@ -263,7 +281,7 @@ function MemberActionsMenu({
                 });
               }}
             >
-              {isPending ? "..." : "Send to Reassignment"}
+              {isPending ? "..." : isFutureDate ? "Schedule Reassignment" : "Send to Reassignment"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -277,6 +295,7 @@ function MemberActionsMenu({
           if (!v) {
             setSelectedReasonId("");
             setOtherReason("");
+            setEffectiveDate("");
           }
         }}
       >
@@ -320,6 +339,12 @@ function MemberActionsMenu({
                 />
               </div>
             )}
+
+            <EffectiveDatePicker
+              value={effectiveDate}
+              onChange={setEffectiveDate}
+              disabled={isPending}
+            />
           </div>
 
           <DialogFooter>
@@ -328,15 +353,19 @@ function MemberActionsMenu({
             </Button>
             <Button
               variant="destructive"
-              disabled={!selectedReasonId || isPending}
+              disabled={!selectedReasonId || !effectiveDate || isPending}
               onClick={() => {
                 startTransition(async () => {
                   const result = await sendToLostList(studentId, membershipId, {
                     lostReasonId: selectedReasonId,
                     otherLostReason: otherReason || null,
+                    effectiveDate,
                   });
                   if (result?.error) {
                     toast.error(result.error);
+                  } else if ("scheduled" in result && result.scheduled) {
+                    toast.success(`Lost list action for ${studentName} scheduled for ${effectiveDate}`);
+                    setLostOpen(false);
                   } else if ("success" in result) {
                     toast.success(`${studentName} sent to lost list`);
                     setLostOpen(false);
@@ -344,7 +373,7 @@ function MemberActionsMenu({
                 });
               }}
             >
-              {isPending ? "..." : "Send to Lost list"}
+              {isPending ? "..." : isFutureDate ? "Schedule Lost" : "Send to Lost list"}
             </Button>
           </DialogFooter>
         </DialogContent>

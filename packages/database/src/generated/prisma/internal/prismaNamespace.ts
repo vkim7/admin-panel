@@ -416,7 +416,8 @@ export const ModelName = {
   CallHistory: 'CallHistory',
   SmsHistory: 'SmsHistory',
   Holiday: 'Holiday',
-  Exam: 'Exam'
+  Exam: 'Exam',
+  ScheduledAction: 'ScheduledAction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -432,7 +433,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2878,6 +2879,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ScheduledAction: {
+      payload: Prisma.$ScheduledActionPayload<ExtArgs>
+      fields: Prisma.ScheduledActionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ScheduledActionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ScheduledActionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        findFirst: {
+          args: Prisma.ScheduledActionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ScheduledActionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        findMany: {
+          args: Prisma.ScheduledActionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>[]
+        }
+        create: {
+          args: Prisma.ScheduledActionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        createMany: {
+          args: Prisma.ScheduledActionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ScheduledActionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>[]
+        }
+        delete: {
+          args: Prisma.ScheduledActionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        update: {
+          args: Prisma.ScheduledActionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ScheduledActionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ScheduledActionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ScheduledActionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ScheduledActionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ScheduledActionPayload>
+        }
+        aggregate: {
+          args: Prisma.ScheduledActionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateScheduledAction>
+        }
+        groupBy: {
+          args: Prisma.ScheduledActionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduledActionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ScheduledActionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ScheduledActionCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3455,12 +3530,40 @@ export const ExamScalarFieldEnum = {
 export type ExamScalarFieldEnum = (typeof ExamScalarFieldEnum)[keyof typeof ExamScalarFieldEnum]
 
 
+export const ScheduledActionScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  status: 'status',
+  effectiveDate: 'effectiveDate',
+  studentId: 'studentId',
+  membershipId: 'membershipId',
+  sourceGroupId: 'sourceGroupId',
+  destGroupId: 'destGroupId',
+  payload: 'payload',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  executedAt: 'executedAt',
+  cancelledAt: 'cancelledAt',
+  cancelReason: 'cancelReason',
+  failureReason: 'failureReason'
+} as const
+
+export type ScheduledActionScalarFieldEnum = (typeof ScheduledActionScalarFieldEnum)[keyof typeof ScheduledActionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -3477,6 +3580,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -3801,6 +3913,48 @@ export type ListEnumExamTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
 
 
 /**
+ * Reference to a field of type 'ScheduledActionType'
+ */
+export type EnumScheduledActionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduledActionType'>
+    
+
+
+/**
+ * Reference to a field of type 'ScheduledActionType[]'
+ */
+export type ListEnumScheduledActionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduledActionType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ScheduledActionStatus'
+ */
+export type EnumScheduledActionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduledActionStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ScheduledActionStatus[]'
+ */
+export type ListEnumScheduledActionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ScheduledActionStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -3941,6 +4095,7 @@ export type GlobalOmitConfig = {
   smsHistory?: Prisma.SmsHistoryOmit
   holiday?: Prisma.HolidayOmit
   exam?: Prisma.ExamOmit
+  scheduledAction?: Prisma.ScheduledActionOmit
 }
 
 /* Types for Logging */

@@ -182,3 +182,8 @@ export type Holiday = Prisma.HolidayModel
  * 
  */
 export type Exam = Prisma.ExamModel
+/**
+ * Model ScheduledAction
+ * 
+ */
+export type ScheduledAction = Prisma.ScheduledActionModel
