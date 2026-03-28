@@ -2,11 +2,7 @@
   "crons": [
     {
       "path": "/api/cron/execute-scheduled-actions",
-      "schedule": "* * * * *"
-    },
-    {
-      "path": "/api/cron/test",
-      "schedule": "* * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
