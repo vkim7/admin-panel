@@ -35,9 +35,12 @@ export type GroupOption = {
   days: number[];
   startTime: string;
   teacherName: string;
+  activeCount: number;
   availableSeats: number;
   maxStudents: number;
   teachingLanguage: string;
+  scheduledDepartures: number;
+  scheduledArrivals: number;
 };
 
 export type StudentForAssign = {
@@ -186,13 +189,19 @@ export function AssignDialog({
         studentIds: [student.id],
         joinDate: values.joinDate,
         comment: null,
-      });
+      }) as { error: string } | { success: true; scheduled?: boolean; warning?: string };
       if ("error" in result) {
         toast.error(result.error);
       } else {
-        toast.success(
-          `${student.firstName} ${student.lastName} assigned to group`,
-        );
+        if ("scheduled" in result && result.scheduled) {
+          toast.success(
+            `Assignment scheduled for ${student.firstName} ${student.lastName}`,
+          );
+        } else {
+          toast.success(
+            `${student.firstName} ${student.lastName} assigned to group`,
+          );
+        }
         if ("warning" in result && result.warning) {
           toast.warning(result.warning);
         }
@@ -217,7 +226,6 @@ export function AssignDialog({
 
     const levelLabel = LEVEL_SHORT[group.level] ?? group.level;
     const stageLabel = STAGE_SHORT[group.progressStage] ?? group.progressStage;
-    const activeCount = group.maxStudents - group.availableSeats;
 
     return (
       <button
@@ -249,7 +257,15 @@ export function AssignDialog({
             </span>
           </div>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
-            <span>{group.teacherName} · {activeCount}/{group.maxStudents}</span>
+            <span>
+              {group.teacherName} · {group.activeCount}/{group.maxStudents}
+              {group.scheduledDepartures > 0 && (
+                <span className="ml-1 text-red-600">↓{group.scheduledDepartures}</span>
+              )}
+              {group.scheduledArrivals > 0 && (
+                <span className="ml-1 text-green-600">↑{group.scheduledArrivals}</span>
+              )}
+            </span>
             <span>{getDaysLabel(group.days)} {group.startTime}</span>
           </div>
         </div>

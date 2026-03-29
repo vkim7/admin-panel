@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
+import type { GroupScheduledActionRow } from "@/lib/queries/scheduled-actions";
+import { GroupScheduledActions } from "@/components/groups/group-scheduled-actions";
 import { MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -392,6 +394,7 @@ export function StudentList({
   trialMembershipIdsWithAttendance,
   lostReasons,
   uncertainReasons,
+  scheduledActions,
 }: {
   memberships: MembershipRow[];
   groupId: string;
@@ -402,6 +405,7 @@ export function StudentList({
   trialMembershipIdsWithAttendance?: Set<string>;
   lostReasons?: LostReason[];
   uncertainReasons?: UncertainReasonOption[];
+  scheduledActions?: GroupScheduledActionRow[];
 }) {
   const active = memberships.filter((m) => !m.leaveDate);
   const past = memberships.filter((m) => m.leaveDate);
@@ -562,6 +566,13 @@ export function StudentList({
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Scheduled actions */}
+      {scheduledActions && scheduledActions.length > 0 && (
+        <div className="mt-4">
+          <GroupScheduledActions actions={scheduledActions} groupId={groupId} />
         </div>
       )}
 

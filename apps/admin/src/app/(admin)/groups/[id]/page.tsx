@@ -26,6 +26,8 @@ import { MergeDialog } from "@/components/groups/merge-dialog";
 import { GraduationDialog } from "@/components/groups/graduation-dialog";
 import { LessonGrid } from "@/components/lessons/lesson-grid";
 import { TeacherChangeDialog } from "@/components/lessons/teacher-change-dialog";
+import { getScheduledActionsForGroup } from "@/lib/queries/scheduled-actions";
+import { getScheduledCapacity, STEADY_STATE_DATE } from "@/lib/helpers/capacity";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -43,7 +45,8 @@ export default async function GroupDetailPage({
   const group = await getGroupById(id);
   if (!group) notFound();
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons] = await Promise.all([
+
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons, groupScheduledActions, scheduledCapacity] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
@@ -54,6 +57,8 @@ export default async function GroupDetailPage({
     getGroupsForMerge(id),
     getLostReasons(),
     getUncertainReasons(),
+    getScheduledActionsForGroup(id),
+    getScheduledCapacity(id, STEADY_STATE_DATE),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -64,7 +69,7 @@ export default async function GroupDetailPage({
       : 0;
 
   const activeMemberships = group.memberships.filter((m) => !m.leaveDate);
-  const hasCapacity = activeMemberships.length < group.maxStudents;
+  const hasCapacity = scheduledCapacity.availableSlots > 0;
 
   // Check for stale trials
   const today = new Date();
@@ -230,6 +235,16 @@ export default async function GroupDetailPage({
           <p className="text-xs font-medium text-muted-foreground">Students</p>
           <p className="mt-1 text-sm">
             {activeMemberships.length}/{group.maxStudents}
+            {scheduledCapacity.scheduledDepartures > 0 && (
+              <span className="ml-1.5 text-red-600">
+                ↓{scheduledCapacity.scheduledDepartures}
+              </span>
+            )}
+            {scheduledCapacity.scheduledArrivals > 0 && (
+              <span className="ml-1.5 text-green-600">
+                ↑{scheduledCapacity.scheduledArrivals}
+              </span>
+            )}
           </p>
         </div>
         <div>
@@ -291,6 +306,7 @@ export default async function GroupDetailPage({
         trialMembershipIdsWithAttendance={trialMembershipIdsWithAttendance}
         lostReasons={lostReasons}
         uncertainReasons={uncertainReasons}
+        scheduledActions={groupScheduledActions}
       />
 
       <Separator />

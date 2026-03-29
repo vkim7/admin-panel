@@ -25,6 +25,8 @@ const TYPE_LABELS: Record<string, string> = {
   SEND_TO_LOST: "Lost List",
   DEACTIVATE: "Deactivate",
   MERGE_GROUP: "Merge Group",
+  ASSIGN: "Assignment",
+  CHANGE_TEACHER: "Teacher Change",
 };
 
 const STATUS_OPTIONS = ["ALL", "PENDING", "COMPLETED", "FAILED", "CANCELLED"] as const;
@@ -172,18 +174,64 @@ const columns: ColumnDef<ScheduledActionRow>[] = [
     },
   },
   {
-    accessorKey: "sourceGroup",
-    header: "Source",
+    id: "details",
+    header: "Details",
     cell: ({ row }) => {
-      const g = row.original.sourceGroup ?? row.original.membership?.group;
-      if (!g) return "—";
-      return g.publicId;
+      const r = row.original;
+      const source = r.sourceGroup ?? r.membership?.group;
+      const dest = r.destGroup;
+
+      function groupLink(g: { id: string; publicId: string }) {
+        return (
+          <Link href={`/groups/${g.id}`} className="text-primary underline">
+            {g.publicId}
+          </Link>
+        );
+      }
+
+      function teacherLink(id: string, name: string) {
+        return (
+          <Link href={`/teachers/${id}`} className="text-primary underline">
+            {name}
+          </Link>
+        );
+      }
+
+      switch (r.type) {
+        case "TRANSFER":
+          return source && dest ? (
+            <span>{groupLink(source)} → {groupLink(dest)}</span>
+          ) : "—";
+        case "SEND_TO_REASSIGNMENT":
+        case "SEND_TO_LOST":
+          return source ? (
+            <span>from {groupLink(source)}</span>
+          ) : "—";
+        case "DEACTIVATE":
+          return <span className="text-muted-foreground">All memberships</span>;
+        case "MERGE_GROUP":
+          return source && dest ? (
+            <span>{groupLink(source)} → {groupLink(dest)}</span>
+          ) : "—";
+        case "ASSIGN":
+          return dest ? (
+            <span>→ {groupLink(dest)}</span>
+          ) : "—";
+        case "CHANGE_TEACHER": {
+          const p = r.payload as Record<string, string> | null;
+          if (!p?.currentTeacherName || !p?.newTeacherName) return "—";
+          return (
+            <span>
+              {p.currentTeacherId ? teacherLink(p.currentTeacherId, p.currentTeacherName) : p.currentTeacherName}
+              {" → "}
+              {p.newTeacherId ? teacherLink(p.newTeacherId, p.newTeacherName) : p.newTeacherName}
+            </span>
+          );
+        }
+        default:
+          return "—";
+      }
     },
-  },
-  {
-    accessorKey: "destGroup",
-    header: "Destination",
-    cell: ({ row }) => row.original.destGroup?.publicId ?? "—",
   },
   {
     accessorKey: "effectiveDate",
@@ -234,7 +282,7 @@ interface ScheduledActionsTableProps {
 }
 
 export function ScheduledActionsTable({ data }: ScheduledActionsTableProps) {
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [statusFilter, setStatusFilter] = useState<string>("PENDING");
 
   const filtered = statusFilter === "ALL"
     ? data
@@ -243,16 +291,23 @@ export function ScheduledActionsTable({ data }: ScheduledActionsTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex gap-1">
-        {STATUS_OPTIONS.map((s) => (
-          <Button
-            key={s}
-            variant={statusFilter === s ? "default" : "outline"}
-            size="sm"
-            onClick={() => setStatusFilter(s)}
-          >
-            {s === "ALL" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}
-          </Button>
-        ))}
+        {STATUS_OPTIONS.map((s) => {
+          const isActive = statusFilter === s;
+          return (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatusFilter(s)}
+              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                isActive
+                  ? "border-primary bg-primary/5 text-primary"
+                  : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              {s === "ALL" ? "All" : s.charAt(0) + s.slice(1).toLowerCase()}
+            </button>
+          );
+        })}
       </div>
       <DataTable
         columns={columns}

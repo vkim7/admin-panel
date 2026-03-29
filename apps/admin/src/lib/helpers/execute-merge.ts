@@ -5,6 +5,7 @@ import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
 import { applyTransferCredit } from "@/lib/helpers/transfer-credit";
 import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
+import { getScheduledCapacity } from "@/lib/helpers/capacity";
 
 export interface ExecuteMergeParams {
   sourceGroupId: string;
@@ -87,11 +88,11 @@ export async function executeMerge(
 
   const activeMemberships = source.memberships.filter((m) => !m.isTrial);
 
-  // Capacity check — destination must have room for ALL source students
-  const destActiveCount = dest.memberships.length;
-  if (destActiveCount + activeMemberships.length > dest.maxStudents) {
+  // Capacity check — accounts for pending scheduled actions
+  const capacity = await getScheduledCapacity(destinationGroupId, effectiveDate);
+  if (capacity.effectiveCount + activeMemberships.length > dest.maxStudents) {
     return {
-      error: `Destination group cannot accommodate all ${activeMemberships.length} students (${destActiveCount}/${dest.maxStudents} currently)`,
+      error: `Destination group cannot accommodate all ${activeMemberships.length} students (${capacity.effectiveCount}/${dest.maxStudents} effectively)`,
     };
   }
 

@@ -3,7 +3,10 @@ import type { ScheduleCell as ScheduleCellData } from "@/lib/queries/schedule";
 import { LEVEL_SHORT } from "@/lib/constants";
 
 export function ScheduleCell({ cell }: { cell: ScheduleCellData }) {
-  const isFull = cell.activeCount >= cell.maxStudents;
+  // Effective count after scheduled actions resolve
+  const effectiveCount =
+    cell.activeCount - cell.scheduledDepartures + cell.scheduledArrivals;
+  const isFull = effectiveCount >= cell.maxStudents;
   const unpaidCount = cell.activeCount - cell.paidCount;
 
   // Format: "4/6" or "4+1T/6"
@@ -39,6 +42,12 @@ export function ScheduleCell({ cell }: { cell: ScheduleCellData }) {
       </div>
       <div className="text-muted-foreground">
         {countLabel}
+        {cell.scheduledDepartures > 0 && (
+          <span className="ml-1 text-red-600">↓{cell.scheduledDepartures}</span>
+        )}
+        {cell.scheduledArrivals > 0 && (
+          <span className="ml-1 text-green-600">↑{cell.scheduledArrivals}</span>
+        )}
         {unpaidCount > 0 && (
           <span className="font-medium text-red-600"> ({unpaidCount})</span>
         )}

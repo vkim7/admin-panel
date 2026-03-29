@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { changeGroupTeacher } from "@/lib/actions/lessons";
+import { getUzbekistanTodayStr } from "@/lib/helpers/date";
 import { ArrowRightLeft } from "lucide-react";
 
 interface TeacherChangeDialogProps {
@@ -32,11 +34,16 @@ export function TeacherChangeDialog({
 }: TeacherChangeDialogProps) {
   const [open, setOpen] = useState(false);
   const [selectedTeacherId, setSelectedTeacherId] = useState("");
+  const [effectiveDate, setEffectiveDate] = useState(() => getUzbekistanTodayStr());
   const [isPending, startTransition] = useTransition();
+
+  const todayStr = getUzbekistanTodayStr();
+  const isFuture = effectiveDate > todayStr;
 
   function handleClose() {
     setOpen(false);
     setSelectedTeacherId("");
+    setEffectiveDate(getUzbekistanTodayStr());
   }
 
   return (
@@ -61,20 +68,32 @@ export function TeacherChangeDialog({
                 No other active teachers available.
               </p>
             ) : (
-              <div className="space-y-2">
-                <Select onValueChange={setSelectedTeacherId} value={selectedTeacherId}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select new teacher..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {teachers.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>
-                        {t.firstName} {t.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">New Teacher</label>
+                  <Select onValueChange={setSelectedTeacherId} value={selectedTeacherId}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select new teacher..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {teachers.map((t) => (
+                        <SelectItem key={t.id} value={t.id}>
+                          {t.firstName} {t.lastName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Effective Date</label>
+                  <Input
+                    type="date"
+                    min={todayStr}
+                    value={effectiveDate}
+                    onChange={(e) => setEffectiveDate(e.target.value)}
+                  />
+                </div>
+              </>
             )}
           </div>
 
@@ -83,23 +102,28 @@ export function TeacherChangeDialog({
               Close
             </Button>
             <Button
-              disabled={!selectedTeacherId || isPending}
+              disabled={!selectedTeacherId || !effectiveDate || isPending}
               onClick={() => {
                 startTransition(async () => {
                   const result = await changeGroupTeacher({
                     groupId,
                     newTeacherId: selectedTeacherId,
-                  });
-                  if (result?.error) {
+                    effectiveDate,
+                  }) as { error: string } | { success: true; scheduled?: boolean };
+                  if ("error" in result) {
                     toast.error(result.error);
                   } else {
-                    toast.success("Teacher changed successfully");
+                    if (result.scheduled) {
+                      toast.success("Teacher change scheduled");
+                    } else {
+                      toast.success("Teacher changed successfully");
+                    }
                     handleClose();
                   }
                 });
               }}
             >
-              {isPending ? "Changing..." : "Change Teacher"}
+              {isPending ? "Saving..." : isFuture ? "Schedule Change" : "Change Teacher"}
             </Button>
           </DialogFooter>
         </DialogContent>

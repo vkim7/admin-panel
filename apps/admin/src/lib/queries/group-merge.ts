@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
+import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
 /**
  * Get active groups at the same level as the source, with capacity for merge.
@@ -14,34 +15,46 @@ export async function getGroupsForMerge(sourceGroupId: string) {
 
   if (!source) return [];
 
-  return prisma.group.findMany({
-    where: {
-      isActive: true,
-      level: source.level,
-      id: { not: sourceGroupId },
-    },
-    select: {
-      id: true,
-      publicId: true,
-      type: true,
-      level: true,
-      progressStage: true,
-      days: true,
-      startTime: true,
-      durationMinutes: true,
-      maxStudents: true,
-      teacher: {
-        select: { firstName: true, lastName: true },
+  const [groups, scheduledCounts] = await Promise.all([
+    prisma.group.findMany({
+      where: {
+        isActive: true,
+        level: source.level,
+        id: { not: sourceGroupId },
       },
-      _count: {
-        select: {
-          memberships: {
-            where: { leaveDate: null },
+      select: {
+        id: true,
+        publicId: true,
+        type: true,
+        level: true,
+        progressStage: true,
+        days: true,
+        startTime: true,
+        durationMinutes: true,
+        maxStudents: true,
+        teacher: {
+          select: { firstName: true, lastName: true },
+        },
+        _count: {
+          select: {
+            memberships: {
+              where: { leaveDate: null },
+            },
           },
         },
       },
-    },
-    orderBy: { publicId: "asc" },
+      orderBy: { publicId: "asc" },
+    }),
+    getGroupScheduledCounts(),
+  ]);
+
+  return groups.map((g) => {
+    const counts = scheduledCounts.get(g.id);
+    return {
+      ...g,
+      scheduledDepartures: counts?.departures ?? 0,
+      scheduledArrivals: counts?.arrivals ?? 0,
+    };
   });
 }
 

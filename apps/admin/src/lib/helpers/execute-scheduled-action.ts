@@ -3,8 +3,9 @@ import { prisma } from "@/server/db";
 import { executeTransfer } from "@/lib/helpers/execute-transfer";
 import { executeReassignment } from "@/lib/helpers/execute-reassignment";
 import { executeSendToLost } from "@/lib/helpers/execute-send-to-lost";
-import { executeDeactivate } from "@/lib/helpers/execute-deactivate";
 import { executeMerge } from "@/lib/helpers/execute-merge";
+import { executeAssign } from "@/lib/helpers/execute-assign";
+import { executeChangeTeacher } from "@/lib/helpers/execute-change-teacher";
 
 interface TransferPayload {
   transferReasonId: string;
@@ -16,9 +17,14 @@ interface SendToLostPayload {
   otherLostReason: string | null;
 }
 
-interface DeactivatePayload {
-  lostReasonId: string;
-  otherLostReason: string | null;
+interface AssignPayload {
+  comment: string | null;
+}
+
+interface ChangeTeacherPayload {
+  newTeacherId: string;
+  currentTeacherName: string;
+  newTeacherName: string;
 }
 
 /**
@@ -102,27 +108,6 @@ export async function executeSingleScheduledAction(
       break;
     }
 
-    case "DEACTIVATE": {
-      if (!action.studentId) {
-        result = { error: "Missing studentId for deactivation" };
-        break;
-      }
-      const payload = action.payload as unknown as DeactivatePayload;
-      const deactivateResult = await executeDeactivate({
-        studentId: action.studentId,
-        lostReasonId: payload.lostReasonId,
-        otherLostReason: payload.otherLostReason,
-        adminId,
-        effectiveDate,
-      });
-      if ("error" in deactivateResult) {
-        result = { error: deactivateResult.error };
-      } else {
-        result = { success: true, revalidatePaths: deactivateResult.revalidatePaths };
-      }
-      break;
-    }
-
     case "MERGE_GROUP": {
       if (!action.sourceGroupId || !action.destGroupId) {
         result = { error: "Missing sourceGroupId or destinationGroupId for merge" };
@@ -138,6 +123,47 @@ export async function executeSingleScheduledAction(
         result = { error: mergeResult.error };
       } else {
         result = { success: true, revalidatePaths: mergeResult.revalidatePaths };
+      }
+      break;
+    }
+
+    case "ASSIGN": {
+      if (!action.studentId || !action.destGroupId) {
+        result = { error: "Missing studentId or destinationGroupId for assignment" };
+        break;
+      }
+      const assignPayload = action.payload as unknown as AssignPayload;
+      const assignResult = await executeAssign({
+        groupId: action.destGroupId,
+        studentIds: [action.studentId],
+        joinDate: effectiveDate,
+        comment: assignPayload.comment,
+        adminId,
+      });
+      if ("error" in assignResult) {
+        result = { error: assignResult.error };
+      } else {
+        result = { success: true, revalidatePaths: assignResult.revalidatePaths };
+      }
+      break;
+    }
+
+    case "CHANGE_TEACHER": {
+      if (!action.sourceGroupId) {
+        result = { error: "Missing sourceGroupId for teacher change" };
+        break;
+      }
+      const changeTeacherPayload = action.payload as unknown as ChangeTeacherPayload;
+      const changeTeacherResult = await executeChangeTeacher({
+        groupId: action.sourceGroupId,
+        newTeacherId: changeTeacherPayload.newTeacherId,
+        effectiveDate,
+        adminId,
+      });
+      if ("error" in changeTeacherResult) {
+        result = { error: changeTeacherResult.error };
+      } else {
+        result = { success: true, revalidatePaths: changeTeacherResult.revalidatePaths };
       }
       break;
     }

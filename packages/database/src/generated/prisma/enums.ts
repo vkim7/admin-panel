@@ -178,7 +178,9 @@ export const ScheduledActionType = {
   SEND_TO_REASSIGNMENT: 'SEND_TO_REASSIGNMENT',
   SEND_TO_LOST: 'SEND_TO_LOST',
   DEACTIVATE: 'DEACTIVATE',
-  MERGE_GROUP: 'MERGE_GROUP'
+  MERGE_GROUP: 'MERGE_GROUP',
+  ASSIGN: 'ASSIGN',
+  CHANGE_TEACHER: 'CHANGE_TEACHER'
 } as const
 
 export type ScheduledActionType = (typeof ScheduledActionType)[keyof typeof ScheduledActionType]

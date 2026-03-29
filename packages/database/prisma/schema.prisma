@@ -403,6 +403,8 @@ enum ScheduledActionType {
   SEND_TO_LOST
   DEACTIVATE
   MERGE_GROUP
+  ASSIGN
+  CHANGE_TEACHER
 }
 
 enum ScheduledActionStatus {

@@ -8,6 +8,7 @@ import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
 import { applyTransferCredit } from "@/lib/helpers/transfer-credit";
 import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
+import { getScheduledCapacity } from "@/lib/helpers/capacity";
 
 export interface ExecuteTransferParams {
   membershipId: string;
@@ -108,8 +109,9 @@ export async function executeTransfer(
     return { error: "Destination group is not active" };
   }
 
-  // Capacity check
-  if (destGroup.memberships.length >= destGroup.maxStudents) {
+  // Capacity check — accounts for pending scheduled actions
+  const capacity = await getScheduledCapacity(destinationGroupId, effectiveDate);
+  if (capacity.availableSlots <= 0) {
     return { error: "Destination group is full" };
   }
 

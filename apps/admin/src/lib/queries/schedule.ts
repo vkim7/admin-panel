@@ -1,6 +1,7 @@
 import { prisma } from "@/server/db";
 import { TIME_SLOTS } from "@/lib/constants";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
+import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
 export type ScheduleCell = {
   groupId: string;
@@ -13,6 +14,8 @@ export type ScheduleCell = {
   maxStudents: number;
   paidCount: number;
   language: "UZ" | "RU" | null; // null = both (default, not shown)
+  scheduledDepartures: number;
+  scheduledArrivals: number;
 };
 
 export type ScheduleTeacherRow = {
@@ -94,6 +97,9 @@ export async function getScheduleData(): Promise<ScheduleData> {
     paidPeriods.map((p) => [p.groupId, p._count.id]),
   );
 
+  // Query 3: Scheduled departure/arrival counts per group
+  const scheduledCounts = await getGroupScheduledCounts();
+
   // Build empty slot template
   const emptySlots = (): Record<string, ScheduleCell | null> => {
     const slots: Record<string, ScheduleCell | null> = {};
@@ -155,6 +161,8 @@ export async function getScheduleData(): Promise<ScheduleData> {
         teacher.teachingLanguage === "RUSSIAN" ? "RU" :
         null;
 
+      const groupCounts = scheduledCounts.get(group.id);
+
       const cell: ScheduleCell = {
         groupId: group.id,
         publicId: group.publicId,
@@ -166,6 +174,8 @@ export async function getScheduleData(): Promise<ScheduleData> {
         maxStudents: group.maxStudents,
         paidCount: paidByGroup.get(group.id) ?? 0,
         language: lang,
+        scheduledDepartures: groupCounts?.departures ?? 0,
+        scheduledArrivals: groupCounts?.arrivals ?? 0,
       };
 
       if (row.slots[group.startTime] !== undefined) {

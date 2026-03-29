@@ -70,14 +70,20 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
 
   function onSubmit(values: AddStudentsFormValues) {
     startTransition(async () => {
-      const result = await addStudentsToGroup(groupId, values);
+      const result = await addStudentsToGroup(groupId, values) as { error: string } | { success: true; scheduled?: boolean; warning?: string };
       if ("error" in result) {
         toast.error(result.error);
       } else {
         const count = values.studentIds.length;
-        toast.success(
-          `${count} student${count === 1 ? "" : "s"} added to group`,
-        );
+        if ("scheduled" in result && result.scheduled) {
+          toast.success(
+            `Assignment scheduled for ${count} student${count === 1 ? "" : "s"}`,
+          );
+        } else {
+          toast.success(
+            `${count} student${count === 1 ? "" : "s"} added to group`,
+          );
+        }
         setOpen(false);
         form.reset();
         setSearch("");

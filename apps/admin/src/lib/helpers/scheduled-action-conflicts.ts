@@ -7,6 +7,8 @@ const ACTION_TYPE_LABELS: Record<ScheduledActionType, string> = {
   SEND_TO_LOST: "send to lost list",
   DEACTIVATE: "deactivation",
   MERGE_GROUP: "group merge",
+  ASSIGN: "assignment",
+  CHANGE_TEACHER: "teacher change",
 };
 
 function formatDate(date: Date): string {
@@ -120,22 +122,6 @@ export async function checkScheduledActionConflict(
     return null;
   }
 
-  // Deactivate: one per student (student-level, not membership-level)
-  if (type === "DEACTIVATE") {
-    if (!studentId) return null;
-
-    const pending = await prisma.scheduledAction.findFirst({
-      where: { studentId, status: "PENDING" },
-      select: { type: true, effectiveDate: true },
-    });
-
-    if (pending) {
-      return `This student already has a scheduled ${ACTION_TYPE_LABELS[pending.type]} on ${formatDate(pending.effectiveDate)}. Cancel it first to schedule a new action.`;
-    }
-
-    return null;
-  }
-
   // Student-level actions: one per membership
   if (!membershipId) return null;
 
@@ -146,6 +132,78 @@ export async function checkScheduledActionConflict(
 
   if (pending) {
     return `This membership already has a scheduled ${ACTION_TYPE_LABELS[pending.type]} on ${formatDate(pending.effectiveDate)}. Cancel it first to schedule a new action.`;
+  }
+
+  return null;
+}
+
+/**
+ * Check conflicts for a scheduled ASSIGN action.
+ *
+ * Blocks if:
+ * - Student already has a pending ASSIGN to the same group
+ * - Student already has a pending ASSIGN to another group of the same type
+ * - Student has a pending DEACTIVATE
+ * - Student has an active same-type membership with no scheduled departure before the join date
+ *   (this is handled in execute-assign.ts, not here — we only check scheduled-action-level conflicts)
+ */
+export async function checkAssignConflicts(
+  studentId: string,
+  groupId: string,
+  groupType: string,
+  joinDate: Date,
+): Promise<string | null> {
+  // Check for pending deactivate
+  const pendingDeactivate = await prisma.scheduledAction.findFirst({
+    where: { studentId, status: "PENDING", type: "DEACTIVATE" },
+    select: { effectiveDate: true },
+  });
+  if (pendingDeactivate) {
+    return `This student has a pending deactivation on ${formatDate(pendingDeactivate.effectiveDate)}. Cancel it first.`;
+  }
+
+  // Check for pending ASSIGN to the same group
+  const duplicateAssign = await prisma.scheduledAction.findFirst({
+    where: { studentId, destGroupId: groupId, status: "PENDING", type: "ASSIGN" },
+    select: { effectiveDate: true },
+  });
+  if (duplicateAssign) {
+    return `This student already has a scheduled assignment to this group on ${formatDate(duplicateAssign.effectiveDate)}.`;
+  }
+
+  // Check for pending ASSIGN to another group of the same type
+  const sameTypeAssign = await prisma.scheduledAction.findFirst({
+    where: {
+      studentId,
+      status: "PENDING",
+      type: "ASSIGN",
+      destGroupId: { not: groupId },
+      destGroup: { type: groupType as "GROUP" | "INDIVIDUAL" },
+    },
+    include: { destGroup: { select: { publicId: true } } },
+  });
+  if (sameTypeAssign) {
+    const label = groupType === "GROUP" ? "group" : "individual";
+    return `This student already has a scheduled ${label} assignment to ${sameTypeAssign.destGroup?.publicId} on ${formatDate(sameTypeAssign.effectiveDate)}.`;
+  }
+
+  return null;
+}
+
+/**
+ * Block scheduling a CHANGE_TEACHER if the group already has one pending.
+ * Returns error message or null.
+ */
+export async function checkChangeTeacherConflict(
+  groupId: string,
+): Promise<string | null> {
+  const pending = await prisma.scheduledAction.findFirst({
+    where: { sourceGroupId: groupId, status: "PENDING", type: "CHANGE_TEACHER" },
+    select: { effectiveDate: true },
+  });
+
+  if (pending) {
+    return `This group already has a scheduled teacher change on ${formatDate(pending.effectiveDate)}. Cancel it first.`;
   }
 
   return null;

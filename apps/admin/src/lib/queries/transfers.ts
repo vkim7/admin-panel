@@ -1,4 +1,5 @@
 import { prisma } from "@/server/db";
+import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
 /**
  * Get active transfer reasons, ordered by sortOrder.
@@ -17,33 +18,45 @@ export type TransferReason = Awaited<ReturnType<typeof getTransferReasons>>[numb
  * Used to populate the transfer destination picker.
  */
 export async function getGroupsForTransfer(currentGroupId?: string) {
-  return prisma.group.findMany({
-    where: {
-      isActive: true,
-      ...(currentGroupId ? { id: { not: currentGroupId } } : {}),
-    },
-    select: {
-      id: true,
-      publicId: true,
-      type: true,
-      level: true,
-      progressStage: true,
-      days: true,
-      startTime: true,
-      durationMinutes: true,
-      maxStudents: true,
-      teacher: {
-        select: { firstName: true, lastName: true },
+  const [groups, scheduledCounts] = await Promise.all([
+    prisma.group.findMany({
+      where: {
+        isActive: true,
+        ...(currentGroupId ? { id: { not: currentGroupId } } : {}),
       },
-      _count: {
-        select: {
-          memberships: {
-            where: { leaveDate: null },
+      select: {
+        id: true,
+        publicId: true,
+        type: true,
+        level: true,
+        progressStage: true,
+        days: true,
+        startTime: true,
+        durationMinutes: true,
+        maxStudents: true,
+        teacher: {
+          select: { firstName: true, lastName: true },
+        },
+        _count: {
+          select: {
+            memberships: {
+              where: { leaveDate: null },
+            },
           },
         },
       },
-    },
-    orderBy: { publicId: "asc" },
+      orderBy: { publicId: "asc" },
+    }),
+    getGroupScheduledCounts(),
+  ]);
+
+  return groups.map((g) => {
+    const counts = scheduledCounts.get(g.id);
+    return {
+      ...g,
+      scheduledDepartures: counts?.departures ?? 0,
+      scheduledArrivals: counts?.arrivals ?? 0,
+    };
   });
 }
 

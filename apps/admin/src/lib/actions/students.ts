@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
-import { studentSchema, deactivateStudentSchema } from "@/schemas/student";
+import { studentSchema, deactivateStudentSchema, sendToLostSchema } from "@/schemas/student";
 import { markUncertainSchema } from "@/schemas/uncertain";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
 import { UNCERTAIN_CLEAR_FIELDS, resolveUncertainHistory } from "@/lib/helpers/uncertain";
@@ -215,50 +215,20 @@ export async function deactivateStudent(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const effectiveDate = new Date(parsed.data.effectiveDate + "T00:00:00Z");
-  const today = getUzbekistanToday();
+  const deactivateConflict = await checkImmediateDeactivateConflict(id);
+  if (deactivateConflict) return { error: deactivateConflict };
 
-  if (effectiveDate.getTime() < today.getTime()) {
-    return { error: "Effective date cannot be in the past" };
-  }
-
-  if (effectiveDate.getTime() === today.getTime()) {
-    const deactivateConflict = await checkImmediateDeactivateConflict(id);
-    if (deactivateConflict) return { error: deactivateConflict };
-
-    const result = await executeDeactivate({
-      studentId: id,
-      lostReasonId: parsed.data.lostReasonId,
-      otherLostReason: parsed.data.otherLostReason,
-      adminId: admin.id,
-      effectiveDate,
-    });
-    if ("error" in result) return { error: result.error };
-
-    for (const path of result.revalidatePaths) revalidatePath(path);
-    return { success: true };
-  }
-
-  // Future date — create scheduled action
-  // For deactivate, check if student has any pending scheduled action
-  const conflict = await checkScheduledActionConflict("DEACTIVATE", undefined, undefined, id);
-  if (conflict) return { error: conflict };
-
-  await prisma.scheduledAction.create({
-    data: {
-      type: "DEACTIVATE",
-      effectiveDate,
-      studentId: id,
-      payload: {
-        lostReasonId: parsed.data.lostReasonId,
-        otherLostReason: parsed.data.otherLostReason,
-      },
-      createdById: admin.id,
-    },
+  const result = await executeDeactivate({
+    studentId: id,
+    lostReasonId: parsed.data.lostReasonId,
+    otherLostReason: parsed.data.otherLostReason,
+    adminId: admin.id,
+    effectiveDate: getUzbekistanToday(),
   });
+  if ("error" in result) return { error: result.error };
 
-  revalidatePath("/scheduled-actions");
-  return { success: true, scheduled: true };
+  for (const path of result.revalidatePaths) revalidatePath(path);
+  return { success: true };
 }
 
 /**
@@ -333,7 +303,7 @@ export async function sendToLostList(
   data: unknown,
 ) {
   const admin = await requireAdmin();
-  const parsed = deactivateStudentSchema.safeParse(data);
+  const parsed = sendToLostSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }

@@ -128,7 +128,7 @@ export function MergeDialog({
 
   const selectedGroup = availableGroups.find((g) => g.id === selectedGroupId);
   const hasCapacity = selectedGroup
-    ? selectedGroup._count.memberships + activeStudentCount <= selectedGroup.maxStudents
+    ? (selectedGroup._count.memberships - selectedGroup.scheduledDepartures + selectedGroup.scheduledArrivals) + activeStudentCount <= selectedGroup.maxStudents
     : false;
 
   const canSubmit = selectedGroupId && hasCapacity && effectiveDate && confirmed;
@@ -172,7 +172,8 @@ export function MergeDialog({
                 </p>
               ) : (
                 filteredGroups.map((g) => {
-                  const capacity = g._count.memberships + activeStudentCount <= g.maxStudents;
+                  const effectiveCount = g._count.memberships - g.scheduledDepartures + g.scheduledArrivals;
+                  const capacity = effectiveCount + activeStudentCount <= g.maxStudents;
                   const isSelected = selectedGroupId === g.id;
                   const activeCount = g._count.memberships;
                   const levelLabel = LEVEL_SHORT[g.level] ?? g.level;
@@ -203,6 +204,12 @@ export function MergeDialog({
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>
                             {g.teacher.firstName} {g.teacher.lastName} · {activeCount}/{g.maxStudents}
+                            {g.scheduledDepartures > 0 && (
+                              <span className="ml-1 text-red-600">↓{g.scheduledDepartures}</span>
+                            )}
+                            {g.scheduledArrivals > 0 && (
+                              <span className="ml-1 text-green-600">↑{g.scheduledArrivals}</span>
+                            )}
                             {!capacity && " (not enough capacity)"}
                           </span>
                           <span>

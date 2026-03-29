@@ -20,8 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { EffectiveDatePicker } from "@/components/shared/effective-date-picker";
-import { getUzbekistanTodayStr } from "@/lib/helpers/date";
 import { deactivateStudent } from "@/lib/actions/students";
 
 type LostReason = {
@@ -44,11 +42,9 @@ export function StudentActions({
   const [showDeactivate, setShowDeactivate] = useState(false);
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
-  const [effectiveDate, setEffectiveDate] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const selectedReason = lostReasons.find((r) => r.id === selectedReasonId);
-  const isFutureDate = effectiveDate > getUzbekistanTodayStr();
 
   const showDeactivateButton =
     status === "ACTIVE" ||
@@ -108,12 +104,6 @@ export function StudentActions({
                 />
               </div>
             )}
-
-            <EffectiveDatePicker
-              value={effectiveDate}
-              onChange={setEffectiveDate}
-              disabled={isPending}
-            />
           </div>
 
           <DialogFooter>
@@ -125,19 +115,15 @@ export function StudentActions({
             </Button>
             <Button
               variant="destructive"
-              disabled={!selectedReasonId || !effectiveDate || isPending}
+              disabled={!selectedReasonId || isPending}
               onClick={() => {
                 startTransition(async () => {
                   const result = await deactivateStudent(studentId, {
                     lostReasonId: selectedReasonId,
                     otherLostReason: otherReason || null,
-                    effectiveDate,
                   });
                   if (result?.error) {
                     toast.error(result.error);
-                  } else if ("scheduled" in result && result.scheduled) {
-                    toast.success(`Deactivation scheduled for ${effectiveDate}`);
-                    setShowDeactivate(false);
                   } else if ("success" in result) {
                     toast.success("Student deactivated");
                     setShowDeactivate(false);
@@ -145,7 +131,7 @@ export function StudentActions({
                 });
               }}
             >
-              {isPending ? "Deactivating..." : isFutureDate ? "Schedule Deactivation" : "Deactivate"}
+              {isPending ? "Deactivating..." : "Deactivate"}
             </Button>
           </DialogFooter>
         </DialogContent>

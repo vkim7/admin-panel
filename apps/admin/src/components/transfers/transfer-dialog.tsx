@@ -195,7 +195,8 @@ export function TransferDialog({
                 </p>
               ) : (
                 filteredGroups.map((g) => {
-                  const isFull = g._count.memberships >= g.maxStudents;
+                  const effectiveCount = g._count.memberships - g.scheduledDepartures + g.scheduledArrivals;
+                  const isFull = effectiveCount >= g.maxStudents;
                   const isSelected = selectedGroupId === g.id;
                   const activeCount = g._count.memberships;
                   const levelLabel = LEVEL_SHORT[g.level] ?? g.level;
@@ -226,6 +227,12 @@ export function TransferDialog({
                         <div className="flex items-center justify-between text-xs text-muted-foreground">
                           <span>
                             {g.teacher.firstName} {g.teacher.lastName} · {activeCount}/{g.maxStudents}
+                            {g.scheduledDepartures > 0 && (
+                              <span className="ml-1 text-red-600">↓{g.scheduledDepartures}</span>
+                            )}
+                            {g.scheduledArrivals > 0 && (
+                              <span className="ml-1 text-green-600">↑{g.scheduledArrivals}</span>
+                            )}
                           </span>
                           <span>
                             {getDaysLabel(g.days)} {g.startTime}

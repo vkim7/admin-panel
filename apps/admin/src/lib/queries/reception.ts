@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import { getTrialMembershipAttendance } from "./students";
+import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
 export async function getReceptionStudents() {
   return prisma.student.findMany({
@@ -288,37 +289,49 @@ export async function getSecondLessonsData(): Promise<SecondLessonRow[]> {
 
 /** Active groups with available seats, for the assign-to-group dialog */
 export async function getGroupsForAssignment() {
-  const groups = await prisma.group.findMany({
-    where: { isActive: true },
-    include: {
-      teacher: {
-        select: {
-          firstName: true,
-          lastName: true,
-          teachingLanguage: true,
+  const [groups, scheduledCounts] = await Promise.all([
+    prisma.group.findMany({
+      where: { isActive: true },
+      include: {
+        teacher: {
+          select: {
+            firstName: true,
+            lastName: true,
+            teachingLanguage: true,
+          },
+        },
+        memberships: {
+          where: { leaveDate: null },
+          select: { id: true },
         },
       },
-      memberships: {
-        where: { leaveDate: null },
-        select: { id: true },
-      },
-    },
-    orderBy: [{ level: "asc" }, { startTime: "asc" }],
-  });
+      orderBy: [{ level: "asc" }, { startTime: "asc" }],
+    }),
+    getGroupScheduledCounts(),
+  ]);
 
   return groups
-    .filter((g) => g.memberships.length < g.maxStudents)
-    .map((g) => ({
-      id: g.id,
-      publicId: g.publicId,
-      type: g.type,
-      level: g.level,
-      progressStage: g.progressStage,
-      days: g.days,
-      startTime: g.startTime,
-      teacherName: `${g.teacher.firstName} ${g.teacher.lastName}`,
-      teachingLanguage: g.teacher.teachingLanguage,
-      availableSeats: g.maxStudents - g.memberships.length,
-      maxStudents: g.maxStudents,
-    }));
+    .map((g) => {
+      const counts = scheduledCounts.get(g.id);
+      const departures = counts?.departures ?? 0;
+      const arrivals = counts?.arrivals ?? 0;
+      const effectiveCount = g.memberships.length - departures + arrivals;
+      return {
+        id: g.id,
+        publicId: g.publicId,
+        type: g.type,
+        level: g.level,
+        progressStage: g.progressStage,
+        days: g.days,
+        startTime: g.startTime,
+        teacherName: `${g.teacher.firstName} ${g.teacher.lastName}`,
+        teachingLanguage: g.teacher.teachingLanguage,
+        activeCount: g.memberships.length,
+        availableSeats: g.maxStudents - effectiveCount,
+        maxStudents: g.maxStudents,
+        scheduledDepartures: departures,
+        scheduledArrivals: arrivals,
+      };
+    })
+    .filter((g) => g.availableSeats > 0);
 }

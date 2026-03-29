@@ -12,6 +12,9 @@ import {
 } from "@/schemas/lesson";
 import { permanentTeacherChangeSchema } from "@/schemas/teacher-change";
 import { findNextValidDate, timeToMinutes } from "@/lib/helpers/lesson-scheduling";
+import { getUzbekistanToday } from "@/lib/helpers/date";
+import { executeChangeTeacher, checkTeacherScheduleConflicts } from "@/lib/helpers/execute-change-teacher";
+import { checkChangeTeacherConflict } from "@/lib/helpers/scheduled-action-conflicts";
 import type { PrismaClient } from "@eng/database";
 
 type Tx = Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0];
@@ -586,142 +589,72 @@ export async function changeGroupTeacher(data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { groupId, newTeacherId } = parsed.data;
+  const { groupId, newTeacherId, effectiveDate: effectiveDateStr } = parsed.data;
+  const effectiveDate = new Date(effectiveDateStr + "T00:00:00Z");
+  const today = getUzbekistanToday();
+  const isFuture = effectiveDate.getTime() > today.getTime();
 
-  const group = await prisma.group.findUnique({
-    where: { id: groupId },
-    select: { id: true, teacherId: true, startTime: true, durationMinutes: true },
-  });
+  // Block if group already has a pending CHANGE_TEACHER
+  const conflict = await checkChangeTeacherConflict(groupId);
+  if (conflict) return { error: conflict };
 
-  if (!group) return { error: "Group not found" };
-  if (group.teacherId === newTeacherId) {
-    return { error: "New teacher must be different from the current teacher" };
-  }
-
-  const newTeacher = await prisma.teacher.findUnique({
-    where: { id: newTeacherId },
-    select: { isActive: true },
-  });
-
-  if (!newTeacher?.isActive) {
-    return { error: "New teacher must be active" };
-  }
-
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
-  // Get all future SCHEDULED lessons
-  const futureLessons = await prisma.lesson.findMany({
-    where: {
-      groupId,
-      status: "SCHEDULED",
-      lessonDate: { gte: today },
-    },
-    select: { id: true, lessonDate: true, startTime: true },
-  });
-
-  // Check conflicts for new teacher on all future lesson dates
-  const lessonStart = timeToMinutes(group.startTime);
-  const lessonEnd = lessonStart + group.durationMinutes;
-
-  if (futureLessons.length > 0) {
-    const futureDates = futureLessons.map((l) => l.lessonDate);
-
-    const conflictingSlots = await prisma.teacherScheduleSlot.findMany({
-      where: {
-        teacherId: newTeacherId,
-        date: { in: futureDates },
-      },
-      select: { startTime: true, date: true, group: { select: { durationMinutes: true, publicId: true } } },
-    });
-
-    for (const slot of conflictingSlots) {
-      const slotStart = timeToMinutes(slot.startTime);
-      const slotEnd = slotStart + slot.group.durationMinutes;
-      if (lessonStart < slotEnd && slotStart < lessonEnd) {
-        const dateStr = slot.date.toISOString().split("T")[0];
-        return {
-          error: `New teacher has a conflict on ${dateStr} with group ${slot.group.publicId}`,
-        };
-      }
-    }
-
-    // Check unavailability
-    const unavailabilities = await prisma.teacherUnavailability.findMany({
-      where: {
-        teacherId: newTeacherId,
-        date: { in: futureDates },
-      },
-    });
-
-    for (const ua of unavailabilities) {
-      if (ua.startTime === null) {
-        const dateStr = ua.date.toISOString().split("T")[0];
-        return { error: `New teacher is unavailable on ${dateStr}` };
-      }
-      const uaStart = timeToMinutes(ua.startTime);
-      const uaEnd = ua.endTime ? timeToMinutes(ua.endTime) : 1440;
-      if (lessonStart < uaEnd && uaStart < lessonEnd) {
-        const dateStr = ua.date.toISOString().split("T")[0];
-        return { error: `New teacher is unavailable on ${dateStr}` };
-      }
-    }
-  }
-
-  await prisma.$transaction(async (tx) => {
-    // a. Update Group.teacherId
-    await tx.group.update({
+  if (isFuture) {
+    // Validate basics before scheduling
+    const group = await prisma.group.findUnique({
       where: { id: groupId },
-      data: { teacherId: newTeacherId },
+      select: {
+        id: true, teacherId: true, startTime: true, durationMinutes: true,
+        teacher: { select: { firstName: true, lastName: true } },
+      },
     });
+    if (!group) return { error: "Group not found" };
+    if (group.teacherId === newTeacherId) {
+      return { error: "New teacher must be different from the current teacher" };
+    }
 
-    // b. Close current GroupTeacherHistory
-    await tx.groupTeacherHistory.updateMany({
-      where: { groupId, endDate: null },
-      data: { endDate: today },
+    const newTeacher = await prisma.teacher.findUnique({
+      where: { id: newTeacherId },
+      select: { isActive: true, firstName: true, lastName: true },
     });
+    if (!newTeacher?.isActive) {
+      return { error: "New teacher must be active" };
+    }
 
-    // c. Create new GroupTeacherHistory
-    await tx.groupTeacherHistory.create({
+    // Early conflict check — validate schedule from effective date
+    const scheduleConflict = await checkTeacherScheduleConflicts(newTeacherId, groupId, effectiveDate);
+    if (scheduleConflict) return { error: scheduleConflict };
+
+    await prisma.scheduledAction.create({
       data: {
-        groupId,
-        teacherId: newTeacherId,
-        startDate: today,
-        changedById: admin.id,
+        type: "CHANGE_TEACHER",
+        effectiveDate,
+        sourceGroupId: groupId,
+        payload: {
+          currentTeacherId: group.teacherId,
+          currentTeacherName: `${group.teacher.firstName} ${group.teacher.lastName}`,
+          newTeacherId,
+          newTeacherName: `${newTeacher.firstName} ${newTeacher.lastName}`,
+        },
+        createdById: admin.id,
       },
     });
 
-    // d. Update all future SCHEDULED lessons
-    if (futureLessons.length > 0) {
-      const lessonIds = futureLessons.map((l) => l.id);
+    revalidatePath(`/groups/${groupId}`);
+    revalidatePath("/scheduled-actions");
+    revalidatePath("/schedule");
+    return { success: true, scheduled: true };
+  }
 
-      await tx.lesson.updateMany({
-        where: { id: { in: lessonIds } },
-        data: {
-          teacherId: newTeacherId,
-          originalTeacherId: newTeacherId,
-        },
-      });
-
-      // e. Delete old schedule slots, create new ones
-      await tx.teacherScheduleSlot.deleteMany({
-        where: { lessonId: { in: lessonIds } },
-      });
-
-      await tx.teacherScheduleSlot.createMany({
-        data: futureLessons.map((l) => ({
-          teacherId: newTeacherId,
-          date: l.lessonDate,
-          startTime: l.startTime,
-          groupId,
-          lessonId: l.id,
-        })),
-      });
-    }
+  // Today — execute immediately
+  const result = await executeChangeTeacher({
+    groupId,
+    newTeacherId,
+    effectiveDate: today,
+    adminId: admin.id,
   });
 
-  revalidatePath(`/groups/${groupId}`);
-  revalidatePath("/schedule");
-  revalidatePath("/teachers");
+  if ("error" in result) return result;
+
+  for (const path of result.revalidatePaths) revalidatePath(path);
   return { success: true };
 }
