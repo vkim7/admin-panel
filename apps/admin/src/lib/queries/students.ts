@@ -8,7 +8,7 @@ export async function getStudents() {
         where: { leaveDate: null },
         select: {
           id: true,
-          group: { select: { id: true, publicId: true, type: true, level: true } },
+          group: { select: { id: true, publicId: true, type: true, level: true, zoomLink: true } },
         },
       },
     },
@@ -36,6 +36,7 @@ export async function getStudentById(id: string) {
               level: true,
               days: true,
               startTime: true,
+              zoomLink: true,
               isActive: true,
               mergedIntoGroupId: true,
               mergedIntoGroup: { select: { id: true, publicId: true } },
@@ -166,14 +167,22 @@ export async function getTrialMembershipAttendance(
 }
 
 /** Students available for group assignment — excludes inactive and those already active in the given group */
-export async function getStudentsForGroupAssignment(groupId: string) {
+export async function getStudentsForGroupAssignment(
+  groupId: string,
+  groupType: "GROUP" | "INDIVIDUAL",
+) {
   return prisma.student.findMany({
     where: {
       status: { not: "INACTIVE" },
       groupMemberships: {
         none: {
-          groupId,
           leaveDate: null,
+          OR: [
+            // Not already in THIS group
+            { groupId },
+            // Not already in ANOTHER group of the same type
+            { group: { type: groupType }, groupId: { not: groupId } },
+          ],
         },
       },
     },

@@ -762,7 +762,7 @@ A discount configuration. Can be percentage-based or fixed amount.
 | validFrom / validTo | Campaign window for seasonal promos. |
 | code | Promo/influencer code, e.g., "ALI2026". Null for non-code promos. |
 
-**Stacking:** All active promotions stack additively. No cap at the Promotion level, but the resulting `discountAmount` on `StudentPaymentPeriod` is clamped to `amountDue` (constraint #36) — a student never pays less than zero.
+**Stacking:** All active promotions stack additively via greedy application (TRIAL promos first). Each promo's discount is capped at the period's remaining room. Non-recurring promos that find no room in a fully-discounted period defer to the next period instead of being wasted. The total `discountAmount` on `StudentPaymentPeriod` never exceeds `amountDue` (constraint #36) — a student never pays less than zero.
 
 **Promo codes:** A Promotion with `type = PROMO_CODE` and a `code`. Students sign up with the code, get the discount. Admin tracks usage count for influencer/campaign payouts. PROMO_CODE and REFERRAL are mutually exclusive — a student can only have one acquisition channel.
 
@@ -771,7 +771,7 @@ A discount configuration. Can be percentage-based or fixed amount.
 - **WIN_BACK:** Auto-created when a student with `lostReasonId != null` is assigned to a group (came from Lost List, directly or via reassignment). `sendToReassignment` preserves inactivation fields for this detection.
 - **SEASONAL:** Auto-created at student registration if an active campaign exists (`validFrom <= now <= validTo`), and also at group assignment if the student has 0 non-trial committed memberships. Persists even if assignment happens after campaign ends.
 - **PROMO_CODE:** Validated and attached at student creation. Mutually exclusive with REFERRAL.
-- **REFERRAL:** Auto-created on first payment (existing Phase 12 logic).
+- **REFERRAL:** "Referral Welcome" for the referred student is auto-created immediately when the referral is recorded (at student creation or via manual `recordReferral`). "Referral Reward" for the referrer is auto-created when the referred student makes their first payment.
 - **APOLOGY / REWARD:** Admin-applied manually via existing promotion UI.
 
 ### StudentPromotion
@@ -811,10 +811,10 @@ Tracks who referred whom. Rewards are handled through the Promotion system.
 
 **Flow:**
 1. Student A shares their `referralCode`
-2. Student B enrolls, admin records the referral
+2. Student B enrolls, admin records the referral → "Referral Welcome" StudentPromotion created immediately for B
 3. Status = PENDING
-4. Student B makes first payment → status = COMPLETED
-5. System creates two StudentPromotions: one for A (billing credit), one for B (first-month discount)
+4. B's welcome discount applies to their first billing cycle (via `applyPromotionsToPeriods` at commit/assignment)
+5. Student B makes first payment → status = COMPLETED → "Referral Reward" StudentPromotion created for A and applied to A's existing billing periods
 6. Credits accumulate — a student with 10 referrals gets 10 separate StudentPromotion records
 
 **Unique constraint:** One referral per pair, and each student can only be referred once (`referredStudentId` is `@unique`). A can't refer B twice, and B can only have one referral source.

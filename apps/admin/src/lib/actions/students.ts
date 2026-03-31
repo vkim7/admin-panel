@@ -4,15 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
-import { studentSchema, deactivateStudentSchema, sendToLostSchema } from "@/schemas/student";
+import { studentSchema, sendOrphanToLostSchema, sendToLostSchema } from "@/schemas/student";
 import { markUncertainSchema } from "@/schemas/uncertain";
 import { removeFamilyIfNeeded, detectFamily, applyFamilyToExistingMembers } from "@/lib/helpers/promotion-auto-detect";
 import { UNCERTAIN_CLEAR_FIELDS, resolveUncertainHistory } from "@/lib/helpers/uncertain";
-import { executeDeactivate } from "@/lib/helpers/execute-deactivate";
+import { executeSendOrphanToLost } from "@/lib/helpers/execute-send-orphan-to-lost";
 import { executeReassignment } from "@/lib/helpers/execute-reassignment";
 import { executeSendToLost } from "@/lib/helpers/execute-send-to-lost";
 import { getUzbekistanToday } from "@/lib/helpers/date";
-import { checkImmediateStudentActionConflict, checkImmediateDeactivateConflict, checkScheduledActionConflict } from "@/lib/helpers/scheduled-action-conflicts";
+import { checkImmediateStudentActionConflict, checkImmediateSendToLostConflict, checkScheduledActionConflict } from "@/lib/helpers/scheduled-action-conflicts";
 
 export async function createStudent(data: unknown, redirectTo?: string) {
   await requireAdmin();
@@ -102,6 +102,8 @@ export async function createStudent(data: unknown, redirectTo?: string) {
       }
 
       // REFERRAL: create referral record linking referrer → this student
+      // and immediately attach "Referral Welcome" so the referred student
+      // gets the discount as soon as billing periods are created (commit / direct assign)
       if (referrerStudentId) {
         await tx.referral.create({
           data: {
@@ -109,6 +111,19 @@ export async function createStudent(data: unknown, redirectTo?: string) {
             referredStudentId: student.id,
           },
         });
+
+        const referredReward = await tx.promotion.findFirst({
+          where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Welcome" } },
+          select: { id: true, validityDays: true },
+        });
+        if (referredReward) {
+          const expiresAt = referredReward.validityDays
+            ? new Date(Date.now() + referredReward.validityDays * 24 * 60 * 60 * 1000)
+            : null;
+          await tx.studentPromotion.create({
+            data: { studentId: student.id, promotionId: referredReward.id, expiresAt },
+          });
+        }
       }
 
       // SEASONAL: attach StudentPromotion if an active campaign window is open
@@ -208,22 +223,21 @@ export async function updateStudent(id: string, data: unknown) {
   redirect(`/students/${id}`);
 }
 
-export async function deactivateStudent(id: string, data: unknown) {
+export async function sendOrphanToLost(id: string, data: unknown) {
   const admin = await requireAdmin();
-  const parsed = deactivateStudentSchema.safeParse(data);
+  const parsed = sendOrphanToLostSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const deactivateConflict = await checkImmediateDeactivateConflict(id);
-  if (deactivateConflict) return { error: deactivateConflict };
+  const conflict = await checkImmediateSendToLostConflict(id);
+  if (conflict) return { error: conflict };
 
-  const result = await executeDeactivate({
+  const result = await executeSendOrphanToLost({
     studentId: id,
     lostReasonId: parsed.data.lostReasonId,
     otherLostReason: parsed.data.otherLostReason,
     adminId: admin.id,
-    effectiveDate: getUzbekistanToday(),
   });
   if ("error" in result) return { error: result.error };
 

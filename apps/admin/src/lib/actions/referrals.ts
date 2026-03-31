@@ -41,11 +41,32 @@ export async function recordReferral(data: unknown) {
   }
 
   try {
-    await prisma.referral.create({
-      data: {
-        referrerStudentId: parsed.data.referrerStudentId,
-        referredStudentId: parsed.data.referredStudentId,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.referral.create({
+        data: {
+          referrerStudentId: parsed.data.referrerStudentId,
+          referredStudentId: parsed.data.referredStudentId,
+        },
+      });
+
+      // Immediately attach "Referral Welcome" so the referred student
+      // gets the discount when billing periods are created (commit / direct assign)
+      const referredReward = await tx.promotion.findFirst({
+        where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Welcome" } },
+        select: { id: true, validityDays: true },
+      });
+      if (referredReward) {
+        const expiresAt = referredReward.validityDays
+          ? new Date(Date.now() + referredReward.validityDays * 24 * 60 * 60 * 1000)
+          : null;
+        await tx.studentPromotion.create({
+          data: {
+            studentId: parsed.data.referredStudentId,
+            promotionId: referredReward.id,
+            expiresAt,
+          },
+        });
+      }
     });
   } catch (e: unknown) {
     if (

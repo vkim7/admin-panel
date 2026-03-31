@@ -44,6 +44,7 @@ export type FirstLessonRow = {
   groupType: string;
   groupDays: number[];
   groupStartTime: string;
+  zoomLink: string | null;
   lessonDate: Date | null;
   lessonStatus: string | null;
   attendanceStatus: "upcoming" | "attended" | "absent" | "no_record";
@@ -58,7 +59,7 @@ export async function getFirstLessonsData(): Promise<FirstLessonRow[]> {
         select: { id: true, crmCode: true, firstName: true, lastName: true, phone: true },
       },
       group: {
-        select: { id: true, publicId: true, type: true, startTime: true, days: true },
+        select: { id: true, publicId: true, type: true, startTime: true, days: true, zoomLink: true },
       },
     },
     orderBy: { joinDate: "asc" },
@@ -174,6 +175,7 @@ export async function getFirstLessonsData(): Promise<FirstLessonRow[]> {
       groupType: m.group.type,
       groupDays: m.group.days,
       groupStartTime: m.group.startTime,
+      zoomLink: m.group.zoomLink,
       lessonDate: lesson?.lessonDate ?? null,
       lessonStatus: lesson?.lessonStatus ?? null,
       attendanceStatus,

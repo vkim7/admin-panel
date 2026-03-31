@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TrialActionsMenu } from "@/components/groups/trial-resolution-dialog";
+import { CopyZoomButton } from "@/components/copy-zoom-button";
 import { DAYS_LABEL } from "@/lib/constants";
 import type { FirstLessonRow } from "@/lib/queries/reception";
 import type { LostReason } from "@/lib/queries/students";
@@ -57,6 +58,7 @@ export function FirstLessons({ data, lostReasons, transferGroups }: FirstLessons
             <TableHead>Name</TableHead>
             <TableHead>Phone</TableHead>
             <TableHead>Group</TableHead>
+            <TableHead>Schedule</TableHead>
             <TableHead>Lesson</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-10">Actions</TableHead>
@@ -78,12 +80,15 @@ export function FirstLessons({ data, lostReasons, transferGroups }: FirstLessons
                 </TableCell>
                 <TableCell>{row.phone}</TableCell>
                 <TableCell>
-                  <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
-                    {row.groupPublicId}
-                  </Link>
-                  <span className="ml-1 text-xs text-muted-foreground">
-                    {daysLabel} {row.groupStartTime}
+                  <span className="flex items-center gap-1">
+                    <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
+                      {row.groupPublicId}
+                    </Link>
+                    <CopyZoomButton zoomLink={row.zoomLink} />
                   </span>
+                </TableCell>
+                <TableCell className="text-xs text-muted-foreground">
+                  {daysLabel} {row.groupStartTime}
                 </TableCell>
                 <TableCell>{formatDate(row.lessonDate)}</TableCell>
                 <TableCell>

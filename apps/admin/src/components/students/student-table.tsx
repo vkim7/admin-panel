@@ -6,6 +6,7 @@ import Link from "next/link";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
+import { CopyZoomButton } from "@/components/copy-zoom-button";
 import { getAge } from "@/lib/helpers/date";
 
 type StudentRow = {
@@ -20,7 +21,7 @@ type StudentRow = {
   family: { parentPhone: string | null } | null;
   groupMemberships: {
     id: string;
-    group: { id: string; publicId: string; type: string; level: string };
+    group: { id: string; publicId: string; type: string; level: string; zoomLink: string | null };
   }[];
 };
 
@@ -95,11 +96,14 @@ const columns: ColumnDef<StudentRow>[] = [
         return <span className="text-sm text-muted-foreground">—</span>;
       }
       return (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-col gap-1">
           {memberships.map((m) => (
-            <Badge key={m.id} variant="outline" className="text-xs">
-              {m.group.publicId}
-            </Badge>
+            <span key={m.id} className="flex items-center gap-1">
+              <Link href={`/groups/${m.group.id}`} className="text-muted-foreground hover:underline text-sm">
+                {m.group.publicId}
+              </Link>
+              <CopyZoomButton zoomLink={m.group.zoomLink} />
+            </span>
           ))}
         </div>
       );

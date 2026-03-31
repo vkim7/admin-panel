@@ -5,6 +5,7 @@ import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import { recordPaymentSchema, adjustPeriodSchema } from "@/schemas/payment";
 import { calculatePaymentStatus } from "@/lib/helpers/payment-status";
+import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
 
 export async function recordPayment(periodId: string, data: unknown) {
   const admin = await requireAdmin();
@@ -102,17 +103,12 @@ export async function recordPayment(periodId: string, data: unknown) {
           data: { status: "COMPLETED", completedAt: new Date() },
         });
 
-        // Find referral reward promotions and create StudentPromotions
-        const [referrerReward, referredReward] = await Promise.all([
-          tx.promotion.findFirst({
-            where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Reward" } },
-            select: { id: true, validityDays: true },
-          }),
-          tx.promotion.findFirst({
-            where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Welcome" } },
-            select: { id: true, validityDays: true },
-          }),
-        ]);
+        // Create "Referral Reward" StudentPromotion for the referrer
+        // ("Referral Welcome" for the referred student is already created at student creation time)
+        const referrerReward = await tx.promotion.findFirst({
+          where: { type: "REFERRAL", isActive: true, name: { contains: "Referral Reward" } },
+          select: { id: true, validityDays: true },
+        });
 
         if (referrerReward) {
           const expiresAt = referrerReward.validityDays
@@ -125,19 +121,25 @@ export async function recordPayment(periodId: string, data: unknown) {
               expiresAt,
             },
           });
-        }
 
-        if (referredReward) {
-          const expiresAt = referredReward.validityDays
-            ? new Date(Date.now() + referredReward.validityDays * 24 * 60 * 60 * 1000)
-            : null;
-          await tx.studentPromotion.create({
-            data: {
-              studentId: pendingReferral.referredStudentId,
-              promotionId: referredReward.id,
-              expiresAt,
+          // Apply the reward to the referrer's existing billing periods
+          const referrerMemberships = await tx.groupMembership.findMany({
+            where: {
+              studentId: pendingReferral.referrerStudentId,
+              leaveDate: null,
             },
+            include: { group: { select: { level: true, type: true } } },
           });
+
+          for (const m of referrerMemberships) {
+            await applyPromotionsToPeriods({
+              studentId: pendingReferral.referrerStudentId,
+              membershipId: m.id,
+              groupLevel: m.group.level,
+              groupType: m.group.type,
+              tx,
+            });
+          }
         }
       }
     }

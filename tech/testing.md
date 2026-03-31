@@ -334,7 +334,7 @@ The test branch connection string stays the same after recreation (same endpoint
 | FAMILY: updateStudent with family change → old family rechecked, new family rechecked (calls updateStudent action) | — |
 | WIN_BACK: inactive student rejoins → WIN_BACK promo auto-attached | — |
 | SEASONAL: active campaign window → promo attached at student creation + group join | — |
-| REFERRAL: first real payment → referral COMPLETED, reward promos attached to both | — |
+| REFERRAL: welcome promo attached immediately on referral recording; first real payment → referral COMPLETED, reward promo attached to referrer + applied to existing periods | — |
 | REFERRAL + PROMO_CODE mutual exclusivity → error | — |
 | TRIAL promo: commit attaches correct promo (GROUP 100%, INDIVIDUAL 50%) | — |
 

@@ -834,8 +834,9 @@ src/lib/queries/students.ts                  — added LostReason type export
 - [x] **Assign promotion to student** — create StudentPromotion, calculate expiresAt from validityDays
 - [x] **Apply promotions during billing** (new `applyPromotionsToPeriods` helper):
   - Query active StudentPromotions
-  - Calculate discount per period, create AppliedPromotion records
-  - Clamp total discountAmount to amountDue **(C#36)** — a student never pays less than zero
+  - Calculate discount per period greedily (TRIAL first), create AppliedPromotion records
+  - Non-recurring promos that find no room in a period are deferred to the next one (not wasted)
+  - Clamp each promo's discount at remaining room **(C#36)** — a student never pays less than zero
   - For recurring: increment monthsUsed, check recurringMonths / expiresAt
 - [x] **First-lesson discount for trial commits** — when a trial student commits, auto-create a TRIAL StudentPromotion, then `applyPromotionsToPeriods()` applies 50% to first billing period.
 - [x] **Promotion list** — usage count, active/inactive toggle
@@ -844,14 +845,15 @@ src/lib/queries/students.ts                  — added LostReason type export
 
 - [x] **Record referral**: referrer → referred student, using referralCode
   - Validate: no self-referral (Zod), each student can only be referred once (referredStudentId @unique)
+- [x] **Referral welcome promo**: "Referral Welcome" StudentPromotion created immediately when referral is recorded (at student creation or via manual `recordReferral`), so the referred student gets the discount on their first billing cycle
 - [x] **Referral completion**: when referred student makes first payment → status=COMPLETED, completedAt
-  - Create StudentPromotions for both referrer (billing credit) and referred (first-month discount)
+  - Create "Referral Reward" StudentPromotion for the referrer and apply to their existing billing periods via `applyPromotionsToPeriods()`
 
 ### Implementation Notes
 
 - **Billing integration pattern**: `buildPaymentPeriods()` unchanged (still sets `discountAmount: 0`). New `applyPromotionsToPeriods()` helper runs after `createMany` within the same transaction — queries eligible StudentPromotions, calculates discounts, creates `AppliedPromotion` records, updates `discountAmount` + `paymentStatus` on each period.
 - **Wired into all period-creation flows**: `addStudentsToGroup`, `resolveTrialMembership` (trial commit), `transferStudent`, `mergeGroup`, `graduateGroup`.
-- **Referral completion**: `recordPayment` converted from batched to interactive transaction. After recording payment, checks if student has a PENDING referral and this is their first real (non-transfer-credit) payment.
+- **Referral flow**: "Referral Welcome" is created immediately when the referral is recorded (in `createStudent` or `recordReferral`). "Referral Reward" for the referrer is created in `recordPayment` when the referred student makes their first real (non-transfer-credit) payment, and `applyPromotionsToPeriods()` is called for the referrer's active memberships so the reward applies to existing periods.
 - **Referral codes**: Auto-generated (8 char alphanumeric) on student creation.
 - **Form schema pattern**: `promotionBaseSchema` (no refine/preprocess) for react-hook-form, `promotionSchema` (with XOR refine) for server actions — avoids zodResolver type issues with `z.preprocess`.
 
@@ -1195,7 +1197,7 @@ apps/admin/src/app/(admin)/layout.tsx                 — fetch + pass lostCount
 | Type | Discount | Trigger | Duration | Auto/Manual |
 |------|----------|---------|----------|-------------|
 | FAMILY | 100,000 UZS | 2+ active family members | Recurring, indefinite (auto-removed when <2 active) | Auto |
-| REFERRAL | 100,000 UZS | Friend's referral code → first payment | One-time, first cycle (both referrer AND referred) | Auto (existing) |
+| REFERRAL | 100,000 UZS | Referred: immediately on referral recording. Referrer: on referred student's first payment | One-time, first cycle (both referrer AND referred) | Auto (existing) |
 | PROMO_CODE | Varies per campaign | Celebrity/campaign code at student creation | One-time, first cycle | Auto on creation |
 | WIN_BACK | 100,000 UZS | Student assigned from Lost List | One-time, first cycle back | Auto |
 | SEASONAL | Varies per campaign | Student created during campaign window OR assigned during window with 0 committed memberships | One-time, first committed cycle | Auto |
@@ -1204,7 +1206,7 @@ apps/admin/src/app/(admin)/layout.tsx                 — fetch + pass lostCount
 | TRIAL | Varies (100% group, 50% individual) | Auto on trial membership | One-time per trial | Auto (existing) |
 
 **Rules:**
-- All promotions stack additively, clamped to `amountDue` (constraint #36)
+- All promotions stack additively, clamped to `amountDue` (constraint #36). Applied greedily per period (TRIAL first); non-recurring promos that find no room defer to the next period instead of being wasted
 - REFERRAL and PROMO_CODE are mutually exclusive (one acquisition channel per student)
 - Only FAMILY has auto-removal (stops applying from next billing cycle when <2 active family members; don't retroactively remove from current/past periods)
 - Application timing: next billing cycle for existing students, first billing cycle for newly joining students

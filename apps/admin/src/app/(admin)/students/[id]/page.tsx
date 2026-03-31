@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getStudentById, getLostReasons, getTrialMembershipAttendance } from "@/lib/queries/students";
+import { getStudentById, getTrialMembershipAttendance } from "@/lib/queries/students";
 import { getStudentPaymentPeriods } from "@/lib/queries/payments";
 import { getStudentPromotions, getActivePromotions } from "@/lib/queries/promotions";
 import { getStudentReferrals } from "@/lib/queries/referrals";
-import { StudentActions } from "@/components/students/student-actions";
 import { PaymentHistory } from "@/components/payments/payment-history";
 import { AssignPromotionDialog } from "@/components/promotions/assign-dialog";
 import { TrialStatusBadge, getTrialStatus } from "@/components/ui/trial-status-badge";
@@ -14,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
 import { StudentCommentEdit } from "@/components/students/student-comment-edit";
+import { CopyZoomButton } from "@/components/copy-zoom-button";
 
 const LEVEL_LABEL: Record<string, string> = {
   BEGINNER: "Beginner",
@@ -52,9 +52,8 @@ export default async function StudentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [student, lostReasons, paymentPeriods, studentPromotions, activePromotions, referrals] = await Promise.all([
+  const [student, paymentPeriods, studentPromotions, activePromotions, referrals] = await Promise.all([
     getStudentById(id),
-    getLostReasons(),
     getStudentPaymentPeriods(id),
     getStudentPromotions(id),
     getActivePromotions(),
@@ -242,12 +241,15 @@ export default async function StudentDetailPage({
                   {activeMemberships.map((m) => (
                     <tr key={m.id} className="border-t">
                       <td className="px-3 py-2 font-medium">
-                        <Link
-                          href={`/groups/${m.group.id}`}
-                          className="text-primary hover:underline"
-                        >
-                          {m.group.publicId}
-                        </Link>
+                        <span className="flex items-center gap-1">
+                          <Link
+                            href={`/groups/${m.group.id}`}
+                            className="text-primary hover:underline"
+                          >
+                            {m.group.publicId}
+                          </Link>
+                          <CopyZoomButton zoomLink={m.group.zoomLink} />
+                        </span>
                       </td>
                       <td className="px-3 py-2">
                         {m.group.type === "INDIVIDUAL"
@@ -557,13 +559,6 @@ export default async function StudentDetailPage({
         </>
       )}
 
-      {/* Danger zone */}
-      <Separator />
-      <StudentActions
-        studentId={id}
-        status={student.status}
-        lostReasons={lostReasons}
-      />
     </div>
   );
 }

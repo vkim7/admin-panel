@@ -85,12 +85,20 @@ export async function applyPromotionsToPeriods({
 
   if (periods.length === 0) return;
 
-  // 4. Apply discounts: per period, stack all eligible promotions
-  // Track how many periods each non-recurring promotion has been applied to
+  // 4. Apply discounts greedily per period (TRIAL promos first).
+  // Non-recurring promos that find no room in a period are deferred to the next one
+  // instead of being proportionally reduced and wasted.
   const appliedCountPerPromo = new Map<string, number>();
 
+  // Sort: TRIAL first so the free trial lesson is always accounted for before other discounts
+  eligible.sort((a, b) => {
+    if (a.promotion.type === "TRIAL" && b.promotion.type !== "TRIAL") return -1;
+    if (a.promotion.type !== "TRIAL" && b.promotion.type === "TRIAL") return 1;
+    return 0;
+  });
+
   for (const period of periods) {
-    let totalDiscount = 0;
+    let remainingRoom = period.amountDue; // C#36: discount never exceeds amountDue
     const appliedRecords: { studentPromotionId: string; discountAmount: number }[] = [];
 
     for (const sp of eligible) {
@@ -109,7 +117,7 @@ export async function applyPromotionsToPeriods({
       }
 
       // Calculate discount amount for this period
-      // TRIAL promotions: 50% off ONE lesson, not the whole period
+      // TRIAL promotions: discount applies to ONE lesson's price, not the whole period
       let discount: number;
       if (promo.discountType === "PERCENTAGE") {
         const base = promo.type === "TRIAL" ? period.pricePerLesson : period.amountDue;
@@ -120,30 +128,22 @@ export async function applyPromotionsToPeriods({
 
       if (discount <= 0) continue;
 
-      totalDiscount += discount;
-      appliedRecords.push({ studentPromotionId: sp.id, discountAmount: discount });
+      // Non-recurring promos: if the period is already fully discounted,
+      // skip it so the promo can apply to the next period instead of being wasted
+      if (!promo.isRecurring && remainingRoom <= 0) {
+        continue;
+      }
+
+      // Cap discount at remaining room
+      const appliedDiscount = Math.min(discount, remainingRoom);
+      remainingRoom -= appliedDiscount;
+
+      appliedRecords.push({ studentPromotionId: sp.id, discountAmount: appliedDiscount });
       appliedCountPerPromo.set(sp.id, (appliedCountPerPromo.get(sp.id) ?? 0) + 1);
     }
 
+    const totalDiscount = appliedRecords.reduce((sum, r) => sum + r.discountAmount, 0);
     if (totalDiscount === 0) continue;
-
-    // C#36: Clamp total discount to amountDue
-    const clampedDiscount = Math.min(totalDiscount, period.amountDue);
-
-    // If we clamped, proportionally reduce each record's discount
-    if (clampedDiscount < totalDiscount) {
-      const ratio = clampedDiscount / totalDiscount;
-      let distributed = 0;
-      for (let i = 0; i < appliedRecords.length; i++) {
-        if (i === appliedRecords.length - 1) {
-          // Last record gets the remainder to avoid rounding issues
-          appliedRecords[i]!.discountAmount = clampedDiscount - distributed;
-        } else {
-          appliedRecords[i]!.discountAmount = Math.floor(appliedRecords[i]!.discountAmount * ratio);
-          distributed += appliedRecords[i]!.discountAmount;
-        }
-      }
-    }
 
     // 5. Create AppliedPromotion records
     for (const record of appliedRecords) {
@@ -160,14 +160,14 @@ export async function applyPromotionsToPeriods({
     // 6. Update period discountAmount and recalculate paymentStatus
     const newStatus = calculatePaymentStatus(
       period.amountDue,
-      clampedDiscount,
+      totalDiscount,
       period.amountPaid,
     );
 
     await tx.studentPaymentPeriod.update({
       where: { id: period.id },
       data: {
-        discountAmount: clampedDiscount,
+        discountAmount: totalDiscount,
         paymentStatus: newStatus,
       },
     });
