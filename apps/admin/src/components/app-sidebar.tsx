@@ -7,6 +7,7 @@ import { logout } from "@/lib/actions/auth";
 import type { LucideIcon } from "lucide-react";
 import {
   CalendarDays,
+  CalendarOff,
   UserPlus,
   CreditCard,
   GraduationCap,
@@ -75,7 +76,10 @@ const navSections: NavSection[] = [
   },
   {
     title: "Reference",
-    items: [{ label: "Promotions", href: "/promotions", icon: Tag }],
+    items: [
+      { label: "Promotions", href: "/promotions", icon: Tag },
+      { label: "Holidays", href: "/holidays", icon: CalendarOff },
+    ],
   },
 ];
 

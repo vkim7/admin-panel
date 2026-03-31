@@ -389,6 +389,7 @@ enum AdjustmentType {
   TRANSFER
   DROPOUT
   MERGE
+  HOLIDAY
 }
 
 enum SmsStatus {

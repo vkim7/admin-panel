@@ -158,7 +158,8 @@ export const AdjustmentType = {
   MANUAL: 'MANUAL',
   TRANSFER: 'TRANSFER',
   DROPOUT: 'DROPOUT',
-  MERGE: 'MERGE'
+  MERGE: 'MERGE',
+  HOLIDAY: 'HOLIDAY'
 } as const
 
 export type AdjustmentType = (typeof AdjustmentType)[keyof typeof AdjustmentType]

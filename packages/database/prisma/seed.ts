@@ -99,9 +99,10 @@ async function main() {
         { name: "Scheduling conflict", sortOrder: 4 },
         { name: "Administrative", sortOrder: 5 },
         { name: "Other", isOther: true, sortOrder: 6 },
+        { name: "Holiday", sortOrder: 7, isActive: false },
       ].map(r => prisma.cancellationReason.create({ data: r }))
     );
-    console.log("Created 6 cancellation reasons");
+    console.log("Created 7 cancellation reasons");
   } else {
     console.log(`Cancellation reasons already exist (${existingCancellationReasons}), skipping`);
   }

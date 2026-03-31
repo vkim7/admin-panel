@@ -40,7 +40,7 @@ Source of truth: `packages/database/DATA_MODEL.md` (business rules, 37 constrain
 | H | Promotions, Comments & Constraints ✅ | D | feedback.md #7,28,33 |
 | I | Exams & Scheduling ✅ | D | feedback.md #29 |
 | J | Scheduled Actions (Effective Date) ✅ | I | feedback.md #26 |
-| K | Holidays Management | D | feedback.md #31 |
+| K | Holidays Management ✅ | D | feedback.md #31 |
 | L | Test Suite Revisit | All | — |
 
 ```
@@ -1387,6 +1387,48 @@ Completed. Structured uncertain reasons + history tracking + actions on the unce
 **Schema changes:** New `UncertainReason` model, new `UncertainHistory` model, `uncertainReasonId` field added to `Student`. Migration: `20260325120000_add_uncertain_reason_and_history`.
 
 **Files changed:** `schema.prisma`, `seed.ts`, `actions/students.ts`, `queries/students.ts`, `schemas/uncertain.ts` (new), `uncertain-reason-dialog.tsx` (new), `uncertain-table.tsx` (rewrite), `uncertain/page.tsx`, `groups/student-list.tsx`, `groups/[id]/page.tsx`, `__tests__/helpers/db.ts`.
+
+### Phase H: Promotions, Comments & Constraints ✅
+
+Completed. See commit history.
+
+### Phase I: Exams & Scheduling ✅
+
+Completed. See commit history.
+
+### Phase J: Scheduled Actions — Seat Reservation, ASSIGN & CHANGE_TEACHER ✅
+
+Completed. Extends the base scheduled actions system (Phase J original) with seat reservation, two new action types, and removes scheduled DEACTIVATE.
+
+- [x] **Seat reservation (date-aware capacity)** — New `capacity.ts` module with `getScheduledCapacity(groupId, asOfDate)` and `getGroupScheduledCounts()`. All 4 server-side capacity checks (addStudentsToGroup, transferTrialStudent, executeTransfer, executeMerge) now use date-aware capacity. Schedule page, group detail, and all group picker dialogs (transfer, merge, assign) show `↓N ↑N` departure/arrival indicators.
+- [x] **ASSIGN as scheduled action** — Future-dated assignments create a `ScheduledAction` instead of immediate membership. Core logic extracted to `execute-assign.ts`. Conflict detection: blocks duplicate assigns to same group, same-type group limit violations, and pending deactivations.
+- [x] **CHANGE_TEACHER as scheduled action** — Future-dated teacher changes create a `ScheduledAction`; only lessons from effective date onward get reassigned. Core logic extracted to `execute-change-teacher.ts` with shared `checkTeacherScheduleConflicts` helper (validates at both scheduling and execution time).
+- [x] **Remove scheduled DEACTIVATE** — Deactivation is now immediate-only. Send to Lost per-membership covers the same ground with per-group granularity, eliminating the capacity tracking gap.
+- [x] **Scheduled actions table improvements** — Collapsed Source/Destination into Details column with action-type-aware rendering and navigation links. Default filter changed to Pending. Tab styling aligned with Payment History.
+- [x] **Group detail scheduled actions** — Table showing pending actions for the group with cancel button, displayed between students and past members.
+
+**Schema changes:** Added `ASSIGN` and `CHANGE_TEACHER` to `ScheduledActionType` enum. Migrations: `20260329102713_add_assign_scheduled_action_type`, `20260329105439_add_change_teacher_action_type`. Split `deactivateStudentSchema` from `sendToLostSchema`.
+
+**New files:** `capacity.ts`, `execute-assign.ts`, `execute-change-teacher.ts`, `group-scheduled-actions.tsx`.
+
+**Key modified files:** `actions/group-memberships.ts` (thin wrapper), `actions/lessons.ts` (thin wrapper), `actions/students.ts` (remove scheduled deactivate), `execute-scheduled-action.ts` (ASSIGN + CHANGE_TEACHER cases), `scheduled-action-conflicts.ts` (ASSIGN + CHANGE_TEACHER conflict checks), `scheduled-actions-table.tsx` (Details column), all group picker queries (scheduled counts).
+
+### Phase K: Holidays Management ✅
+
+Completed. Admins can view and add holidays via `/holidays`. Adding a holiday cancels all SCHEDULED lessons on that date (without replacement), adjusts billing downward, and handles overpayment via credit-forward or PENDING refund. No delete from UI — record removal is too risky (doesn't undo cancellations/billing).
+
+- [x] **Schema** — Added `HOLIDAY` to `AdjustmentType` enum. Added "Holiday" `CancellationReason` (seeded with `isActive: false` so it doesn't appear in manual cancellation dropdown).
+- [x] **Holiday billing helper** (`holiday-billing.ts`) — Transactional: cancels lessons, deletes TeacherScheduleSlots, adjusts each affected StudentPaymentPeriod (reduce totalLessons by 1, recalculate amountDue/discount/status), creates PaymentPeriodAdjustment with type HOLIDAY. Overpayment → credit to next month's period or PENDING refund. Moves exams on the holiday to the next scheduled lesson.
+- [x] **Create holiday action** — Future dates only (Tashkent timezone). All-or-nothing transaction: creates Holiday record + runs billing helper. Handles P2002 (duplicate date). Sets `cancellationReasonId` to the "Holiday" reason on cancelled lessons.
+- [x] **Holidays page** — Year filter pills (current + 2 next years), grouped table (consecutive dates merged into ranges with "X days" badge), search by name. Read-only — no delete action exposed.
+- [x] **Sidebar** — "Holidays" entry under Reference section with CalendarOff icon.
+- [x] **Exported `recalculateDiscount`** from `leave-billing.ts` for reuse.
+
+**Schema changes:** `HOLIDAY` added to `AdjustmentType` enum. Migration: `20260329124838_add_holiday_adjustment_type`.
+
+**New files:** `schemas/holiday.ts`, `queries/holidays.ts`, `helpers/holiday-billing.ts`, `actions/holidays.ts`, `app/(admin)/holidays/page.tsx`, `components/holidays/holidays-table.tsx`, `components/holidays/add-holiday-dialog.tsx`.
+
+**Key modified files:** `schema.prisma` (enum), `leave-billing.ts` (export), `app-sidebar.tsx` (nav entry), `seed.ts` (Holiday cancellation reason).
 
 ---
 

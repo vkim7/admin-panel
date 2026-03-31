@@ -53,9 +53,9 @@ Promotion
         └── AppliedPromotion* (which billing periods it actually discounted)
 
 ScheduledAction (future-dated operations executed by daily cron)
-  ├── Student? (target student, if applicable)
+  ├── Student? (target student, for transfer/reassignment/lost/assign)
   ├── GroupMembership? (target membership, for transfer/reassignment/lost)
-  ├── Group? ×2 (source + destination, for merge/transfer)
+  ├── Group? ×2 (source + destination, for merge/transfer/assign/change teacher)
   └── AdminUser (who created it)
 ```
 
@@ -190,6 +190,10 @@ Official public holidays when no lessons are held. Used during lesson pre-creati
 | name | Human-readable name, e.g., "Navruz" |
 
 **Used at group creation time:** When pre-generating all Lesson records from startDate to endDate, dates that fall on holidays are skipped. This means the total lesson count (and therefore billing) is based on actual teaching days.
+
+**Used when adding a holiday:** If a holiday is added on a date that already has SCHEDULED lessons, those lessons are cancelled (status → CANCELLED, cancellationReasonId → "Holiday" reason), their TeacherScheduleSlots are deleted, and affected billing periods are adjusted downward (totalLessons reduced by 1, amountDue recalculated). Overpayment is credited to the next month's period or becomes a PENDING refund. Exams on the holiday date are moved to the next scheduled lesson.
+
+**Managed via:** `/holidays` admin page. Admins can add future-dated holidays. Multi-day holidays are stored as one record per day (e.g., Navruz Mar 21-23 = 3 records). The table groups consecutive dates into ranges for display.
 
 **Seeded with:** Uzbekistan 2026 public holidays (New Year, Women's Day, Navruz, Eid al-Fitr, Day of Remembrance, Eid al-Adha, Independence Day, Constitution Day).
 
@@ -407,7 +411,9 @@ A student may have multiple history records (flagged, resolved, flagged again). 
 ### CancellationReason (Reference Table)
 Admin-manageable list of reasons a lesson is cancelled.
 
-Seeded with: Teacher absence, Low attendance, Student request, Scheduling conflict, Administrative, Other.
+Seeded with: Teacher absence, Low attendance, Student request, Scheduling conflict, Administrative, Other, Holiday.
+
+The "Holiday" reason has `isActive = false` so it doesn't appear in manual cancellation dropdowns — it's only set programmatically when a holiday cancels lessons.
 
 `isOther = true` on the "Other" entry means the UI must show a free-text input (stored in `Lesson.otherCancellationReason`).
 
@@ -568,7 +574,7 @@ Audit trail for billing period modifications. One record per adjustment. Snapsho
 | Field | Purpose |
 |-------|---------|
 | studentPaymentPeriodId | Which billing period was modified |
-| type | What triggered this: `MANUAL`, `TRANSFER`, `DROPOUT`, or `MERGE` |
+| type | What triggered this: `MANUAL`, `TRANSFER`, `DROPOUT`, `MERGE`, or `HOLIDAY` |
 | previousTotalLessons | totalLessons before the change |
 | previousAmountDue | amountDue before the change |
 | previousDiscountAmount | discountAmount before the change |
@@ -583,6 +589,7 @@ Audit trail for billing period modifications. One record per adjustment. Snapsho
 - `TRANSFER` — student transfers mid-month, source group's period is adjusted (unused lessons removed)
 - `DROPOUT` — student goes INACTIVE, period adjusted to lessons up to leave date
 - `MERGE` — group merge, same mechanics as transfer
+- `HOLIDAY` — holiday added on a date with scheduled lessons, period's totalLessons reduced by 1
 
 Every modification creates a new adjustment record — they are append-only and immutable.
 
@@ -862,14 +869,14 @@ Allows admins to schedule future-dated operations (transfer, reassignment, lost 
 
 | Field | Purpose |
 |-------|---------|
-| type | `TRANSFER`, `SEND_TO_REASSIGNMENT`, `SEND_TO_LOST`, `DEACTIVATE`, `MERGE_GROUP` |
+| type | `TRANSFER`, `SEND_TO_REASSIGNMENT`, `SEND_TO_LOST`, `MERGE_GROUP`, `ASSIGN`, `CHANGE_TEACHER` |
 | status | `PENDING` → `COMPLETED` / `FAILED` / `CANCELLED` |
 | effectiveDate | Date when the action should execute (stored as `@db.Date`) |
-| studentId | Target student (nullable — not set for `MERGE_GROUP`) |
+| studentId | Target student (nullable — not set for `MERGE_GROUP` or `CHANGE_TEACHER`) |
 | membershipId | Target membership (for transfer/reassignment/lost) |
-| sourceGroupId | Source group (for merge, also set for transfer) |
-| destGroupId | Destination group (for merge/transfer) |
-| payload | JSON bag with action-specific params (e.g. `transferReasonId`, `lostReasonId`) |
+| sourceGroupId | Source group (for merge, change teacher) |
+| destGroupId | Destination group (for merge/transfer/assign) |
+| payload | JSON bag with action-specific params (e.g. `transferReasonId`, `lostReasonId`, `newTeacherId`) |
 | createdById | Admin who created the scheduled action |
 | executedAt | Timestamp when executed (null until completion) |
 | cancelledAt | Timestamp when cancelled |
@@ -884,19 +891,37 @@ Allows admins to schedule future-dated operations (transfer, reassignment, lost 
 4. On success → `COMPLETED` + `executedAt`. On business error → `FAILED` + `failureReason`
 5. Admins can also Cancel (sets `CANCELLED`) or Execute Now from the `/scheduled-actions` page
 
+### Seat reservation
+
+When a scheduled action will affect group capacity (transfer in/out, assign, merge), the seat is reserved immediately. All capacity checks use date-aware logic via `getScheduledCapacity(groupId, asOfDate)` — counting pending departures and arrivals that resolve by the target date. Schedule page and group picker dialogs show `↓N ↑N` indicators.
+
+### ASSIGN as scheduled action
+
+Future-dated student assignments create a `ScheduledAction` (type `ASSIGN`, `destGroupId` = target group, `studentId` = student) instead of an immediate membership. This prevents inflating the active count prematurely. On execution, the same `executeAssign` logic runs (capacity check, duplicate check, billing, promotions).
+
+### CHANGE_TEACHER as scheduled action
+
+Future-dated teacher changes create a `ScheduledAction` (type `CHANGE_TEACHER`, `sourceGroupId` = group, payload = `{ currentTeacherId, currentTeacherName, newTeacherId, newTeacherName }`). Only lessons from the effective date onward are reassigned. Schedule conflicts are validated at both scheduling time (early feedback) and execution time (re-validation).
+
+### DEACTIVATE — immediate only
+
+Deactivation is not available as a scheduled action. It always executes immediately. Use Send to Lost per-membership for future-dated departures, which provides per-group granularity for seat reservation.
+
 ### Conflict rules (Strategy C — blocking, no auto-cancel)
 
 - **Immediate student action** (transfer/reassign/lost): blocked if same membership has a PENDING scheduled action
 - **Immediate deactivate**: blocked if student has ANY PENDING scheduled action
 - **Immediate merge**: blocked if source group has a PENDING merge OR any student in source group has a PENDING action
 - **New scheduled action**: blocked if same membership/group already has one PENDING
+- **Scheduled ASSIGN**: blocked if student has pending deactivate, duplicate assign to same group, or pending assign to another group of the same type
+- **Scheduled CHANGE_TEACHER**: blocked if group already has a pending CHANGE_TEACHER
 
 ### Indexes
 
 - `(status, effectiveDate)` — cron query
 - `(studentId, status)` — deactivate conflict check
 - `(membershipId, status)` — student action conflict check
-- `(sourceGroupId, status)` — merge conflict check
+- `(sourceGroupId, status)` — merge and change teacher conflict check
 
 ---
 

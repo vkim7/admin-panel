@@ -189,7 +189,7 @@ export async function performLeaveBilling({
  * (percentage vs fixed, TRIAL base = pricePerLesson vs amountDue). Updates each
  * AppliedPromotion record and returns the new total, clamped to newAmountDue.
  */
-async function recalculateDiscount(
+export async function recalculateDiscount(
   periodId: string,
   newAmountDue: number,
   pricePerLesson: number,
