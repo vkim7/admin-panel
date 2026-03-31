@@ -339,9 +339,9 @@ describe("trial resolution", () => {
   });
 });
 
-describe("deactivation & reactivation", () => {
-  it("C#17: deactivates student with lost reason", async () => {
-    const { deactivateStudent } = await importStudents();
+describe("send to lost list & reactivation", () => {
+  it("C#17: sends orphan student to lost list with reason", async () => {
+    const { sendOrphanToLost } = await importStudents();
 
     // Create an active student with no memberships
     const student = await createTestStudent({ status: "ACTIVE" });
@@ -350,7 +350,7 @@ describe("deactivation & reactivation", () => {
       where: { name: "Too expensive" },
     });
 
-    const result = await deactivateStudent(student.id, {
+    const result = await sendOrphanToLost(student.id, {
       lostReasonId: lostReason!.id,
       otherLostReason: null,
     });
@@ -366,8 +366,8 @@ describe("deactivation & reactivation", () => {
     expect(updated!.inactivatedById).toBe(TEST_ADMIN_ID);
   });
 
-  it("C#17: rejects deactivation if student has active membership", async () => {
-    const { deactivateStudent } = await importStudents();
+  it("C#17: rejects send to lost if student has active membership", async () => {
+    const { sendOrphanToLost } = await importStudents();
     const student = await createTestStudent({ status: "ACTIVE" });
     const { group } = await createTestGroup();
 
@@ -378,7 +378,7 @@ describe("deactivation & reactivation", () => {
     });
 
     const lostReason = await prisma.lostReason.findFirst();
-    const result = await deactivateStudent(student.id, {
+    const result = await sendOrphanToLost(student.id, {
       lostReasonId: lostReason!.id,
       otherLostReason: null,
     });

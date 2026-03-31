@@ -83,12 +83,12 @@ export const studentSchema = z
     },
   );
 
-export const deactivateStudentSchema = z.object({
+export const sendOrphanToLostSchema = z.object({
   lostReasonId: requiredString("Lost reason is required"),
   otherLostReason: z.string().nullable(),
 });
 
-export type DeactivateStudentValues = z.infer<typeof deactivateStudentSchema>;
+export type SendOrphanToLostValues = z.infer<typeof sendOrphanToLostSchema>;
 
 export const sendToLostSchema = z.object({
   lostReasonId: requiredString("Lost reason is required"),

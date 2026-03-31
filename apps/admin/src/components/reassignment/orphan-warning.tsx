@@ -23,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { sendToReassignment, deactivateStudent } from "@/lib/actions/students";
+import { sendToReassignment, sendOrphanToLost } from "@/lib/actions/students";
 import { LEVEL_SHORT } from "@/lib/constants";
 
 type OrphanedStudent = {
@@ -171,7 +171,7 @@ export function OrphanWarning({ orphans, lostReasons }: OrphanWarningProps) {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Deactivate Student</DialogTitle>
+            <DialogTitle>Send to Lost List</DialogTitle>
             <DialogDescription>
               This will mark {deactivatingStudent?.firstName} {deactivatingStudent?.lastName} as inactive. Please select a reason.
             </DialogDescription>
@@ -217,20 +217,20 @@ export function OrphanWarning({ orphans, lostReasons }: OrphanWarningProps) {
               onClick={() => {
                 if (!deactivatingStudent) return;
                 startTransition(async () => {
-                  const result = await deactivateStudent(deactivatingStudent.id, {
+                  const result = await sendOrphanToLost(deactivatingStudent.id, {
                     lostReasonId: selectedReasonId,
                     otherLostReason: otherReason || null,
                   });
                   if (result?.error) {
                     toast.error(result.error);
                   } else if ("success" in result) {
-                    toast.success("Student deactivated");
+                    toast.success("Student sent to lost list");
                     setDeactivatingStudent(null);
                   }
                 });
               }}
             >
-              {isPending ? "Deactivating..." : "Deactivate"}
+              {isPending ? "Sending..." : "Send to Lost List"}
             </Button>
           </DialogFooter>
         </DialogContent>

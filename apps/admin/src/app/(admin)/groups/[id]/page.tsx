@@ -97,7 +97,7 @@ export default async function GroupDetailPage({
   const progressStage = getProgressStage(group.startDate, group.endDate);
 
   // Students available for assignment
-  const availableStudents = await getStudentsForGroupAssignment(id);
+  const availableStudents = await getStudentsForGroupAssignment(id, group.type);
 
   // Derive trial attendance scoped to each membership's date window
   const trialMemberships = group.memberships

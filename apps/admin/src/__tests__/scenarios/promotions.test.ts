@@ -332,7 +332,7 @@ describe("FAMILY: auto-detection & removal", () => {
   it("family drops below 2 active → FAMILY promo expired, removed from future periods", async () => {
     const { addStudentsToGroup, resolveTrialMembership } =
       await importMemberships();
-    const { deactivateStudent } = await importStudents();
+    const { sendOrphanToLost } = await importStudents();
 
     const family = await createTestFamily();
     const studentA = await createTestStudent({ familyId: family.id });
@@ -381,17 +381,17 @@ describe("FAMILY: auto-detection & removal", () => {
     });
     const discountBefore = aPeriodBefore!.discountAmount;
 
-    // Close B's membership (required before deactivation)
+    // Close B's membership (required before send to lost)
     await prisma.groupMembership.update({
       where: { id: mB!.id },
       data: { leaveDate: new Date() },
     });
 
-    // Deactivate B → removeFamilyIfNeeded fires
+    // Send B to lost list → removeFamilyIfNeeded fires
     const lostReason = await prisma.lostReason.findFirst({
       where: { isOther: false },
     });
-    await deactivateStudent(studentB.id, {
+    await sendOrphanToLost(studentB.id, {
       lostReasonId: lostReason!.id,
       otherLostReason: null,
     });

@@ -33,10 +33,10 @@ export async function checkImmediateStudentActionConflict(
 }
 
 /**
- * Block immediate deactivate if student has ANY pending scheduled action.
+ * Block immediate send-to-lost if student has ANY pending scheduled action.
  * Returns error message or null.
  */
-export async function checkImmediateDeactivateConflict(
+export async function checkImmediateSendToLostConflict(
   studentId: string,
 ): Promise<string | null> {
   const pending = await prisma.scheduledAction.findFirst({

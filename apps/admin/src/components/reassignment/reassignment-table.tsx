@@ -30,7 +30,7 @@ import {
   type GroupOption,
   type StudentForAssign,
 } from "@/components/reception/assign-dialog";
-import { deactivateStudent, updateStudentComment } from "@/lib/actions/students";
+import { sendOrphanToLost, updateStudentComment } from "@/lib/actions/students";
 import { ArrowRight, UserMinus } from "lucide-react";
 import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
 
@@ -260,7 +260,7 @@ export function ReassignmentTable({ data, groups, lostReasons }: ReassignmentTab
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Deactivate Student</DialogTitle>
+            <DialogTitle>Send to Lost List</DialogTitle>
             <DialogDescription>
               This will mark {deactivatingStudent?.firstName} {deactivatingStudent?.lastName} as inactive. Please select a reason.
             </DialogDescription>
@@ -306,20 +306,20 @@ export function ReassignmentTable({ data, groups, lostReasons }: ReassignmentTab
               onClick={() => {
                 if (!deactivatingStudent) return;
                 startTransition(async () => {
-                  const result = await deactivateStudent(deactivatingStudent.id, {
+                  const result = await sendOrphanToLost(deactivatingStudent.id, {
                     lostReasonId: selectedReasonId,
                     otherLostReason: otherReason || null,
                   });
                   if (result?.error) {
                     toast.error(result.error);
                   } else if ("success" in result) {
-                    toast.success("Student deactivated");
+                    toast.success("Student sent to lost list");
                     setDeactivatingStudent(null);
                   }
                 });
               }}
             >
-              {isPending ? "Deactivating..." : "Deactivate"}
+              {isPending ? "Sending..." : "Send to Lost List"}
             </Button>
           </DialogFooter>
         </DialogContent>
