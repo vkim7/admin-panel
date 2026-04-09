@@ -33,6 +33,10 @@ import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { CopyZoomButton } from "@/components/copy-zoom-button";
+import { CreateZoomMeetingButton } from "@/components/groups/create-zoom-meeting-button";
+import { JoinAsHostButton } from "@/components/groups/join-as-host-button";
+import { getRecordingCountsForGroup } from "@/lib/queries/recordings";
 import { Pencil, AlertTriangle } from "lucide-react";
 import { DAY_SHORT, LEVEL_LABEL, MONTH_NAMES } from "@/lib/constants";
 
@@ -46,7 +50,7 @@ export default async function GroupDetailPage({
   if (!group) notFound();
 
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons, groupScheduledActions, scheduledCapacity] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons, groupScheduledActions, scheduledCapacity, recordingCounts] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
@@ -59,6 +63,7 @@ export default async function GroupDetailPage({
     getUncertainReasons(),
     getScheduledActionsForGroup(id),
     getScheduledCapacity(id, STEADY_STATE_DATE),
+    getRecordingCountsForGroup(id),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -276,21 +281,42 @@ export default async function GroupDetailPage({
             </div>
           </div>
         )}
-        {group.zoomLink && (
+        {group.zoomJoinUrl ? (
           <div>
             <p className="text-xs font-medium text-muted-foreground">
               Zoom Link
             </p>
-            <a
-              href={group.zoomLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 text-sm text-primary hover:underline"
-            >
-              Open Zoom
-            </a>
+            <div className="mt-1 flex items-center gap-2">
+              <a
+                href={group.zoomJoinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-primary hover:underline"
+              >
+                Student Link
+              </a>
+              <CopyZoomButton zoomLink={group.zoomJoinUrl} />
+              <span className="text-muted-foreground">·</span>
+              <JoinAsHostButton groupId={id} />
+            </div>
           </div>
-        )}
+        ) : group.isActive ? (
+          <div>
+            <p className="text-xs font-medium text-muted-foreground">
+              Zoom Link
+            </p>
+            {group.teacher.zoomEmail ? (
+              <div className="mt-1">
+                <CreateZoomMeetingButton groupId={id} />
+              </div>
+            ) : (
+              <div className="mt-1 flex items-center gap-1.5 text-sm text-amber-600">
+                <AlertTriangle className="size-3.5 shrink-0" />
+                No Zoom email on teacher — meeting not created
+              </div>
+            )}
+          </div>
+        ) : null}
       </div>
 
       <Separator />
@@ -321,6 +347,7 @@ export default async function GroupDetailPage({
         attendanceRecords={attendanceRecords}
         lessonAttendanceStatus={lessonAttendanceStatus}
         activeMembers={activeMembers}
+        recordingCounts={Object.fromEntries(recordingCounts)}
       />
 
       <Separator />

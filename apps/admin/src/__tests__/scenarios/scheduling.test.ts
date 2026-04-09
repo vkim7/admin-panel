@@ -83,7 +83,6 @@ describe("C#8/C#4: group creation generates lessons", () => {
         level: "BEGINNER",
         maxStudents: 6,
         startDate: "2026-04-01",
-        zoomLink: null,
       }),
     );
 
@@ -148,7 +147,6 @@ describe("C#8/C#4: group creation generates lessons", () => {
         level: "BEGINNER",
         maxStudents: 6,
         startDate: "2026-04-01",
-        zoomLink: null,
       }),
     );
 
@@ -162,7 +160,6 @@ describe("C#8/C#4: group creation generates lessons", () => {
       level: "ELEMENTARY",
       maxStudents: 6,
       startDate: "2026-04-01",
-      zoomLink: null,
     });
 
     expect(result).toHaveProperty("error");
@@ -297,7 +294,6 @@ describe("C#13: updateGroup startTime cascade", () => {
       updateGroup(group.id, {
         startTime: "16:00",
         maxStudents: 6,
-        zoomLink: null,
         skipAutoGraduation: false,
       }),
     );

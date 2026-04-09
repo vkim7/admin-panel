@@ -401,6 +401,7 @@ export const ModelName = {
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
+  Recording: 'Recording',
   StudentPaymentPeriod: 'StudentPaymentPeriod',
   Payment: 'Payment',
   PaymentPeriodAdjustment: 'PaymentPeriodAdjustment',
@@ -433,7 +434,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1692,6 +1693,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AttendanceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AttendanceCountAggregateOutputType> | number
+        }
+      }
+    }
+    Recording: {
+      payload: Prisma.$RecordingPayload<ExtArgs>
+      fields: Prisma.RecordingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RecordingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RecordingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        findFirst: {
+          args: Prisma.RecordingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RecordingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        findMany: {
+          args: Prisma.RecordingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+        }
+        create: {
+          args: Prisma.RecordingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        createMany: {
+          args: Prisma.RecordingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RecordingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+        }
+        delete: {
+          args: Prisma.RecordingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        update: {
+          args: Prisma.RecordingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        deleteMany: {
+          args: Prisma.RecordingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RecordingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RecordingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>[]
+        }
+        upsert: {
+          args: Prisma.RecordingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecordingPayload>
+        }
+        aggregate: {
+          args: Prisma.RecordingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRecording>
+        }
+        groupBy: {
+          args: Prisma.RecordingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecordingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RecordingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecordingCountAggregateOutputType> | number
         }
       }
     }
@@ -3014,6 +3089,7 @@ export const TeacherScalarFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   telegramId: 'telegramId',
+  zoomEmail: 'zoomEmail',
   levels: 'levels',
   teachingLanguage: 'teachingLanguage',
   isActive: 'isActive',
@@ -3130,7 +3206,8 @@ export const GroupScalarFieldEnum = {
   mergedIntoGroupId: 'mergedIntoGroupId',
   skipAutoGraduation: 'skipAutoGraduation',
   graduatedIntoGroupId: 'graduatedIntoGroupId',
-  zoomLink: 'zoomLink',
+  zoomMeetingId: 'zoomMeetingId',
+  zoomJoinUrl: 'zoomJoinUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -3277,6 +3354,23 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const RecordingScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  fileType: 'fileType',
+  recordingType: 'recordingType',
+  r2Key: 'r2Key',
+  fileSizeBytes: 'fileSizeBytes',
+  durationSeconds: 'durationSeconds',
+  status: 'status',
+  zoomFileId: 'zoomFileId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecordingScalarFieldEnum = (typeof RecordingScalarFieldEnum)[keyof typeof RecordingScalarFieldEnum]
 
 
 export const StudentPaymentPeriodScalarFieldEnum = {
@@ -3773,6 +3867,20 @@ export type ListEnumLessonStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'RecordingStatus'
+ */
+export type EnumRecordingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordingStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RecordingStatus[]'
+ */
+export type ListEnumRecordingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecordingStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'PaymentStatus'
  */
 export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus'>
@@ -4079,6 +4187,7 @@ export type GlobalOmitConfig = {
   groupMembership?: Prisma.GroupMembershipOmit
   lesson?: Prisma.LessonOmit
   attendance?: Prisma.AttendanceOmit
+  recording?: Prisma.RecordingOmit
   studentPaymentPeriod?: Prisma.StudentPaymentPeriodOmit
   payment?: Prisma.PaymentOmit
   paymentPeriodAdjustment?: Prisma.PaymentPeriodAdjustmentOmit

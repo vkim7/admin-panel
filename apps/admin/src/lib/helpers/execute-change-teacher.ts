@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import { timeToMinutes } from "@/lib/helpers/lesson-scheduling";
+import { createZoomMeeting, deleteZoomMeeting } from "@/lib/zoom";
 
 export interface ExecuteChangeTeacherParams {
   groupId: string;
@@ -79,7 +80,19 @@ export async function executeChangeTeacher(
 
   const group = await prisma.group.findUnique({
     where: { id: groupId },
-    select: { id: true, teacherId: true, startTime: true, durationMinutes: true, isActive: true },
+    select: {
+      id: true,
+      teacherId: true,
+      startTime: true,
+      durationMinutes: true,
+      isActive: true,
+      zoomMeetingId: true,
+      zoomJoinUrl: true,
+      publicId: true,
+      days: true,
+      startDate: true,
+      endDate: true,
+    },
   });
 
   if (!group) return { error: "Group not found" };
@@ -90,7 +103,7 @@ export async function executeChangeTeacher(
 
   const newTeacher = await prisma.teacher.findUnique({
     where: { id: newTeacherId },
-    select: { isActive: true },
+    select: { isActive: true, zoomEmail: true, firstName: true, lastName: true },
   });
 
   if (!newTeacher?.isActive) {
@@ -162,6 +175,36 @@ export async function executeChangeTeacher(
       });
     }
   });
+
+  // Best-effort: delete old Zoom meeting and create new one under new teacher
+  if (group.zoomMeetingId) {
+    await deleteZoomMeeting(group.zoomMeetingId);
+  }
+
+  if (newTeacher.zoomEmail) {
+    const zoomResult = await createZoomMeeting({
+      zoomEmail: newTeacher.zoomEmail,
+      topic: `${group.publicId} - ${newTeacher.firstName} ${newTeacher.lastName}`,
+      startTime: group.startTime,
+      durationMinutes: group.durationMinutes,
+      days: group.days,
+      startDate: group.startDate,
+      endDate: group.endDate,
+    });
+    await prisma.group.update({
+      where: { id: groupId },
+      data: {
+        zoomMeetingId: zoomResult?.meetingId ?? null,
+        zoomJoinUrl: zoomResult?.joinUrl ?? null,
+      },
+    });
+  } else if (group.zoomMeetingId) {
+    // Old meeting deleted, new teacher has no Zoom — clear fields
+    await prisma.group.update({
+      where: { id: groupId },
+      data: { zoomMeetingId: null, zoomJoinUrl: null },
+    });
+  }
 
   return {
     success: true,

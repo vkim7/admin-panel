@@ -1,0 +1,11 @@
+name = "recording-downloader"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+
+# R2 bucket binding — same bucket as the admin app uses
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "eng-uploads" # Replace with your actual R2 bucket name
+
+[vars]
+# Set CALLBACK_SECRET via `wrangler secret put CALLBACK_SECRET`

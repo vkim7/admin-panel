@@ -193,7 +193,8 @@ interface GroupOverrides {
   maxStudents?: number;
   /** YYYY-MM-DD. Default: 2026-04-01 (future date, avoids holidays). */
   startDate?: string;
-  zoomLink?: string | null;
+  zoomJoinUrl?: string | null;
+  zoomMeetingId?: string | null;
 }
 
 /**
@@ -212,7 +213,8 @@ export async function createTestGroup(overrides: GroupOverrides = {}) {
     level = "BEGINNER",
     maxStudents = type === "GROUP" ? 6 : 1,
     startDate: startDateStr = "2026-04-01",
-    zoomLink = null,
+    zoomJoinUrl = null,
+    zoomMeetingId = null,
   } = overrides;
 
   // Create or reuse teacher
@@ -250,7 +252,8 @@ export async function createTestGroup(overrides: GroupOverrides = {}) {
         maxStudents,
         startDate,
         endDate,
-        zoomLink,
+        zoomJoinUrl,
+        zoomMeetingId,
       },
     });
 

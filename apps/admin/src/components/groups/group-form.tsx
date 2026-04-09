@@ -50,6 +50,7 @@ type TeacherOption = {
   id: string;
   firstName: string;
   lastName: string;
+  zoomEmail: string | null;
   rateChanges: { id: string }[];
   availability: { dayOfWeek: number; startTime: string; endTime: string }[];
 };
@@ -80,7 +81,6 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
       durationMinutes: 80,
       maxStudents: 6,
       startDate: "",
-      zoomLink: null,
     },
   });
 
@@ -161,6 +161,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
           render={({ field }) => {
             const fieldTeacher = teachers.find((t) => t.id === field.value);
             const hasNoRates = fieldTeacher && fieldTeacher.rateChanges.length === 0;
+            const hasNoZoomEmail = fieldTeacher && !fieldTeacher.zoomEmail;
             return (
               <FormItem>
                 <FormLabel>Teacher</FormLabel>
@@ -183,6 +184,12 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                   <div className="flex items-center gap-1.5 text-sm text-amber-600">
                     <AlertTriangle className="size-3.5" />
                     This teacher has no rate history. Add rates first.
+                  </div>
+                )}
+                {hasNoZoomEmail && !hasNoRates && (
+                  <div className="flex items-center gap-1.5 text-sm text-amber-600">
+                    <AlertTriangle className="size-3.5" />
+                    No Zoom email configured. A Zoom meeting won&apos;t be created.
                   </div>
                 )}
                 <FormMessage />
@@ -355,25 +362,11 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
           )}
         </div>
 
-        {/* Zoom Link */}
-        <FormField
-          control={form.control}
-          name="zoomLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Zoom Link</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  value={field.value ?? ""}
-                  placeholder="https://zoom.us/j/..."
-                />
-              </FormControl>
-              <FormDescription>Optional</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!isEdit && (
+          <p className="text-sm text-muted-foreground">
+            A Zoom meeting will be created automatically if the teacher has a Zoom email configured.
+          </p>
+        )}
 
         {/* Actions */}
         <div className="flex gap-3">

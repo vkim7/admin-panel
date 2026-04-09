@@ -195,3 +195,13 @@ export const ScheduledActionStatus = {
 } as const
 
 export type ScheduledActionStatus = (typeof ScheduledActionStatus)[keyof typeof ScheduledActionStatus]
+
+
+export const RecordingStatus = {
+  PENDING: 'PENDING',
+  DOWNLOADING: 'DOWNLOADING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type RecordingStatus = (typeof RecordingStatus)[keyof typeof RecordingStatus]

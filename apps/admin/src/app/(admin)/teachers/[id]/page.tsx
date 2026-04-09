@@ -94,6 +94,12 @@ export default async function TeacherDetailPage({
           <p className="text-xs font-medium text-muted-foreground">Active Groups</p>
           <p className="mt-1 text-sm">{teacher.groups.length}</p>
         </div>
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">Zoom Email</p>
+          <p className="mt-1 text-sm">
+            {teacher.zoomEmail ?? <span className="text-muted-foreground">Not configured</span>}
+          </p>
+        </div>
       </div>
 
       {/* Active Groups */}

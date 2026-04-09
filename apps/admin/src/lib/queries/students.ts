@@ -8,7 +8,7 @@ export async function getStudents() {
         where: { leaveDate: null },
         select: {
           id: true,
-          group: { select: { id: true, publicId: true, type: true, level: true, zoomLink: true } },
+          group: { select: { id: true, publicId: true, type: true, level: true, zoomJoinUrl: true } },
         },
       },
     },
@@ -36,7 +36,7 @@ export async function getStudentById(id: string) {
               level: true,
               days: true,
               startTime: true,
-              zoomLink: true,
+              zoomJoinUrl: true,
               isActive: true,
               mergedIntoGroupId: true,
               mergedIntoGroup: { select: { id: true, publicId: true } },

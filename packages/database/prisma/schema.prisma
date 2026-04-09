@@ -415,6 +415,13 @@ enum ScheduledActionStatus {
   CANCELLED
 }
 
+enum RecordingStatus {
+  PENDING
+  DOWNLOADING
+  COMPLETED
+  FAILED
+}
+
 // ─── Core Entities ──────────────────────────────────────────────────────────────
 
 model AdminUser {
@@ -457,6 +464,7 @@ model Teacher {
   lastName   String
   phone      String  @unique
   telegramId BigInt? @unique
+  zoomEmail  String? // Zoom account email under our org — required for auto-creating meetings
 
   // Levels this teacher can teach (PostgreSQL array, queryable via `has` filter)
   levels Level[]
@@ -678,7 +686,8 @@ model Group {
   mergedIntoGroupId    String? // Self-ref: if this group was merged into another (GROUP or INDIVIDUAL type)
   skipAutoGraduation   Boolean  @default(false) // If true, skip auto-graduation prompt when program ends
   graduatedIntoGroupId String? // Self-ref: the next-level group created when this group's program ends
-  zoomLink             String?
+  zoomMeetingId        String?  // Zoom recurring meeting ID — needed for API calls (update/delete)
+  zoomJoinUrl          String?  // Stable join URL for students
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -910,6 +919,7 @@ model Lesson {
   cancelledBy        AdminUser?           @relation("CancelledByAdmin", fields: [cancelledById], references: [id], onDelete: Restrict)
   cancellationReason CancellationReason?  @relation(fields: [cancellationReasonId], references: [id], onDelete: Restrict)
   attendanceRecords  Attendance[]
+  recordings         Recording[]
   scheduleSlot       TeacherScheduleSlot?
 
   @@unique([groupId, lessonNumber])
@@ -940,6 +950,33 @@ model Attendance {
   @@unique([lessonId, studentId])
   @@index([studentId, groupId])
   @@index([groupId])
+}
+
+// ─── Recordings ─────────────────────────────────────────────────────────────────
+//
+// Zoom cloud recordings downloaded to Cloudflare R2. One lesson can have multiple
+// recording files (MP4 video, M4A audio, chat transcript, etc.). The download
+// pipeline: Zoom webhook → create PENDING rows → Cloudflare Worker streams to R2
+// → callback marks COMPLETED → Zoom cloud copy deleted to free storage.
+
+model Recording {
+  id              String          @id @default(cuid())
+  lessonId        String
+  fileType        String // "MP4", "M4A", "CHAT", "TRANSCRIPT", "TIMELINE", etc.
+  recordingType   String // Zoom's recording_type: "shared_screen_with_gallery_view", "audio_only", etc.
+  r2Key           String // Cloudflare R2 object key
+  fileSizeBytes   BigInt
+  durationSeconds Int? // For video/audio files; null for chat/transcript
+  status          RecordingStatus @default(PENDING)
+  zoomFileId      String // Zoom recording file ID — needed for deletion API
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+
+  @@index([lessonId])
+  @@index([status])
 }
 
 // ─── Payments ───────────────────────────────────────────────────────────────────

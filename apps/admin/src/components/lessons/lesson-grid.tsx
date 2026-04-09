@@ -9,6 +9,7 @@ import type {
   CancellationReasonOption,
 } from "@/lib/queries/lessons";
 import type { AttendanceRecord } from "@/lib/queries/attendance";
+import { Video } from "lucide-react";
 
 // ─── Attendance Cell ────────────────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ interface LessonGridProps {
   attendanceRecords: AttendanceRecord[];
   lessonAttendanceStatus: string[];
   activeMembers: ActiveMember[];
+  recordingCounts: Record<string, number>;
 }
 
 export function LessonGrid({
@@ -109,6 +111,7 @@ export function LessonGrid({
   attendanceRecords,
   lessonAttendanceStatus,
   activeMembers,
+  recordingCounts,
 }: LessonGridProps) {
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const selectedLesson = selectedLessonId
@@ -222,6 +225,9 @@ export function LessonGrid({
                         timeZone: "UTC",
                       })}
                     </div>
+                    {(recordingCounts[l.id] ?? 0) > 0 && (
+                      <Video className="mx-auto mt-0.5 size-3 text-blue-500" />
+                    )}
                   </th>
                 );
               })}
@@ -312,6 +318,7 @@ export function LessonGrid({
           cancellationReasons={cancellationReasons}
           studentCancellationsThisMonth={studentCancellationsThisMonth}
           hasAttendance={attendanceStatusSet.has(selectedLesson.id)}
+          hasRecordings={(recordingCounts[selectedLesson.id] ?? 0) > 0}
         />
       )}
     </div>

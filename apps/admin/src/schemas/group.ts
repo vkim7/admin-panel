@@ -4,7 +4,6 @@ import {
   requiredTime,
   requiredIsoDate,
   requiredInt,
-  nullableString,
 } from "./helpers";
 import { TIME_SLOTS } from "@/lib/constants";
 
@@ -34,7 +33,6 @@ export const groupBaseSchema = z.object({
   durationMinutes: z.number().int(),
   maxStudents: z.number().int().min(1),
   startDate: z.string().min(1, "Start date is required"),
-  zoomLink: z.string().nullable(),
 });
 
 export type GroupFormValues = z.infer<typeof groupBaseSchema>;
@@ -50,7 +48,6 @@ export const groupCreateSchema = z
     durationMinutes: requiredInt("Duration is required"),
     maxStudents: requiredInt("Max students is required"),
     startDate: requiredIsoDate("Start date is required"),
-    zoomLink: nullableString(),
   })
   .refine(
     (data) => {
@@ -89,7 +86,6 @@ export const groupEditSchema = z
   .object({
     maxStudents: requiredInt("Max students is required"),
     startTime: requiredTime("Start time is required"),
-    zoomLink: nullableString(),
     skipAutoGraduation: z.boolean().default(false),
   })
   .refine(

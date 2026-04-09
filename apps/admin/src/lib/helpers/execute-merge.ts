@@ -1,5 +1,6 @@
 import { prisma } from "@/server/db";
 import { getLevelCategory, calculateLessonsStart } from "@/lib/helpers/lesson-generation";
+import { deleteZoomMeeting } from "@/lib/zoom";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { checkScheduleConflicts } from "@/lib/helpers/lesson-scheduling";
 import { performLeaveBilling } from "@/lib/helpers/leave-billing";
@@ -236,6 +237,11 @@ export async function executeMerge(
       },
     });
   });
+
+  // Best-effort: delete source group's Zoom meeting
+  if (source.zoomMeetingId) {
+    await deleteZoomMeeting(source.zoomMeetingId);
+  }
 
   const revalidatePaths = [
     `/groups/${sourceGroupId}`,

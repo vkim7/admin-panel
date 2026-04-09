@@ -21,7 +21,7 @@ type StudentRow = {
   family: { parentPhone: string | null } | null;
   groupMemberships: {
     id: string;
-    group: { id: string; publicId: string; type: string; level: string; zoomLink: string | null };
+    group: { id: string; publicId: string; type: string; level: string; zoomJoinUrl: string | null };
   }[];
 };
 
@@ -102,7 +102,7 @@ const columns: ColumnDef<StudentRow>[] = [
               <Link href={`/groups/${m.group.id}`} className="text-muted-foreground hover:underline text-sm">
                 {m.group.publicId}
               </Link>
-              <CopyZoomButton zoomLink={m.group.zoomLink} />
+              <CopyZoomButton zoomLink={m.group.zoomJoinUrl} />
             </span>
           ))}
         </div>

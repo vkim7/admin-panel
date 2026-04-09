@@ -68,6 +68,7 @@ export const ModelName = {
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
+  Recording: 'Recording',
   StudentPaymentPeriod: 'StudentPaymentPeriod',
   Payment: 'Payment',
   PaymentPeriodAdjustment: 'PaymentPeriodAdjustment',
@@ -125,6 +126,7 @@ export const TeacherScalarFieldEnum = {
   lastName: 'lastName',
   phone: 'phone',
   telegramId: 'telegramId',
+  zoomEmail: 'zoomEmail',
   levels: 'levels',
   teachingLanguage: 'teachingLanguage',
   isActive: 'isActive',
@@ -241,7 +243,8 @@ export const GroupScalarFieldEnum = {
   mergedIntoGroupId: 'mergedIntoGroupId',
   skipAutoGraduation: 'skipAutoGraduation',
   graduatedIntoGroupId: 'graduatedIntoGroupId',
-  zoomLink: 'zoomLink',
+  zoomMeetingId: 'zoomMeetingId',
+  zoomJoinUrl: 'zoomJoinUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -388,6 +391,23 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const RecordingScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  fileType: 'fileType',
+  recordingType: 'recordingType',
+  r2Key: 'r2Key',
+  fileSizeBytes: 'fileSizeBytes',
+  durationSeconds: 'durationSeconds',
+  status: 'status',
+  zoomFileId: 'zoomFileId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecordingScalarFieldEnum = (typeof RecordingScalarFieldEnum)[keyof typeof RecordingScalarFieldEnum]
 
 
 export const StudentPaymentPeriodScalarFieldEnum = {

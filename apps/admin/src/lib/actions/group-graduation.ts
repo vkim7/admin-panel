@@ -15,6 +15,7 @@ import { findNextValidDate } from "@/lib/helpers/lesson-scheduling";
 import { getApplicablePrice, buildPaymentPeriods } from "@/lib/helpers/billing";
 import { applyPromotionsToPeriods } from "@/lib/helpers/promotions";
 import { getGraduationPreview } from "@/lib/queries/group-graduation";
+import { createZoomMeeting, deleteZoomMeeting } from "@/lib/zoom";
 
 /**
  * Graduate a group: create successor group at next level, move continuing students,
@@ -148,7 +149,7 @@ export async function graduateGroup(data: unknown) {
         maxStudents: group.maxStudents,
         startDate,
         endDate,
-        zoomLink: group.zoomLink,
+        // Zoom meeting created after transaction (best-effort)
       },
     });
 
@@ -281,6 +282,41 @@ export async function graduateGroup(data: unknown) {
 
     return { newGroupId: newGroup.id };
   });
+
+  // Best-effort: delete old Zoom meeting and create new one for successor group
+  if (group.zoomMeetingId) {
+    await deleteZoomMeeting(group.zoomMeetingId);
+  }
+
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: group.teacherId },
+    select: { zoomEmail: true, firstName: true, lastName: true },
+  });
+
+  if (teacher?.zoomEmail) {
+    const newGroup = await prisma.group.findUnique({
+      where: { id: result.newGroupId },
+      select: { publicId: true },
+    });
+    const zoomResult = await createZoomMeeting({
+      zoomEmail: teacher.zoomEmail,
+      topic: `${newGroup?.publicId ?? result.newGroupId} - ${teacher.firstName} ${teacher.lastName}`,
+      startTime: group.startTime,
+      durationMinutes: group.durationMinutes,
+      days: group.days,
+      startDate,
+      endDate,
+    });
+    if (zoomResult) {
+      await prisma.group.update({
+        where: { id: result.newGroupId },
+        data: {
+          zoomMeetingId: zoomResult.meetingId,
+          zoomJoinUrl: zoomResult.joinUrl,
+        },
+      });
+    }
+  }
 
   // Revalidate
   revalidatePath(`/groups/${groupId}`);

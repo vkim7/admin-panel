@@ -374,6 +374,7 @@ export type LessonWhereInput = {
   cancelledBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   cancellationReason?: Prisma.XOR<Prisma.CancellationReasonNullableScalarRelationFilter, Prisma.CancellationReasonWhereInput> | null
   attendanceRecords?: Prisma.AttendanceListRelationFilter
+  recordings?: Prisma.RecordingListRelationFilter
   scheduleSlot?: Prisma.XOR<Prisma.TeacherScheduleSlotNullableScalarRelationFilter, Prisma.TeacherScheduleSlotWhereInput> | null
 }
 
@@ -411,6 +412,7 @@ export type LessonOrderByWithRelationInput = {
   cancelledBy?: Prisma.AdminUserOrderByWithRelationInput
   cancellationReason?: Prisma.CancellationReasonOrderByWithRelationInput
   attendanceRecords?: Prisma.AttendanceOrderByRelationAggregateInput
+  recordings?: Prisma.RecordingOrderByRelationAggregateInput
   scheduleSlot?: Prisma.TeacherScheduleSlotOrderByWithRelationInput
 }
 
@@ -452,6 +454,7 @@ export type LessonWhereUniqueInput = Prisma.AtLeast<{
   cancelledBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   cancellationReason?: Prisma.XOR<Prisma.CancellationReasonNullableScalarRelationFilter, Prisma.CancellationReasonWhereInput> | null
   attendanceRecords?: Prisma.AttendanceListRelationFilter
+  recordings?: Prisma.RecordingListRelationFilter
   scheduleSlot?: Prisma.XOR<Prisma.TeacherScheduleSlotNullableScalarRelationFilter, Prisma.TeacherScheduleSlotWhereInput> | null
 }, "id" | "rescheduledFromId" | "groupId_lessonNumber">
 
@@ -542,6 +545,7 @@ export type LessonCreateInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -572,6 +576,7 @@ export type LessonUncheckedCreateInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -602,6 +607,7 @@ export type LessonUpdateInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -632,6 +638,7 @@ export type LessonUncheckedUpdateInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -1167,6 +1174,20 @@ export type LessonUpdateOneRequiredWithoutAttendanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LessonUpdateToOneWithWhereWithoutAttendanceRecordsInput, Prisma.LessonUpdateWithoutAttendanceRecordsInput>, Prisma.LessonUncheckedUpdateWithoutAttendanceRecordsInput>
 }
 
+export type LessonCreateNestedOneWithoutRecordingsInput = {
+  create?: Prisma.XOR<Prisma.LessonCreateWithoutRecordingsInput, Prisma.LessonUncheckedCreateWithoutRecordingsInput>
+  connectOrCreate?: Prisma.LessonCreateOrConnectWithoutRecordingsInput
+  connect?: Prisma.LessonWhereUniqueInput
+}
+
+export type LessonUpdateOneRequiredWithoutRecordingsNestedInput = {
+  create?: Prisma.XOR<Prisma.LessonCreateWithoutRecordingsInput, Prisma.LessonUncheckedCreateWithoutRecordingsInput>
+  connectOrCreate?: Prisma.LessonCreateOrConnectWithoutRecordingsInput
+  upsert?: Prisma.LessonUpsertWithoutRecordingsInput
+  connect?: Prisma.LessonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LessonUpdateToOneWithWhereWithoutRecordingsInput, Prisma.LessonUpdateWithoutRecordingsInput>, Prisma.LessonUncheckedUpdateWithoutRecordingsInput>
+}
+
 export type LessonCreateWithoutCancelledByInput = {
   id?: string
   lessonNumber: number
@@ -1193,6 +1214,7 @@ export type LessonCreateWithoutCancelledByInput = {
   replacementChain?: Prisma.LessonCreateNestedManyWithoutOriginalLessonInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1222,6 +1244,7 @@ export type LessonUncheckedCreateWithoutCancelledByInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1306,6 +1329,7 @@ export type LessonCreateWithoutTeacherInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1335,6 +1359,7 @@ export type LessonUncheckedCreateWithoutTeacherInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1374,6 +1399,7 @@ export type LessonCreateWithoutOriginalTeacherInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1403,6 +1429,7 @@ export type LessonUncheckedCreateWithoutOriginalTeacherInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1475,6 +1502,7 @@ export type LessonCreateWithoutScheduleSlotInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
 }
 
 export type LessonUncheckedCreateWithoutScheduleSlotInput = {
@@ -1504,6 +1532,7 @@ export type LessonUncheckedCreateWithoutScheduleSlotInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
 }
 
 export type LessonCreateOrConnectWithoutScheduleSlotInput = {
@@ -1549,6 +1578,7 @@ export type LessonUpdateWithoutScheduleSlotInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonUncheckedUpdateWithoutScheduleSlotInput = {
@@ -1578,6 +1608,7 @@ export type LessonUncheckedUpdateWithoutScheduleSlotInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
 }
 
 export type LessonCreateWithoutGroupInput = {
@@ -1606,6 +1637,7 @@ export type LessonCreateWithoutGroupInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1635,6 +1667,7 @@ export type LessonUncheckedCreateWithoutGroupInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1690,6 +1723,7 @@ export type LessonCreateWithoutCancellationReasonInput = {
   replacementChain?: Prisma.LessonCreateNestedManyWithoutOriginalLessonInput
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1719,6 +1753,7 @@ export type LessonUncheckedCreateWithoutCancellationReasonInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1774,6 +1809,7 @@ export type LessonCreateWithoutRescheduledToInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1803,6 +1839,7 @@ export type LessonUncheckedCreateWithoutRescheduledToInput = {
   updatedAt?: Date | string
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1837,6 +1874,7 @@ export type LessonCreateWithoutRescheduledFromInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1866,6 +1904,7 @@ export type LessonUncheckedCreateWithoutRescheduledFromInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1900,6 +1939,7 @@ export type LessonCreateWithoutReplacementChainInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1929,6 +1969,7 @@ export type LessonUncheckedCreateWithoutReplacementChainInput = {
   updatedAt?: Date | string
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -1963,6 +2004,7 @@ export type LessonCreateWithoutOriginalLessonInput = {
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -1992,6 +2034,7 @@ export type LessonUncheckedCreateWithoutOriginalLessonInput = {
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
   attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -2042,6 +2085,7 @@ export type LessonUpdateWithoutRescheduledToInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2071,6 +2115,7 @@ export type LessonUncheckedUpdateWithoutRescheduledToInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2111,6 +2156,7 @@ export type LessonUpdateWithoutRescheduledFromInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2140,6 +2186,7 @@ export type LessonUncheckedUpdateWithoutRescheduledFromInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2180,6 +2227,7 @@ export type LessonUpdateWithoutReplacementChainInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2209,6 +2257,7 @@ export type LessonUncheckedUpdateWithoutReplacementChainInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2254,6 +2303,7 @@ export type LessonCreateWithoutAttendanceRecordsInput = {
   replacementChain?: Prisma.LessonCreateNestedManyWithoutOriginalLessonInput
   cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
   cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
 }
 
@@ -2283,6 +2333,7 @@ export type LessonUncheckedCreateWithoutAttendanceRecordsInput = {
   updatedAt?: Date | string
   rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
   replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutLessonInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
 }
 
@@ -2328,6 +2379,7 @@ export type LessonUpdateWithoutAttendanceRecordsInput = {
   replacementChain?: Prisma.LessonUpdateManyWithoutOriginalLessonNestedInput
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2357,6 +2409,143 @@ export type LessonUncheckedUpdateWithoutAttendanceRecordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
+  scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
+}
+
+export type LessonCreateWithoutRecordingsInput = {
+  id?: string
+  lessonNumber: number
+  lessonDate: Date | string
+  startTime: string
+  status?: $Enums.LessonStatus
+  originalDate?: Date | string | null
+  originalStartTime?: string | null
+  pendingAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  otherCancellationReason?: string | null
+  completedAt?: Date | string | null
+  activeStudentCount?: number | null
+  notes?: string | null
+  recordingUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.GroupCreateNestedOneWithoutLessonsInput
+  teacher: Prisma.TeacherCreateNestedOneWithoutLessonsInput
+  originalTeacher: Prisma.TeacherCreateNestedOneWithoutOriginalLessonsInput
+  rescheduledFrom?: Prisma.LessonCreateNestedOneWithoutRescheduledToInput
+  rescheduledTo?: Prisma.LessonCreateNestedOneWithoutRescheduledFromInput
+  originalLesson?: Prisma.LessonCreateNestedOneWithoutReplacementChainInput
+  replacementChain?: Prisma.LessonCreateNestedManyWithoutOriginalLessonInput
+  cancelledBy?: Prisma.AdminUserCreateNestedOneWithoutCancelledLessonsInput
+  cancellationReason?: Prisma.CancellationReasonCreateNestedOneWithoutLessonsInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutLessonInput
+  scheduleSlot?: Prisma.TeacherScheduleSlotCreateNestedOneWithoutLessonInput
+}
+
+export type LessonUncheckedCreateWithoutRecordingsInput = {
+  id?: string
+  groupId: string
+  teacherId: string
+  originalTeacherId: string
+  lessonNumber: number
+  lessonDate: Date | string
+  startTime: string
+  status?: $Enums.LessonStatus
+  originalDate?: Date | string | null
+  originalStartTime?: string | null
+  pendingAt?: Date | string | null
+  rescheduledFromId?: string | null
+  originalLessonId?: string | null
+  cancelledAt?: Date | string | null
+  cancelledById?: string | null
+  cancellationReasonId?: string | null
+  otherCancellationReason?: string | null
+  completedAt?: Date | string | null
+  activeStudentCount?: number | null
+  notes?: string | null
+  recordingUrl?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  rescheduledTo?: Prisma.LessonUncheckedCreateNestedOneWithoutRescheduledFromInput
+  replacementChain?: Prisma.LessonUncheckedCreateNestedManyWithoutOriginalLessonInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutLessonInput
+  scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedCreateNestedOneWithoutLessonInput
+}
+
+export type LessonCreateOrConnectWithoutRecordingsInput = {
+  where: Prisma.LessonWhereUniqueInput
+  create: Prisma.XOR<Prisma.LessonCreateWithoutRecordingsInput, Prisma.LessonUncheckedCreateWithoutRecordingsInput>
+}
+
+export type LessonUpsertWithoutRecordingsInput = {
+  update: Prisma.XOR<Prisma.LessonUpdateWithoutRecordingsInput, Prisma.LessonUncheckedUpdateWithoutRecordingsInput>
+  create: Prisma.XOR<Prisma.LessonCreateWithoutRecordingsInput, Prisma.LessonUncheckedCreateWithoutRecordingsInput>
+  where?: Prisma.LessonWhereInput
+}
+
+export type LessonUpdateToOneWithWhereWithoutRecordingsInput = {
+  where?: Prisma.LessonWhereInput
+  data: Prisma.XOR<Prisma.LessonUpdateWithoutRecordingsInput, Prisma.LessonUncheckedUpdateWithoutRecordingsInput>
+}
+
+export type LessonUpdateWithoutRecordingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lessonDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLessonStatusFieldUpdateOperationsInput | $Enums.LessonStatus
+  originalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  originalStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otherCancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activeStudentCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.GroupUpdateOneRequiredWithoutLessonsNestedInput
+  teacher?: Prisma.TeacherUpdateOneRequiredWithoutLessonsNestedInput
+  originalTeacher?: Prisma.TeacherUpdateOneRequiredWithoutOriginalLessonsNestedInput
+  rescheduledFrom?: Prisma.LessonUpdateOneWithoutRescheduledToNestedInput
+  rescheduledTo?: Prisma.LessonUpdateOneWithoutRescheduledFromNestedInput
+  originalLesson?: Prisma.LessonUpdateOneWithoutReplacementChainNestedInput
+  replacementChain?: Prisma.LessonUpdateManyWithoutOriginalLessonNestedInput
+  cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
+  cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
+}
+
+export type LessonUncheckedUpdateWithoutRecordingsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  originalTeacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  lessonDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumLessonStatusFieldUpdateOperationsInput | $Enums.LessonStatus
+  originalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  originalStartTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pendingAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rescheduledFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  originalLessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherCancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activeStudentCount?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
+  replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2411,6 +2600,7 @@ export type LessonUpdateWithoutCancelledByInput = {
   replacementChain?: Prisma.LessonUpdateManyWithoutOriginalLessonNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2440,6 +2630,7 @@ export type LessonUncheckedUpdateWithoutCancelledByInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2544,6 +2735,7 @@ export type LessonUpdateWithoutTeacherInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2573,6 +2765,7 @@ export type LessonUncheckedUpdateWithoutTeacherInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2627,6 +2820,7 @@ export type LessonUpdateWithoutOriginalTeacherInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2656,6 +2850,7 @@ export type LessonUncheckedUpdateWithoutOriginalTeacherInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2735,6 +2930,7 @@ export type LessonUpdateWithoutGroupInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2764,6 +2960,7 @@ export type LessonUncheckedUpdateWithoutGroupInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2843,6 +3040,7 @@ export type LessonUpdateWithoutCancellationReasonInput = {
   replacementChain?: Prisma.LessonUpdateManyWithoutOriginalLessonNestedInput
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2872,6 +3070,7 @@ export type LessonUncheckedUpdateWithoutCancellationReasonInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -2951,6 +3150,7 @@ export type LessonUpdateWithoutOriginalLessonInput = {
   cancelledBy?: Prisma.AdminUserUpdateOneWithoutCancelledLessonsNestedInput
   cancellationReason?: Prisma.CancellationReasonUpdateOneWithoutLessonsNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUpdateOneWithoutLessonNestedInput
 }
 
@@ -2980,6 +3180,7 @@ export type LessonUncheckedUpdateWithoutOriginalLessonInput = {
   rescheduledTo?: Prisma.LessonUncheckedUpdateOneWithoutRescheduledFromNestedInput
   replacementChain?: Prisma.LessonUncheckedUpdateManyWithoutOriginalLessonNestedInput
   attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutLessonNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutLessonNestedInput
   scheduleSlot?: Prisma.TeacherScheduleSlotUncheckedUpdateOneWithoutLessonNestedInput
 }
 
@@ -3016,11 +3217,13 @@ export type LessonUncheckedUpdateManyWithoutOriginalLessonInput = {
 export type LessonCountOutputType = {
   replacementChain: number
   attendanceRecords: number
+  recordings: number
 }
 
 export type LessonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   replacementChain?: boolean | LessonCountOutputTypeCountReplacementChainArgs
   attendanceRecords?: boolean | LessonCountOutputTypeCountAttendanceRecordsArgs
+  recordings?: boolean | LessonCountOutputTypeCountRecordingsArgs
 }
 
 /**
@@ -3045,6 +3248,13 @@ export type LessonCountOutputTypeCountReplacementChainArgs<ExtArgs extends runti
  */
 export type LessonCountOutputTypeCountAttendanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AttendanceWhereInput
+}
+
+/**
+ * LessonCountOutputType without action
+ */
+export type LessonCountOutputTypeCountRecordingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecordingWhereInput
 }
 
 
@@ -3082,6 +3292,7 @@ export type LessonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   cancelledBy?: boolean | Prisma.Lesson$cancelledByArgs<ExtArgs>
   cancellationReason?: boolean | Prisma.Lesson$cancellationReasonArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Lesson$attendanceRecordsArgs<ExtArgs>
+  recordings?: boolean | Prisma.Lesson$recordingsArgs<ExtArgs>
   scheduleSlot?: boolean | Prisma.Lesson$scheduleSlotArgs<ExtArgs>
   _count?: boolean | Prisma.LessonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lesson"]>
@@ -3190,6 +3401,7 @@ export type LessonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   cancelledBy?: boolean | Prisma.Lesson$cancelledByArgs<ExtArgs>
   cancellationReason?: boolean | Prisma.Lesson$cancellationReasonArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Lesson$attendanceRecordsArgs<ExtArgs>
+  recordings?: boolean | Prisma.Lesson$recordingsArgs<ExtArgs>
   scheduleSlot?: boolean | Prisma.Lesson$scheduleSlotArgs<ExtArgs>
   _count?: boolean | Prisma.LessonCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -3225,6 +3437,7 @@ export type $LessonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     cancelledBy: Prisma.$AdminUserPayload<ExtArgs> | null
     cancellationReason: Prisma.$CancellationReasonPayload<ExtArgs> | null
     attendanceRecords: Prisma.$AttendancePayload<ExtArgs>[]
+    recordings: Prisma.$RecordingPayload<ExtArgs>[]
     scheduleSlot: Prisma.$TeacherScheduleSlotPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -3655,6 +3868,7 @@ export interface Prisma__LessonClient<T, Null = never, ExtArgs extends runtime.T
   cancelledBy<T extends Prisma.Lesson$cancelledByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$cancelledByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   cancellationReason<T extends Prisma.Lesson$cancellationReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$cancellationReasonArgs<ExtArgs>>): Prisma.Prisma__CancellationReasonClient<runtime.Types.Result.GetResult<Prisma.$CancellationReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attendanceRecords<T extends Prisma.Lesson$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recordings<T extends Prisma.Lesson$recordingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$recordingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecordingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   scheduleSlot<T extends Prisma.Lesson$scheduleSlotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lesson$scheduleSlotArgs<ExtArgs>>): Prisma.Prisma__TeacherScheduleSlotClient<runtime.Types.Result.GetResult<Prisma.$TeacherScheduleSlotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4244,6 +4458,30 @@ export type Lesson$attendanceRecordsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.AttendanceScalarFieldEnum | Prisma.AttendanceScalarFieldEnum[]
+}
+
+/**
+ * Lesson.recordings
+ */
+export type Lesson$recordingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Recording
+   */
+  select?: Prisma.RecordingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Recording
+   */
+  omit?: Prisma.RecordingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecordingInclude<ExtArgs> | null
+  where?: Prisma.RecordingWhereInput
+  orderBy?: Prisma.RecordingOrderByWithRelationInput | Prisma.RecordingOrderByWithRelationInput[]
+  cursor?: Prisma.RecordingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecordingScalarFieldEnum | Prisma.RecordingScalarFieldEnum[]
 }
 
 /**

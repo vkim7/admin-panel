@@ -11,6 +11,7 @@ import {
   getLevelCategory,
 } from "@/lib/helpers/lesson-generation";
 import { calculateExamDates } from "@/lib/helpers/exam-calculation";
+import { createZoomMeeting, updateZoomMeeting, deleteZoomMeeting, getZoomStartUrl } from "@/lib/zoom";
 
 export async function createGroup(data: unknown) {
   await requireAdmin();
@@ -28,7 +29,6 @@ export async function createGroup(data: unknown) {
     level,
     maxStudents,
     startDate: startDateStr,
-    zoomLink,
   } = parsed.data;
 
   // Teacher rate guard: reject if teacher has no rate history
@@ -98,7 +98,6 @@ export async function createGroup(data: unknown) {
         maxStudents,
         startDate,
         endDate,
-        zoomLink,
       },
     });
 
@@ -150,6 +149,33 @@ export async function createGroup(data: unknown) {
     return newGroup;
   });
 
+  // Best-effort: create Zoom meeting after DB transaction
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: teacherId },
+    select: { zoomEmail: true, firstName: true, lastName: true },
+  });
+
+  if (teacher?.zoomEmail) {
+    const zoomResult = await createZoomMeeting({
+      zoomEmail: teacher.zoomEmail,
+      topic: `${group.publicId} - ${teacher.firstName} ${teacher.lastName}`,
+      startTime,
+      durationMinutes,
+      days,
+      startDate,
+      endDate,
+    });
+    if (zoomResult) {
+      await prisma.group.update({
+        where: { id: group.id },
+        data: {
+          zoomMeetingId: zoomResult.meetingId,
+          zoomJoinUrl: zoomResult.joinUrl,
+        },
+      });
+    }
+  }
+
   revalidatePath("/exams");
   redirect(`/groups/${group.id}`);
 }
@@ -161,12 +187,12 @@ export async function updateGroup(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { startTime, maxStudents, zoomLink, skipAutoGraduation } = parsed.data;
+  const { startTime, maxStudents, skipAutoGraduation } = parsed.data;
 
   // Get current group to check if startTime changed
   const currentGroup = await prisma.group.findUnique({
     where: { id },
-    select: { startTime: true },
+    select: { startTime: true, zoomMeetingId: true },
   });
 
   if (!currentGroup) {
@@ -180,7 +206,7 @@ export async function updateGroup(id: string, data: unknown) {
     await prisma.$transaction(async (tx) => {
       await tx.group.update({
         where: { id },
-        data: { maxStudents, startTime, zoomLink, skipAutoGraduation },
+        data: { maxStudents, startTime, skipAutoGraduation },
       });
 
       const today = new Date();
@@ -215,10 +241,87 @@ export async function updateGroup(id: string, data: unknown) {
     // Simple update, no cascade needed
     await prisma.group.update({
       where: { id },
-      data: { maxStudents, startTime, zoomLink, skipAutoGraduation },
+      data: { maxStudents, startTime, skipAutoGraduation },
     });
+  }
+
+  // Best-effort: update Zoom meeting if startTime changed
+  if (startTimeChanged && currentGroup.zoomMeetingId) {
+    await updateZoomMeeting(currentGroup.zoomMeetingId, { startTime });
   }
 
   revalidatePath(`/groups/${id}`);
   redirect(`/groups/${id}`);
+}
+
+export async function createGroupZoomMeeting(groupId: string) {
+  await requireAdmin();
+
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: {
+      id: true,
+      publicId: true,
+      isActive: true,
+      zoomMeetingId: true,
+      days: true,
+      startTime: true,
+      durationMinutes: true,
+      startDate: true,
+      endDate: true,
+      teacher: { select: { zoomEmail: true, firstName: true, lastName: true } },
+    },
+  });
+
+  if (!group) return { error: "Group not found" };
+  if (!group.isActive) return { error: "Group is not active" };
+  if (group.zoomMeetingId) return { error: "Group already has a Zoom meeting" };
+  if (!group.teacher.zoomEmail) {
+    return { error: "Teacher has no Zoom email configured. Add it in the teacher profile first." };
+  }
+
+  const zoomResult = await createZoomMeeting({
+    zoomEmail: group.teacher.zoomEmail,
+    topic: `${group.publicId} - ${group.teacher.firstName} ${group.teacher.lastName}`,
+    startTime: group.startTime,
+    durationMinutes: group.durationMinutes,
+    days: group.days,
+    startDate: group.startDate,
+    endDate: group.endDate,
+  });
+
+  if (!zoomResult) {
+    return { error: "Failed to create Zoom meeting. Check Zoom credentials and try again." };
+  }
+
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      zoomMeetingId: zoomResult.meetingId,
+      zoomJoinUrl: zoomResult.joinUrl,
+    },
+  });
+
+  revalidatePath(`/groups/${groupId}`);
+  return { success: true };
+}
+
+export async function getZoomHostUrl(groupId: string): Promise<{ url?: string; error?: string }> {
+  await requireAdmin();
+
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: { zoomMeetingId: true },
+  });
+
+  if (!group?.zoomMeetingId) {
+    return { error: "No Zoom meeting configured for this group" };
+  }
+
+  const url = await getZoomStartUrl(group.zoomMeetingId);
+  if (!url) {
+    return { error: "Failed to get host URL from Zoom" };
+  }
+
+  return { url };
 }

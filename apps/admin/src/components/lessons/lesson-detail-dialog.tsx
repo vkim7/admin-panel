@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,8 @@ import { CancelLessonDialog } from "./cancel-lesson-dialog";
 import { StudentCancelDialog } from "./student-cancel-dialog";
 import { RescheduleDialog } from "./reschedule-dialog";
 import { initializeAttendance } from "@/lib/actions/attendance";
+import { getRecordingsForLesson } from "@/lib/actions/recordings-query";
+import { RecordingList } from "./recording-list";
 import type { LessonWithDetails, CancellationReasonOption } from "@/lib/queries/lessons";
 
 const DAY_NAME: Record<number, string> = {
@@ -31,6 +33,7 @@ interface LessonDetailDialogProps {
   cancellationReasons: CancellationReasonOption[];
   studentCancellationsThisMonth: number;
   hasAttendance: boolean;
+  hasRecordings: boolean;
 }
 
 export function LessonDetailDialog({
@@ -41,12 +44,22 @@ export function LessonDetailDialog({
   cancellationReasons,
   studentCancellationsThisMonth,
   hasAttendance,
+  hasRecordings,
 }: LessonDetailDialogProps) {
   const [completeOpen, setCompleteOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
   const [studentCancelOpen, setStudentCancelOpen] = useState(false);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [isInitPending, startInitTransition] = useTransition();
+  const [recordings, setRecordings] = useState<Awaited<ReturnType<typeof getRecordingsForLesson>> | null>(null);
+
+  // Load recordings when dialog opens and lesson has recordings
+  useEffect(() => {
+    if (open && hasRecordings) {
+      setRecordings(null);
+      getRecordingsForLesson(lesson.id).then(setRecordings);
+    }
+  }, [open, hasRecordings, lesson.id]);
 
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -151,6 +164,14 @@ export function LessonDetailDialog({
               </div>
             )}
           </div>
+
+          {/* Recordings */}
+          {hasRecordings && recordings && recordings.length > 0 && (
+            <>
+              <Separator />
+              <RecordingList recordings={recordings} />
+            </>
+          )}
 
           {/* Actions */}
           {hasActions && (

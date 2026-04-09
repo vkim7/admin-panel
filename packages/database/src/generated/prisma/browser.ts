@@ -103,6 +103,11 @@ export type Lesson = Prisma.LessonModel
  */
 export type Attendance = Prisma.AttendanceModel
 /**
+ * Model Recording
+ * 
+ */
+export type Recording = Prisma.RecordingModel
+/**
  * Model StudentPaymentPeriod
  * 
  */

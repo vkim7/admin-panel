@@ -248,7 +248,7 @@ export default async function StudentDetailPage({
                           >
                             {m.group.publicId}
                           </Link>
-                          <CopyZoomButton zoomLink={m.group.zoomLink} />
+                          <CopyZoomButton zoomLink={m.group.zoomJoinUrl} />
                         </span>
                       </td>
                       <td className="px-3 py-2">

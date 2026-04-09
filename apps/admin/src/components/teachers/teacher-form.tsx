@@ -15,6 +15,7 @@ import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,6 +46,7 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
       firstName: "",
       lastName: "",
       phone: "",
+      zoomEmail: null,
       levels: [],
       teachingLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
     },
@@ -102,6 +104,28 @@ export function TeacherForm({ defaultValues, teacherId }: TeacherFormProps) {
               <FormControl>
                 <PhoneInput {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="zoomEmail"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Zoom Email</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  {...field}
+                  value={field.value ?? ""}
+                  placeholder="teacher@example.com"
+                />
+              </FormControl>
+              <FormDescription>
+                Zoom account email. Required for automatic meeting creation.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

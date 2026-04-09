@@ -84,7 +84,7 @@ export function FirstLessons({ data, lostReasons, transferGroups }: FirstLessons
                     <Link href={`/groups/${row.groupId}`} className="text-muted-foreground hover:underline">
                       {row.groupPublicId}
                     </Link>
-                    <CopyZoomButton zoomLink={row.zoomLink} />
+                    <CopyZoomButton zoomLink={row.zoomJoinUrl} />
                   </span>
                 </TableCell>
                 <TableCell className="text-xs text-muted-foreground">

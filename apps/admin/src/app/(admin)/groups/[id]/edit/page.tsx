@@ -37,7 +37,6 @@ export default async function EditGroupPage({
           durationMinutes: group.durationMinutes,
           maxStudents: group.maxStudents,
           startDate: group.startDate.toISOString().split("T")[0]!,
-          zoomLink: group.zoomLink,
         }}
       />
     </div>

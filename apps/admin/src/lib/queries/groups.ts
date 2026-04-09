@@ -18,7 +18,7 @@ export async function getGroupById(id: string) {
     where: { id },
     include: {
       teacher: {
-        select: { id: true, firstName: true, lastName: true },
+        select: { id: true, firstName: true, lastName: true, zoomEmail: true },
       },
       memberships: {
         orderBy: { joinDate: "asc" },
@@ -81,6 +81,7 @@ export async function getTeachersForGroupForm() {
       id: true,
       firstName: true,
       lastName: true,
+      zoomEmail: true,
       rateChanges: {
         select: { id: true },
         take: 1,

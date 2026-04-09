@@ -57,7 +57,8 @@ export type GroupMinAggregateOutputType = {
   mergedIntoGroupId: string | null
   skipAutoGraduation: boolean | null
   graduatedIntoGroupId: string | null
-  zoomLink: string | null
+  zoomMeetingId: string | null
+  zoomJoinUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -79,7 +80,8 @@ export type GroupMaxAggregateOutputType = {
   mergedIntoGroupId: string | null
   skipAutoGraduation: boolean | null
   graduatedIntoGroupId: string | null
-  zoomLink: string | null
+  zoomMeetingId: string | null
+  zoomJoinUrl: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -102,7 +104,8 @@ export type GroupCountAggregateOutputType = {
   mergedIntoGroupId: number
   skipAutoGraduation: number
   graduatedIntoGroupId: number
-  zoomLink: number
+  zoomMeetingId: number
+  zoomJoinUrl: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -140,7 +143,8 @@ export type GroupMinAggregateInputType = {
   mergedIntoGroupId?: true
   skipAutoGraduation?: true
   graduatedIntoGroupId?: true
-  zoomLink?: true
+  zoomMeetingId?: true
+  zoomJoinUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -162,7 +166,8 @@ export type GroupMaxAggregateInputType = {
   mergedIntoGroupId?: true
   skipAutoGraduation?: true
   graduatedIntoGroupId?: true
-  zoomLink?: true
+  zoomMeetingId?: true
+  zoomJoinUrl?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -185,7 +190,8 @@ export type GroupCountAggregateInputType = {
   mergedIntoGroupId?: true
   skipAutoGraduation?: true
   graduatedIntoGroupId?: true
-  zoomLink?: true
+  zoomMeetingId?: true
+  zoomJoinUrl?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -295,7 +301,8 @@ export type GroupGroupByOutputType = {
   mergedIntoGroupId: string | null
   skipAutoGraduation: boolean
   graduatedIntoGroupId: string | null
-  zoomLink: string | null
+  zoomMeetingId: string | null
+  zoomJoinUrl: string | null
   createdAt: Date
   updatedAt: Date
   _count: GroupCountAggregateOutputType | null
@@ -341,7 +348,8 @@ export type GroupWhereInput = {
   mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomLink?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
@@ -379,7 +387,8 @@ export type GroupOrderByWithRelationInput = {
   mergedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   skipAutoGraduation?: Prisma.SortOrder
   graduatedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
-  zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  zoomMeetingId?: Prisma.SortOrderInput | Prisma.SortOrder
+  zoomJoinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
@@ -420,7 +429,8 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomLink?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
@@ -458,7 +468,8 @@ export type GroupOrderByWithAggregationInput = {
   mergedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   skipAutoGraduation?: Prisma.SortOrder
   graduatedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
-  zoomLink?: Prisma.SortOrderInput | Prisma.SortOrder
+  zoomMeetingId?: Prisma.SortOrderInput | Prisma.SortOrder
+  zoomJoinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.GroupCountOrderByAggregateInput
@@ -489,7 +500,8 @@ export type GroupScalarWhereWithAggregatesInput = {
   mergedIntoGroupId?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   skipAutoGraduation?: Prisma.BoolWithAggregatesFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
-  zoomLink?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
+  zoomMeetingId?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
+  zoomJoinUrl?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
 }
@@ -509,7 +521,8 @@ export type GroupCreateInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -547,7 +560,8 @@ export type GroupUncheckedCreateInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -578,7 +592,8 @@ export type GroupUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -616,7 +631,8 @@ export type GroupUncheckedUpdateInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -651,7 +667,8 @@ export type GroupCreateManyInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -670,7 +687,8 @@ export type GroupUpdateManyMutationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -693,7 +711,8 @@ export type GroupUncheckedUpdateManyInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -736,7 +755,8 @@ export type GroupCountOrderByAggregateInput = {
   mergedIntoGroupId?: Prisma.SortOrder
   skipAutoGraduation?: Prisma.SortOrder
   graduatedIntoGroupId?: Prisma.SortOrder
-  zoomLink?: Prisma.SortOrder
+  zoomMeetingId?: Prisma.SortOrder
+  zoomJoinUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -765,7 +785,8 @@ export type GroupMaxOrderByAggregateInput = {
   mergedIntoGroupId?: Prisma.SortOrder
   skipAutoGraduation?: Prisma.SortOrder
   graduatedIntoGroupId?: Prisma.SortOrder
-  zoomLink?: Prisma.SortOrder
+  zoomMeetingId?: Prisma.SortOrder
+  zoomJoinUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -787,7 +808,8 @@ export type GroupMinOrderByAggregateInput = {
   mergedIntoGroupId?: Prisma.SortOrder
   skipAutoGraduation?: Prisma.SortOrder
   graduatedIntoGroupId?: Prisma.SortOrder
-  zoomLink?: Prisma.SortOrder
+  zoomMeetingId?: Prisma.SortOrder
+  zoomJoinUrl?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1129,7 +1151,8 @@ export type GroupCreateWithoutTeacherInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
@@ -1165,7 +1188,8 @@ export type GroupUncheckedCreateWithoutTeacherInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1229,7 +1253,8 @@ export type GroupScalarWhereInput = {
   mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomLink?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
 }
@@ -1249,7 +1274,8 @@ export type GroupCreateWithoutScheduleSlotsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1286,7 +1312,8 @@ export type GroupUncheckedCreateWithoutScheduleSlotsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1332,7 +1359,8 @@ export type GroupUpdateWithoutScheduleSlotsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -1369,7 +1397,8 @@ export type GroupUncheckedUpdateWithoutScheduleSlotsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -1400,7 +1429,8 @@ export type GroupCreateWithoutMergedFromGroupsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1437,7 +1467,8 @@ export type GroupUncheckedCreateWithoutMergedFromGroupsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   graduatedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutGraduatedIntoGroupInput
@@ -1473,7 +1504,8 @@ export type GroupCreateWithoutMergedIntoGroupInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1509,7 +1541,8 @@ export type GroupUncheckedCreateWithoutMergedIntoGroupInput = {
   endDate: Date | string
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1551,7 +1584,8 @@ export type GroupCreateWithoutGraduatedFromGroupsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1588,7 +1622,8 @@ export type GroupUncheckedCreateWithoutGraduatedFromGroupsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1624,7 +1659,8 @@ export type GroupCreateWithoutGraduatedIntoGroupInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1660,7 +1696,8 @@ export type GroupUncheckedCreateWithoutGraduatedIntoGroupInput = {
   endDate: Date | string
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1712,7 +1749,8 @@ export type GroupUpdateWithoutMergedFromGroupsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -1749,7 +1787,8 @@ export type GroupUncheckedUpdateWithoutMergedFromGroupsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   graduatedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutGraduatedIntoGroupNestedInput
@@ -1806,7 +1845,8 @@ export type GroupUpdateWithoutGraduatedFromGroupsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -1843,7 +1883,8 @@ export type GroupUncheckedUpdateWithoutGraduatedFromGroupsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -1890,7 +1931,8 @@ export type GroupCreateWithoutTeacherHistoryInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -1927,7 +1969,8 @@ export type GroupUncheckedCreateWithoutTeacherHistoryInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1973,7 +2016,8 @@ export type GroupUpdateWithoutTeacherHistoryInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2010,7 +2054,8 @@ export type GroupUncheckedUpdateWithoutTeacherHistoryInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2041,7 +2086,8 @@ export type GroupCreateWithoutMembershipsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2078,7 +2124,8 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2124,7 +2171,8 @@ export type GroupUpdateWithoutMembershipsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2161,7 +2209,8 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2192,7 +2241,8 @@ export type GroupCreateWithoutLessonsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2229,7 +2279,8 @@ export type GroupUncheckedCreateWithoutLessonsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2275,7 +2326,8 @@ export type GroupUpdateWithoutLessonsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2312,7 +2364,8 @@ export type GroupUncheckedUpdateWithoutLessonsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2343,7 +2396,8 @@ export type GroupCreateWithoutAttendanceRecordsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2380,7 +2434,8 @@ export type GroupUncheckedCreateWithoutAttendanceRecordsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2426,7 +2481,8 @@ export type GroupUpdateWithoutAttendanceRecordsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2463,7 +2519,8 @@ export type GroupUncheckedUpdateWithoutAttendanceRecordsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2494,7 +2551,8 @@ export type GroupCreateWithoutStudentPaymentPeriodsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2531,7 +2589,8 @@ export type GroupUncheckedCreateWithoutStudentPaymentPeriodsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2577,7 +2636,8 @@ export type GroupUpdateWithoutStudentPaymentPeriodsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2614,7 +2674,8 @@ export type GroupUncheckedUpdateWithoutStudentPaymentPeriodsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2645,7 +2706,8 @@ export type GroupCreateWithoutTeacherPaymentPeriodsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2682,7 +2744,8 @@ export type GroupUncheckedCreateWithoutTeacherPaymentPeriodsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2728,7 +2791,8 @@ export type GroupUpdateWithoutTeacherPaymentPeriodsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2765,7 +2829,8 @@ export type GroupUncheckedUpdateWithoutTeacherPaymentPeriodsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2796,7 +2861,8 @@ export type GroupCreateWithoutExamsInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2833,7 +2899,8 @@ export type GroupUncheckedCreateWithoutExamsInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2879,7 +2946,8 @@ export type GroupUpdateWithoutExamsInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -2916,7 +2984,8 @@ export type GroupUncheckedUpdateWithoutExamsInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2947,7 +3016,8 @@ export type GroupCreateWithoutScheduledActionsAsSourceInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -2984,7 +3054,8 @@ export type GroupUncheckedCreateWithoutScheduledActionsAsSourceInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3020,7 +3091,8 @@ export type GroupCreateWithoutScheduledActionsAsDestInput = {
   startDate: Date | string
   endDate: Date | string
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
@@ -3057,7 +3129,8 @@ export type GroupUncheckedCreateWithoutScheduledActionsAsDestInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3103,7 +3176,8 @@ export type GroupUpdateWithoutScheduledActionsAsSourceInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -3140,7 +3214,8 @@ export type GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3181,7 +3256,8 @@ export type GroupUpdateWithoutScheduledActionsAsDestInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -3218,7 +3294,8 @@ export type GroupUncheckedUpdateWithoutScheduledActionsAsDestInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3251,7 +3328,8 @@ export type GroupCreateManyTeacherInput = {
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3270,7 +3348,8 @@ export type GroupUpdateWithoutTeacherInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
@@ -3306,7 +3385,8 @@ export type GroupUncheckedUpdateWithoutTeacherInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3340,7 +3420,8 @@ export type GroupUncheckedUpdateManyWithoutTeacherInput = {
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3362,7 +3443,8 @@ export type GroupCreateManyMergedIntoGroupInput = {
   endDate: Date | string
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: string | null
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3384,7 +3466,8 @@ export type GroupCreateManyGraduatedIntoGroupInput = {
   endDate: Date | string
   mergedIntoGroupId?: string | null
   skipAutoGraduation?: boolean
-  zoomLink?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3403,7 +3486,8 @@ export type GroupUpdateWithoutMergedIntoGroupInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -3439,7 +3523,8 @@ export type GroupUncheckedUpdateWithoutMergedIntoGroupInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3473,7 +3558,8 @@ export type GroupUncheckedUpdateManyWithoutMergedIntoGroupInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3492,7 +3578,8 @@ export type GroupUpdateWithoutGraduatedIntoGroupInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
@@ -3528,7 +3615,8 @@ export type GroupUncheckedUpdateWithoutGraduatedIntoGroupInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3562,7 +3650,8 @@ export type GroupUncheckedUpdateManyWithoutGraduatedIntoGroupInput = {
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  zoomLink?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3715,7 +3804,8 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   mergedIntoGroupId?: boolean
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: boolean
-  zoomLink?: boolean
+  zoomMeetingId?: boolean
+  zoomJoinUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -3754,7 +3844,8 @@ export type GroupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   mergedIntoGroupId?: boolean
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: boolean
-  zoomLink?: boolean
+  zoomMeetingId?: boolean
+  zoomJoinUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -3780,7 +3871,8 @@ export type GroupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   mergedIntoGroupId?: boolean
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: boolean
-  zoomLink?: boolean
+  zoomMeetingId?: boolean
+  zoomJoinUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
@@ -3806,12 +3898,13 @@ export type GroupSelectScalar = {
   mergedIntoGroupId?: boolean
   skipAutoGraduation?: boolean
   graduatedIntoGroupId?: boolean
-  zoomLink?: boolean
+  zoomMeetingId?: boolean
+  zoomJoinUrl?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "sequenceNumber" | "type" | "teacherId" | "days" | "startTime" | "durationMinutes" | "level" | "progressStage" | "maxStudents" | "isActive" | "startDate" | "endDate" | "mergedIntoGroupId" | "skipAutoGraduation" | "graduatedIntoGroupId" | "zoomLink" | "createdAt" | "updatedAt", ExtArgs["result"]["group"]>
+export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "sequenceNumber" | "type" | "teacherId" | "days" | "startTime" | "durationMinutes" | "level" | "progressStage" | "maxStudents" | "isActive" | "startDate" | "endDate" | "mergedIntoGroupId" | "skipAutoGraduation" | "graduatedIntoGroupId" | "zoomMeetingId" | "zoomJoinUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["group"]>
 export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
@@ -3878,7 +3971,8 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     mergedIntoGroupId: string | null
     skipAutoGraduation: boolean
     graduatedIntoGroupId: string | null
-    zoomLink: string | null
+    zoomMeetingId: string | null
+    zoomJoinUrl: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["group"]>
@@ -4336,7 +4430,8 @@ export interface GroupFieldRefs {
   readonly mergedIntoGroupId: Prisma.FieldRef<"Group", 'String'>
   readonly skipAutoGraduation: Prisma.FieldRef<"Group", 'Boolean'>
   readonly graduatedIntoGroupId: Prisma.FieldRef<"Group", 'String'>
-  readonly zoomLink: Prisma.FieldRef<"Group", 'String'>
+  readonly zoomMeetingId: Prisma.FieldRef<"Group", 'String'>
+  readonly zoomJoinUrl: Prisma.FieldRef<"Group", 'String'>
   readonly createdAt: Prisma.FieldRef<"Group", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Group", 'DateTime'>
 }

@@ -398,7 +398,6 @@ describe("C#14: teacher rate required", () => {
       level: "BEGINNER",
       maxStudents: 6,
       startDate: "2026-04-01",
-      zoomLink: null,
     });
 
     expect(result).toHaveProperty("error");
@@ -422,7 +421,6 @@ describe("C#12/C#12a: group schema validation", () => {
       level: "BEGINNER",
       maxStudents: 6,
       startDate: "2026-04-01",
-      zoomLink: null,
     });
 
     expect(result).toHaveProperty("error");
@@ -442,7 +440,6 @@ describe("C#12/C#12a: group schema validation", () => {
       level: "BEGINNER",
       maxStudents: 6,
       startDate: "2026-04-01",
-      zoomLink: null,
     });
 
     expect(result).toHaveProperty("error");
