@@ -395,7 +395,9 @@ export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof
 
 export const RecordingScalarFieldEnum = {
   id: 'id',
+  groupId: 'groupId',
   lessonId: 'lessonId',
+  recordingDate: 'recordingDate',
   fileType: 'fileType',
   recordingType: 'recordingType',
   r2Key: 'r2Key',

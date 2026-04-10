@@ -82,9 +82,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: "no_group" });
   }
 
-  // Match to lesson by recording start date
+  // Match to lesson by recording start date (may be null if no lesson on that day)
   const recordingStart = new Date(recordingFiles[0]!.recording_start);
-  const lessonDate = new Date(
+  const recordingDate = new Date(
     Date.UTC(
       recordingStart.getUTCFullYear(),
       recordingStart.getUTCMonth(),
@@ -95,16 +95,15 @@ export async function POST(request: Request) {
   const lesson = await prisma.lesson.findFirst({
     where: {
       groupId: group.id,
-      lessonDate: lessonDate,
+      lessonDate: recordingDate,
     },
     select: { id: true },
   });
 
   if (!lesson) {
-    console.error(
-      `[Zoom Webhook] No lesson found for group ${group.id} on ${lessonDate.toISOString()}`,
+    console.log(
+      `[Zoom Webhook] No lesson found for group ${group.id} on ${recordingDate.toISOString()} — storing as orphan recording`,
     );
-    return NextResponse.json({ status: "no_lesson" });
   }
 
   // Zoom includes a download_token (JWT, valid 24h) at the root of the webhook
@@ -123,7 +122,8 @@ export async function POST(request: Request) {
   for (const file of recordingFiles) {
     const ext = getExtension(file.file_type);
     const timestamp = file.recording_start.split("T")[0] ?? "unknown";
-    const r2Key = `recordings/${group.id}/${lesson.id}/${file.file_type}_${timestamp}.${ext}`;
+    const folder = lesson ? lesson.id : `orphan_${timestamp}`;
+    const r2Key = `recordings/${group.id}/${folder}/${file.file_type}_${timestamp}.${ext}`;
 
     const durationSeconds =
       file.recording_start && file.recording_end
@@ -137,7 +137,9 @@ export async function POST(request: Request) {
     // Create PENDING recording row
     const recording = await prisma.recording.create({
       data: {
-        lessonId: lesson.id,
+        groupId: group.id,
+        lessonId: lesson?.id ?? null,
+        recordingDate,
         fileType: file.file_type,
         recordingType: file.recording_type,
         r2Key,

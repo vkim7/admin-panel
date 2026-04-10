@@ -38,7 +38,9 @@ export type RecordingSumAggregateOutputType = {
 
 export type RecordingMinAggregateOutputType = {
   id: string | null
+  groupId: string | null
   lessonId: string | null
+  recordingDate: Date | null
   fileType: string | null
   recordingType: string | null
   r2Key: string | null
@@ -52,7 +54,9 @@ export type RecordingMinAggregateOutputType = {
 
 export type RecordingMaxAggregateOutputType = {
   id: string | null
+  groupId: string | null
   lessonId: string | null
+  recordingDate: Date | null
   fileType: string | null
   recordingType: string | null
   r2Key: string | null
@@ -66,7 +70,9 @@ export type RecordingMaxAggregateOutputType = {
 
 export type RecordingCountAggregateOutputType = {
   id: number
+  groupId: number
   lessonId: number
+  recordingDate: number
   fileType: number
   recordingType: number
   r2Key: number
@@ -92,7 +98,9 @@ export type RecordingSumAggregateInputType = {
 
 export type RecordingMinAggregateInputType = {
   id?: true
+  groupId?: true
   lessonId?: true
+  recordingDate?: true
   fileType?: true
   recordingType?: true
   r2Key?: true
@@ -106,7 +114,9 @@ export type RecordingMinAggregateInputType = {
 
 export type RecordingMaxAggregateInputType = {
   id?: true
+  groupId?: true
   lessonId?: true
+  recordingDate?: true
   fileType?: true
   recordingType?: true
   r2Key?: true
@@ -120,7 +130,9 @@ export type RecordingMaxAggregateInputType = {
 
 export type RecordingCountAggregateInputType = {
   id?: true
+  groupId?: true
   lessonId?: true
+  recordingDate?: true
   fileType?: true
   recordingType?: true
   r2Key?: true
@@ -221,7 +233,9 @@ export type RecordingGroupByArgs<ExtArgs extends runtime.Types.Extensions.Intern
 
 export type RecordingGroupByOutputType = {
   id: string
-  lessonId: string
+  groupId: string
+  lessonId: string | null
+  recordingDate: Date
   fileType: string
   recordingType: string
   r2Key: string
@@ -258,7 +272,9 @@ export type RecordingWhereInput = {
   OR?: Prisma.RecordingWhereInput[]
   NOT?: Prisma.RecordingWhereInput | Prisma.RecordingWhereInput[]
   id?: Prisma.StringFilter<"Recording"> | string
-  lessonId?: Prisma.StringFilter<"Recording"> | string
+  groupId?: Prisma.StringFilter<"Recording"> | string
+  lessonId?: Prisma.StringNullableFilter<"Recording"> | string | null
+  recordingDate?: Prisma.DateTimeFilter<"Recording"> | Date | string
   fileType?: Prisma.StringFilter<"Recording"> | string
   recordingType?: Prisma.StringFilter<"Recording"> | string
   r2Key?: Prisma.StringFilter<"Recording"> | string
@@ -268,12 +284,15 @@ export type RecordingWhereInput = {
   zoomFileId?: Prisma.StringFilter<"Recording"> | string
   createdAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
-  lesson?: Prisma.XOR<Prisma.LessonScalarRelationFilter, Prisma.LessonWhereInput>
+  group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  lesson?: Prisma.XOR<Prisma.LessonNullableScalarRelationFilter, Prisma.LessonWhereInput> | null
 }
 
 export type RecordingOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  lessonId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrderInput | Prisma.SortOrder
+  recordingDate?: Prisma.SortOrder
   fileType?: Prisma.SortOrder
   recordingType?: Prisma.SortOrder
   r2Key?: Prisma.SortOrder
@@ -283,6 +302,7 @@ export type RecordingOrderByWithRelationInput = {
   zoomFileId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  group?: Prisma.GroupOrderByWithRelationInput
   lesson?: Prisma.LessonOrderByWithRelationInput
 }
 
@@ -291,7 +311,9 @@ export type RecordingWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RecordingWhereInput | Prisma.RecordingWhereInput[]
   OR?: Prisma.RecordingWhereInput[]
   NOT?: Prisma.RecordingWhereInput | Prisma.RecordingWhereInput[]
-  lessonId?: Prisma.StringFilter<"Recording"> | string
+  groupId?: Prisma.StringFilter<"Recording"> | string
+  lessonId?: Prisma.StringNullableFilter<"Recording"> | string | null
+  recordingDate?: Prisma.DateTimeFilter<"Recording"> | Date | string
   fileType?: Prisma.StringFilter<"Recording"> | string
   recordingType?: Prisma.StringFilter<"Recording"> | string
   r2Key?: Prisma.StringFilter<"Recording"> | string
@@ -301,12 +323,15 @@ export type RecordingWhereUniqueInput = Prisma.AtLeast<{
   zoomFileId?: Prisma.StringFilter<"Recording"> | string
   createdAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
-  lesson?: Prisma.XOR<Prisma.LessonScalarRelationFilter, Prisma.LessonWhereInput>
+  group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
+  lesson?: Prisma.XOR<Prisma.LessonNullableScalarRelationFilter, Prisma.LessonWhereInput> | null
 }, "id">
 
 export type RecordingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  lessonId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
+  lessonId?: Prisma.SortOrderInput | Prisma.SortOrder
+  recordingDate?: Prisma.SortOrder
   fileType?: Prisma.SortOrder
   recordingType?: Prisma.SortOrder
   r2Key?: Prisma.SortOrder
@@ -328,7 +353,9 @@ export type RecordingScalarWhereWithAggregatesInput = {
   OR?: Prisma.RecordingScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RecordingScalarWhereWithAggregatesInput | Prisma.RecordingScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Recording"> | string
-  lessonId?: Prisma.StringWithAggregatesFilter<"Recording"> | string
+  groupId?: Prisma.StringWithAggregatesFilter<"Recording"> | string
+  lessonId?: Prisma.StringNullableWithAggregatesFilter<"Recording"> | string | null
+  recordingDate?: Prisma.DateTimeWithAggregatesFilter<"Recording"> | Date | string
   fileType?: Prisma.StringWithAggregatesFilter<"Recording"> | string
   recordingType?: Prisma.StringWithAggregatesFilter<"Recording"> | string
   r2Key?: Prisma.StringWithAggregatesFilter<"Recording"> | string
@@ -342,6 +369,7 @@ export type RecordingScalarWhereWithAggregatesInput = {
 
 export type RecordingCreateInput = {
   id?: string
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -351,12 +379,15 @@ export type RecordingCreateInput = {
   zoomFileId: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  lesson: Prisma.LessonCreateNestedOneWithoutRecordingsInput
+  group: Prisma.GroupCreateNestedOneWithoutRecordingsInput
+  lesson?: Prisma.LessonCreateNestedOneWithoutRecordingsInput
 }
 
 export type RecordingUncheckedCreateInput = {
   id?: string
-  lessonId: string
+  groupId: string
+  lessonId?: string | null
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -370,6 +401,7 @@ export type RecordingUncheckedCreateInput = {
 
 export type RecordingUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -379,12 +411,15 @@ export type RecordingUpdateInput = {
   zoomFileId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lesson?: Prisma.LessonUpdateOneRequiredWithoutRecordingsNestedInput
+  group?: Prisma.GroupUpdateOneRequiredWithoutRecordingsNestedInput
+  lesson?: Prisma.LessonUpdateOneWithoutRecordingsNestedInput
 }
 
 export type RecordingUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -398,7 +433,9 @@ export type RecordingUncheckedUpdateInput = {
 
 export type RecordingCreateManyInput = {
   id?: string
-  lessonId: string
+  groupId: string
+  lessonId?: string | null
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -412,6 +449,7 @@ export type RecordingCreateManyInput = {
 
 export type RecordingUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -425,7 +463,9 @@ export type RecordingUpdateManyMutationInput = {
 
 export type RecordingUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  lessonId?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -449,7 +489,9 @@ export type RecordingOrderByRelationAggregateInput = {
 
 export type RecordingCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
   lessonId?: Prisma.SortOrder
+  recordingDate?: Prisma.SortOrder
   fileType?: Prisma.SortOrder
   recordingType?: Prisma.SortOrder
   r2Key?: Prisma.SortOrder
@@ -468,7 +510,9 @@ export type RecordingAvgOrderByAggregateInput = {
 
 export type RecordingMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
   lessonId?: Prisma.SortOrder
+  recordingDate?: Prisma.SortOrder
   fileType?: Prisma.SortOrder
   recordingType?: Prisma.SortOrder
   r2Key?: Prisma.SortOrder
@@ -482,7 +526,9 @@ export type RecordingMaxOrderByAggregateInput = {
 
 export type RecordingMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
   lessonId?: Prisma.SortOrder
+  recordingDate?: Prisma.SortOrder
   fileType?: Prisma.SortOrder
   recordingType?: Prisma.SortOrder
   r2Key?: Prisma.SortOrder
@@ -497,6 +543,48 @@ export type RecordingMinOrderByAggregateInput = {
 export type RecordingSumOrderByAggregateInput = {
   fileSizeBytes?: Prisma.SortOrder
   durationSeconds?: Prisma.SortOrder
+}
+
+export type RecordingCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput> | Prisma.RecordingCreateWithoutGroupInput[] | Prisma.RecordingUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.RecordingCreateOrConnectWithoutGroupInput | Prisma.RecordingCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.RecordingCreateManyGroupInputEnvelope
+  connect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+}
+
+export type RecordingUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput> | Prisma.RecordingCreateWithoutGroupInput[] | Prisma.RecordingUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.RecordingCreateOrConnectWithoutGroupInput | Prisma.RecordingCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.RecordingCreateManyGroupInputEnvelope
+  connect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+}
+
+export type RecordingUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput> | Prisma.RecordingCreateWithoutGroupInput[] | Prisma.RecordingUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.RecordingCreateOrConnectWithoutGroupInput | Prisma.RecordingCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.RecordingUpsertWithWhereUniqueWithoutGroupInput | Prisma.RecordingUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.RecordingCreateManyGroupInputEnvelope
+  set?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  disconnect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  delete?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  connect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  update?: Prisma.RecordingUpdateWithWhereUniqueWithoutGroupInput | Prisma.RecordingUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.RecordingUpdateManyWithWhereWithoutGroupInput | Prisma.RecordingUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
+}
+
+export type RecordingUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput> | Prisma.RecordingCreateWithoutGroupInput[] | Prisma.RecordingUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.RecordingCreateOrConnectWithoutGroupInput | Prisma.RecordingCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.RecordingUpsertWithWhereUniqueWithoutGroupInput | Prisma.RecordingUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.RecordingCreateManyGroupInputEnvelope
+  set?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  disconnect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  delete?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  connect?: Prisma.RecordingWhereUniqueInput | Prisma.RecordingWhereUniqueInput[]
+  update?: Prisma.RecordingUpdateWithWhereUniqueWithoutGroupInput | Prisma.RecordingUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.RecordingUpdateManyWithWhereWithoutGroupInput | Prisma.RecordingUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
 }
 
 export type RecordingCreateNestedManyWithoutLessonInput = {
@@ -553,8 +641,25 @@ export type EnumRecordingStatusFieldUpdateOperationsInput = {
   set?: $Enums.RecordingStatus
 }
 
-export type RecordingCreateWithoutLessonInput = {
+export type RecordingCreateWithoutGroupInput = {
   id?: string
+  recordingDate: Date | string
+  fileType: string
+  recordingType: string
+  r2Key: string
+  fileSizeBytes: bigint | number
+  durationSeconds?: number | null
+  status?: $Enums.RecordingStatus
+  zoomFileId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lesson?: Prisma.LessonCreateNestedOneWithoutRecordingsInput
+}
+
+export type RecordingUncheckedCreateWithoutGroupInput = {
+  id?: string
+  lessonId?: string | null
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -566,8 +671,70 @@ export type RecordingCreateWithoutLessonInput = {
   updatedAt?: Date | string
 }
 
+export type RecordingCreateOrConnectWithoutGroupInput = {
+  where: Prisma.RecordingWhereUniqueInput
+  create: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput>
+}
+
+export type RecordingCreateManyGroupInputEnvelope = {
+  data: Prisma.RecordingCreateManyGroupInput | Prisma.RecordingCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type RecordingUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.RecordingWhereUniqueInput
+  update: Prisma.XOR<Prisma.RecordingUpdateWithoutGroupInput, Prisma.RecordingUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.RecordingCreateWithoutGroupInput, Prisma.RecordingUncheckedCreateWithoutGroupInput>
+}
+
+export type RecordingUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.RecordingWhereUniqueInput
+  data: Prisma.XOR<Prisma.RecordingUpdateWithoutGroupInput, Prisma.RecordingUncheckedUpdateWithoutGroupInput>
+}
+
+export type RecordingUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.RecordingScalarWhereInput
+  data: Prisma.XOR<Prisma.RecordingUpdateManyMutationInput, Prisma.RecordingUncheckedUpdateManyWithoutGroupInput>
+}
+
+export type RecordingScalarWhereInput = {
+  AND?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
+  OR?: Prisma.RecordingScalarWhereInput[]
+  NOT?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
+  id?: Prisma.StringFilter<"Recording"> | string
+  groupId?: Prisma.StringFilter<"Recording"> | string
+  lessonId?: Prisma.StringNullableFilter<"Recording"> | string | null
+  recordingDate?: Prisma.DateTimeFilter<"Recording"> | Date | string
+  fileType?: Prisma.StringFilter<"Recording"> | string
+  recordingType?: Prisma.StringFilter<"Recording"> | string
+  r2Key?: Prisma.StringFilter<"Recording"> | string
+  fileSizeBytes?: Prisma.BigIntFilter<"Recording"> | bigint | number
+  durationSeconds?: Prisma.IntNullableFilter<"Recording"> | number | null
+  status?: Prisma.EnumRecordingStatusFilter<"Recording"> | $Enums.RecordingStatus
+  zoomFileId?: Prisma.StringFilter<"Recording"> | string
+  createdAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
+}
+
+export type RecordingCreateWithoutLessonInput = {
+  id?: string
+  recordingDate: Date | string
+  fileType: string
+  recordingType: string
+  r2Key: string
+  fileSizeBytes: bigint | number
+  durationSeconds?: number | null
+  status?: $Enums.RecordingStatus
+  zoomFileId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  group: Prisma.GroupCreateNestedOneWithoutRecordingsInput
+}
+
 export type RecordingUncheckedCreateWithoutLessonInput = {
   id?: string
+  groupId: string
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -605,25 +772,70 @@ export type RecordingUpdateManyWithWhereWithoutLessonInput = {
   data: Prisma.XOR<Prisma.RecordingUpdateManyMutationInput, Prisma.RecordingUncheckedUpdateManyWithoutLessonInput>
 }
 
-export type RecordingScalarWhereInput = {
-  AND?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
-  OR?: Prisma.RecordingScalarWhereInput[]
-  NOT?: Prisma.RecordingScalarWhereInput | Prisma.RecordingScalarWhereInput[]
-  id?: Prisma.StringFilter<"Recording"> | string
-  lessonId?: Prisma.StringFilter<"Recording"> | string
-  fileType?: Prisma.StringFilter<"Recording"> | string
-  recordingType?: Prisma.StringFilter<"Recording"> | string
-  r2Key?: Prisma.StringFilter<"Recording"> | string
-  fileSizeBytes?: Prisma.BigIntFilter<"Recording"> | bigint | number
-  durationSeconds?: Prisma.IntNullableFilter<"Recording"> | number | null
-  status?: Prisma.EnumRecordingStatusFilter<"Recording"> | $Enums.RecordingStatus
-  zoomFileId?: Prisma.StringFilter<"Recording"> | string
-  createdAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
+export type RecordingCreateManyGroupInput = {
+  id?: string
+  lessonId?: string | null
+  recordingDate: Date | string
+  fileType: string
+  recordingType: string
+  r2Key: string
+  fileSizeBytes: bigint | number
+  durationSeconds?: number | null
+  status?: $Enums.RecordingStatus
+  zoomFileId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RecordingUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingType?: Prisma.StringFieldUpdateOperationsInput | string
+  r2Key?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSizeBytes?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumRecordingStatusFieldUpdateOperationsInput | $Enums.RecordingStatus
+  zoomFileId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lesson?: Prisma.LessonUpdateOneWithoutRecordingsNestedInput
+}
+
+export type RecordingUncheckedUpdateWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingType?: Prisma.StringFieldUpdateOperationsInput | string
+  r2Key?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSizeBytes?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumRecordingStatusFieldUpdateOperationsInput | $Enums.RecordingStatus
+  zoomFileId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RecordingUncheckedUpdateManyWithoutGroupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileType?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingType?: Prisma.StringFieldUpdateOperationsInput | string
+  r2Key?: Prisma.StringFieldUpdateOperationsInput | string
+  fileSizeBytes?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  durationSeconds?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  status?: Prisma.EnumRecordingStatusFieldUpdateOperationsInput | $Enums.RecordingStatus
+  zoomFileId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RecordingCreateManyLessonInput = {
   id?: string
+  groupId: string
+  recordingDate: Date | string
   fileType: string
   recordingType: string
   r2Key: string
@@ -637,6 +849,7 @@ export type RecordingCreateManyLessonInput = {
 
 export type RecordingUpdateWithoutLessonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -646,10 +859,13 @@ export type RecordingUpdateWithoutLessonInput = {
   zoomFileId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  group?: Prisma.GroupUpdateOneRequiredWithoutRecordingsNestedInput
 }
 
 export type RecordingUncheckedUpdateWithoutLessonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -663,6 +879,8 @@ export type RecordingUncheckedUpdateWithoutLessonInput = {
 
 export type RecordingUncheckedUpdateManyWithoutLessonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  groupId?: Prisma.StringFieldUpdateOperationsInput | string
+  recordingDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileType?: Prisma.StringFieldUpdateOperationsInput | string
   recordingType?: Prisma.StringFieldUpdateOperationsInput | string
   r2Key?: Prisma.StringFieldUpdateOperationsInput | string
@@ -678,7 +896,9 @@ export type RecordingUncheckedUpdateManyWithoutLessonInput = {
 
 export type RecordingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
   lessonId?: boolean
+  recordingDate?: boolean
   fileType?: boolean
   recordingType?: boolean
   r2Key?: boolean
@@ -688,12 +908,15 @@ export type RecordingSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   zoomFileId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["recording"]>
 
 export type RecordingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
   lessonId?: boolean
+  recordingDate?: boolean
   fileType?: boolean
   recordingType?: boolean
   r2Key?: boolean
@@ -703,12 +926,15 @@ export type RecordingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   zoomFileId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["recording"]>
 
 export type RecordingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  groupId?: boolean
   lessonId?: boolean
+  recordingDate?: boolean
   fileType?: boolean
   recordingType?: boolean
   r2Key?: boolean
@@ -718,12 +944,15 @@ export type RecordingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   zoomFileId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }, ExtArgs["result"]["recording"]>
 
 export type RecordingSelectScalar = {
   id?: boolean
+  groupId?: boolean
   lessonId?: boolean
+  recordingDate?: boolean
   fileType?: boolean
   recordingType?: boolean
   r2Key?: boolean
@@ -735,25 +964,31 @@ export type RecordingSelectScalar = {
   updatedAt?: boolean
 }
 
-export type RecordingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "lessonId" | "fileType" | "recordingType" | "r2Key" | "fileSizeBytes" | "durationSeconds" | "status" | "zoomFileId" | "createdAt" | "updatedAt", ExtArgs["result"]["recording"]>
+export type RecordingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "groupId" | "lessonId" | "recordingDate" | "fileType" | "recordingType" | "r2Key" | "fileSizeBytes" | "durationSeconds" | "status" | "zoomFileId" | "createdAt" | "updatedAt", ExtArgs["result"]["recording"]>
 export type RecordingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }
 export type RecordingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }
 export type RecordingIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  lesson?: boolean | Prisma.LessonDefaultArgs<ExtArgs>
+  group?: boolean | Prisma.GroupDefaultArgs<ExtArgs>
+  lesson?: boolean | Prisma.Recording$lessonArgs<ExtArgs>
 }
 
 export type $RecordingPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Recording"
   objects: {
-    lesson: Prisma.$LessonPayload<ExtArgs>
+    group: Prisma.$GroupPayload<ExtArgs>
+    lesson: Prisma.$LessonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    lessonId: string
+    groupId: string
+    lessonId: string | null
+    recordingDate: Date
     fileType: string
     recordingType: string
     r2Key: string
@@ -1157,7 +1392,8 @@ readonly fields: RecordingFieldRefs;
  */
 export interface Prisma__RecordingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  lesson<T extends Prisma.LessonDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LessonDefaultArgs<ExtArgs>>): Prisma.Prisma__LessonClient<runtime.Types.Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  group<T extends Prisma.GroupDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.GroupDefaultArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  lesson<T extends Prisma.Recording$lessonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Recording$lessonArgs<ExtArgs>>): Prisma.Prisma__LessonClient<runtime.Types.Result.GetResult<Prisma.$LessonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1188,7 +1424,9 @@ export interface Prisma__RecordingClient<T, Null = never, ExtArgs extends runtim
  */
 export interface RecordingFieldRefs {
   readonly id: Prisma.FieldRef<"Recording", 'String'>
+  readonly groupId: Prisma.FieldRef<"Recording", 'String'>
   readonly lessonId: Prisma.FieldRef<"Recording", 'String'>
+  readonly recordingDate: Prisma.FieldRef<"Recording", 'DateTime'>
   readonly fileType: Prisma.FieldRef<"Recording", 'String'>
   readonly recordingType: Prisma.FieldRef<"Recording", 'String'>
   readonly r2Key: Prisma.FieldRef<"Recording", 'String'>
@@ -1591,6 +1829,25 @@ export type RecordingDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Limit how many Recordings to delete.
    */
   limit?: number
+}
+
+/**
+ * Recording.lesson
+ */
+export type Recording$lessonArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lesson
+   */
+  select?: Prisma.LessonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lesson
+   */
+  omit?: Prisma.LessonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LessonInclude<ExtArgs> | null
+  where?: Prisma.LessonWhereInput
 }
 
 /**

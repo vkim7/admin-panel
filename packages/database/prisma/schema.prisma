@@ -705,6 +705,7 @@ model Group {
   teacherPaymentPeriods TeacherPaymentPeriod[]
   scheduleSlots             TeacherScheduleSlot[]
   teacherHistory            GroupTeacherHistory[]
+  recordings                Recording[]
   scheduledActionsAsSource  ScheduledAction[]       @relation("ScheduledActionSource")
   scheduledActionsAsDest    ScheduledAction[]       @relation("ScheduledActionDest")
 
@@ -958,10 +959,16 @@ model Attendance {
 // recording files (MP4 video, M4A audio, chat transcript, etc.). The download
 // pipeline: Zoom webhook → create PENDING rows → Cloudflare Worker streams to R2
 // → callback marks COMPLETED → Zoom cloud copy deleted to free storage.
+//
+// lessonId is nullable — recordings from meetings that don't match a scheduled
+// lesson date are stored as "orphans" linked only to the group (e.g., when a
+// lesson is informally rescheduled outside the admin panel).
 
 model Recording {
   id              String          @id @default(cuid())
-  lessonId        String
+  groupId         String
+  lessonId        String? // Null = orphan recording (no matching lesson on that date)
+  recordingDate   DateTime        @db.Date // Date the recording was made (from Zoom's recording_start)
   fileType        String // "MP4", "M4A", "CHAT", "TRANSCRIPT", "TIMELINE", etc.
   recordingType   String // Zoom's recording_type: "shared_screen_with_gallery_view", "audio_only", etc.
   r2Key           String // Cloudflare R2 object key
@@ -973,8 +980,10 @@ model Recording {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  group  Group   @relation(fields: [groupId], references: [id], onDelete: Restrict)
+  lesson Lesson? @relation(fields: [lessonId], references: [id], onDelete: Restrict)
 
+  @@index([groupId])
   @@index([lessonId])
   @@index([status])
 }

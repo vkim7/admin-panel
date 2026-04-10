@@ -29,12 +29,8 @@ export async function POST(request: Request) {
       id: true,
       zoomFileId: true,
       status: true,
-      lesson: {
-        select: {
-          group: {
-            select: { zoomMeetingId: true },
-          },
-        },
+      group: {
+        select: { zoomMeetingId: true },
       },
     },
   });
@@ -59,7 +55,7 @@ export async function POST(request: Request) {
     });
 
     // Best-effort: delete recording from Zoom cloud to free storage
-    const zoomMeetingId = recording.lesson.group.zoomMeetingId;
+    const zoomMeetingId = recording.group.zoomMeetingId;
     if (zoomMeetingId) {
       await deleteZoomRecording(zoomMeetingId, recording.zoomFileId);
     }

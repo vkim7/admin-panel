@@ -1,8 +1,8 @@
 import { prisma } from "@/server/db";
 
 /**
- * Get all recordings for a set of lessons (for the lesson grid).
- * Returns a map of lessonId → recording count for quick lookup.
+ * Get recording counts per lesson for the lesson grid.
+ * Returns a map of lessonId → recording count.
  */
 export async function getRecordingCountsForGroup(
   groupId: string,
@@ -10,7 +10,8 @@ export async function getRecordingCountsForGroup(
   const results = await prisma.recording.groupBy({
     by: ["lessonId"],
     where: {
-      lesson: { groupId },
+      groupId,
+      lessonId: { not: null },
       status: { in: ["COMPLETED", "PENDING", "DOWNLOADING"] },
     },
     _count: { id: true },
@@ -18,29 +19,33 @@ export async function getRecordingCountsForGroup(
 
   const map = new Map<string, number>();
   for (const r of results) {
-    map.set(r.lessonId, r._count.id);
+    if (r.lessonId) map.set(r.lessonId, r._count.id);
   }
   return map;
 }
 
 /**
- * Get detailed recordings for a specific lesson (for the recording popover).
+ * Get orphan recordings (no matching lesson) for a group.
  */
-export async function getRecordingsForLesson(lessonId: string) {
+export async function getOrphanRecordingsForGroup(groupId: string) {
   return prisma.recording.findMany({
-    where: { lessonId },
+    where: {
+      groupId,
+      lessonId: null,
+      status: { in: ["COMPLETED", "PENDING", "DOWNLOADING"] },
+    },
     select: {
       id: true,
+      recordingDate: true,
       fileType: true,
       recordingType: true,
-      r2Key: true,
       fileSizeBytes: true,
       durationSeconds: true,
       status: true,
       createdAt: true,
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { recordingDate: "desc" },
   });
 }
 
-export type RecordingDetail = Awaited<ReturnType<typeof getRecordingsForLesson>>[number];
+export type OrphanRecording = Awaited<ReturnType<typeof getOrphanRecordingsForGroup>>[number];
