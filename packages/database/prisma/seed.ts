@@ -40,9 +40,11 @@ async function main() {
   const existingHolidays = await prisma.holiday.count();
   if (existingHolidays === 0) {
     await Promise.all(
-      holidayData.map(h =>
-        prisma.holiday.create({ data: { date: new Date(h.date), name: h.name } })
-      )
+      holidayData.map((h) =>
+        prisma.holiday.create({
+          data: { date: new Date(h.date), name: h.name },
+        }),
+      ),
     );
     console.log(`Created ${holidayData.length} holidays`);
   } else {
@@ -60,11 +62,13 @@ async function main() {
         { name: "Level too advanced", sortOrder: 4 },
         { name: "Failed mid exam", sortOrder: 5 },
         { name: "Other", isOther: true, sortOrder: 6 },
-      ].map(r => prisma.transferReason.create({ data: r }))
+      ].map((r) => prisma.transferReason.create({ data: r })),
     );
     console.log("Created 6 transfer reasons");
   } else {
-    console.log(`Transfer reasons already exist (${existingTransferReasons}), skipping`);
+    console.log(
+      `Transfer reasons already exist (${existingTransferReasons}), skipping`,
+    );
   }
 
   // ─── Lost Reasons ───────────────────────────────────────────────────────
@@ -81,11 +85,13 @@ async function main() {
         { name: "Trial no-show (Individual)", sortOrder: 12 },
         { name: "Trial — didn't continue (Group)", sortOrder: 13 },
         { name: "Trial — didn't continue (Individual)", sortOrder: 14 },
-      ].map(r => prisma.lostReason.create({ data: r }))
+      ].map((r) => prisma.lostReason.create({ data: r })),
     );
     console.log("Created 9 lost reasons");
   } else {
-    console.log(`Lost reasons already exist (${existingLostReasons}), skipping`);
+    console.log(
+      `Lost reasons already exist (${existingLostReasons}), skipping`,
+    );
   }
 
   // ─── Cancellation Reasons ──────────────────────────────────────────────
@@ -100,11 +106,13 @@ async function main() {
         { name: "Administrative", sortOrder: 5 },
         { name: "Other", isOther: true, sortOrder: 6 },
         { name: "Holiday", sortOrder: 7, isActive: false },
-      ].map(r => prisma.cancellationReason.create({ data: r }))
+      ].map((r) => prisma.cancellationReason.create({ data: r })),
     );
     console.log("Created 7 cancellation reasons");
   } else {
-    console.log(`Cancellation reasons already exist (${existingCancellationReasons}), skipping`);
+    console.log(
+      `Cancellation reasons already exist (${existingCancellationReasons}), skipping`,
+    );
   }
 
   // ─── Uncertain Reasons ─────────────────────────────────────────────────
@@ -127,11 +135,13 @@ async function main() {
         { name: "Change of environment", sortOrder: 13 },
         { name: "Group conflict", sortOrder: 14 },
         { name: "Other", isOther: true, sortOrder: 15 },
-      ].map(r => prisma.uncertainReason.create({ data: r }))
+      ].map((r) => prisma.uncertainReason.create({ data: r })),
     );
     console.log("Created 15 uncertain reasons");
   } else {
-    console.log(`Uncertain reasons already exist (${existingUncertainReasons}), skipping`);
+    console.log(
+      `Uncertain reasons already exist (${existingUncertainReasons}), skipping`,
+    );
   }
 
   // ─── Admin Users ───────────────────────────────────────────────────────
@@ -149,7 +159,7 @@ async function main() {
 
     const admin2 = await prisma.adminUser.create({
       data: {
-        email: "loopenglish@yandex.com",
+        email: "labforces@gmail.com",
         telegramId: 990254932n,
         firstName: "Laziz",
         lastName: "Islomkhujaev",
@@ -157,7 +167,18 @@ async function main() {
       },
     });
 
-    console.log(`Created admins: ${admin.firstName} (${admin.role}), ${admin2.firstName} (${admin2.role})`);
+    const admin3 = await prisma.adminUser.create({
+      data: {
+        email: "sadullaev1194@gmail.com",
+        firstName: "Anvar",
+        lastName: "Sadullaev",
+        role: "ADMIN",
+      },
+    });
+
+    console.log(
+      `Created admins: ${admin.firstName} (${admin.role}), ${admin2.firstName} (${admin2.role}), ${admin3.firstName} (${admin3.role})`,
+    );
   } else {
     console.log(`Admin users already exist (${existingAdmins}), skipping`);
   }
@@ -165,15 +186,42 @@ async function main() {
   // ─── Price Settings ────────────────────────────────────────────────────
   const existingPrices = await prisma.priceSetting.count();
   if (existingPrices === 0) {
-    const admin = await prisma.adminUser.findFirst({ where: { role: "SUPER_ADMIN" } });
-    if (!admin) throw new Error("Super admin must exist to create price settings");
+    const admin = await prisma.adminUser.findFirst({
+      where: { role: "SUPER_ADMIN" },
+    });
+    if (!admin)
+      throw new Error("Super admin must exist to create price settings");
 
     await prisma.priceSetting.createMany({
       data: [
-        { levelCategory: "GENERAL", groupType: "GROUP", pricePerLesson: 100000, effectiveFrom: new Date("2025-01-01"), changedById: admin.id },
-        { levelCategory: "GENERAL", groupType: "INDIVIDUAL", pricePerLesson: 200000, effectiveFrom: new Date("2025-01-01"), changedById: admin.id },
-        { levelCategory: "IELTS", groupType: "GROUP", pricePerLesson: 100000, effectiveFrom: new Date("2025-01-01"), changedById: admin.id },
-        { levelCategory: "IELTS", groupType: "INDIVIDUAL", pricePerLesson: 200000, effectiveFrom: new Date("2025-01-01"), changedById: admin.id },
+        {
+          levelCategory: "GENERAL",
+          groupType: "GROUP",
+          pricePerLesson: 100000,
+          effectiveFrom: new Date("2025-01-01"),
+          changedById: admin.id,
+        },
+        {
+          levelCategory: "GENERAL",
+          groupType: "INDIVIDUAL",
+          pricePerLesson: 200000,
+          effectiveFrom: new Date("2025-01-01"),
+          changedById: admin.id,
+        },
+        {
+          levelCategory: "IELTS",
+          groupType: "GROUP",
+          pricePerLesson: 100000,
+          effectiveFrom: new Date("2025-01-01"),
+          changedById: admin.id,
+        },
+        {
+          levelCategory: "IELTS",
+          groupType: "INDIVIDUAL",
+          pricePerLesson: 200000,
+          effectiveFrom: new Date("2025-01-01"),
+          changedById: admin.id,
+        },
       ],
     });
     console.log("Created 4 price settings");
@@ -187,18 +235,81 @@ async function main() {
     await prisma.promotion.createMany({
       data: [
         // Trial discounts
-        { name: "Trial Group Free Lesson", type: "TRIAL", discountType: "PERCENTAGE", discountPercent: 100, groupTypes: ["GROUP"], isRecurring: false, maxUsesPerStudent: 1, isActive: true },
-        { name: "Trial Individual 50%", type: "TRIAL", discountType: "PERCENTAGE", discountPercent: 50, groupTypes: ["INDIVIDUAL"], isRecurring: false, maxUsesPerStudent: 1, isActive: true },
+        {
+          name: "Trial Group Free Lesson",
+          type: "TRIAL",
+          discountType: "PERCENTAGE",
+          discountPercent: 100,
+          groupTypes: ["GROUP"],
+          isRecurring: false,
+          maxUsesPerStudent: 1,
+          isActive: true,
+        },
+        {
+          name: "Trial Individual 50%",
+          type: "TRIAL",
+          discountType: "PERCENTAGE",
+          discountPercent: 50,
+          groupTypes: ["INDIVIDUAL"],
+          isRecurring: false,
+          maxUsesPerStudent: 1,
+          isActive: true,
+        },
         // Referral
-        { name: "Referral Reward", type: "REFERRAL", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: false, maxUsesPerStudent: 1, isActive: true },
-        { name: "Referral Welcome", type: "REFERRAL", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: false, maxUsesPerStudent: 1, isActive: true },
+        {
+          name: "Referral Reward",
+          type: "REFERRAL",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: false,
+          maxUsesPerStudent: 1,
+          isActive: true,
+        },
+        {
+          name: "Referral Welcome",
+          type: "REFERRAL",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: false,
+          maxUsesPerStudent: 1,
+          isActive: true,
+        },
         // Family
-        { name: "Family Discount", type: "FAMILY", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: true, isActive: true },
+        {
+          name: "Family Discount",
+          type: "FAMILY",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: true,
+          isActive: true,
+        },
         // Win-Back
-        { name: "Win-Back Discount", type: "WIN_BACK", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: false, maxUsesPerStudent: 1, isActive: true },
+        {
+          name: "Win-Back Discount",
+          type: "WIN_BACK",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: false,
+          maxUsesPerStudent: 1,
+          isActive: true,
+        },
         // Admin-applied
-        { name: "Apology Discount", type: "APOLOGY", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: false, isActive: true },
-        { name: "Reward Discount", type: "REWARD", discountType: "FIXED_AMOUNT", discountAmount: 100000, isRecurring: false, isActive: true },
+        {
+          name: "Apology Discount",
+          type: "APOLOGY",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: false,
+          isActive: true,
+        },
+        {
+          name: "Reward Discount",
+          type: "REWARD",
+          discountType: "FIXED_AMOUNT",
+          discountAmount: 100000,
+          isRecurring: false,
+          isActive: true,
+        },
       ],
     });
     console.log("Created 8 system promotions");
