@@ -142,13 +142,14 @@ export async function createZoomMeeting(
 
 export async function updateZoomMeeting(
   meetingId: string,
-  params: { startTime?: string; durationMinutes?: number },
+  params: { startTime?: string; startDate?: Date; durationMinutes?: number },
 ): Promise<boolean> {
   try {
     const body: Record<string, unknown> = {};
     if (params.startTime !== undefined) {
-      // Update only the time portion — Zoom keeps the existing recurrence dates
-      body.start_time = `${params.startTime}:00`;
+      // Zoom requires a full ISO datetime, not just a time string
+      const datePart = params.startDate ? formatDate(params.startDate) : "2026-01-01";
+      body.start_time = `${datePart}T${params.startTime}:00`;
     }
     if (params.durationMinutes !== undefined) {
       body.duration = params.durationMinutes;

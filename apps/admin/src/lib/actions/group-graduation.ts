@@ -277,6 +277,8 @@ export async function graduateGroup(data: unknown) {
       data: {
         graduatedIntoGroupId: newGroup.id,
         isActive: false,
+        zoomMeetingId: null,
+        zoomJoinUrl: null,
       },
     });
 

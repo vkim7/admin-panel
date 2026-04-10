@@ -8,4 +8,5 @@ binding = "BUCKET"
 bucket_name = "admin-panel"
 
 [vars]
-# Set CALLBACK_SECRET via `wrangler secret put CALLBACK_SECRET`
+# CALLBACK_SECRET — set via `wrangler secret put CALLBACK_SECRET`
+# CALLBACK_URL — set via `wrangler secret put CALLBACK_URL`

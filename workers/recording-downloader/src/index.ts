@@ -8,6 +8,7 @@
 interface Env {
   BUCKET: R2Bucket;
   CALLBACK_SECRET: string;
+  CALLBACK_URL: string; // e.g. https://your-domain.com/api/webhooks/recording-callback
 }
 
 interface DownloadRequest {
@@ -15,8 +16,6 @@ interface DownloadRequest {
   zoomDownloadToken: string; // JWT from webhook payload, valid 24h
   r2Key: string;
   recordingId: string;
-  callbackUrl: string;
-  callbackSecret: string;
 }
 
 export default {
@@ -32,12 +31,14 @@ export default {
     }
 
     const body = (await request.json()) as DownloadRequest;
-    const { zoomDownloadUrl, zoomDownloadToken, r2Key, recordingId, callbackUrl, callbackSecret } =
-      body;
+    const { zoomDownloadUrl, zoomDownloadToken, r2Key, recordingId } = body;
 
-    if (!zoomDownloadUrl || !zoomDownloadToken || !r2Key || !recordingId || !callbackUrl) {
+    if (!zoomDownloadUrl || !zoomDownloadToken || !r2Key || !recordingId) {
       return new Response("Missing required fields", { status: 400 });
     }
+
+    const callbackUrl = env.CALLBACK_URL;
+    const callbackSecret = env.CALLBACK_SECRET;
 
     try {
       // Download from Zoom using the download_token (JWT) from the webhook

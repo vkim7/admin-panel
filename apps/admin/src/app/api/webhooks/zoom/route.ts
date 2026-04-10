@@ -32,7 +32,9 @@ function getExtension(fileType: string): string {
 // ─── Webhook handler ─────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
-  const body = await request.json();
+  // Read raw body for signature verification, then parse JSON
+  const rawBody = await request.text();
+  const body = JSON.parse(rawBody);
 
   // CRC challenge-response (Zoom periodically re-validates the endpoint)
   if (body.event === "endpoint.url_validation") {
@@ -44,6 +46,19 @@ export async function POST(request: Request) {
       plainToken,
       encryptedToken: hashToken(plainToken),
     });
+  }
+
+  // Verify webhook signature (Zoom sends x-zm-signature on all event deliveries)
+  const signature = request.headers.get("x-zm-signature");
+  const timestamp = request.headers.get("x-zm-request-timestamp");
+  if (!signature || !timestamp) {
+    return NextResponse.json({ error: "Missing signature" }, { status: 401 });
+  }
+  const message = `v0:${timestamp}:${rawBody}`;
+  const expected = `v0=${crypto.createHmac("sha256", WEBHOOK_SECRET).update(message).digest("hex")}`;
+  if (signature !== expected) {
+    console.error("[Zoom Webhook] Signature verification failed");
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   // Only handle recording.completed
@@ -72,7 +87,7 @@ export async function POST(request: Request) {
   }
 
   // Match meeting to group
-  const group = await prisma.group.findFirst({
+  const group = await prisma.group.findUnique({
     where: { zoomMeetingId },
     select: { id: true },
   });
@@ -116,18 +131,15 @@ export async function POST(request: Request) {
   }
 
   // Create Recording rows and dispatch to Worker
-  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL
-    ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
-
   console.log(
-    `[Zoom Webhook] Processing ${recordingFiles.length} files for group ${group.id}, lesson=${lesson?.id ?? "orphan"}, callbackBase=${appBaseUrl}`,
+    `[Zoom Webhook] Processing ${recordingFiles.length} files for group ${group.id}, lesson=${lesson?.id ?? "orphan"}`,
   );
 
   for (const file of recordingFiles) {
     const ext = getExtension(file.file_type);
     const timestamp = file.recording_start.split("T")[0] ?? "unknown";
     const folder = lesson ? lesson.id : `orphan_${timestamp}`;
-    const r2Key = `recordings/${group.id}/${folder}/${file.file_type}_${timestamp}.${ext}`;
+    const r2Key = `recordings/${group.id}/${folder}/${file.id}_${file.file_type}_${timestamp}.${ext}`;
 
     const durationSeconds =
       file.recording_start && file.recording_end
@@ -138,24 +150,33 @@ export async function POST(request: Request) {
           )
         : null;
 
-    // Create PENDING recording row
-    const recording = await prisma.recording.create({
-      data: {
-        groupId: group.id,
-        lessonId: lesson?.id ?? null,
-        recordingDate,
-        fileType: file.file_type,
-        recordingType: file.recording_type,
-        r2Key,
-        fileSizeBytes: BigInt(file.file_size),
-        durationSeconds,
-        status: "PENDING",
-        zoomFileId: file.id,
-      },
-    });
+    // Create PENDING recording row (unique zoomFileId prevents duplicates on webhook retry)
+    let recording;
+    try {
+      recording = await prisma.recording.create({
+        data: {
+          groupId: group.id,
+          lessonId: lesson?.id ?? null,
+          recordingDate,
+          fileType: file.file_type,
+          recordingType: file.recording_type,
+          r2Key,
+          fileSizeBytes: BigInt(file.file_size),
+          durationSeconds,
+          status: "PENDING",
+          zoomFileId: file.id,
+        },
+      });
+    } catch (err: unknown) {
+      // P2002 = unique constraint violation → duplicate webhook delivery, skip
+      if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
+        console.log(`[Zoom Webhook] Duplicate file ${file.id} — skipping (webhook retry)`);
+        continue;
+      }
+      throw err;
+    }
 
     // Dispatch to Cloudflare Worker (fire-and-forget, Worker calls back)
-    const callbackUrl = `${appBaseUrl}/api/webhooks/recording-callback`;
     console.log(
       `[Zoom Webhook] Dispatching ${recording.id} (${file.file_type}) to Worker → ${WORKER_URL}`,
     );
@@ -171,8 +192,6 @@ export async function POST(request: Request) {
           zoomDownloadToken: downloadToken,
           r2Key,
           recordingId: recording.id,
-          callbackUrl,
-          callbackSecret: CALLBACK_SECRET,
         }),
       });
       console.log(

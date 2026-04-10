@@ -686,7 +686,7 @@ model Group {
   mergedIntoGroupId    String? // Self-ref: if this group was merged into another (GROUP or INDIVIDUAL type)
   skipAutoGraduation   Boolean  @default(false) // If true, skip auto-graduation prompt when program ends
   graduatedIntoGroupId String? // Self-ref: the next-level group created when this group's program ends
-  zoomMeetingId        String?  // Zoom recurring meeting ID — needed for API calls (update/delete)
+  zoomMeetingId        String?  @unique // Zoom recurring meeting ID — needed for API calls (update/delete)
   zoomJoinUrl          String?  // Stable join URL for students
 
   createdAt DateTime @default(now())
@@ -975,7 +975,7 @@ model Recording {
   fileSizeBytes   BigInt
   durationSeconds Int? // For video/audio files; null for chat/transcript
   status          RecordingStatus @default(PENDING)
-  zoomFileId      String // Zoom recording file ID — needed for deletion API
+  zoomFileId      String @unique // Zoom recording file ID — idempotency key for webhook retries
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

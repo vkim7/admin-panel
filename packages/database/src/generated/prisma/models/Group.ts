@@ -414,6 +414,7 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   publicId?: string
   sequenceNumber?: number
+  zoomMeetingId?: string
   AND?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[]
   OR?: Prisma.GroupWhereInput[]
   NOT?: Prisma.GroupWhereInput | Prisma.GroupWhereInput[]
@@ -431,7 +432,6 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
   zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
@@ -451,7 +451,7 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   recordings?: Prisma.RecordingListRelationFilter
   scheduledActionsAsSource?: Prisma.ScheduledActionListRelationFilter
   scheduledActionsAsDest?: Prisma.ScheduledActionListRelationFilter
-}, "id" | "publicId" | "sequenceNumber">
+}, "id" | "publicId" | "sequenceNumber" | "zoomMeetingId">
 
 export type GroupOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

@@ -308,6 +308,7 @@ export type RecordingOrderByWithRelationInput = {
 
 export type RecordingWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  zoomFileId?: string
   AND?: Prisma.RecordingWhereInput | Prisma.RecordingWhereInput[]
   OR?: Prisma.RecordingWhereInput[]
   NOT?: Prisma.RecordingWhereInput | Prisma.RecordingWhereInput[]
@@ -320,12 +321,11 @@ export type RecordingWhereUniqueInput = Prisma.AtLeast<{
   fileSizeBytes?: Prisma.BigIntFilter<"Recording"> | bigint | number
   durationSeconds?: Prisma.IntNullableFilter<"Recording"> | number | null
   status?: Prisma.EnumRecordingStatusFilter<"Recording"> | $Enums.RecordingStatus
-  zoomFileId?: Prisma.StringFilter<"Recording"> | string
   createdAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Recording"> | Date | string
   group?: Prisma.XOR<Prisma.GroupScalarRelationFilter, Prisma.GroupWhereInput>
   lesson?: Prisma.XOR<Prisma.LessonNullableScalarRelationFilter, Prisma.LessonWhereInput> | null
-}, "id">
+}, "id" | "zoomFileId">
 
 export type RecordingOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

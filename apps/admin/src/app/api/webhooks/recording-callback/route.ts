@@ -39,9 +39,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Recording not found" }, { status: 404 });
   }
 
-  // Already processed
-  if (recording.status === "COMPLETED") {
-    return NextResponse.json({ status: "already_completed" });
+  // Only process PENDING recordings — guards against retries and invalid transitions
+  if (recording.status !== "PENDING") {
+    return NextResponse.json({ status: `already_${recording.status.toLowerCase()}` });
   }
 
   if (status === "completed") {

@@ -228,12 +228,14 @@ export async function executeMerge(
       }
     }
 
-    // Close source group
+    // Close source group and clear Zoom fields (meeting will be deleted outside tx)
     await tx.group.update({
       where: { id: sourceGroupId },
       data: {
         mergedIntoGroupId: destinationGroupId,
         isActive: false,
+        zoomMeetingId: null,
+        zoomJoinUrl: null,
       },
     });
   });

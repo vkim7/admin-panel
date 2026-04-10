@@ -192,7 +192,7 @@ export async function updateGroup(id: string, data: unknown) {
   // Get current group to check if startTime changed
   const currentGroup = await prisma.group.findUnique({
     where: { id },
-    select: { startTime: true, zoomMeetingId: true },
+    select: { startTime: true, startDate: true, zoomMeetingId: true },
   });
 
   if (!currentGroup) {
@@ -247,7 +247,7 @@ export async function updateGroup(id: string, data: unknown) {
 
   // Best-effort: update Zoom meeting if startTime changed
   if (startTimeChanged && currentGroup.zoomMeetingId) {
-    await updateZoomMeeting(currentGroup.zoomMeetingId, { startTime });
+    await updateZoomMeeting(currentGroup.zoomMeetingId, { startTime, startDate: currentGroup.startDate });
   }
 
   revalidatePath(`/groups/${id}`);
