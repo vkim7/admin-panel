@@ -48,16 +48,37 @@ export default {
     // Actually, let's process synchronously — Workers have generous streaming time
 
     try {
-      // Download from Zoom (with access token as query param)
+      // Download from Zoom — handle redirects manually because Authorization
+      // headers get stripped on redirect, and Zoom redirects to a CDN
       const separator = zoomDownloadUrl.includes("?") ? "&" : "?";
-      const downloadUrl = `${zoomDownloadUrl}${separator}access_token=${zoomAccessToken}`;
+      const initialUrl = `${zoomDownloadUrl}${separator}access_token=${zoomAccessToken}`;
 
-      const zoomRes = await fetch(downloadUrl, {
+      console.log(`[Worker] Downloading recording ${recordingId} from Zoom...`);
+
+      // First request: may redirect (302) to CDN
+      let zoomRes = await fetch(initialUrl, {
         headers: { Authorization: `Bearer ${zoomAccessToken}` },
+        redirect: "manual",
       });
+
+      // Follow redirect if needed (CDN URL has its own auth, no header needed)
+      if (zoomRes.status === 301 || zoomRes.status === 302) {
+        const redirectUrl = zoomRes.headers.get("location");
+        if (!redirectUrl) {
+          await sendCallback(callbackUrl, callbackSecret, {
+            recordingId,
+            status: "failed",
+            error: "Zoom redirect has no Location header",
+          });
+          return new Response("No redirect location", { status: 502 });
+        }
+        console.log(`[Worker] Following redirect for ${recordingId}...`);
+        zoomRes = await fetch(redirectUrl);
+      }
 
       if (!zoomRes.ok) {
         const errorText = await zoomRes.text();
+        console.error(`[Worker] Zoom download failed (${zoomRes.status}): ${errorText.slice(0, 200)}`);
         await sendCallback(callbackUrl, callbackSecret, {
           recordingId,
           status: "failed",
@@ -85,6 +106,8 @@ export default {
       // Get actual size from R2
       const head = await env.BUCKET.head(r2Key);
       const fileSizeBytes = head?.size ?? 0;
+
+      console.log(`[Worker] Successfully uploaded ${r2Key} (${fileSizeBytes} bytes)`);
 
       // Callback success
       await sendCallback(callbackUrl, callbackSecret, {
