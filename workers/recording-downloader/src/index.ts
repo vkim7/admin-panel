@@ -39,41 +39,19 @@ export default {
       return new Response("Missing required fields", { status: 400 });
     }
 
-    // Process in the background so we return 202 immediately
-    // (waitUntil keeps the worker alive until the promise resolves)
-    const ctx = { waitUntil: (p: Promise<unknown>) => p };
-
-    // For Cloudflare Workers, we use ctx.waitUntil via the execution context
-    // But since we're in the fetch handler, we process and return
-    // Actually, let's process synchronously — Workers have generous streaming time
-
     try {
       // Download from Zoom using the download_token (JWT) from the webhook
-      // payload as a Bearer header. S2S OAuth tokens do NOT work for downloads.
+      // payload as a query parameter. This is the Zoom-recommended approach:
+      // - Survives cross-origin redirects (Bearer headers get stripped)
+      // - Works with both direct and CDN URLs
+      // - S2S OAuth tokens do NOT work for webhook download URLs
       console.log(`[Worker] Downloading recording ${recordingId} from Zoom...`);
 
-      let zoomRes = await fetch(zoomDownloadUrl, {
-        headers: { Authorization: `Bearer ${zoomDownloadToken}` },
-        redirect: "manual",
-      });
+      const separator = zoomDownloadUrl.includes("?") ? "&" : "?";
+      const downloadUrl = `${zoomDownloadUrl}${separator}access_token=${zoomDownloadToken}`;
 
-      console.log(`[Worker] Initial response: ${zoomRes.status}`);
-
-      // Follow redirect if needed (CDN URL has its own auth)
-      if (zoomRes.status === 301 || zoomRes.status === 302) {
-        const redirectUrl = zoomRes.headers.get("location");
-        if (!redirectUrl) {
-          await sendCallback(callbackUrl, callbackSecret, {
-            recordingId,
-            status: "failed",
-            error: "Zoom redirect has no Location header",
-          });
-          return new Response("No redirect location", { status: 502 });
-        }
-        console.log(`[Worker] Following redirect for ${recordingId}...`);
-        zoomRes = await fetch(redirectUrl);
-        console.log(`[Worker] Redirect response: ${zoomRes.status}`);
-      }
+      const zoomRes = await fetch(downloadUrl);
+      console.log(`[Worker] Zoom response: ${zoomRes.status} ${zoomRes.statusText}`);
 
       if (!zoomRes.ok) {
         const errorText = await zoomRes.text();
@@ -143,7 +121,8 @@ async function sendCallback(
   secret: string,
   body: { recordingId: string; status: string; fileSizeBytes?: number; error?: string },
 ) {
-  await fetch(url, {
+  console.log(`[Worker] Sending callback: ${body.status} for ${body.recordingId} → ${url}`);
+  const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -151,4 +130,9 @@ async function sendCallback(
     },
     body: JSON.stringify(body),
   });
+  console.log(`[Worker] Callback response: ${res.status} ${res.statusText}`);
+  if (!res.ok) {
+    const text = await res.text();
+    console.error(`[Worker] Callback failed: ${text.slice(0, 200)}`);
+  }
 }

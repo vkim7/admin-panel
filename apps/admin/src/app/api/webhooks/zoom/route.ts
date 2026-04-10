@@ -119,6 +119,10 @@ export async function POST(request: Request) {
   const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL
     ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
+  console.log(
+    `[Zoom Webhook] Processing ${recordingFiles.length} files for group ${group.id}, lesson=${lesson?.id ?? "orphan"}, callbackBase=${appBaseUrl}`,
+  );
+
   for (const file of recordingFiles) {
     const ext = getExtension(file.file_type);
     const timestamp = file.recording_start.split("T")[0] ?? "unknown";
@@ -151,8 +155,12 @@ export async function POST(request: Request) {
     });
 
     // Dispatch to Cloudflare Worker (fire-and-forget, Worker calls back)
+    const callbackUrl = `${appBaseUrl}/api/webhooks/recording-callback`;
+    console.log(
+      `[Zoom Webhook] Dispatching ${recording.id} (${file.file_type}) to Worker → ${WORKER_URL}`,
+    );
     try {
-      await fetch(WORKER_URL, {
+      const workerRes = await fetch(WORKER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -163,10 +171,13 @@ export async function POST(request: Request) {
           zoomDownloadToken: downloadToken,
           r2Key,
           recordingId: recording.id,
-          callbackUrl: `${appBaseUrl}/api/webhooks/recording-callback`,
+          callbackUrl,
           callbackSecret: CALLBACK_SECRET,
         }),
       });
+      console.log(
+        `[Zoom Webhook] Worker response for ${recording.id}: ${workerRes.status}`,
+      );
     } catch (error) {
       console.error(
         `[Zoom Webhook] Failed to dispatch to Worker for recording ${recording.id}:`,
