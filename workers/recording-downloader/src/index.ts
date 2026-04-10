@@ -12,7 +12,7 @@ interface Env {
 
 interface DownloadRequest {
   zoomDownloadUrl: string;
-  zoomAccessToken: string;
+  zoomDownloadToken: string; // JWT from webhook payload, valid 24h
   r2Key: string;
   recordingId: string;
   callbackUrl: string;
@@ -32,10 +32,10 @@ export default {
     }
 
     const body = (await request.json()) as DownloadRequest;
-    const { zoomDownloadUrl, zoomAccessToken, r2Key, recordingId, callbackUrl, callbackSecret } =
+    const { zoomDownloadUrl, zoomDownloadToken, r2Key, recordingId, callbackUrl, callbackSecret } =
       body;
 
-    if (!zoomDownloadUrl || !zoomAccessToken || !r2Key || !recordingId || !callbackUrl) {
+    if (!zoomDownloadUrl || !zoomDownloadToken || !r2Key || !recordingId || !callbackUrl) {
       return new Response("Missing required fields", { status: 400 });
     }
 
@@ -48,20 +48,18 @@ export default {
     // Actually, let's process synchronously — Workers have generous streaming time
 
     try {
-      // Download from Zoom — handle redirects manually because Authorization
-      // headers get stripped on redirect, and Zoom redirects to a CDN
-      const separator = zoomDownloadUrl.includes("?") ? "&" : "?";
-      const initialUrl = `${zoomDownloadUrl}${separator}access_token=${zoomAccessToken}`;
-
+      // Download from Zoom using the download_token (JWT) from the webhook
+      // payload as a Bearer header. S2S OAuth tokens do NOT work for downloads.
       console.log(`[Worker] Downloading recording ${recordingId} from Zoom...`);
 
-      // First request: may redirect (302) to CDN
-      let zoomRes = await fetch(initialUrl, {
-        headers: { Authorization: `Bearer ${zoomAccessToken}` },
+      let zoomRes = await fetch(zoomDownloadUrl, {
+        headers: { Authorization: `Bearer ${zoomDownloadToken}` },
         redirect: "manual",
       });
 
-      // Follow redirect if needed (CDN URL has its own auth, no header needed)
+      console.log(`[Worker] Initial response: ${zoomRes.status}`);
+
+      // Follow redirect if needed (CDN URL has its own auth)
       if (zoomRes.status === 301 || zoomRes.status === 302) {
         const redirectUrl = zoomRes.headers.get("location");
         if (!redirectUrl) {
@@ -74,6 +72,7 @@ export default {
         }
         console.log(`[Worker] Following redirect for ${recordingId}...`);
         zoomRes = await fetch(redirectUrl);
+        console.log(`[Worker] Redirect response: ${zoomRes.status}`);
       }
 
       if (!zoomRes.ok) {

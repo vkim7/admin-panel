@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { prisma } from "@/server/db";
-import { getAccessToken } from "@/lib/zoom";
 
 const WEBHOOK_SECRET = process.env.ZOOM_WEBHOOK_SECRET_TOKEN!;
 const WORKER_URL = process.env.RECORDING_WORKER_URL!;
@@ -108,16 +107,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: "no_lesson" });
   }
 
-  // Get fresh Zoom access token for download auth
-  let zoomAccessToken: string;
-  try {
-    zoomAccessToken = await getAccessToken();
-  } catch {
-    console.error("[Zoom Webhook] Failed to get access token for downloads");
-    return NextResponse.json(
-      { error: "Failed to get Zoom access token" },
-      { status: 500 },
-    );
+  // Zoom includes a download_token (JWT, valid 24h) at the root of the webhook
+  // payload. This is the ONLY token that works for downloading recording files —
+  // S2S OAuth tokens are rejected by Zoom's download server.
+  const downloadToken: string | undefined = body.download_token;
+  if (!downloadToken) {
+    console.error("[Zoom Webhook] No download_token in webhook payload");
+    return NextResponse.json({ error: "Missing download_token" }, { status: 400 });
   }
 
   // Create Recording rows and dispatch to Worker
@@ -162,7 +158,7 @@ export async function POST(request: Request) {
         },
         body: JSON.stringify({
           zoomDownloadUrl: file.download_url,
-          zoomAccessToken,
+          zoomDownloadToken: downloadToken,
           r2Key,
           recordingId: recording.id,
           callbackUrl: `${appBaseUrl}/api/webhooks/recording-callback`,
