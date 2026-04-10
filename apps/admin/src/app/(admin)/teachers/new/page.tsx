@@ -1,7 +1,10 @@
 import { TeacherForm } from "@/components/teachers/teacher-form";
 import { PageHeader } from "@/components/ui/page-header";
+import { getCurrentPriceLimits } from "@/lib/queries/teachers";
 
-export default function NewTeacherPage() {
+export default async function NewTeacherPage() {
+  const priceLimits = await getCurrentPriceLimits();
+
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <PageHeader
@@ -11,7 +14,7 @@ export default function NewTeacherPage() {
           { label: "Add Teacher" },
         ]}
       />
-      <TeacherForm />
+      <TeacherForm priceLimits={priceLimits} />
     </div>
   );
 }

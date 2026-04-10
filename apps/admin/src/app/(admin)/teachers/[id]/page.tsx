@@ -77,6 +77,10 @@ export default async function TeacherDetailPage({
       {/* Profile Info */}
       <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
         <div>
+          <p className="text-xs font-medium text-muted-foreground">PINFL</p>
+          <p className="mt-1 text-sm font-mono">{teacher.pinfl}</p>
+        </div>
+        <div>
           <p className="text-xs font-medium text-muted-foreground">Levels</p>
           <div className="mt-1 flex flex-wrap gap-1">
             {teacher.levels.map((l) => (
@@ -97,7 +101,7 @@ export default async function TeacherDetailPage({
         <div>
           <p className="text-xs font-medium text-muted-foreground">Zoom Email</p>
           <p className="mt-1 text-sm">
-            {teacher.zoomEmail ?? <span className="text-muted-foreground">Not configured</span>}
+            {teacher.zoomEmail ?? <span className="text-destructive font-medium">Not configured</span>}
           </p>
         </div>
       </div>

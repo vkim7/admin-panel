@@ -3088,6 +3088,7 @@ export const TeacherScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   phone: 'phone',
+  pinfl: 'pinfl',
   telegramId: 'telegramId',
   zoomEmail: 'zoomEmail',
   levels: 'levels',

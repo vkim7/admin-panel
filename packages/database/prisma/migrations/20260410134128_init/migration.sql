@@ -47,10 +47,19 @@ CREATE TYPE "ReferralStatus" AS ENUM ('PENDING', 'COMPLETED');
 CREATE TYPE "RefundStatus" AS ENUM ('PENDING', 'COMPLETED');
 
 -- CreateEnum
-CREATE TYPE "AdjustmentType" AS ENUM ('MANUAL', 'TRANSFER', 'DROPOUT', 'MERGE');
+CREATE TYPE "AdjustmentType" AS ENUM ('MANUAL', 'TRANSFER', 'DROPOUT', 'MERGE', 'HOLIDAY');
 
 -- CreateEnum
 CREATE TYPE "SmsStatus" AS ENUM ('SENT', 'DELIVERED', 'FAILED');
+
+-- CreateEnum
+CREATE TYPE "ScheduledActionType" AS ENUM ('TRANSFER', 'SEND_TO_REASSIGNMENT', 'SEND_TO_LOST', 'DEACTIVATE', 'MERGE_GROUP', 'ASSIGN', 'CHANGE_TEACHER');
+
+-- CreateEnum
+CREATE TYPE "ScheduledActionStatus" AS ENUM ('PENDING', 'COMPLETED', 'FAILED', 'CANCELLED');
+
+-- CreateEnum
+CREATE TYPE "RecordingStatus" AS ENUM ('PENDING', 'DOWNLOADING', 'COMPLETED', 'FAILED');
 
 -- CreateTable
 CREATE TABLE "AdminUser" (
@@ -74,7 +83,9 @@ CREATE TABLE "Teacher" (
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
+    "pinfl" TEXT NOT NULL,
     "telegramId" BIGINT,
+    "zoomEmail" TEXT,
     "levels" "Level"[],
     "teachingLanguage" "PreferredLanguage" NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
@@ -119,6 +130,7 @@ CREATE TABLE "Student" (
     "referralCode" TEXT,
     "isUncertain" BOOLEAN NOT NULL DEFAULT false,
     "uncertainFlaggedBy" "UncertainFlagSource",
+    "uncertainReasonId" TEXT,
     "uncertainComment" TEXT,
     "comment" TEXT,
     "amoCrmLeadId" TEXT,
@@ -190,7 +202,8 @@ CREATE TABLE "Group" (
     "mergedIntoGroupId" TEXT,
     "skipAutoGraduation" BOOLEAN NOT NULL DEFAULT false,
     "graduatedIntoGroupId" TEXT,
-    "zoomLink" TEXT,
+    "zoomMeetingId" TEXT,
+    "zoomJoinUrl" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -244,6 +257,33 @@ CREATE TABLE "CancellationReason" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "CancellationReason_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UncertainReason" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "isOther" BOOLEAN NOT NULL DEFAULT false,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "sortOrder" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "UncertainReason_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "UncertainHistory" (
+    "id" TEXT NOT NULL,
+    "studentId" TEXT NOT NULL,
+    "uncertainReasonId" TEXT NOT NULL,
+    "otherReason" TEXT,
+    "flaggedBy" "UncertainFlagSource" NOT NULL,
+    "flaggedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "flaggedById" TEXT,
+    "resolvedAt" TIMESTAMP(3),
+    "resolvedById" TEXT,
+
+    CONSTRAINT "UncertainHistory_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -309,6 +349,25 @@ CREATE TABLE "Attendance" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Attendance_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Recording" (
+    "id" TEXT NOT NULL,
+    "groupId" TEXT NOT NULL,
+    "lessonId" TEXT,
+    "recordingDate" DATE NOT NULL,
+    "fileType" TEXT NOT NULL,
+    "recordingType" TEXT NOT NULL,
+    "r2Key" TEXT NOT NULL,
+    "fileSizeBytes" BIGINT NOT NULL,
+    "durationSeconds" INTEGER,
+    "status" "RecordingStatus" NOT NULL DEFAULT 'PENDING',
+    "zoomFileId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Recording_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -421,6 +480,19 @@ CREATE TABLE "TeacherRateChange" (
 );
 
 -- CreateTable
+CREATE TABLE "TeacherDocument" (
+    "id" TEXT NOT NULL,
+    "teacherId" TEXT NOT NULL,
+    "fileName" TEXT NOT NULL,
+    "fileKey" TEXT NOT NULL,
+    "fileSize" INTEGER NOT NULL,
+    "uploadedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "uploadedById" TEXT NOT NULL,
+
+    CONSTRAINT "TeacherDocument_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "PriceSetting" (
     "id" TEXT NOT NULL,
     "levelCategory" "LevelCategory" NOT NULL,
@@ -466,6 +538,7 @@ CREATE TABLE "StudentPromotion" (
     "appliedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expiresAt" TIMESTAMP(3),
     "monthsUsed" INTEGER NOT NULL DEFAULT 0,
+    "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -548,6 +621,27 @@ CREATE TABLE "Exam" (
     CONSTRAINT "Exam_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "ScheduledAction" (
+    "id" TEXT NOT NULL,
+    "type" "ScheduledActionType" NOT NULL,
+    "status" "ScheduledActionStatus" NOT NULL DEFAULT 'PENDING',
+    "effectiveDate" DATE NOT NULL,
+    "studentId" TEXT,
+    "membershipId" TEXT,
+    "sourceGroupId" TEXT,
+    "destGroupId" TEXT,
+    "payload" JSONB NOT NULL,
+    "createdById" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "executedAt" TIMESTAMP(3),
+    "cancelledAt" TIMESTAMP(3),
+    "cancelReason" TEXT,
+    "failureReason" TEXT,
+
+    CONSTRAINT "ScheduledAction_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "AdminUser_email_key" ON "AdminUser"("email");
 
@@ -556,6 +650,9 @@ CREATE UNIQUE INDEX "AdminUser_telegramId_key" ON "AdminUser"("telegramId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Teacher_phone_key" ON "Teacher"("phone");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Teacher_pinfl_key" ON "Teacher"("pinfl");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Teacher_telegramId_key" ON "Teacher"("telegramId");
@@ -615,6 +712,9 @@ CREATE UNIQUE INDEX "Group_publicId_key" ON "Group"("publicId");
 CREATE UNIQUE INDEX "Group_sequenceNumber_key" ON "Group"("sequenceNumber");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Group_zoomMeetingId_key" ON "Group"("zoomMeetingId");
+
+-- CreateIndex
 CREATE INDEX "Group_teacherId_idx" ON "Group"("teacherId");
 
 -- CreateIndex
@@ -637,6 +737,12 @@ CREATE UNIQUE INDEX "LostReason_name_key" ON "LostReason"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CancellationReason_name_key" ON "CancellationReason"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "UncertainReason_name_key" ON "UncertainReason"("name");
+
+-- CreateIndex
+CREATE INDEX "UncertainHistory_studentId_idx" ON "UncertainHistory"("studentId");
 
 -- CreateIndex
 CREATE INDEX "GroupMembership_studentId_idx" ON "GroupMembership"("studentId");
@@ -690,6 +796,18 @@ CREATE INDEX "Attendance_groupId_idx" ON "Attendance"("groupId");
 CREATE UNIQUE INDEX "Attendance_lessonId_studentId_key" ON "Attendance"("lessonId", "studentId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Recording_zoomFileId_key" ON "Recording"("zoomFileId");
+
+-- CreateIndex
+CREATE INDEX "Recording_groupId_idx" ON "Recording"("groupId");
+
+-- CreateIndex
+CREATE INDEX "Recording_lessonId_idx" ON "Recording"("lessonId");
+
+-- CreateIndex
+CREATE INDEX "Recording_status_idx" ON "Recording"("status");
+
+-- CreateIndex
 CREATE INDEX "StudentPaymentPeriod_studentId_idx" ON "StudentPaymentPeriod"("studentId");
 
 -- CreateIndex
@@ -738,6 +856,9 @@ CREATE UNIQUE INDEX "TeacherPaymentPeriod_teacherId_groupId_periodYear_periodMon
 CREATE UNIQUE INDEX "TeacherRateChange_teacherId_effectiveFrom_key" ON "TeacherRateChange"("teacherId", "effectiveFrom");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "TeacherDocument_fileKey_key" ON "TeacherDocument"("fileKey");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "PriceSetting_levelCategory_groupType_effectiveFrom_key" ON "PriceSetting"("levelCategory", "groupType", "effectiveFrom");
 
 -- CreateIndex
@@ -773,6 +894,18 @@ CREATE UNIQUE INDEX "Holiday_date_key" ON "Holiday"("date");
 -- CreateIndex
 CREATE INDEX "Exam_groupId_idx" ON "Exam"("groupId");
 
+-- CreateIndex
+CREATE INDEX "ScheduledAction_status_effectiveDate_idx" ON "ScheduledAction"("status", "effectiveDate");
+
+-- CreateIndex
+CREATE INDEX "ScheduledAction_studentId_status_idx" ON "ScheduledAction"("studentId", "status");
+
+-- CreateIndex
+CREATE INDEX "ScheduledAction_membershipId_status_idx" ON "ScheduledAction"("membershipId", "status");
+
+-- CreateIndex
+CREATE INDEX "ScheduledAction_sourceGroupId_status_idx" ON "ScheduledAction"("sourceGroupId", "status");
+
 -- AddForeignKey
 ALTER TABLE "Teacher" ADD CONSTRAINT "Teacher_deactivatedById_fkey" FOREIGN KEY ("deactivatedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -787,6 +920,9 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_inactivatedById_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "Student" ADD CONSTRAINT "Student_lostReasonId_fkey" FOREIGN KEY ("lostReasonId") REFERENCES "LostReason"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Student" ADD CONSTRAINT "Student_uncertainReasonId_fkey" FOREIGN KEY ("uncertainReasonId") REFERENCES "UncertainReason"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TeacherAvailability" ADD CONSTRAINT "TeacherAvailability_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -823,6 +959,18 @@ ALTER TABLE "GroupTeacherHistory" ADD CONSTRAINT "GroupTeacherHistory_teacherId_
 
 -- AddForeignKey
 ALTER TABLE "GroupTeacherHistory" ADD CONSTRAINT "GroupTeacherHistory_changedById_fkey" FOREIGN KEY ("changedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UncertainHistory" ADD CONSTRAINT "UncertainHistory_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UncertainHistory" ADD CONSTRAINT "UncertainHistory_uncertainReasonId_fkey" FOREIGN KEY ("uncertainReasonId") REFERENCES "UncertainReason"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UncertainHistory" ADD CONSTRAINT "UncertainHistory_flaggedById_fkey" FOREIGN KEY ("flaggedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "UncertainHistory" ADD CONSTRAINT "UncertainHistory_resolvedById_fkey" FOREIGN KEY ("resolvedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "GroupMembership" ADD CONSTRAINT "GroupMembership_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -871,6 +1019,12 @@ ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_studentId_fkey" FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE "Attendance" ADD CONSTRAINT "Attendance_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Recording" ADD CONSTRAINT "Recording_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Recording" ADD CONSTRAINT "Recording_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lesson"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "StudentPaymentPeriod" ADD CONSTRAINT "StudentPaymentPeriod_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -924,6 +1078,12 @@ ALTER TABLE "TeacherRateChange" ADD CONSTRAINT "TeacherRateChange_teacherId_fkey
 ALTER TABLE "TeacherRateChange" ADD CONSTRAINT "TeacherRateChange_changedById_fkey" FOREIGN KEY ("changedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "TeacherDocument" ADD CONSTRAINT "TeacherDocument_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TeacherDocument" ADD CONSTRAINT "TeacherDocument_uploadedById_fkey" FOREIGN KEY ("uploadedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "PriceSetting" ADD CONSTRAINT "PriceSetting_changedById_fkey" FOREIGN KEY ("changedById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -958,3 +1118,18 @@ ALTER TABLE "SmsHistory" ADD CONSTRAINT "SmsHistory_sentById_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "Exam" ADD CONSTRAINT "Exam_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledAction" ADD CONSTRAINT "ScheduledAction_studentId_fkey" FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledAction" ADD CONSTRAINT "ScheduledAction_membershipId_fkey" FOREIGN KEY ("membershipId") REFERENCES "GroupMembership"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledAction" ADD CONSTRAINT "ScheduledAction_sourceGroupId_fkey" FOREIGN KEY ("sourceGroupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledAction" ADD CONSTRAINT "ScheduledAction_destGroupId_fkey" FOREIGN KEY ("destGroupId") REFERENCES "Group"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ScheduledAction" ADD CONSTRAINT "ScheduledAction_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "AdminUser"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

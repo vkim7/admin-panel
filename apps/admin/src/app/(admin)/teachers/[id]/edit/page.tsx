@@ -28,6 +28,7 @@ export default async function EditTeacherPage({
           firstName: teacher.firstName,
           lastName: teacher.lastName,
           phone: teacher.phone,
+          pinfl: teacher.pinfl,
           zoomEmail: teacher.zoomEmail,
           levels: teacher.levels as any,
           teachingLanguage: teacher.teachingLanguage,

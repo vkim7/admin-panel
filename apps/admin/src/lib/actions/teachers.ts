@@ -12,6 +12,17 @@ import {
   updateRateChangeSchema,
 } from "@/schemas/teacher";
 import { getCurrentPriceLimits } from "@/lib/queries/teachers";
+import { findOverlappingBlocks } from "@/lib/availability-patterns";
+
+function teacherUniqueError(e: unknown): string {
+  const meta = (e as { meta?: { target?: string[] } }).meta;
+  const target = meta?.target;
+  if (Array.isArray(target)) {
+    if (target.includes("pinfl")) return "A teacher with this PINFL already exists";
+    if (target.includes("phone")) return "A teacher with this phone number already exists";
+  }
+  return "A teacher with this phone number or PINFL already exists";
+}
 
 export async function createTeacher(data: unknown) {
   await requireAdmin();
@@ -35,7 +46,88 @@ export async function createTeacher(data: unknown) {
       "code" in e &&
       (e as { code: string }).code === "P2002"
     ) {
-      return { error: "A teacher with this phone number already exists" };
+      return { error: teacherUniqueError(e) };
+    }
+    throw e;
+  }
+}
+
+export async function createTeacherFull(data: {
+  teacher: unknown;
+  rate: unknown;
+  availabilityBlocks: unknown;
+}) {
+  const admin = await requireAdmin();
+
+  // Validate teacher basic info
+  const teacherParsed = teacherSchema.safeParse(data.teacher);
+  if (!teacherParsed.success) {
+    return { error: teacherParsed.error.issues[0]?.message ?? "Validation failed" };
+  }
+
+  // Validate rate if provided
+  let rateParsed: z.infer<typeof rateChangeSchema> | null = null;
+  if (data.rate) {
+    const result = rateChangeSchema.safeParse(data.rate);
+    if (!result.success) {
+      return { error: result.error.issues[0]?.message ?? "Rate validation failed" };
+    }
+    const limitError = await validateRateLimits(
+      result.data.groupLessonRate,
+      result.data.individualLessonRate,
+    );
+    if (limitError) return { error: limitError };
+    rateParsed = result.data;
+  }
+
+  // Validate availability blocks if provided
+  let availabilityParsed: z.infer<typeof availabilityBlockSchema>[] | null = null;
+  if (data.availabilityBlocks && Array.isArray(data.availabilityBlocks) && data.availabilityBlocks.length > 0) {
+    const result = z.array(availabilityBlockSchema).safeParse(data.availabilityBlocks);
+    if (!result.success) {
+      return { error: result.error.issues[0]?.message ?? "Availability validation failed" };
+    }
+    const overlapError = findOverlappingBlocks(result.data);
+    if (overlapError) return { error: overlapError };
+    availabilityParsed = result.data;
+  }
+
+  try {
+    const teacher = await prisma.$transaction(async (tx) => {
+      const t = await tx.teacher.create({
+        data: teacherParsed.data,
+      });
+
+      if (rateParsed) {
+        await tx.teacherRateChange.create({
+          data: {
+            teacherId: t.id,
+            groupLessonRate: rateParsed.groupLessonRate,
+            individualLessonRate: rateParsed.individualLessonRate,
+            effectiveFrom: new Date(rateParsed.effectiveFrom),
+            changedById: admin.id,
+          },
+        });
+      }
+
+      if (availabilityParsed && availabilityParsed.length > 0) {
+        await tx.teacherAvailability.createMany({
+          data: availabilityParsed.map((block) => ({ teacherId: t.id, ...block })),
+        });
+      }
+
+      return t;
+    });
+
+    redirect(`/teachers/${teacher.id}`);
+  } catch (e: unknown) {
+    if (
+      typeof e === "object" &&
+      e !== null &&
+      "code" in e &&
+      (e as { code: string }).code === "P2002"
+    ) {
+      return { error: teacherUniqueError(e) };
     }
     throw e;
   }
@@ -62,7 +154,7 @@ export async function updateTeacher(id: string, data: unknown) {
       "code" in e &&
       (e as { code: string }).code === "P2002"
     ) {
-      return { error: "A teacher with this phone number already exists" };
+      return { error: teacherUniqueError(e) };
     }
     throw e;
   }
@@ -116,26 +208,8 @@ export async function setAvailability(teacherId: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  // Check for overlapping ranges within the same day
-  const byDay = new Map<number, typeof parsed.data>();
-  for (const block of parsed.data) {
-    const list = byDay.get(block.dayOfWeek) ?? [];
-    list.push(block);
-    byDay.set(block.dayOfWeek, list);
-  }
-  for (const [, dayBlocks] of byDay) {
-    for (let i = 0; i < dayBlocks.length; i++) {
-      for (let j = i + 1; j < dayBlocks.length; j++) {
-        const a = dayBlocks[i]!;
-        const b = dayBlocks[j]!;
-        if (a.startTime < b.endTime && a.endTime > b.startTime) {
-          return {
-            error: `Overlapping ranges: ${a.startTime}–${a.endTime} and ${b.startTime}–${b.endTime}`,
-          };
-        }
-      }
-    }
-  }
+  const overlapError = findOverlappingBlocks(parsed.data);
+  if (overlapError) return { error: overlapError };
 
   await prisma.$transaction([
     prisma.teacherAvailability.deleteMany({ where: { teacherId } }),

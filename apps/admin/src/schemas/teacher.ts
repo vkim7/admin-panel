@@ -16,6 +16,11 @@ export const teacherSchema = z.object({
   firstName: requiredString("First name is required"),
   lastName: requiredString("Last name is required"),
   phone: requiredPhone(),
+  pinfl: z
+    .string()
+    .trim()
+    .min(1, { message: "PINFL is required" })
+    .regex(/^\d{14}$/, { message: "PINFL must be exactly 14 digits" }),
   zoomEmail: nullableString(),
   levels: z.array(z.enum(LEVELS)).min(1, "Select at least one level"),
   teachingLanguage: z.enum(TEACHING_LANGUAGES, { error: "Teaching language is required" }),

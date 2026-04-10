@@ -463,6 +463,7 @@ model Teacher {
   firstName  String
   lastName   String
   phone      String  @unique
+  pinfl      String  @unique // 14-digit personal identification number (tax ID)
   telegramId BigInt? @unique
   zoomEmail  String? // Zoom account email under our org — required for auto-creating meetings
 
