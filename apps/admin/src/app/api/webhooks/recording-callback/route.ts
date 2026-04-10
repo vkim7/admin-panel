@@ -57,7 +57,13 @@ export async function POST(request: Request) {
     // Best-effort: delete recording from Zoom cloud to free storage
     const zoomMeetingId = recording.group.zoomMeetingId;
     if (zoomMeetingId) {
-      await deleteZoomRecording(zoomMeetingId, recording.zoomFileId);
+      console.log(
+        `[Recording Callback] Deleting Zoom recording: meeting=${zoomMeetingId}, file=${recording.zoomFileId}`,
+      );
+      const deleted = await deleteZoomRecording(zoomMeetingId, recording.zoomFileId);
+      console.log(`[Recording Callback] Delete result: ${deleted}`);
+    } else {
+      console.log(`[Recording Callback] No zoomMeetingId — skipping Zoom deletion`);
     }
   } else {
     // Mark as failed

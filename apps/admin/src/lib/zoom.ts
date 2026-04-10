@@ -195,6 +195,8 @@ export async function deleteZoomMeeting(meetingId: string): Promise<boolean> {
 /**
  * Delete a specific recording file from Zoom cloud storage.
  * Called after successful download to R2 to free up the 10GB/teacher limit.
+ * Uses action=trash (moves to trash, recoverable for 30 days) rather than
+ * action=delete (permanent) as a safety net.
  */
 export async function deleteZoomRecording(
   meetingId: string,
@@ -202,10 +204,11 @@ export async function deleteZoomRecording(
 ): Promise<boolean> {
   try {
     const res = await zoomFetch(
-      `/meetings/${meetingId}/recordings/${recordingFileId}`,
+      `/meetings/${meetingId}/recordings/${recordingFileId}?action=trash`,
       { method: "DELETE" },
     );
 
+    // 200/204 = trashed, 404 = already gone — all fine
     if (!res.ok && res.status !== 404) {
       const text = await res.text();
       console.error(
@@ -215,6 +218,7 @@ export async function deleteZoomRecording(
       return false;
     }
 
+    console.log(`[Zoom] Recording ${recordingFileId} moved to trash`);
     return true;
   } catch (error) {
     console.error("[Zoom] Error deleting recording:", error);
