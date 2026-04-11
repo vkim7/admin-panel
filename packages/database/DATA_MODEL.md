@@ -13,6 +13,7 @@ Family (parent info)
 Student
   ├── GroupMembership* ──→ Group (many-to-many through membership history)
   ├── Attendance* (per-lesson attendance records)
+  ├── ExcusedAbsence* (excused absences with billing/pay impact)
   ├── StudentPaymentPeriod* (monthly billing per group)
   │     ├── Payment* (actual payments received, including transfer credits)
   │     ├── Refund* (refunds for unused lessons on dropout)
@@ -524,7 +525,38 @@ Per-student, per-lesson attendance tracking.
 
 **Attendance records are pre-created** for all active group members (`leaveDate IS NULL`) with `isAbsent = false` when attendance is initialized for a lesson. Teacher updates `isAbsent` during or after the lesson. `isAbsent` is for tracking only — it does NOT affect student active/inactive status or billing.
 
-**NOT used for billing or teacher pay.** Students are charged for all lessons in the period regardless of absences. Teacher pay is based on `activeStudentCount` (group membership size snapshotted at lesson completion), not who actually attended — a student who is absent is still counted for the teacher's pay because they're an active member.
+**NOT used for billing or teacher pay** (with one exception — see ExcusedAbsence below). Students are charged for all lessons in the period regardless of absences. Teacher pay is based on `activeStudentCount` (group membership size snapshotted at lesson completion), not who actually attended — a student who is absent is still counted for the teacher's pay because they're an active member.
+
+### ExcusedAbsence
+
+Records cases where a student missed a lesson for a valid reason (illness, power outage, force majeure) and is excused from payment. Created retroactively after the lesson has taken place.
+
+| Field | Purpose |
+|-------|---------|
+| lessonId | Which completed lesson was missed |
+| studentId | Which student is excused |
+| groupMembershipId | Ties to the correct billing period |
+| reasonId | FK to ExcusedAbsenceReason (required) |
+| otherReason | Free text when reason isOther |
+| note | Optional admin notes |
+| documentFileName / documentFileKey / documentFileSize | Optional proof document (medical certificate, etc.) stored in R2 |
+| createdById | Which admin recorded this |
+
+**Unique constraint:** `(lessonId, studentId)` — one excuse per student per lesson.
+
+**Billing impact:** When created, reduces `totalLessons` by 1 on the student's billing period for that month. Creates a `PaymentPeriodAdjustment` with type `EXCUSED_ABSENCE`. If the student overpaid, credit is applied to the next month or a PENDING refund is created.
+
+**Teacher pay impact:** When generating teacher pay, excused absences are counted per lesson and subtracted from `activeStudentCount`. If a group lesson had 4 active students but 1 was excused, the teacher is paid for 3 student-hours on that lesson.
+
+**Reversible:** Deleting an excused absence reverses the billing adjustment (increases `totalLessons` by 1) with its own audit trail.
+
+**No replacement lesson** is created — this is purely a billing/pay adjustment.
+
+### ExcusedAbsenceReason
+
+Reference table for excused absence reasons. Seeded values: "Illness", "Power outage", "Internet outage", "Family emergency", "Force majeure", "Other".
+
+Follows the same pattern as CancellationReason: `name` (unique), `isOther`, `isActive`, `sortOrder`.
 
 ---
 
@@ -574,7 +606,7 @@ Audit trail for billing period modifications. One record per adjustment. Snapsho
 | Field | Purpose |
 |-------|---------|
 | studentPaymentPeriodId | Which billing period was modified |
-| type | What triggered this: `MANUAL`, `TRANSFER`, `DROPOUT`, `MERGE`, or `HOLIDAY` |
+| type | What triggered this: `MANUAL`, `TRANSFER`, `DROPOUT`, `MERGE`, `HOLIDAY`, or `EXCUSED_ABSENCE` |
 | previousTotalLessons | totalLessons before the change |
 | previousAmountDue | amountDue before the change |
 | previousDiscountAmount | discountAmount before the change |
@@ -590,6 +622,7 @@ Audit trail for billing period modifications. One record per adjustment. Snapsho
 - `DROPOUT` — student goes INACTIVE, period adjusted to lessons up to leave date
 - `MERGE` — group merge, same mechanics as transfer
 - `HOLIDAY` — holiday added on a date with scheduled lessons, period's totalLessons reduced by 1
+- `EXCUSED_ABSENCE` — student excused from a completed lesson (illness, force majeure, etc.), period's totalLessons reduced by 1. Also created on reversal (when an excused absence is deleted).
 
 Every modification creates a new adjustment record — they are append-only and immutable.
 

@@ -39,11 +39,31 @@ export async function generateTeacherPay(data: unknown) {
       lessonDate: { gte: periodStart, lte: periodEnd },
     },
     select: {
+      id: true,
       teacherId: true,
       groupId: true,
       activeStudentCount: true,
     },
   });
+
+  // 1b. Fetch excused absences to subtract from student counts
+  const excusedAbsences = await prisma.excusedAbsence.findMany({
+    where: {
+      lesson: {
+        status: "COMPLETED",
+        lessonDate: { gte: periodStart, lte: periodEnd },
+      },
+    },
+    select: { lessonId: true },
+  });
+
+  const excusedCountByLesson = new Map<string, number>();
+  for (const ea of excusedAbsences) {
+    excusedCountByLesson.set(
+      ea.lessonId,
+      (excusedCountByLesson.get(ea.lessonId) ?? 0) + 1,
+    );
+  }
 
   if (lessons.length === 0) {
     return { error: `No completed lessons found for ${MONTH_NAMES_FULL[month]} ${year}` };
@@ -55,7 +75,8 @@ export async function generateTeacherPay(data: unknown) {
   for (const lesson of lessons) {
     const key = `${lesson.teacherId}:${lesson.groupId}`;
     const existing = grouped.get(key);
-    const studentCount = lesson.activeStudentCount ?? 0;
+    const excusedCount = excusedCountByLesson.get(lesson.id) ?? 0;
+    const studentCount = Math.max(0, (lesson.activeStudentCount ?? 0) - excusedCount);
     if (existing) {
       existing.lessonsCompleted++;
       existing.totalStudentLessons += studentCount;

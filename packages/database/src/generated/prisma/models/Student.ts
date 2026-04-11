@@ -433,6 +433,7 @@ export type StudentWhereInput = {
   referralsMade?: Prisma.ReferralListRelationFilter
   referralReceived?: Prisma.XOR<Prisma.ReferralNullableScalarRelationFilter, Prisma.ReferralWhereInput> | null
   scheduledActions?: Prisma.ScheduledActionListRelationFilter
+  excusedAbsences?: Prisma.ExcusedAbsenceListRelationFilter
 }
 
 export type StudentOrderByWithRelationInput = {
@@ -483,6 +484,7 @@ export type StudentOrderByWithRelationInput = {
   referralsMade?: Prisma.ReferralOrderByRelationAggregateInput
   referralReceived?: Prisma.ReferralOrderByWithRelationInput
   scheduledActions?: Prisma.ScheduledActionOrderByRelationAggregateInput
+  excusedAbsences?: Prisma.ExcusedAbsenceOrderByRelationAggregateInput
 }
 
 export type StudentWhereUniqueInput = Prisma.AtLeast<{
@@ -536,6 +538,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   referralsMade?: Prisma.ReferralListRelationFilter
   referralReceived?: Prisma.XOR<Prisma.ReferralNullableScalarRelationFilter, Prisma.ReferralWhereInput> | null
   scheduledActions?: Prisma.ScheduledActionListRelationFilter
+  excusedAbsences?: Prisma.ExcusedAbsenceListRelationFilter
 }, "id" | "crmCode" | "sequenceNumber" | "phone" | "telegramId" | "referralCode" | "amoCrmLeadId">
 
 export type StudentOrderByWithAggregationInput = {
@@ -655,6 +658,7 @@ export type StudentCreateInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateInput = {
@@ -700,6 +704,7 @@ export type StudentUncheckedCreateInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUpdateInput = {
@@ -744,6 +749,7 @@ export type StudentUpdateInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateInput = {
@@ -789,6 +795,7 @@ export type StudentUncheckedUpdateInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyInput = {
@@ -1321,6 +1328,20 @@ export type StudentUpdateOneRequiredWithoutAttendanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutAttendanceRecordsInput, Prisma.StudentUpdateWithoutAttendanceRecordsInput>, Prisma.StudentUncheckedUpdateWithoutAttendanceRecordsInput>
 }
 
+export type StudentCreateNestedOneWithoutExcusedAbsencesInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedCreateWithoutExcusedAbsencesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutExcusedAbsencesInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneRequiredWithoutExcusedAbsencesNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedCreateWithoutExcusedAbsencesInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutExcusedAbsencesInput
+  upsert?: Prisma.StudentUpsertWithoutExcusedAbsencesInput
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutExcusedAbsencesInput, Prisma.StudentUpdateWithoutExcusedAbsencesInput>, Prisma.StudentUncheckedUpdateWithoutExcusedAbsencesInput>
+}
+
 export type StudentCreateNestedOneWithoutPaymentPeriodsInput = {
   create?: Prisma.XOR<Prisma.StudentCreateWithoutPaymentPeriodsInput, Prisma.StudentUncheckedCreateWithoutPaymentPeriodsInput>
   connectOrCreate?: Prisma.StudentCreateOrConnectWithoutPaymentPeriodsInput
@@ -1491,6 +1512,7 @@ export type StudentCreateWithoutActivatedByInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutActivatedByInput = {
@@ -1535,6 +1557,7 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutActivatedByInput = {
@@ -1589,6 +1612,7 @@ export type StudentCreateWithoutInactivatedByInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutInactivatedByInput = {
@@ -1633,6 +1657,7 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutInactivatedByInput = {
@@ -1755,6 +1780,7 @@ export type StudentCreateWithoutFamilyInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutFamilyInput = {
@@ -1799,6 +1825,7 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutFamilyInput = {
@@ -1869,6 +1896,7 @@ export type StudentCreateWithoutLostReasonInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutLostReasonInput = {
@@ -1913,6 +1941,7 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutLostReasonInput = {
@@ -1983,6 +2012,7 @@ export type StudentCreateWithoutUncertainReasonInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUncertainReasonInput = {
@@ -2027,6 +2057,7 @@ export type StudentUncheckedCreateWithoutUncertainReasonInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutUncertainReasonInput = {
@@ -2097,6 +2128,7 @@ export type StudentCreateWithoutUncertainHistoriesInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutUncertainHistoriesInput = {
@@ -2141,6 +2173,7 @@ export type StudentUncheckedCreateWithoutUncertainHistoriesInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutUncertainHistoriesInput = {
@@ -2200,6 +2233,7 @@ export type StudentUpdateWithoutUncertainHistoriesInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUncertainHistoriesInput = {
@@ -2244,6 +2278,7 @@ export type StudentUncheckedUpdateWithoutUncertainHistoriesInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutGroupMembershipsInput = {
@@ -2288,6 +2323,7 @@ export type StudentCreateWithoutGroupMembershipsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
@@ -2332,6 +2368,7 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutGroupMembershipsInput = {
@@ -2391,6 +2428,7 @@ export type StudentUpdateWithoutGroupMembershipsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
@@ -2435,6 +2473,7 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutAttendanceRecordsInput = {
@@ -2479,6 +2518,7 @@ export type StudentCreateWithoutAttendanceRecordsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
@@ -2523,6 +2563,7 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutAttendanceRecordsInput = {
@@ -2582,6 +2623,7 @@ export type StudentUpdateWithoutAttendanceRecordsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
@@ -2617,6 +2659,202 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutExcusedAbsencesInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  inactivatedAt?: Date | string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
+  activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
+  inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
+  lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutExcusedAbsencesInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  familyId?: string | null
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  activatedById?: string | null
+  inactivatedAt?: Date | string | null
+  inactivatedById?: string | null
+  lostReasonId?: string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutExcusedAbsencesInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedCreateWithoutExcusedAbsencesInput>
+}
+
+export type StudentUpsertWithoutExcusedAbsencesInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedUpdateWithoutExcusedAbsencesInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedCreateWithoutExcusedAbsencesInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutExcusedAbsencesInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutExcusedAbsencesInput, Prisma.StudentUncheckedUpdateWithoutExcusedAbsencesInput>
+}
+
+export type StudentUpdateWithoutExcusedAbsencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
+  activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
+  inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
+  lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutExcusedAbsencesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lostReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
   paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
   callHistory?: Prisma.CallHistoryUncheckedUpdateManyWithoutStudentNestedInput
@@ -2670,6 +2908,7 @@ export type StudentCreateWithoutPaymentPeriodsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
@@ -2714,6 +2953,7 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutPaymentPeriodsInput = {
@@ -2773,6 +3013,7 @@ export type StudentUpdateWithoutPaymentPeriodsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
@@ -2817,6 +3058,7 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutPaymentsInput = {
@@ -2861,6 +3103,7 @@ export type StudentCreateWithoutPaymentsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutPaymentsInput = {
@@ -2905,6 +3148,7 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutPaymentsInput = {
@@ -2964,6 +3208,7 @@ export type StudentUpdateWithoutPaymentsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutPaymentsInput = {
@@ -3008,6 +3253,7 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutRefundsInput = {
@@ -3052,6 +3298,7 @@ export type StudentCreateWithoutRefundsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutRefundsInput = {
@@ -3096,6 +3343,7 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutRefundsInput = {
@@ -3155,6 +3403,7 @@ export type StudentUpdateWithoutRefundsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutRefundsInput = {
@@ -3199,6 +3448,7 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutStudentPromotionsInput = {
@@ -3243,6 +3493,7 @@ export type StudentCreateWithoutStudentPromotionsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
@@ -3287,6 +3538,7 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutStudentPromotionsInput = {
@@ -3346,6 +3598,7 @@ export type StudentUpdateWithoutStudentPromotionsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
@@ -3390,6 +3643,7 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutReferralsMadeInput = {
@@ -3434,6 +3688,7 @@ export type StudentCreateWithoutReferralsMadeInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutReferralsMadeInput = {
@@ -3478,6 +3733,7 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutReferralsMadeInput = {
@@ -3527,6 +3783,7 @@ export type StudentCreateWithoutReferralReceivedInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutReferralReceivedInput = {
@@ -3571,6 +3828,7 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutReferralReceivedInput = {
@@ -3630,6 +3888,7 @@ export type StudentUpdateWithoutReferralsMadeInput = {
   refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
@@ -3674,6 +3933,7 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUpsertWithoutReferralReceivedInput = {
@@ -3728,6 +3988,7 @@ export type StudentUpdateWithoutReferralReceivedInput = {
   refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
@@ -3772,6 +4033,7 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutCallHistoryInput = {
@@ -3816,6 +4078,7 @@ export type StudentCreateWithoutCallHistoryInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutCallHistoryInput = {
@@ -3860,6 +4123,7 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutCallHistoryInput = {
@@ -3919,6 +4183,7 @@ export type StudentUpdateWithoutCallHistoryInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutCallHistoryInput = {
@@ -3963,6 +4228,7 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutSmsHistoryInput = {
@@ -4007,6 +4273,7 @@ export type StudentCreateWithoutSmsHistoryInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutSmsHistoryInput = {
@@ -4051,6 +4318,7 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
   scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutSmsHistoryInput = {
@@ -4110,6 +4378,7 @@ export type StudentUpdateWithoutSmsHistoryInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
@@ -4154,6 +4423,7 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateWithoutScheduledActionsInput = {
@@ -4198,6 +4468,7 @@ export type StudentCreateWithoutScheduledActionsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
 }
 
 export type StudentUncheckedCreateWithoutScheduledActionsInput = {
@@ -4242,6 +4513,7 @@ export type StudentUncheckedCreateWithoutScheduledActionsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
 }
 
 export type StudentCreateOrConnectWithoutScheduledActionsInput = {
@@ -4301,6 +4573,7 @@ export type StudentUpdateWithoutScheduledActionsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutScheduledActionsInput = {
@@ -4345,6 +4618,7 @@ export type StudentUncheckedUpdateWithoutScheduledActionsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentCreateManyActivatedByInput = {
@@ -4452,6 +4726,7 @@ export type StudentUpdateWithoutActivatedByInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutActivatedByInput = {
@@ -4496,6 +4771,7 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutActivatedByInput = {
@@ -4571,6 +4847,7 @@ export type StudentUpdateWithoutInactivatedByInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutInactivatedByInput = {
@@ -4615,6 +4892,7 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutInactivatedByInput = {
@@ -4722,6 +5000,7 @@ export type StudentUpdateWithoutFamilyInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutFamilyInput = {
@@ -4766,6 +5045,7 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutFamilyInput = {
@@ -4873,6 +5153,7 @@ export type StudentUpdateWithoutLostReasonInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutLostReasonInput = {
@@ -4917,6 +5198,7 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
@@ -5024,6 +5306,7 @@ export type StudentUpdateWithoutUncertainReasonInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateWithoutUncertainReasonInput = {
@@ -5068,6 +5351,7 @@ export type StudentUncheckedUpdateWithoutUncertainReasonInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
   scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
 export type StudentUncheckedUpdateManyWithoutUncertainReasonInput = {
@@ -5119,6 +5403,7 @@ export type StudentCountOutputType = {
   refunds: number
   referralsMade: number
   scheduledActions: number
+  excusedAbsences: number
 }
 
 export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5133,6 +5418,7 @@ export type StudentCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   refunds?: boolean | StudentCountOutputTypeCountRefundsArgs
   referralsMade?: boolean | StudentCountOutputTypeCountReferralsMadeArgs
   scheduledActions?: boolean | StudentCountOutputTypeCountScheduledActionsArgs
+  excusedAbsences?: boolean | StudentCountOutputTypeCountExcusedAbsencesArgs
 }
 
 /**
@@ -5222,6 +5508,13 @@ export type StudentCountOutputTypeCountScheduledActionsArgs<ExtArgs extends runt
   where?: Prisma.ScheduledActionWhereInput
 }
 
+/**
+ * StudentCountOutputType without action
+ */
+export type StudentCountOutputTypeCountExcusedAbsencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ExcusedAbsenceWhereInput
+}
+
 
 export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5271,6 +5564,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   referralsMade?: boolean | Prisma.Student$referralsMadeArgs<ExtArgs>
   referralReceived?: boolean | Prisma.Student$referralReceivedArgs<ExtArgs>
   scheduledActions?: boolean | Prisma.Student$scheduledActionsArgs<ExtArgs>
+  excusedAbsences?: boolean | Prisma.Student$excusedAbsencesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
@@ -5402,6 +5696,7 @@ export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   referralsMade?: boolean | Prisma.Student$referralsMadeArgs<ExtArgs>
   referralReceived?: boolean | Prisma.Student$referralReceivedArgs<ExtArgs>
   scheduledActions?: boolean | Prisma.Student$scheduledActionsArgs<ExtArgs>
+  excusedAbsences?: boolean | Prisma.Student$excusedAbsencesArgs<ExtArgs>
   _count?: boolean | Prisma.StudentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5439,6 +5734,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     referralsMade: Prisma.$ReferralPayload<ExtArgs>[]
     referralReceived: Prisma.$ReferralPayload<ExtArgs> | null
     scheduledActions: Prisma.$ScheduledActionPayload<ExtArgs>[]
+    excusedAbsences: Prisma.$ExcusedAbsencePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5882,6 +6178,7 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   referralsMade<T extends Prisma.Student$referralsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$referralsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referralReceived<T extends Prisma.Student$referralReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$referralReceivedArgs<ExtArgs>>): Prisma.Prisma__ReferralClient<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   scheduledActions<T extends Prisma.Student$scheduledActionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$scheduledActionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduledActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  excusedAbsences<T extends Prisma.Student$excusedAbsencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$excusedAbsencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExcusedAbsencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6712,6 +7009,30 @@ export type Student$scheduledActionsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ScheduledActionScalarFieldEnum | Prisma.ScheduledActionScalarFieldEnum[]
+}
+
+/**
+ * Student.excusedAbsences
+ */
+export type Student$excusedAbsencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ExcusedAbsence
+   */
+  select?: Prisma.ExcusedAbsenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ExcusedAbsence
+   */
+  omit?: Prisma.ExcusedAbsenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExcusedAbsenceInclude<ExtArgs> | null
+  where?: Prisma.ExcusedAbsenceWhereInput
+  orderBy?: Prisma.ExcusedAbsenceOrderByWithRelationInput | Prisma.ExcusedAbsenceOrderByWithRelationInput[]
+  cursor?: Prisma.ExcusedAbsenceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ExcusedAbsenceScalarFieldEnum | Prisma.ExcusedAbsenceScalarFieldEnum[]
 }
 
 /**

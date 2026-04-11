@@ -1432,6 +1432,25 @@ Completed. Admins can view and add holidays via `/holidays`. Adding a holiday ca
 
 **Key modified files:** `schema.prisma` (enum), `leave-billing.ts` (export), `app-sidebar.tsx` (nav entry), `seed.ts` (Holiday cancellation reason).
 
+### Phase L: Excused Absences ✅
+
+Retroactive recording of valid absences with automatic billing and teacher pay adjustments. Required by law for cases like illness, power outage, force majeure.
+
+- [x] **Schema** — Added `ExcusedAbsenceReason` reference table (seeded: Illness, Power outage, Internet outage, Family emergency, Force majeure, Other). Added `ExcusedAbsence` model with embedded document fields (fileName/fileKey/fileSize on R2). Added `EXCUSED_ABSENCE` to `AdjustmentType` enum. Unique constraint: `(lessonId, studentId)`.
+- [x] **Billing helper** (`excused-absence-billing.ts`) — Mirrors `holiday-billing.ts`: reduces totalLessons by 1, recalculates amountDue/discount/status via `recalculateDiscount()` and `calculatePaymentStatus()`, creates `PaymentPeriodAdjustment` with type `EXCUSED_ABSENCE`. Overpayment → credit to next month or PENDING refund. Reversal function for deletion (increases totalLessons by 1, own audit record).
+- [x] **Server actions** (`excused-absences.ts`) — Create (with optional R2 document upload), delete (with billing reversal + R2 cleanup). Validates: lesson is COMPLETED, membership matches, no duplicates, reason.isOther requires otherReason text.
+- [x] **Teacher pay modification** — `generateTeacherPay()` now fetches excused absences for the period, builds count-per-lesson map, subtracts from `activeStudentCount` per lesson.
+- [x] **Queries** — `getStudentExcusedAbsences()`, `getExcusedAbsenceReasons()`, `getEligibleLessonsForExcuse()` (COMPLETED lessons from active memberships, excludes already-excused and replacement lessons).
+- [x] **UI** — `ExcusedAbsencesSection` client component on student detail page (after Payments, before Promotions). Table of existing records + "Add" dialog with lesson selector, reason dropdown, optional note, optional file upload. Delete with confirmation showing billing reversal impact.
+
+**Infrastructure fix:** Resolved persistent Prisma migration drift by folding `data_integrity_constraints.sql` into a tracked migration (`20260410134129_data_integrity_constraints`) and marking it as applied. Configured shadow database (Neon `neondb_shadow`) for `migrate dev`. Future migrations work cleanly.
+
+**Schema changes:** `EXCUSED_ABSENCE` added to `AdjustmentType` enum. New models: `ExcusedAbsenceReason`, `ExcusedAbsence`. Migration: `20260411124414_add_excused_absence`.
+
+**New files:** `schemas/excused-absence.ts`, `queries/excused-absences.ts`, `actions/excused-absences.ts`, `helpers/excused-absence-billing.ts`, `components/students/excused-absences-section.tsx`.
+
+**Key modified files:** `schema.prisma` (enum + 2 models + back-relations), `seed.ts` (6 reasons), `actions/teacher-payments.ts` (excused count subtraction), `students/[id]/page.tsx` (section + queries), `prisma.config.ts` (shadowDatabaseUrl).
+
 ---
 
 ## Revisit
@@ -1482,7 +1501,7 @@ Every one of DATA_MODEL.md's 40 application-level constraints, mapped to a phase
 | 27 | Individual lesson offline reschedule | 7 | [ ] |
 | 28 | TeacherUnavailability auto-detection | 7 | [ ] |
 | 29 | PENDING_RESOLUTION alert | 7 | [ ] |
-| 30 | Absence policy (no billing impact) | 8 | [ ] |
+| 30 | Absence policy (regular: no billing impact; excused: billing + pay adjusted) | 8, L | [x] |
 | 31 | Per-membership leave billing | 9 (transfer), 11 (merge) | [ ] |
 | 32 | Billing period pre-creation | 3 | [ ] |
 | 33 | Student.level auto-update on graduation | 11 | [ ] |
@@ -1496,7 +1515,7 @@ Every one of DATA_MODEL.md's 40 application-level constraints, mapped to a phase
 
 ### DB-Level Constraints (already applied via migration)
 
-These live in `prisma/migrations/data_integrity_constraints.sql` — not app-level, but verify they exist:
+These are tracked in migration `20260410134129_data_integrity_constraints` (and the standalone `data_integrity_constraints.sql` kept for reference). Not app-level, but verify they exist:
 
 | Constraint | What |
 |-----------|------|

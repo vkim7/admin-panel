@@ -396,11 +396,13 @@ export const ModelName = {
   TransferReason: 'TransferReason',
   LostReason: 'LostReason',
   CancellationReason: 'CancellationReason',
+  ExcusedAbsenceReason: 'ExcusedAbsenceReason',
   UncertainReason: 'UncertainReason',
   UncertainHistory: 'UncertainHistory',
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
+  ExcusedAbsence: 'ExcusedAbsence',
   Recording: 'Recording',
   StudentPaymentPeriod: 'StudentPaymentPeriod',
   Payment: 'Payment',
@@ -434,7 +436,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "excusedAbsenceReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "excusedAbsence" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1326,6 +1328,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ExcusedAbsenceReason: {
+      payload: Prisma.$ExcusedAbsenceReasonPayload<ExtArgs>
+      fields: Prisma.ExcusedAbsenceReasonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExcusedAbsenceReasonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExcusedAbsenceReasonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        findFirst: {
+          args: Prisma.ExcusedAbsenceReasonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExcusedAbsenceReasonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        findMany: {
+          args: Prisma.ExcusedAbsenceReasonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>[]
+        }
+        create: {
+          args: Prisma.ExcusedAbsenceReasonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        createMany: {
+          args: Prisma.ExcusedAbsenceReasonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExcusedAbsenceReasonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>[]
+        }
+        delete: {
+          args: Prisma.ExcusedAbsenceReasonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        update: {
+          args: Prisma.ExcusedAbsenceReasonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        deleteMany: {
+          args: Prisma.ExcusedAbsenceReasonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExcusedAbsenceReasonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExcusedAbsenceReasonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>[]
+        }
+        upsert: {
+          args: Prisma.ExcusedAbsenceReasonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsenceReasonPayload>
+        }
+        aggregate: {
+          args: Prisma.ExcusedAbsenceReasonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExcusedAbsenceReason>
+        }
+        groupBy: {
+          args: Prisma.ExcusedAbsenceReasonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExcusedAbsenceReasonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExcusedAbsenceReasonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExcusedAbsenceReasonCountAggregateOutputType> | number
+        }
+      }
+    }
     UncertainReason: {
       payload: Prisma.$UncertainReasonPayload<ExtArgs>
       fields: Prisma.UncertainReasonFieldRefs
@@ -1693,6 +1769,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AttendanceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AttendanceCountAggregateOutputType> | number
+        }
+      }
+    }
+    ExcusedAbsence: {
+      payload: Prisma.$ExcusedAbsencePayload<ExtArgs>
+      fields: Prisma.ExcusedAbsenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExcusedAbsenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExcusedAbsenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        findFirst: {
+          args: Prisma.ExcusedAbsenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExcusedAbsenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        findMany: {
+          args: Prisma.ExcusedAbsenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>[]
+        }
+        create: {
+          args: Prisma.ExcusedAbsenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        createMany: {
+          args: Prisma.ExcusedAbsenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExcusedAbsenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>[]
+        }
+        delete: {
+          args: Prisma.ExcusedAbsenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        update: {
+          args: Prisma.ExcusedAbsenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        deleteMany: {
+          args: Prisma.ExcusedAbsenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExcusedAbsenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExcusedAbsenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>[]
+        }
+        upsert: {
+          args: Prisma.ExcusedAbsenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExcusedAbsencePayload>
+        }
+        aggregate: {
+          args: Prisma.ExcusedAbsenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExcusedAbsence>
+        }
+        groupBy: {
+          args: Prisma.ExcusedAbsenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExcusedAbsenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExcusedAbsenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExcusedAbsenceCountAggregateOutputType> | number
         }
       }
     }
@@ -3265,6 +3415,18 @@ export const CancellationReasonScalarFieldEnum = {
 export type CancellationReasonScalarFieldEnum = (typeof CancellationReasonScalarFieldEnum)[keyof typeof CancellationReasonScalarFieldEnum]
 
 
+export const ExcusedAbsenceReasonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isOther: 'isOther',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type ExcusedAbsenceReasonScalarFieldEnum = (typeof ExcusedAbsenceReasonScalarFieldEnum)[keyof typeof ExcusedAbsenceReasonScalarFieldEnum]
+
+
 export const UncertainReasonScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -3355,6 +3517,24 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const ExcusedAbsenceScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  studentId: 'studentId',
+  groupMembershipId: 'groupMembershipId',
+  reasonId: 'reasonId',
+  otherReason: 'otherReason',
+  note: 'note',
+  documentFileName: 'documentFileName',
+  documentFileKey: 'documentFileKey',
+  documentFileSize: 'documentFileSize',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type ExcusedAbsenceScalarFieldEnum = (typeof ExcusedAbsenceScalarFieldEnum)[keyof typeof ExcusedAbsenceScalarFieldEnum]
 
 
 export const RecordingScalarFieldEnum = {
@@ -4185,11 +4365,13 @@ export type GlobalOmitConfig = {
   transferReason?: Prisma.TransferReasonOmit
   lostReason?: Prisma.LostReasonOmit
   cancellationReason?: Prisma.CancellationReasonOmit
+  excusedAbsenceReason?: Prisma.ExcusedAbsenceReasonOmit
   uncertainReason?: Prisma.UncertainReasonOmit
   uncertainHistory?: Prisma.UncertainHistoryOmit
   groupMembership?: Prisma.GroupMembershipOmit
   lesson?: Prisma.LessonOmit
   attendance?: Prisma.AttendanceOmit
+  excusedAbsence?: Prisma.ExcusedAbsenceOmit
   recording?: Prisma.RecordingOmit
   studentPaymentPeriod?: Prisma.StudentPaymentPeriodOmit
   payment?: Prisma.PaymentOmit

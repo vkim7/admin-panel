@@ -13,7 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Pencil } from "lucide-react";
 import { StudentCommentEdit } from "@/components/students/student-comment-edit";
+import { ExcusedAbsencesSection } from "@/components/students/excused-absences-section";
 import { CopyZoomButton } from "@/components/copy-zoom-button";
+import {
+  getStudentExcusedAbsences,
+  getExcusedAbsenceReasons,
+  getEligibleLessonsForExcuse,
+} from "@/lib/queries/excused-absences";
 
 const LEVEL_LABEL: Record<string, string> = {
   BEGINNER: "Beginner",
@@ -52,12 +58,15 @@ export default async function StudentDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [student, paymentPeriods, studentPromotions, activePromotions, referrals] = await Promise.all([
+  const [student, paymentPeriods, studentPromotions, activePromotions, referrals, excusedAbsences, excusedAbsenceReasons, eligibleLessons] = await Promise.all([
     getStudentById(id),
     getStudentPaymentPeriods(id),
     getStudentPromotions(id),
     getActivePromotions(),
     getStudentReferrals(id),
+    getStudentExcusedAbsences(id),
+    getExcusedAbsenceReasons(),
+    getEligibleLessonsForExcuse(id),
   ]);
 
   if (!student) notFound();
@@ -387,6 +396,15 @@ export default async function StudentDetailPage({
           </div>
         </>
       )}
+
+      {/* Excused Absences */}
+      <Separator />
+      <ExcusedAbsencesSection
+        studentId={id}
+        excusedAbsences={excusedAbsences}
+        reasons={excusedAbsenceReasons}
+        eligibleLessons={eligibleLessons}
+      />
 
       {/* Promotions */}
       <Separator />

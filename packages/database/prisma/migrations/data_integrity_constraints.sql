@@ -1,25 +1,16 @@
--- DB-level constraints that MUST live in PostgreSQL (not app-level).
--- Only things here: race-condition-sensitive constraints and computed-field triggers.
--- Everything else (CHECK constraints, field validation) is enforced via Zod at the app level.
+-- Auto-computed ID triggers that MUST live in PostgreSQL.
+-- These are the only DB-level constraints — everything else is enforced at the app level.
 --
--- This file is NOT embedded in the Prisma init migration (to avoid drift issues
--- with partial indexes and triggers that Prisma doesn't track).
--- Run this AFTER `prisma migrate deploy` / `prisma migrate reset`:
+-- Safety net for fresh DB setup (when migrations/ is deleted and you start with db push):
 --   psql $DATABASE_URL -f prisma/migrations/data_integrity_constraints.sql
 --
--- IMPORTANT: The auto-computed ID triggers (crmCode, publicId) must be applied
--- BEFORE seeding — the seed relies on explicit values being preserved by the
--- trigger's "skip if non-empty" logic.
-
--- ─── Partial Unique Index ──────────────────────────────────────────────────
-
--- A student can only have one active membership per group at a time.
--- (leaveDate IS NULL = currently active)
--- This MUST be DB-level — concurrent requests could both pass an app-level
--- check and insert duplicate active memberships.
-CREATE UNIQUE INDEX IF NOT EXISTS active_membership_unique
-  ON "GroupMembership" ("studentId", "groupId")
-  WHERE "leaveDate" IS NULL;
+-- IMPORTANT: Must be applied BEFORE seeding — the seed relies on explicit values
+-- being preserved by the trigger's "skip if non-empty" logic.
+--
+-- Note: Partial unique indexes (active_membership_unique, current_group_teacher_unique)
+-- were removed — they caused Prisma migration drift on every `migrate dev`. The same
+-- constraints are enforced at the app level in server actions (execute-assign.ts,
+-- execute-transfer.ts, execute-merge.ts, execute-change-teacher.ts).
 
 -- ─── Auto-computed ID Triggers ─────────────────────────────────────────────
 -- These triggers compute human-readable IDs from autoincrement sequence numbers.
@@ -72,11 +63,3 @@ CREATE TRIGGER group_public_id_trigger
   BEFORE INSERT ON "Group"
   FOR EACH ROW
   EXECUTE FUNCTION set_group_public_id();
-
--- ─── Current Group Teacher Uniqueness ────────────────────────────────────
--- A group can only have one current teacher at a time.
--- (endDate IS NULL = current teacher assignment)
--- Same race-condition rationale as active_membership_unique above.
-CREATE UNIQUE INDEX IF NOT EXISTS current_group_teacher_unique
-  ON "GroupTeacherHistory" ("groupId")
-  WHERE "endDate" IS NULL;

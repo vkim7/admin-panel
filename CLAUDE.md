@@ -70,7 +70,7 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 - **Documentation upkeep:** After completing a phase, update `implementation-plan.md` (mark checkboxes, add implementation notes) and `packages/database/DATA_MODEL.md` (if schema changed). Keep docs in sync with code as you go — don't defer updates.
 
-- **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) live in a separate `prisma/migrations/data_integrity_constraints.sql` and must be applied separately after migrations: `npx prisma db execute --file prisma/migrations/data_integrity_constraints.sql`
+- **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) are tracked in migration `20260410134129_data_integrity_constraints` (and kept as a standalone `prisma/migrations/data_integrity_constraints.sql` for reference). A shadow database (`neondb_shadow` on Neon) is configured in `prisma.config.ts` for `migrate dev` — this is dev-only, not needed in production (`migrate deploy` doesn't use it).
 
 - **Shared UI components (`src/components/ui/`):** Never modify the internals of shared UI components to achieve a feature-specific layout. These components are used across the app and changes risk visual regressions in untested places. Instead, control layout from the outside — use wrapper elements, className props, or composition. If a shared component genuinely needs a new capability, add it as an opt-in prop with a default that preserves existing behavior.
 
@@ -88,6 +88,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 - **Student lifecycle**: `awaiting_assignment` → `active` → `inactive`
 - **Single student entity**: one record, multiple views (Reception, Group Details, No Payment List, Student Management) via status/filters — not separate tables
 - **Transfers**: moving a student between groups does NOT change their lifecycle status (they stay `active`). Transfers are tracked at the group membership level (join date, leave date, reason). A student's history of which groups they've been in lives in a separate membership record, not on the student entity.
-- **Teacher pay**: per student-hour (students in group × hours × rate)
+- **Teacher pay**: per student-hour (students in group × hours × rate). Excused absences reduce the count — if 4 students in group but 1 excused, teacher is paid for 3 student-hours on that lesson.
 - **Billing**: first month prorated, then fixed monthly (12 lessons)
+- **Excused absences**: retroactive record that a student missed a lesson for a valid reason (illness, power outage, force majeure). Reduces billing period's `totalLessons` by 1 and teacher pay by 1 student-hour. Creates `PaymentPeriodAdjustment` audit trail. Reversible — deleting an excuse restores billing. No replacement lesson created. UI lives on the student detail page.
+- **Billing adjustments**: `PaymentPeriodAdjustment` records track all period changes with type (`MANUAL`, `EXCUSED_ABSENCE`, `HOLIDAY`, `DROPOUT`, `TRANSFER`, `MERGE`). Overpayments from adjustments become transfer credit to next month or PENDING refund.
 - **amoCRM (Kommo)**: external CRM for lead management. Students enter our system after passing placement test via API polling.

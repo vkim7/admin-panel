@@ -159,7 +159,8 @@ export const AdjustmentType = {
   TRANSFER: 'TRANSFER',
   DROPOUT: 'DROPOUT',
   MERGE: 'MERGE',
-  HOLIDAY: 'HOLIDAY'
+  HOLIDAY: 'HOLIDAY',
+  EXCUSED_ABSENCE: 'EXCUSED_ABSENCE'
 } as const
 
 export type AdjustmentType = (typeof AdjustmentType)[keyof typeof AdjustmentType]

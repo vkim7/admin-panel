@@ -65,6 +65,7 @@ Opened by clicking a group cell on Main Schedule.
 - **First month (new student):** prorated — remaining lessons this month × per-lesson price
 - **All future months:** actual lesson count for that month × per-lesson price (typically ~12 lessons, varies by month due to holidays and calendar)
 - **Teacher payout:** students × hours taught × per-lesson teacher rate (per student-hour model — incentivizes teachers to keep groups full and retain students)
+- **Excused absences:** when a student misses a completed lesson for a valid reason (illness, power outage, force majeure), billing period is adjusted: totalLessons reduced by 1, amountDue recalculated, audit trail created. Teacher pay also reduced (excused student-hours subtracted from activeStudentCount at pay generation time). Overpayment → credit to next month or PENDING refund. No replacement lesson created.
 
 ### Transfer (later scope)
 - Transfer button to move student to a different group

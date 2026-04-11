@@ -115,6 +115,26 @@ async function main() {
     );
   }
 
+  // ─── Excused Absence Reasons ──────────────────────────────────────────
+  const existingExcusedReasons = await prisma.excusedAbsenceReason.count();
+  if (existingExcusedReasons === 0) {
+    await Promise.all(
+      [
+        { name: "Illness", sortOrder: 1 },
+        { name: "Power outage", sortOrder: 2 },
+        { name: "Internet outage", sortOrder: 3 },
+        { name: "Family emergency", sortOrder: 4 },
+        { name: "Force majeure", sortOrder: 5 },
+        { name: "Other", isOther: true, sortOrder: 6 },
+      ].map((r) => prisma.excusedAbsenceReason.create({ data: r })),
+    );
+    console.log("Created 6 excused absence reasons");
+  } else {
+    console.log(
+      `Excused absence reasons already exist (${existingExcusedReasons}), skipping`,
+    );
+  }
+
   // ─── Uncertain Reasons ─────────────────────────────────────────────────
   const existingUncertainReasons = await prisma.uncertainReason.count();
   if (existingUncertainReasons === 0) {

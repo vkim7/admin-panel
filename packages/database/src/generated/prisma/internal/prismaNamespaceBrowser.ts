@@ -63,11 +63,13 @@ export const ModelName = {
   TransferReason: 'TransferReason',
   LostReason: 'LostReason',
   CancellationReason: 'CancellationReason',
+  ExcusedAbsenceReason: 'ExcusedAbsenceReason',
   UncertainReason: 'UncertainReason',
   UncertainHistory: 'UncertainHistory',
   GroupMembership: 'GroupMembership',
   Lesson: 'Lesson',
   Attendance: 'Attendance',
+  ExcusedAbsence: 'ExcusedAbsence',
   Recording: 'Recording',
   StudentPaymentPeriod: 'StudentPaymentPeriod',
   Payment: 'Payment',
@@ -302,6 +304,18 @@ export const CancellationReasonScalarFieldEnum = {
 export type CancellationReasonScalarFieldEnum = (typeof CancellationReasonScalarFieldEnum)[keyof typeof CancellationReasonScalarFieldEnum]
 
 
+export const ExcusedAbsenceReasonScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  isOther: 'isOther',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type ExcusedAbsenceReasonScalarFieldEnum = (typeof ExcusedAbsenceReasonScalarFieldEnum)[keyof typeof ExcusedAbsenceReasonScalarFieldEnum]
+
+
 export const UncertainReasonScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -392,6 +406,24 @@ export const AttendanceScalarFieldEnum = {
 } as const
 
 export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const ExcusedAbsenceScalarFieldEnum = {
+  id: 'id',
+  lessonId: 'lessonId',
+  studentId: 'studentId',
+  groupMembershipId: 'groupMembershipId',
+  reasonId: 'reasonId',
+  otherReason: 'otherReason',
+  note: 'note',
+  documentFileName: 'documentFileName',
+  documentFileKey: 'documentFileKey',
+  documentFileSize: 'documentFileSize',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+} as const
+
+export type ExcusedAbsenceScalarFieldEnum = (typeof ExcusedAbsenceScalarFieldEnum)[keyof typeof ExcusedAbsenceScalarFieldEnum]
 
 
 export const RecordingScalarFieldEnum = {

@@ -1,40 +1,9 @@
-<!-- TODO -->
-No recording in the cloudflare
-
-<!-- TODO -->
-do zoom mettings have a ttl? like say we would set the meeting to auto-delete after 3 months?
-
-<!-- TODO CH -->
-Remaining setup needed
-
-  You'll need to add these env vars to apps/admin/.env (and Vercel):
-  ZOOM_ACCOUNT_ID=<from Zoom Server-to-Server OAuth app>
-  ZOOM_CLIENT_ID=<from Zoom Server-to-Server OAuth app>
-  ZOOM_CLIENT_SECRET=<from Zoom Server-to-Server OAuth app>
-
--------------
-
-Right now there's no way to do it from the admin panel — the Zoom meeting is only       
-  created automatically during group creation.                                            
-                                                                                          
-  Options:
-                                                                                          
-  1. Add a "Create Zoom Meeting" button on the group detail page — shown when the group is active but has no zoomJoinUrl. Calls the Zoom API on demand.
-  2. Trigger it on teacher update — when a teacher gets a zoomEmail added, retroactively  
-  create meetings for their active groups that have no Zoom link.                         
-  3. Keep the manual approach — admin sets up the meeting in the Zoom dashboard and pastes
-   the link. But we removed the manual input field.                                       
-                                                                                        
-  Option 1 seems cleanest — explicit, no magic. Want me to add that button?
-
-
-
-
-<!-- TODO -->
-Do all steps at once on teacher creation - rates - schedule - etc
-
-<!-- TODO -->
-Refunds??? according to law???
+<!-- PARTIALLY RESOLVED: Excused Absences feature implemented -->
+<!-- Billing adjustments for valid absences (illness, power outage, force majeure): -->
+<!-- - Excused absence reduces billing period by 1 lesson + reduces teacher pay -->
+<!-- - Overpayment → transfer credit to next month or PENDING refund -->
+<!-- - UI on student detail page with proof document upload -->
+<!-- STILL TODO: Review Uzbekistan consumer protection law for refund obligations/timelines -->
 
 <!-- TODO -->
 Automations of SMS / comms

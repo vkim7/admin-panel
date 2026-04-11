@@ -78,6 +78,11 @@ export type LostReason = Prisma.LostReasonModel
  */
 export type CancellationReason = Prisma.CancellationReasonModel
 /**
+ * Model ExcusedAbsenceReason
+ * 
+ */
+export type ExcusedAbsenceReason = Prisma.ExcusedAbsenceReasonModel
+/**
  * Model UncertainReason
  * 
  */
@@ -102,6 +107,11 @@ export type Lesson = Prisma.LessonModel
  * 
  */
 export type Attendance = Prisma.AttendanceModel
+/**
+ * Model ExcusedAbsence
+ * 
+ */
+export type ExcusedAbsence = Prisma.ExcusedAbsenceModel
 /**
  * Model Recording
  * 

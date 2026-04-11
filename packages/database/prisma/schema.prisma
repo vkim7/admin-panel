@@ -390,6 +390,7 @@ enum AdjustmentType {
   DROPOUT
   MERGE
   HOLIDAY
+  EXCUSED_ABSENCE
 }
 
 enum SmsStatus {
@@ -456,6 +457,7 @@ model AdminUser {
   flaggedUncertain         UncertainHistory[]        @relation("FlaggedUncertain")
   resolvedUncertain        UncertainHistory[]        @relation("ResolvedUncertain")
   scheduledActions         ScheduledAction[]         @relation("ScheduledActionCreatedBy")
+  excusedAbsencesCreated   ExcusedAbsence[]          @relation("ExcusedAbsenceCreatedBy")
 }
 
 model Teacher {
@@ -575,6 +577,7 @@ model Student {
   referralsMade     Referral[]             @relation("Referrer")
   referralReceived  Referral?              @relation("Referred")
   scheduledActions  ScheduledAction[]
+  excusedAbsences   ExcusedAbsence[]
 
   @@index([status])
   @@index([level])
@@ -783,6 +786,18 @@ model CancellationReason {
   lessons Lesson[]
 }
 
+model ExcusedAbsenceReason {
+  id        String  @id @default(cuid())
+  name      String  @unique
+  isOther   Boolean @default(false)
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  excusedAbsences ExcusedAbsence[]
+}
+
 model UncertainReason {
   id        String  @id @default(cuid())
   name      String  @unique // e.g. "Late to lessons", "Misses classes"
@@ -859,6 +874,7 @@ model GroupMembership {
   continuedAsMemberships GroupMembership[]      @relation("MembershipContinuation")
   paymentPeriods         StudentPaymentPeriod[]
   scheduledActions       ScheduledAction[]
+  excusedAbsences        ExcusedAbsence[]
 
   // No unique on [studentId, groupId] — a student can rejoin a group
   @@index([studentId])
@@ -922,6 +938,7 @@ model Lesson {
   cancellationReason CancellationReason?  @relation(fields: [cancellationReasonId], references: [id], onDelete: Restrict)
   attendanceRecords  Attendance[]
   recordings         Recording[]
+  excusedAbsences    ExcusedAbsence[]
   scheduleSlot       TeacherScheduleSlot?
 
   @@unique([groupId, lessonNumber])
@@ -952,6 +969,35 @@ model Attendance {
   @@unique([lessonId, studentId])
   @@index([studentId, groupId])
   @@index([groupId])
+}
+
+model ExcusedAbsence {
+  id                String  @id @default(cuid())
+  lessonId          String
+  studentId         String
+  groupMembershipId String
+
+  reasonId    String
+  otherReason String? // Free text when reason isOther
+  note        String? // Optional admin notes
+
+  // Embedded document (single proof file per excuse)
+  documentFileName String?
+  documentFileKey  String? // R2 object key
+  documentFileSize Int?    // Bytes
+
+  createdById String
+  createdAt   DateTime @default(now())
+
+  lesson          Lesson               @relation(fields: [lessonId], references: [id], onDelete: Restrict)
+  student         Student              @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  groupMembership GroupMembership       @relation(fields: [groupMembershipId], references: [id], onDelete: Restrict)
+  reason          ExcusedAbsenceReason @relation(fields: [reasonId], references: [id], onDelete: Restrict)
+  createdBy       AdminUser            @relation("ExcusedAbsenceCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
+
+  @@unique([lessonId, studentId])
+  @@index([studentId])
+  @@index([groupMembershipId])
 }
 
 // ─── Recordings ─────────────────────────────────────────────────────────────────
