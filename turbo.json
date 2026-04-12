@@ -2,7 +2,8 @@
   "$schema": "https://turbo.build/schema.json",
   "tasks": {
     "db:deploy": {
-      "cache": false
+      "cache": false,
+      "env": ["DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build", "^db:deploy"],
