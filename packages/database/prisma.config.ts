@@ -7,7 +7,10 @@ export default defineConfig({
   schema: path.join("prisma", "schema.prisma"),
   datasource: {
     url: env("DATABASE_URL"),
-    shadowDatabaseUrl: env("SHADOW_DATABASE_URL"),
+    // Optional: only needed for `migrate dev`, not `migrate deploy`
+    ...(process.env.SHADOW_DATABASE_URL && {
+      shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL,
+    }),
   },
   migrate: {
     async adapter() {
