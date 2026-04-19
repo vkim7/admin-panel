@@ -39,6 +39,9 @@ export async function generateMetadata({
         ru: "https://bananaschool.uz/ru",
       },
     },
+    verification: {
+      yandex: "ee2da55dad6b65ad",
+    },
     openGraph: {
       title: dict.meta.title,
       description: dict.meta.description,

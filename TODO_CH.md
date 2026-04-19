@@ -1,7 +1,13 @@
 <!-- TODO -->
+does turborepo handle the only necessary deployments?
+e.g. changes in the landing won't trigger deployments in the admin panel
+
+<!-- TODO -->
 DIRECT_DATABASE_URL
 add the url for non-production branches as well
 do non-production branches need a separate R2 Object, etc
+
+
 <!-- TODO -->
 
 OG Image
