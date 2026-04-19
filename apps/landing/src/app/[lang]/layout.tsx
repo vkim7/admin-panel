@@ -32,6 +32,17 @@ export async function generateMetadata({
   return {
     title: dict.meta.title,
     description: dict.meta.description,
+    metadataBase: new URL("https://bananaschool.uz"),
+    icons: {
+      icon: [
+        { url: "/banana_icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", type: "image/x-icon" },
+      ],
+      apple: "/og.png",
+    },
+    other: {
+      "theme-color": "#FFE347",
+    },
     alternates: {
       canonical: `https://bananaschool.uz/${locale}`,
       languages: {
@@ -49,8 +60,20 @@ export async function generateMetadata({
       siteName: "Banana School",
       locale: locale === "uz" ? "uz_UZ" : "ru_RU",
       type: "website",
-      // TODO: Add OG image when provided
-      // images: [{ url: "https://bananaschool.uz/og-image.jpg", width: 1200, height: 630 }],
+      images: [
+        {
+          url: "https://bananaschool.uz/og.png",
+          width: 1200,
+          height: 630,
+          alt: "Banana School — Learn English Online",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.meta.title,
+      description: dict.meta.description,
+      images: ["https://bananaschool.uz/og.png"],
     },
   };
 }
@@ -64,6 +87,7 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   const locale = isValidLocale(lang) ? lang : "uz";
+  const dict = await getDictionary(locale);
 
   return (
     <html
@@ -71,6 +95,24 @@ export default async function LangLayout({
       className={`${geologica.variable} ${nunitoSans.variable}`}
     >
       <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "EducationalOrganization",
+              name: "Banana School",
+              url: "https://bananaschool.uz",
+              description: dict.meta.description,
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Tashkent",
+                addressCountry: "UZ",
+              },
+              sameAs: ["https://instagram.com/bananaschool.uz"],
+            }),
+          }}
+        />
         {children}
         <FloatingContacts />
       </body>
