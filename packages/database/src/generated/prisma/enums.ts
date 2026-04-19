@@ -206,3 +206,32 @@ export const RecordingStatus = {
 } as const
 
 export type RecordingStatus = (typeof RecordingStatus)[keyof typeof RecordingStatus]
+
+
+export const LeadStatus = {
+  NEW: 'NEW',
+  CONTACTED: 'CONTACTED',
+  TRIAL_SCHEDULED: 'TRIAL_SCHEDULED',
+  CONVERTED: 'CONVERTED',
+  LOST: 'LOST'
+} as const
+
+export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
+
+
+export const LessonPreference = {
+  GROUP: 'GROUP',
+  PAIR: 'PAIR',
+  INDIVIDUAL: 'INDIVIDUAL'
+} as const
+
+export type LessonPreference = (typeof LessonPreference)[keyof typeof LessonPreference]
+
+
+export const SelfAssessedLevel = {
+  COMPLETE_BEGINNER: 'COMPLETE_BEGINNER',
+  KNOW_A_LITTLE: 'KNOW_A_LITTLE',
+  CAN_HOLD_CONVERSATION: 'CAN_HOLD_CONVERSATION'
+} as const
+
+export type SelfAssessedLevel = (typeof SelfAssessedLevel)[keyof typeof SelfAssessedLevel]

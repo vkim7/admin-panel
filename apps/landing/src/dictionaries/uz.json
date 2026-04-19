@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "title": "Banana School — Online English for Teens",
+    "description": "Banana School — 6 kishilik kichik guruhlarda online ingliz tili darslari. 13–18 yoshlilar uchun. IELTS 7.0+ o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
+  },
+  "nav": {
+    "whyUs": "Nega biz",
+    "pricing": "Narx",
+    "faq": "FAQ",
+    "cta": "Boshlash"
+  },
+  "hero": {
+    "pill": "Online ingliz tili darslari",
+    "headline": "Ingliz tilini atiga 6 kishilik guruhda o'rgan.",
+    "highlightedWord": "6 kishilik",
+    "subheadline": "13–18 yoshlilar uchun live online darslar. Kichik guruhlar, haqiqiy o'qituvchilar, real natijalar.",
+    "ctaPrimary": "Bepul sinov darsi",
+    "ctaSecondary": "Narxlarni ko'rish",
+    "followUs": "Bizni kuzating"
+  },
+  "stats": {
+    "maxGroup": "Max guruhda",
+    "lessonsMonth": "Dars / oy",
+    "minLesson": "Daqiqa / dars",
+    "ieltsTeachers": "IELTS teachers"
+  },
+  "features": {
+    "tag": "Nega biz?",
+    "heading": "Katta guruhda kutib o'tirish yo'q",
+    "description": "Ko'p joylarda 16 kishi bir guruhda. Bizda 6. Har bir o'quvchi gapiradi, har biri o'rganadi.",
+    "items": [
+      {
+        "icon": "Users",
+        "title": "6 kishilik guruhlar",
+        "description": "2.7x ko'proq e'tibor har bir o'quvchiga. Darsda jim o'tirish yo'q."
+      },
+      {
+        "icon": "GraduationCap",
+        "title": "Haqiqiy o'qituvchilar",
+        "description": "IELTS 7.0+ sertifikatlangan. Self-study emas — real darslar, real feedback."
+      },
+      {
+        "icon": "Monitor",
+        "title": "100% online",
+        "description": "Zoom orqali live darslar. O'zbekistonning istalgan joyidan."
+      },
+      {
+        "icon": "Smartphone",
+        "title": "O'z ilovamiz",
+        "description": "Uy vazifalarini ilovada bajaring. Progressingizni kuzating."
+      }
+    ]
+  },
+  "howItWorks": {
+    "tag": "Qanday ishlaydi",
+    "heading": "Boshlash juda oson",
+    "description": "Uch qadam — va siz allaqachon o'rganayapsiz.",
+    "steps": [
+      {
+        "title": "Ro'yxatdan o'ting",
+        "description": "Bepul sinov darsiga yoziling. Darajangizni aniqlaymiz."
+      },
+      {
+        "title": "Guruhingizni toping",
+        "description": "Sizning darajangizga mos 6 kishilik guruhga qo'shilamiz."
+      },
+      {
+        "title": "O'rganishni boshlang",
+        "description": "Zoom orqali live darslar, uy vazifalari ilovada, natijalar tez."
+      }
+    ]
+  },
+  "pricing": {
+    "tag": "Narx",
+    "heading": "Bitta tarif. Hamma narsa ichida.",
+    "description": "Oddiy va tushunarli. Yashirin to'lovlar yo'q.",
+    "price": "960,000",
+    "period": "UZS / oyiga",
+    "features": [
+      "12 ta live dars / oy",
+      "Guruhda max 6 o'quvchi",
+      "Har bir dars 80 daqiqa",
+      "IELTS 7.0+ o'qituvchilar",
+      "Uy vazifalar ilovasi",
+      "Barcha darajalar: beginner → advanced"
+    ],
+    "cta": "Bepul sinov darsi"
+  },
+  "faq": {
+    "tag": "FAQ",
+    "heading": "Ko'p beriladigan savollar",
+    "items": [
+      {
+        "question": "Darslar qaysi kunlari bo'ladi?",
+        "answer": "Haftada 3 marta, har bir dars 80 daqiqa. Aniq jadval guruhga qarab belgilanadi."
+      },
+      {
+        "question": "Beginner bo'lsam ham kelsa bo'ladimi?",
+        "answer": "Albatta! Biz barcha darajadagi o'quvchilarni qabul qilamiz — beginner'dan advanced'gacha."
+      },
+      {
+        "question": "IELTS tayyorgarlik ham bormi?",
+        "answer": "Ha! General English, conversational English va IELTS/TOEFL prep — hammasini o'qitamiz."
+      },
+      {
+        "question": "Sinov darsi bepulmi?",
+        "answer": "Ha, birinchi sinov darsi butunlay bepul. Shunchaki ro'yxatdan o'ting."
+      },
+      {
+        "question": "Nima kerak darsga kirish uchun?",
+        "answer": "Kompyuter yoki planshet, internet va Zoom. Hammasi shu!"
+      }
+    ]
+  },
+  "form": {
+    "heading": "Bepul sinov darsiga yoziling",
+    "description": "Ma'lumotlaringizni qoldiring — biz siz bilan bog'lanamiz.",
+    "firstName": "Ism",
+    "firstNamePlaceholder": "Ismingiz",
+    "lastName": "Familiya",
+    "lastNamePlaceholder": "Familiyangiz",
+    "phone": "Telefon raqam",
+    "phonePlaceholder": "+998 90 123 45 67",
+    "dateOfBirth": "Tug'ilgan sana",
+    "lessonPreference": "Dars turi",
+    "lessonPreferenceOptions": {
+      "GROUP": "Guruh (6 kishigacha)",
+      "PAIR": "Juftlik (2 kishi)",
+      "INDIVIDUAL": "Individual"
+    },
+    "selfAssessedLevel": "Ingliz tili darajangiz",
+    "selfAssessedLevelOptions": {
+      "COMPLETE_BEGINNER": "Umuman bilmayman",
+      "KNOW_A_LITTLE": "Ozroq bilaman",
+      "CAN_HOLD_CONVERSATION": "Gaplasha olaman"
+    },
+    "note": "Izoh",
+    "notePlaceholder": "Qo'shimcha ma'lumot (ixtiyoriy)",
+    "submit": "Yuborish",
+    "success": "Arizangiz qabul qilindi! Tez orada bog'lanamiz.",
+    "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
+  },
+  "footer": {
+    "copyright": "\u00a9 2026 Banana School. Tashkent, Uzbekistan."
+  },
+  "floatingContacts": {
+    "telegram": "Telegram",
+    "phone": "Qo'ng'iroq qilish"
+  }
+}

@@ -202,3 +202,8 @@ export type Exam = Prisma.ExamModel
  * 
  */
 export type ScheduledAction = Prisma.ScheduledActionModel
+/**
+ * Model Lead
+ * 
+ */
+export type Lead = Prisma.LeadModel

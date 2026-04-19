@@ -8,6 +8,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   CalendarDays,
   CalendarOff,
+  Inbox,
   UserPlus,
   CreditCard,
   GraduationCap,
@@ -75,6 +76,10 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    title: "Leads",
+    items: [{ label: "Leads", href: "/leads", icon: Inbox }],
+  },
+  {
     title: "Reference",
     items: [
       { label: "Promotions", href: "/promotions", icon: Tag },
@@ -92,6 +97,7 @@ interface AppSidebarProps {
   pendingRefundCount?: number;
   lostCount?: number;
   scheduledCount?: number;
+  leadCount?: number;
 }
 
 const badgeConfig: Record<string, keyof Omit<AppSidebarProps, "adminName">> = {
@@ -102,6 +108,7 @@ const badgeConfig: Record<string, keyof Omit<AppSidebarProps, "adminName">> = {
   "/refunds": "pendingRefundCount",
   "/lost": "lostCount",
   "/scheduled-actions": "scheduledCount",
+  "/leads": "leadCount",
 };
 
 export function AppSidebar({
@@ -113,6 +120,7 @@ export function AppSidebar({
   pendingRefundCount,
   lostCount,
   scheduledCount,
+  leadCount,
 }: AppSidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
@@ -129,6 +137,7 @@ export function AppSidebar({
     pendingRefundCount,
     lostCount,
     scheduledCount,
+    leadCount,
   };
 
   function handleNav(href: string) {

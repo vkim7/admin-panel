@@ -1480,3 +1480,45 @@ model ScheduledAction {
   @@index([membershipId, status])
   @@index([sourceGroupId, status])
 }
+
+// ─── Leads (from Landing Page) ──────────────────────────────────────────────
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  TRIAL_SCHEDULED
+  CONVERTED
+  LOST
+}
+
+enum LessonPreference {
+  GROUP
+  PAIR
+  INDIVIDUAL
+}
+
+enum SelfAssessedLevel {
+  COMPLETE_BEGINNER
+  KNOW_A_LITTLE
+  CAN_HOLD_CONVERSATION
+}
+
+model Lead {
+  id                String             @id @default(cuid())
+  firstName         String
+  lastName          String
+  phone             String
+  dateOfBirth       DateTime?
+  note              String?            // visitor's free-text note
+  language          String             // "uz" or "ru" from URL locale
+  lessonPreference  LessonPreference?  // GROUP, PAIR, or INDIVIDUAL
+  selfAssessedLevel SelfAssessedLevel? // visitor's self-assessed English level
+  status            LeadStatus         @default(NEW)
+  adminNote         String?            // internal note by admin after calling
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}

@@ -87,7 +87,8 @@ export const ModelName = {
   SmsHistory: 'SmsHistory',
   Holiday: 'Holiday',
   Exam: 'Exam',
-  ScheduledAction: 'ScheduledAction'
+  ScheduledAction: 'ScheduledAction',
+  Lead: 'Lead'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -715,6 +716,25 @@ export const ScheduledActionScalarFieldEnum = {
 } as const
 
 export type ScheduledActionScalarFieldEnum = (typeof ScheduledActionScalarFieldEnum)[keyof typeof ScheduledActionScalarFieldEnum]
+
+
+export const LeadScalarFieldEnum = {
+  id: 'id',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  phone: 'phone',
+  dateOfBirth: 'dateOfBirth',
+  note: 'note',
+  language: 'language',
+  lessonPreference: 'lessonPreference',
+  selfAssessedLevel: 'selfAssessedLevel',
+  status: 'status',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
 
 
 export const SortOrder = {
