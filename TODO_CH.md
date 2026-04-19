@@ -1,4 +1,8 @@
 <!-- TODO -->
+DIRECT_DATABASE_URL
+add the url for non-production branches as well
+do non-production branches need a separate R2 Object, etc
+<!-- TODO -->
 
 OG Image
 

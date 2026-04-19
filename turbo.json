@@ -3,7 +3,7 @@
   "tasks": {
     "db:deploy": {
       "cache": false,
-      "env": ["DATABASE_URL"]
+      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },
     "build": {
       "dependsOn": ["^build", "^db:deploy"],
