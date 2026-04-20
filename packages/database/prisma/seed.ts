@@ -217,7 +217,7 @@ async function main() {
         {
           levelCategory: "GENERAL",
           groupType: "GROUP",
-          pricePerLesson: 100000,
+          pricePerLesson: 47500,
           effectiveFrom: new Date("2025-01-01"),
           changedById: admin.id,
         },
@@ -231,7 +231,7 @@ async function main() {
         {
           levelCategory: "IELTS",
           groupType: "GROUP",
-          pricePerLesson: 100000,
+          pricePerLesson: 47500,
           effectiveFrom: new Date("2025-01-01"),
           changedById: admin.id,
         },

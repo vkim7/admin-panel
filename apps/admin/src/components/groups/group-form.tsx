@@ -41,11 +41,6 @@ const DAY_OPTIONS = [
   { value: [2, 4, 6], label: "Tue / Thu / Sat" },
 ] as const;
 
-const DURATION_OPTIONS = [
-  { value: 80, label: "80 min" },
-  { value: 60, label: "60 min" },
-] as const;
-
 type TeacherOption = {
   id: string;
   firstName: string;
@@ -78,8 +73,6 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
       teacherId: prefill?.teacherId ?? "",
       days: prefill?.days ?? [],
       startTime: prefill?.startTime ?? "",
-      durationMinutes: 80,
-      maxStudents: 6,
       startDate: "",
     },
   });
@@ -131,10 +124,6 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                     disabled={isEdit || isPrefilled}
                     onClick={() => {
                       field.onChange(t);
-                      form.setValue(
-                        "maxStudents",
-                        t === "INDIVIDUAL" ? 1 : 6,
-                      );
                     }}
                     className={`rounded-md border px-4 py-1.5 text-sm transition-colors ${
                       field.value === t
@@ -237,65 +226,36 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
           )}
         />
 
-        {/* Time & Duration */}
-        <div className="grid grid-cols-2 items-start gap-4">
-          <FormField
-            control={form.control}
-            name="startTime"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Start Time</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value} disabled={isPrefilled || !watchedTeacherId || watchedDays.length === 0 || availableTimeSlots.length === 0}>
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select time..." />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {availableTimeSlots.map((slot) => (
-                      <SelectItem key={slot} value={slot}>
-                        {slot}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {watchedTeacherId && watchedDays.length > 0 && availableTimeSlots.length === 0 && (
-                  <p className="text-sm text-destructive">
-                    No available slots for this teacher on selected days
-                  </p>
-                )}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="durationMinutes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Duration</FormLabel>
-                <div className="flex gap-2">
-                  {DURATION_OPTIONS.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      disabled={isEdit}
-                      onClick={() => field.onChange(opt.value)}
-                      className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-                        field.value === opt.value
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-input hover:bg-accent"
-                      } ${isEdit ? "cursor-not-allowed opacity-50" : ""}`}
-                    >
-                      {opt.label}
-                    </button>
+        {/* Start Time */}
+        <FormField
+          control={form.control}
+          name="startTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Time</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value} disabled={isPrefilled || !watchedTeacherId || watchedDays.length === 0 || availableTimeSlots.length === 0}>
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select time..." />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {availableTimeSlots.map((slot) => (
+                    <SelectItem key={slot} value={slot}>
+                      {slot}
+                    </SelectItem>
                   ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+                </SelectContent>
+              </Select>
+              {watchedTeacherId && watchedDays.length > 0 && availableTimeSlots.length === 0 && (
+                <p className="text-sm text-destructive">
+                  No available slots for this teacher on selected days
+                </p>
+              )}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Level — only on create */}
         {!isEdit && (
@@ -325,42 +285,22 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
           />
         )}
 
-        {/* Max Students & Start Date */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Start Date */}
+        {!isEdit && (
           <FormField
             control={form.control}
-            name="maxStudents"
+            name="startDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Max Students</FormLabel>
+                <FormLabel>Start Date</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 1)}
-                  />
+                  <Input type="date" {...field} min={new Date().toISOString().split("T")[0]} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          {!isEdit && (
-            <FormField
-              control={form.control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Start Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} min={new Date().toISOString().split("T")[0]} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
-        </div>
+        )}
 
         {!isEdit && (
           <p className="text-sm text-muted-foreground">

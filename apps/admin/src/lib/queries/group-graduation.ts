@@ -116,7 +116,7 @@ export async function getGraduationPreview(groupId: string) {
       teacher: group.teacher,
       days: group.days,
       startTime: group.startTime,
-      durationMinutes: group.durationMinutes,
+      durationMinutes: 80,
       startDate: startDate.toISOString().split("T")[0]!,
       endDate: endDate.toISOString().split("T")[0]!,
       lessonCount: lessonDates.length,

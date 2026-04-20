@@ -83,8 +83,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 - **CRM Code**: unique student identifier (plain sequence number, e.g., "1", "42"), used across all views
 - **Day patterns**: 1,3,5 (Mon/Wed/Fri) or 2,4,6 (Tue/Thu/Sat) — all scheduling is built on this
 - **Time slots**: flexible — stored as strings (e.g., "14:00"), not a fixed enum
-- **Lesson duration**: 80 minutes default, can be 60 — stored per group
-- **Unified Group model**: both group lessons (up to 6 students) and individual lessons use the same `Group` entity with a `type` field (GROUP or INDIVIDUAL). Individual lessons are typically 1 student but could be 2 (not yet decided) — `maxStudents` handles this.
+- **Lesson duration**: 80 minutes (fixed for all group types, not user-editable)
+- **Unified Group model**: both group lessons (up to 12 students) and individual lessons use the same `Group` entity with a `type` field (GROUP or INDIVIDUAL). Individual lessons are 1 student. `maxStudents` is set automatically (12 for GROUP, 1 for INDIVIDUAL) and not user-editable.
 - **Student lifecycle**: `awaiting_assignment` → `active` → `inactive`
 - **Single student entity**: one record, multiple views (Reception, Group Details, No Payment List, Student Management) via status/filters — not separate tables
 - **Transfers**: moving a student between groups does NOT change their lifecycle status (they stay `active`). Transfers are tracked at the group membership level (join date, leave date, reason). A student's history of which groups they've been in lives in a separate membership record, not on the student entity.

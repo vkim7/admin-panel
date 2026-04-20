@@ -33,12 +33,20 @@ function randomPhone() {
   return `+998${digits}`;
 }
 
+/** Random 14-digit PINFL (personal identification number). */
+function randomPinfl() {
+  return Array.from({ length: 14 }, () =>
+    Math.floor(Math.random() * 10),
+  ).join("");
+}
+
 // ─── Teacher ────────────────────────────────────────────────────────────────
 
 interface TeacherOverrides {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  pinfl?: string;
   levels?: Array<
     | "BEGINNER"
     | "ELEMENTARY"
@@ -64,6 +72,7 @@ export async function createTestTeacher(overrides: TeacherOverrides = {}) {
     firstName = "Test",
     lastName = `Teacher-${uid()}`,
     phone = randomPhone(),
+    pinfl = randomPinfl(),
     levels = ["BEGINNER", "ELEMENTARY", "PRE_INTERMEDIATE"],
     teachingLanguage = "ANY",
     groupLessonRate = 50_000,
@@ -72,7 +81,7 @@ export async function createTestTeacher(overrides: TeacherOverrides = {}) {
   } = overrides;
 
   const teacher = await prisma.teacher.create({
-    data: { firstName, lastName, phone, levels, teachingLanguage },
+    data: { firstName, lastName, phone, pinfl, levels, teachingLanguage },
   });
 
   await prisma.teacherRateChange.create({
@@ -211,7 +220,7 @@ export async function createTestGroup(overrides: GroupOverrides = {}) {
     startTime = "14:00",
     durationMinutes = 80,
     level = "BEGINNER",
-    maxStudents = type === "GROUP" ? 6 : 1,
+    maxStudents = type === "GROUP" ? 12 : 1,
     startDate: startDateStr = "2026-04-01",
     zoomJoinUrl = null,
     zoomMeetingId = null,

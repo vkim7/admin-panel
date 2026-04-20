@@ -384,6 +384,7 @@ describe("C#14: teacher rate required", () => {
         firstName: "No",
         lastName: "Rate",
         phone: "+998909999999",
+        pinfl: "99999999999999",
         levels: ["BEGINNER"],
         teachingLanguage: "ANY",
       },
@@ -394,9 +395,7 @@ describe("C#14: teacher rate required", () => {
       teacherId: teacher.id,
       days: [1, 3, 5],
       startTime: "14:30",
-      durationMinutes: 80,
       level: "BEGINNER",
-      maxStudents: 6,
       startDate: "2026-04-01",
     });
 
@@ -417,32 +416,11 @@ describe("C#12/C#12a: group schema validation", () => {
       teacherId: teacher.id,
       days: [1, 2, 3],
       startTime: "14:30",
-      durationMinutes: 80,
       level: "BEGINNER",
-      maxStudents: 6,
       startDate: "2026-04-01",
     });
 
     expect(result).toHaveProperty("error");
     expect(result.error).toMatch(/days|mon.*wed.*fri|tue.*thu.*sat/i);
-  });
-
-  it("C#12a: rejects invalid duration 90", async () => {
-    const { createGroup } = await importGroups();
-    const teacher = await createTestTeacher();
-
-    const result = await createGroup({
-      type: "GROUP",
-      teacherId: teacher.id,
-      days: [1, 3, 5],
-      startTime: "14:30",
-      durationMinutes: 90,
-      level: "BEGINNER",
-      maxStudents: 6,
-      startDate: "2026-04-01",
-    });
-
-    expect(result).toHaveProperty("error");
-    expect(result.error).toMatch(/duration|60|80/i);
   });
 });

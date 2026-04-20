@@ -34,8 +34,6 @@ export default async function EditGroupPage({
           days: group.days,
           startTime: group.startTime,
           level: group.level as any,
-          durationMinutes: group.durationMinutes,
-          maxStudents: group.maxStudents,
           startDate: group.startDate.toISOString().split("T")[0]!,
         }}
       />
