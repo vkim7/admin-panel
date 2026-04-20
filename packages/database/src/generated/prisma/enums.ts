@@ -221,7 +221,6 @@ export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
 
 export const LessonPreference = {
   GROUP: 'GROUP',
-  PAIR: 'PAIR',
   INDIVIDUAL: 'INDIVIDUAL'
 } as const
 
@@ -230,8 +229,7 @@ export type LessonPreference = (typeof LessonPreference)[keyof typeof LessonPref
 
 export const SelfAssessedLevel = {
   COMPLETE_BEGINNER: 'COMPLETE_BEGINNER',
-  KNOW_A_LITTLE: 'KNOW_A_LITTLE',
-  CAN_HOLD_CONVERSATION: 'CAN_HOLD_CONVERSATION'
+  CONTINUING: 'CONTINUING'
 } as const
 
 export type SelfAssessedLevel = (typeof SelfAssessedLevel)[keyof typeof SelfAssessedLevel]

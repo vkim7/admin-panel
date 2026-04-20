@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { MessageCircle, Phone } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import { submitLead } from "@/app/[lang]/actions";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,45 @@ interface CtaFormProps {
   locale: string;
 }
 
+function PillGroup({
+  name,
+  options,
+  value,
+  onChange,
+}: {
+  name: string;
+  options: Record<string, string>;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {Object.entries(options).map(([k, label]) => (
+        <label key={k} className="cursor-pointer">
+          <input
+            type="radio"
+            name={name}
+            value={k}
+            checked={value === k}
+            onChange={() => onChange(k)}
+            className="sr-only"
+          />
+          <div
+            className={cn(
+              "px-4 py-2 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap",
+              value === k
+                ? "bg-main text-foreground border-border shadow-[2px_2px_0_var(--border)]"
+                : "bg-secondary-background text-foreground/70 border-border hover:bg-background",
+            )}
+          >
+            {label}
+          </div>
+        </label>
+      ))}
+    </div>
+  );
+}
+
 export function CtaForm({ dict, locale }: CtaFormProps) {
   const [lessonPreference, setLessonPreference] = useState("");
   const [selfAssessedLevel, setSelfAssessedLevel] = useState("");
@@ -21,7 +61,6 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
       formData.set("language", locale);
-      // Prepend +998 to the phone number
       const phone = formData.get("phone");
       if (typeof phone === "string") {
         formData.set("phone", `+998${phone.replace(/\s/g, "")}`);
@@ -33,22 +72,10 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
 
   if (state?.success) {
     return (
-      <section id="cta" className="py-16 md:py-24 bg-foreground border-t-2 border-border relative overflow-hidden">
-        <div
-          className="absolute -top-1/2 -left-[20%] w-[140%] h-[200%] pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at 50% 100%, rgba(255,227,71,0.12) 0%, transparent 60%)",
-          }}
-        />
-        <div className="max-w-[1080px] mx-auto px-6 relative z-10 text-center">
-          <img
-            src="/logo_cropped_yellow.svg"
-            alt="Banana School"
-            className="w-[120px] mx-auto mb-8 opacity-90"
-          />
+      <section id="cta" className="py-16 md:py-24 bg-background border-t-2 border-border relative overflow-hidden">
+        <div className="max-w-[1080px] mx-auto px-6 flex items-center justify-center min-h-[400px]">
           <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 max-w-md mx-auto">
-            <p className="text-leaf-green font-bold text-lg">{dict.success}</p>
+            <p className="text-leaf-green font-bold text-lg text-center">{dict.success}</p>
           </div>
         </div>
       </section>
@@ -56,161 +83,134 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
   }
 
   return (
-    <section id="cta" className="py-16 md:py-24 bg-foreground border-t-2 border-border relative overflow-hidden">
-      {/* Radial gradient overlay */}
-      <div
-        className="absolute -top-1/2 -left-[20%] w-[140%] h-[200%] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse at 50% 100%, rgba(255,227,71,0.12) 0%, transparent 60%)",
-        }}
-      />
+    <section id="cta" className="py-16 md:py-24 bg-background border-t-2 border-border relative overflow-hidden">
+      <div className="max-w-[1080px] mx-auto px-6">
+        <div className="grid md:grid-cols-[1fr_1.2fr] gap-10 md:gap-16 items-start">
+          {/* Left — heading + description + contact */}
+          <div className="md:sticky md:top-32">
+            <div className="inline-flex font-bold text-[13px] bg-main border-2 border-border rounded-full px-4 py-1.5 shadow-[2px_2px_0_var(--border)] mb-5 text-foreground">
+              {dict.tag}
+            </div>
+            <h2 className="font-heading font-black text-[clamp(28px,4vw,44px)] text-foreground tracking-[-1.5px] leading-[1.1] mb-4">
+              {dict.heading}
+            </h2>
+            <p className="text-foreground/50 text-[17px] leading-relaxed">
+              {dict.description}
+            </p>
 
-      <div className="max-w-[1080px] mx-auto px-6 relative z-10">
-        <div className="text-center mb-10">
-          <img
-            src="/logo_cropped_yellow.svg"
-            alt="Banana School"
-            className="w-[120px] mx-auto mb-8 opacity-90"
-          />
-          <h2 className="font-heading font-black text-[clamp(32px,5vw,52px)] text-white tracking-[-1.5px] leading-[1.1] mb-4">
-            {dict.heading}
-          </h2>
-          <p className="text-[#999] text-[17px] max-w-[440px] mx-auto">
-            {dict.description}
-          </p>
-        </div>
+            {/* OR divider + contacts */}
+            <div className="flex items-center gap-4 mt-8 mb-6">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-sm font-bold text-foreground/30 uppercase">{dict.or}</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
 
-        <form
-          action={formAction}
-          className="max-w-md mx-auto space-y-5"
-        >
-          {/* First name */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.firstName}</Label>
-            <Input
-              name="firstName"
-              placeholder={dict.firstNamePlaceholder}
-              required
-            />
+            <div className="space-y-3">
+              <a
+                href="https://t.me/bananaschool_uz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-sky-blue-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <MessageCircle size={18} strokeWidth={2.5} />
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">Telegram</span>
+              </a>
+              <a
+                href="tel:+998979798808"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-leaf-green-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <Phone size={18} strokeWidth={2.5} />
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">+998 97 979 88 08</span>
+              </a>
+              <a
+                href="https://www.instagram.com/bananaschool.uz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-purple-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" /></svg>
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">@bananaschool.uz</span>
+              </a>
+            </div>
           </div>
 
-          {/* Last name */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.lastName}</Label>
-            <Input
-              name="lastName"
-              placeholder={dict.lastNamePlaceholder}
-              required
-            />
-          </div>
-
-          {/* Phone */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.phone}</Label>
-            <div className="flex">
-              <div className="flex items-center px-3 bg-secondary-background border-2 border-r-0 border-border rounded-l-base text-sm font-bold text-foreground">
-                +998
+          {/* Right — white card form */}
+          <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8">
+            <form action={formAction} className="space-y-4">
+              {/* Name row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-bold text-foreground">{dict.firstName}</Label>
+                  <Input name="firstName" required />
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-sm font-bold text-foreground">{dict.lastName}</Label>
+                  <Input name="lastName" required />
+                </div>
               </div>
-              <Input
-                name="phone"
-                type="tel"
-                placeholder="90 123 45 67"
-                required
-                className="rounded-l-none"
-              />
-            </div>
-          </div>
 
-          {/* Date of birth */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.dateOfBirth}</Label>
-            <Input name="dateOfBirth" type="date" />
-          </div>
-
-          {/* Lesson preference - chunky toggle buttons */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.lessonPreference}</Label>
-            <div className="grid grid-cols-1 gap-2">
-              {Object.entries(dict.lessonPreferenceOptions).map(([value, label]) => (
-                <label key={value} className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="lessonPreference"
-                    value={value}
-                    checked={lessonPreference === value}
-                    onChange={() => setLessonPreference(value)}
-                    className="sr-only"
-                  />
-                  <div
-                    className={cn(
-                      "px-4 py-3 text-sm font-bold text-center border-2 border-border rounded-base transition-all",
-                      lessonPreference === value
-                        ? "bg-main text-foreground shadow-[2px_2px_0_var(--border)]"
-                        : "bg-secondary-background text-foreground/70 hover:bg-background",
-                    )}
-                  >
-                    {label}
+              {/* Phone */}
+              <div className="space-y-1.5">
+                <Label className="text-sm font-bold text-foreground">{dict.phone}</Label>
+                <div className="flex">
+                  <div className="flex items-center px-3 bg-foreground border-2 border-border rounded-l-base text-sm font-bold text-white">
+                    +998
                   </div>
-                </label>
-              ))}
-            </div>
+                  <Input name="phone" type="tel" required className="rounded-l-none" />
+                </div>
+              </div>
+
+              {/* Lesson format pills */}
+              <div className="space-y-3">
+                <Label className="text-sm font-bold text-foreground">{dict.lessonPreference}</Label>
+                <PillGroup
+                  name="lessonPreference"
+                  options={dict.lessonPreferenceOptions}
+                  value={lessonPreference}
+                  onChange={setLessonPreference}
+                />
+              </div>
+
+              {/* Level pills */}
+              <div className="space-y-3">
+                <Label className="text-sm font-bold text-foreground">{dict.selfAssessedLevel}</Label>
+                <PillGroup
+                  name="selfAssessedLevel"
+                  options={dict.selfAssessedLevelOptions}
+                  value={selfAssessedLevel}
+                  onChange={setSelfAssessedLevel}
+                />
+              </div>
+
+              {/* Note */}
+              <div className="space-y-1.5">
+                <Label className="text-sm font-bold text-foreground">{dict.note}</Label>
+                <Textarea name="note" rows={2} />
+              </div>
+
+              {/* Error */}
+              {state?.error && (
+                <p className="text-vermilion text-sm font-semibold">{dict.error}</p>
+              )}
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                size="lg"
+                disabled={isPending}
+                className="w-full rounded-full text-base border-main mt-2"
+              >
+                {isPending ? "..." : dict.submit}
+              </Button>
+            </form>
           </div>
-
-          {/* Self-assessed level - chunky toggle buttons */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.selfAssessedLevel}</Label>
-            <div className="grid grid-cols-1 gap-2">
-              {Object.entries(dict.selfAssessedLevelOptions).map(([value, label]) => (
-                <label key={value} className="cursor-pointer">
-                  <input
-                    type="radio"
-                    name="selfAssessedLevel"
-                    value={value}
-                    checked={selfAssessedLevel === value}
-                    onChange={() => setSelfAssessedLevel(value)}
-                    className="sr-only"
-                  />
-                  <div
-                    className={cn(
-                      "px-4 py-3 text-sm font-bold text-center border-2 border-border rounded-base transition-all",
-                      selfAssessedLevel === value
-                        ? "bg-main text-foreground shadow-[2px_2px_0_var(--border)]"
-                        : "bg-secondary-background text-foreground/70 hover:bg-background",
-                    )}
-                  >
-                    {label}
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Note */}
-          <div className="space-y-2">
-            <Label className="text-white">{dict.note}</Label>
-            <Textarea
-              name="note"
-              placeholder={dict.notePlaceholder}
-              rows={3}
-            />
-          </div>
-
-          {/* Error message */}
-          {state?.error && (
-            <p className="text-vermilion text-sm font-semibold">{dict.error}</p>
-          )}
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            size="lg"
-            disabled={isPending}
-            className="w-full rounded-full text-base border-main"
-          >
-            {isPending ? "..." : dict.submit}
-          </Button>
-        </form>
+        </div>
       </div>
     </section>
   );

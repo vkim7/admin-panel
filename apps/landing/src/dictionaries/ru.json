@@ -113,8 +113,10 @@
     ]
   },
   "form": {
+    "tag": "Записаться",
     "heading": "Запишитесь на бесплатный урок",
     "description": "Оставьте свои данные — мы с вами свяжемся.",
+    "or": "или",
     "firstName": "Имя",
     "firstNamePlaceholder": "Ваше имя",
     "lastName": "Фамилия",
@@ -122,17 +124,15 @@
     "phone": "Номер телефона",
     "phonePlaceholder": "+998 90 123 45 67",
     "dateOfBirth": "Дата рождения",
-    "lessonPreference": "Формат уроков",
+    "lessonPreference": "Формат",
     "lessonPreferenceOptions": {
-      "GROUP": "Группа (до 6 человек)",
-      "PAIR": "Парные (2 человека)",
+      "GROUP": "Группа",
       "INDIVIDUAL": "Индивидуально"
     },
-    "selfAssessedLevel": "Ваш уровень английского",
+    "selfAssessedLevel": "Ваш уровень",
     "selfAssessedLevelOptions": {
       "COMPLETE_BEGINNER": "Совсем не знаю",
-      "KNOW_A_LITTLE": "Знаю немного",
-      "CAN_HOLD_CONVERSATION": "Могу поддержать разговор"
+      "CONTINUING": "Продолжаю обучение"
     },
     "note": "Комментарий",
     "notePlaceholder": "Дополнительная информация (необязательно)",

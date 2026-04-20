@@ -113,8 +113,10 @@
     ]
   },
   "form": {
+    "tag": "Ro'yxatdan o'tish",
     "heading": "Bepul sinov darsiga yoziling",
     "description": "Ma'lumotlaringizni qoldiring — biz siz bilan bog'lanamiz.",
+    "or": "yoki",
     "firstName": "Ism",
     "firstNamePlaceholder": "Ismingiz",
     "lastName": "Familiya",
@@ -122,17 +124,15 @@
     "phone": "Telefon raqam",
     "phonePlaceholder": "+998 90 123 45 67",
     "dateOfBirth": "Tug'ilgan sana",
-    "lessonPreference": "Dars turi",
+    "lessonPreference": "Format",
     "lessonPreferenceOptions": {
-      "GROUP": "Guruh (6 kishigacha)",
-      "PAIR": "Juftlik (2 kishi)",
+      "GROUP": "Guruh",
       "INDIVIDUAL": "Individual"
     },
-    "selfAssessedLevel": "Ingliz tili darajangiz",
+    "selfAssessedLevel": "Darajangiz",
     "selfAssessedLevelOptions": {
       "COMPLETE_BEGINNER": "Umuman bilmayman",
-      "KNOW_A_LITTLE": "Ozroq bilaman",
-      "CAN_HOLD_CONVERSATION": "Gaplasha olaman"
+      "CONTINUING": "O'qishni davom ettirmoqdaman"
     },
     "note": "Izoh",
     "notePlaceholder": "Qo'shimcha ma'lumot (ixtiyoriy)",

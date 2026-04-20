@@ -17,13 +17,11 @@ const leadSchema = z.object({
   ),
   lessonPreference: z.preprocess(
     (val) => (val === "" || val === null || val === undefined ? null : val),
-    z.enum(["GROUP", "PAIR", "INDIVIDUAL"]).nullable(),
+    z.enum(["GROUP", "INDIVIDUAL"]).nullable(),
   ),
   selfAssessedLevel: z.preprocess(
     (val) => (val === "" || val === null || val === undefined ? null : val),
-    z
-      .enum(["COMPLETE_BEGINNER", "KNOW_A_LITTLE", "CAN_HOLD_CONVERSATION"])
-      .nullable(),
+    z.enum(["COMPLETE_BEGINNER", "CONTINUING"]).nullable(),
   ),
   note: z.preprocess(
     (val) => (typeof val === "string" && val.trim() === "" ? null : val),
