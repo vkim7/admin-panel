@@ -55,8 +55,8 @@ function PillGroup({
 }
 
 export function CtaForm({ dict, locale }: CtaFormProps) {
-  const [lessonPreference, setLessonPreference] = useState("");
-  const [selfAssessedLevel, setSelfAssessedLevel] = useState("");
+  const [lessonPreference, setLessonPreference] = useState("GROUP");
+  const [selfAssessedLevel, setSelfAssessedLevel] = useState("COMPLETE_BEGINNER");
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
@@ -91,10 +91,11 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
             <div className="inline-flex font-bold text-[13px] bg-main border-2 border-border rounded-full px-4 py-1.5 shadow-[2px_2px_0_var(--border)] mb-5 text-foreground">
               {dict.tag}
             </div>
-            <h2 className="font-heading font-black text-[clamp(28px,4vw,44px)] text-foreground tracking-[-1.5px] leading-[1.1] mb-4">
+            <h2 className="font-heading font-black text-[clamp(28px,4vw,44px)] text-foreground tracking-[-1.5px] leading-[1.1] mb-6">
               {dict.heading}
             </h2>
-            <p className="text-foreground/50 text-[17px] leading-relaxed">
+
+            <p className="text-foreground/50 text-[15px] leading-relaxed">
               {dict.description}
             </p>
 

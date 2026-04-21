@@ -51,7 +51,7 @@ export function Faq({ dict }: FaqProps) {
                   </span>
                 </button>
                 {isOpen && (
-                  <div className="px-6 pb-5 text-[15px] text-foreground/60 leading-relaxed">
+                  <div className="px-6 pb-5 text-[15px] text-foreground/60 leading-relaxed text-left">
                     {item.answer}
                   </div>
                 )}

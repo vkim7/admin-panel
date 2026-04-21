@@ -19,14 +19,6 @@ export function Nav({ dict, locale }: NavProps) {
         <ul className="flex items-center gap-1">
           <li className="hidden md:block">
             <Link
-              href={`/${locale}#features`}
-              className="px-4 py-2 text-[15px] font-semibold text-foreground rounded-base transition-colors hover:bg-background"
-            >
-              {dict.whyUs}
-            </Link>
-          </li>
-          <li className="hidden md:block">
-            <Link
               href={`/${locale}#pricing`}
               className="px-4 py-2 text-[15px] font-semibold text-foreground rounded-base transition-colors hover:bg-background"
             >
@@ -40,6 +32,16 @@ export function Nav({ dict, locale }: NavProps) {
             >
               {dict.faq}
             </Link>
+          </li>
+          <li className="hidden md:block">
+            <a
+              href="/public_offer.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 text-[15px] font-semibold text-foreground rounded-base transition-colors hover:bg-background"
+            >
+              {dict.offer}
+            </a>
           </li>
           <li className="mr-2">
             <LanguageSwitcher currentLocale={locale} />

@@ -1,90 +1,79 @@
 {
   "meta": {
-    "title": "Banana School — Online English for Teens",
-    "description": "Banana School — 6 kishilik kichik guruhlarda online ingliz tili darslari. 13–18 yoshlilar uchun. IELTS 7.0+ o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
+    "title": "Banana School — Online ingliz tili darslari",
+    "description": "Banana School — kichik guruhlarda online ingliz tili darslari. 13+ yoshlilar uchun. Professional o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
   },
   "nav": {
     "whyUs": "Nega biz",
     "pricing": "Narx",
     "faq": "FAQ",
+    "offer": "Ommaviy oferta",
     "cta": "Boshlash"
   },
   "hero": {
-    "pill": "Online ingliz tili darslari",
-    "headline": "Ingliz tilini atiga 6 kishilik guruhda o'rgan.",
-    "highlightedWord": "6 kishilik",
-    "subheadline": "13–18 yoshlilar uchun live online darslar. Kichik guruhlar, haqiqiy o'qituvchilar, real natijalar.",
-    "ctaPrimary": "Bepul sinov darsi",
-    "ctaSecondary": "Narxlarni ko'rish",
-    "followUs": "Bizni kuzating"
-  },
-  "stats": {
-    "maxGroup": "Max guruhda",
-    "lessonsMonth": "Dars / oy",
-    "minLesson": "Daqiqa / dars",
-    "ieltsTeachers": "IELTS teachers"
-  },
-  "features": {
-    "tag": "Nega biz?",
-    "heading": "Katta guruhda kutib o'tirish yo'q",
-    "description": "Ko'p joylarda 16 kishi bir guruhda. Bizda 6. Har bir o'quvchi gapiradi, har biri o'rganadi.",
+    "pill": "Biz kimmiz",
+    "headline": "Ingliz tili — onlayn, tirbandliksiz.",
+    "highlightedWord": "onlayn",
     "items": [
-      {
-        "icon": "Users",
-        "title": "6 kishilik guruhlar",
-        "description": "2.7x ko'proq e'tibor har bir o'quvchiga. Darsda jim o'tirish yo'q."
-      },
-      {
-        "icon": "GraduationCap",
-        "title": "Haqiqiy o'qituvchilar",
-        "description": "IELTS 7.0+ sertifikatlangan. Self-study emas — real darslar, real feedback."
-      },
-      {
-        "icon": "Monitor",
-        "title": "100% online",
-        "description": "Zoom orqali live darslar. O'zbekistonning istalgan joyidan."
-      },
-      {
-        "icon": "Smartphone",
-        "title": "O'z ilovamiz",
-        "description": "Uy vazifalarini ilovada bajaring. Progressingizni kuzating."
-      }
+      "O'zbekistonning istalgan joyidan",
+      "Live darslar, haqiqiy o'qituvchi",
+      "Telefon yoki noutbukdan"
     ]
   },
-  "howItWorks": {
-    "tag": "Qanday ishlaydi",
-    "heading": "Boshlash juda oson",
-    "description": "Uch qadam — va siz allaqachon o'rganayapsiz.",
-    "steps": [
+  "comparison": {
+    "tag": "Taqqoslash",
+    "heading": "Biz va boshqalar",
+    "description": "",
+    "competitors": [
       {
-        "title": "Ro'yxatdan o'ting",
-        "description": "Bepul sinov darsiga yoziling. Darajangizni aniqlaymiz."
+        "name": "Boshqa maktablar",
+        "rows": [
+          { "label": "Narxi", "value": "800k – 1 mln" },
+          { "label": "Guruh", "value": "15–20" },
+          { "label": "Yo'l", "value": "30–60 daq" }
+        ]
       },
       {
-        "title": "Guruhingizni toping",
-        "description": "Sizning darajangizga mos 6 kishilik guruhga qo'shilamiz."
-      },
-      {
-        "title": "O'rganishni boshlang",
-        "description": "Zoom orqali live darslar, uy vazifalari ilovada, natijalar tez."
+        "name": "Banana School",
+        "featured": true,
+        "badge": "🔥",
+        "rows": [
+          { "label": "Narxi", "value": "570k", "highlight": true },
+          { "label": "Guruh", "value": "8–12", "highlight": true },
+          { "label": "Yo'l", "value": "0 daq", "highlight": true }
+        ]
       }
     ]
   },
   "pricing": {
     "tag": "Narx",
-    "heading": "Bitta tarif. Hamma narsa ichida.",
-    "description": "Oddiy va tushunarli. Yashirin to'lovlar yo'q.",
-    "price": "960,000",
-    "period": "UZS / oyiga",
-    "features": [
-      "12 ta live dars / oy",
-      "Guruhda max 6 o'quvchi",
-      "Har bir dars 80 daqiqa",
-      "IELTS 7.0+ o'qituvchilar",
-      "Uy vazifalar ilovasi",
-      "Barcha darajalar: beginner → advanced"
-    ],
-    "cta": "Bepul sinov darsi"
+    "heading": "Yashirin to'lovlar yo'q.",
+    "description": "",
+    "cta": "Bepul sinov darsi",
+    "group": {
+      "title": "Guruh darslari",
+      "price": "570,000",
+      "period": "UZS / oyiga",
+      "features": [
+        "Oyiga 12 ta dars",
+        "Professional o'qituvchilar",
+        "Live Zoom darslar, 80 daqiqa",
+        "O'quvchilar ilovasi (tez kunda)",
+        "Bepul sinov darsi"
+      ]
+    },
+    "individual": {
+      "title": "Individual darslar",
+      "price": "2,400,000",
+      "period": "UZS / oyiga",
+      "features": [
+        "Oyiga 12 ta dars",
+        "Faqat siz va o'qituvchi",
+        "Maqsadlaringizga mos dastur",
+        "Faqat senga e'tibor",
+        "Sinov darsi — 50% chegirma"
+      ]
+    }
   },
   "faq": {
     "tag": "FAQ",
@@ -92,29 +81,25 @@
     "items": [
       {
         "question": "Darslar qaysi kunlari bo'ladi?",
-        "answer": "Haftada 3 marta, har bir dars 80 daqiqa. Aniq jadval guruhga qarab belgilanadi."
+        "answer": "Dsh/chr/jm yoki se/pay/sh — haftada 3 marta, har bir dars 80 daqiqa."
       },
       {
         "question": "Beginner bo'lsam ham kelsa bo'ladimi?",
         "answer": "Albatta! Biz barcha darajadagi o'quvchilarni qabul qilamiz — beginner'dan advanced'gacha."
       },
       {
-        "question": "IELTS tayyorgarlik ham bormi?",
-        "answer": "Ha! General English, conversational English va IELTS/TOEFL prep — hammasini o'qitamiz."
-      },
-      {
         "question": "Sinov darsi bepulmi?",
-        "answer": "Ha, birinchi sinov darsi butunlay bepul. Shunchaki ro'yxatdan o'ting."
+        "answer": "Guruh darsi — bepul. Individual dars — 50% chegirma. Shunchaki ro'yxatdan o'ting."
       },
       {
         "question": "Nima kerak darsga kirish uchun?",
-        "answer": "Kompyuter yoki planshet, internet va Zoom. Hammasi shu!"
+        "answer": "Telefon yoki kompyuter va internet. Hammasi shu!"
       }
     ]
   },
   "form": {
     "tag": "Ro'yxatdan o'tish",
-    "heading": "Bepul sinov darsiga yoziling",
+    "heading": "Bepul sinov darsi",
     "description": "Ma'lumotlaringizni qoldiring — biz siz bilan bog'lanamiz.",
     "or": "yoki",
     "firstName": "Ism",
@@ -139,6 +124,59 @@
     "submit": "Yuborish",
     "success": "Arizangiz qabul qilindi! Tez orada bog'lanamiz.",
     "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
+  },
+  "testimonials": {
+    "tag": "Sharhlar *",
+    "heading": "Kelajakdagi o'quvchilarimiz nima deydi",
+    "highlightedWord": "Kelajakdagi",
+    "items": [
+      {
+        "name": "Kamila Sh.",
+        "detail": "16 yosh, 1 yil Banana'da",
+        "quote": "Dugonám sinov darsiga olib keldi. Endi men hammani olib kelyapman."
+      },
+      {
+        "name": "Sherzod R.",
+        "detail": "17 yosh, IELTS ga tayyorlanmoqda",
+        "quote": "Banana'dan oldin oddiy o'quv markazga bordim — 20 kishi, o'qituvchi ismimni bilmasdi. Bu yerda birinchi darsda eslab qolishdi."
+      },
+      {
+        "name": "Saida X.",
+        "detail": "O'quvchi onasi, 13 yosh",
+        "quote": "Bu narxga — kichik guruh, yaxshi o'qituvchilar, va qizim o'zi o'qishni xohlaydi. Yana nima kerak?"
+      },
+      {
+        "name": "Dilshod N.",
+        "detail": "Ikki o'quvchining otasi",
+        "quote": "Ikkala bolam o'qiyapti, ikkalasi ham mamnun. Ikkinchi bolaga chegirma ham bor."
+      },
+      {
+        "name": "Amir T.",
+        "detail": "14 yosh, 6 oy o'qigan",
+        "quote": "Banana School'da do'stlar bilan o'rganish juda qiziq — endi inglizcha meme'larni ham tushunaman."
+      },
+      {
+        "name": "Aziza V.",
+        "detail": "13 yosh, noldan → A2",
+        "quote": "Alifbodan boshladim. Jiddiy. 4 oyda o'qituvchi bilan darsda gaplashyapdim."
+      }
+    ]
+  },
+  "stats": {
+    "maxGroup": "o'quvchi guruhda",
+    "minLesson": "daqiqa live darslar",
+    "perWeek": "marta haftada",
+    "curriculum": "University Press"
+  },
+  "audience": {
+    "tag": "Kim uchun?",
+    "heading": "Bu sen uchun, agar...",
+    "highlightedWord": "sen uchun",
+    "items": [
+      { "badge": "13+", "text": "Sening yoshing 13 yoki undan katta" },
+      { "badge": "A1", "text": "Hozircha faqat 'hello' va 'thank you'" },
+      { "badge": "C1", "text": "Allaqachon Netflix'ni subtitrsiz ko'rasan" }
+    ]
   },
   "footer": {
     "copyright": "\u00a9 2026 Banana School. Tashkent, Uzbekistan."

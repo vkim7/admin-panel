@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { Check } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
-import { Button } from "@/components/ui/button";
 
 interface PricingProps {
   dict: Dictionary["pricing"];
@@ -9,8 +7,10 @@ interface PricingProps {
 }
 
 export function Pricing({ dict, locale }: PricingProps) {
+  const plans = [dict.group, dict.individual];
+
   return (
-    <section id="pricing" className="py-16 md:py-24 bg-white border-t-2 border-border">
+    <section id="pricing" className="py-16 md:py-24 bg-background border-t-2 border-border">
       <div className="max-w-[1080px] mx-auto px-6">
         <div className="text-center">
           <div className="inline-flex font-bold text-[13px] bg-main border-2 border-border rounded-full px-4 py-1.5 shadow-[2px_2px_0_var(--border)] mb-5 text-foreground">
@@ -26,37 +26,40 @@ export function Pricing({ dict, locale }: PricingProps) {
           </p>
         </div>
 
-        {/* Pricing card */}
-        <div className="max-w-[480px] mx-auto bg-white border-2 border-border rounded-xl shadow-[6px_6px_0_var(--border)] overflow-hidden">
-          {/* Yellow header */}
-          <div className="bg-main border-b-2 border-border px-9 py-10 text-center">
-            <div className="font-heading font-black text-5xl leading-none mb-1">
-              {dict.price}
-            </div>
-            <div className="text-[15px] font-semibold text-foreground/60">
-              {dict.period}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[860px] mx-auto">
+          {plans.map((plan) => (
+            <div key={plan.title} className="bg-white border-2 border-border rounded-xl shadow-[6px_6px_0_var(--border)] overflow-hidden flex flex-col">
+              {/* Yellow header */}
+              <div className="bg-main border-b-2 border-border px-8 py-8 text-center">
+                <div className="font-heading font-bold text-lg mb-3">
+                  {plan.title}
+                </div>
+                <div className="font-heading font-black text-4xl leading-none mb-1">
+                  {plan.price}
+                </div>
+                <div className="text-[14px] font-semibold text-foreground/60">
+                  {plan.period}
+                </div>
+              </div>
 
-          {/* Body with checklist */}
-          <div className="px-9 py-8">
-            <ul className="mb-8">
-              {dict.features.map((feature) => (
-                <li
-                  key={feature}
-                  className="flex items-center gap-3 py-3 border-b border-border/20 last:border-b-0 text-[15px] font-semibold"
-                >
-                  <span className="w-[22px] h-[22px] bg-main border-2 border-border rounded-full flex items-center justify-center shrink-0">
-                    <Check size={12} strokeWidth={3} />
-                  </span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-            <Button asChild size="lg" className="w-full rounded-full text-base">
-              <Link href={`/${locale}#cta`}>{dict.cta}</Link>
-            </Button>
-          </div>
+              {/* Body with checklist */}
+              <div className="px-8 py-7 flex flex-col flex-1">
+                <ul className="flex-1">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-center gap-3 py-3 border-b border-border/20 last:border-b-0 text-[15px] font-semibold"
+                    >
+                      <span className="w-[22px] h-[22px] bg-leaf-green border-2 border-border rounded-full flex items-center justify-center shrink-0">
+                        <Check size={12} strokeWidth={3} className="text-white" />
+                      </span>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

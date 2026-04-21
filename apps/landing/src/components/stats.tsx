@@ -5,10 +5,10 @@ interface StatsProps {
 }
 
 const stats = [
-  { value: "6", key: "maxGroup" as const },
-  { value: "12", key: "lessonsMonth" as const },
+  { value: "8–12", key: "maxGroup" as const },
   { value: "80", key: "minLesson" as const },
-  { value: "7.0+", key: "ieltsTeachers" as const },
+  { value: "3×", key: "perWeek" as const },
+  { value: "Oxford", key: "curriculum" as const },
 ];
 
 export function Stats({ dict }: StatsProps) {

@@ -3,9 +3,10 @@ import { cn } from "@/lib/utils";
 
 interface LanguageSwitcherProps {
   currentLocale: string;
+  pathSuffix?: string;
 }
 
-export function LanguageSwitcher({ currentLocale }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ currentLocale, pathSuffix = "" }: LanguageSwitcherProps) {
   const languages = [
     { code: "uz", label: "UZ" },
     { code: "ru", label: "RU" },
@@ -16,7 +17,7 @@ export function LanguageSwitcher({ currentLocale }: LanguageSwitcherProps) {
       {languages.map((lang) => (
         <Link
           key={lang.code}
-          href={`/${lang.code}`}
+          href={`/${lang.code}${pathSuffix}`}
           className={cn(
             "px-3 py-1.5 text-xs font-bold transition-all",
             currentLocale === lang.code

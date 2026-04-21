@@ -12,6 +12,13 @@ const iconMap = {
   Smartphone,
 } as const;
 
+const cardColors = [
+  { icon: "bg-main" },
+  { icon: "bg-vermilion" },
+  { icon: "bg-sky-blue" },
+  { icon: "bg-leaf-green" },
+] as const;
+
 export function Features({ dict }: FeaturesProps) {
   return (
     <section id="features" className="py-16 md:py-24 bg-white">
@@ -29,15 +36,16 @@ export function Features({ dict }: FeaturesProps) {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {dict.items.map((item) => {
+          {dict.items.map((item, i) => {
             const Icon = iconMap[item.icon as keyof typeof iconMap];
+            const color = cardColors[i % cardColors.length]!;
             return (
               <div
                 key={item.title}
                 className="bg-white border-2 border-border rounded-xl p-8 shadow-shadow transition-all hover:shadow-[6px_6px_0_var(--border)] hover:translate-x-[-2px] hover:translate-y-[-2px]"
               >
-                <div className="w-12 h-12 bg-main border-2 border-border rounded-base flex items-center justify-center mb-5 shadow-[2px_2px_0_var(--border)]">
-                  {Icon ? <Icon size={22} strokeWidth={2.5} /> : null}
+                <div className={`w-12 h-12 ${color.icon} border-2 border-border rounded-base flex items-center justify-center mb-5 shadow-[2px_2px_0_var(--border)]`}>
+                  {Icon ? <Icon size={22} strokeWidth={2.5} className={i > 0 ? "text-white" : ""} /> : null}
                 </div>
                 <h3 className="font-heading font-bold text-[19px] mb-2 tracking-[-0.3px]">
                   {item.title}

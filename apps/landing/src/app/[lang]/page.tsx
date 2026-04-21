@@ -2,9 +2,9 @@ import { getDictionary, isValidLocale } from "@/lib/i18n";
 import { Nav } from "@/components/nav";
 import { Hero } from "@/components/hero";
 import { Stats } from "@/components/stats";
-import { Features } from "@/components/features";
-import { HowItWorks } from "@/components/how-it-works";
+import { Comparison } from "@/components/comparison";
 import { Pricing } from "@/components/pricing";
+import { Testimonials } from "@/components/testimonials";
 import { Faq } from "@/components/faq";
 import { CtaForm } from "@/components/cta-form";
 import { Footer } from "@/components/footer";
@@ -24,13 +24,13 @@ export default async function LandingPage({
       <main>
         <Hero dict={dict.hero} locale={locale} />
         <Stats dict={dict.stats} />
-        <Features dict={dict.features} />
-        <HowItWorks dict={dict.howItWorks} />
+        <Comparison dict={dict.comparison} />
         <Pricing dict={dict.pricing} locale={locale} />
+        <Testimonials dict={dict.testimonials} />
         <Faq dict={dict.faq} />
         <CtaForm dict={dict.form} locale={locale} />
       </main>
-      <Footer dict={dict.footer} locale={locale} />
+      <Footer />
     </>
   );
 }
