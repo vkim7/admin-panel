@@ -5,7 +5,7 @@
   },
   "nav": {
     "whyUs": "Nega biz",
-    "pricing": "Narx",
+    "pricing": "Narxlari",
     "faq": "FAQ",
     "offer": "Ommaviy oferta",
     "cta": "Boshlash"
@@ -16,7 +16,7 @@
     "highlightedWord": "onlayn",
     "items": [
       "O'zbekistonning istalgan joyidan",
-      "Live darslar, haqiqiy o'qituvchi",
+      "Jonli darslar, haqiqiy o'qituvchi",
       "Telefon yoki noutbukdan"
     ]
   },
@@ -29,8 +29,8 @@
         "name": "Boshqa maktablar",
         "rows": [
           { "label": "Narxi", "value": "800k – 1 mln" },
-          { "label": "Guruh", "value": "15–20" },
-          { "label": "Yo'l", "value": "30–60 daq" }
+          { "label": "Guruh hajmi", "value": "15–20" },
+          { "label": "Yo'lga ketadigan vaqti", "value": "30–60 daq" }
         ]
       },
       {
@@ -39,8 +39,8 @@
         "badge": "🔥",
         "rows": [
           { "label": "Narxi", "value": "570k", "highlight": true },
-          { "label": "Guruh", "value": "8–12", "highlight": true },
-          { "label": "Yo'l", "value": "0 daq", "highlight": true }
+          { "label": "Guruh hajmi", "value": "8–12", "highlight": true },
+          { "label": "Yo'lga ketadigan vaqti", "value": "0 daq", "highlight": true }
         ]
       }
     ]
@@ -85,7 +85,7 @@
       },
       {
         "question": "Beginner bo'lsam ham kelsa bo'ladimi?",
-        "answer": "Albatta! Biz barcha darajadagi o'quvchilarni qabul qilamiz — beginner'dan advanced'gacha."
+        "answer": "Albatta! Biz barcha darajadagi o'quvchilarni qabul qilamiz — beginner'dan upper-intermediate'gacha."
       },
       {
         "question": "Sinov darsi bepulmi?",
@@ -133,7 +133,7 @@
       {
         "name": "Kamila Sh.",
         "detail": "16 yosh, 1 yil Banana'da",
-        "quote": "Dugonám sinov darsiga olib keldi. Endi men hammani olib kelyapman."
+        "quote": "Dugonam sinov darsiga olib keldi. Endi men hammani olib kelyapman."
       },
       {
         "name": "Sherzod R.",
@@ -158,7 +158,7 @@
       {
         "name": "Aziza V.",
         "detail": "13 yosh, noldan → A2",
-        "quote": "Alifbodan boshladim. Jiddiy. 4 oyda o'qituvchi bilan darsda gaplashyapdim."
+        "quote": "Alifbodan boshladim. Jiddiy. 4 oyda o'qituvchi bilan darsda gaplashyapman."
       }
     ]
   },

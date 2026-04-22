@@ -1,14 +1,17 @@
+import Link from "next/link";
 import type { Dictionary } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
 
 interface HeroProps {
   dict: Dictionary["hero"];
+  cta: string;
   locale: string;
 }
 
 const emojis = ["🌍", "🎥", "📱"];
 const emojiBg = ["bg-main", "bg-leaf-green-bg", "bg-sky-blue-bg"];
 
-export function Hero({ dict }: HeroProps) {
+export function Hero({ dict, cta, locale }: HeroProps) {
   const parts = dict.headline.split(dict.highlightedWord);
   const before = parts[0] ?? "";
   const after = parts[1] ?? "";
@@ -45,6 +48,13 @@ export function Hero({ dict }: HeroProps) {
               </span>
             </div>
           ))}
+        </div>
+
+        {/* CTA — mobile only */}
+        <div className="mt-10 md:hidden">
+          <Button asChild size="lg" className="rounded-full text-base shadow-[3px_3px_0_var(--border)] hover:shadow-[5px_5px_0_var(--border)] hover:translate-x-[-2px] hover:translate-y-[-2px]">
+            <Link href={`/${locale}#cta`}>{cta}</Link>
+          </Button>
         </div>
       </div>
     </section>

@@ -22,10 +22,10 @@ export default async function LandingPage({
     <>
       <Nav dict={dict.nav} locale={locale} />
       <main>
-        <Hero dict={dict.hero} locale={locale} />
+        <Hero dict={dict.hero} cta={dict.nav.cta} locale={locale} />
         <Stats dict={dict.stats} />
-        <Comparison dict={dict.comparison} />
         <Pricing dict={dict.pricing} locale={locale} />
+        <Comparison dict={dict.comparison} />
         <Testimonials dict={dict.testimonials} />
         <Faq dict={dict.faq} />
         <CtaForm dict={dict.form} locale={locale} />
