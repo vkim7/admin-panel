@@ -70,7 +70,7 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 
 - **Documentation upkeep:** After completing a phase, update `implementation-plan.md` (mark checkboxes, add implementation notes) and `packages/database/DATA_MODEL.md` (if schema changed). Keep docs in sync with code as you go — don't defer updates.
 
-- **Database setup:** The init migration is pure Prisma-generated SQL. Custom constraints (partial unique indexes, auto-ID triggers) are tracked in migration `20260410134129_data_integrity_constraints` (and kept as a standalone `prisma/migrations/data_integrity_constraints.sql` for reference). A shadow database (`neondb_shadow` on Neon) is configured in `prisma.config.ts` for `migrate dev` — this is dev-only, not needed in production (`migrate deploy` doesn't use it).
+- **Database setup:** The init migration is pure Prisma-generated SQL. Auto-ID triggers (crmCode, publicId) are tracked in migration `20260410134129_data_integrity_constraints` (and kept as a standalone `prisma/migrations/data_integrity_constraints.sql` as a safety net for fresh DB setups via `db push`). Partial unique indexes were removed — they caused Prisma migration drift; the same constraints are enforced at the app level in server actions. Migrations auto-deploy on Vercel builds via Turbo's `db:deploy` task. Neon's Vercel integration creates isolated DB branches for preview deployments.
 
 - **Shared UI components (`src/components/ui/`):** Never modify the internals of shared UI components to achieve a feature-specific layout. These components are used across the app and changes risk visual regressions in untested places. Instead, control layout from the outside — use wrapper elements, className props, or composition. If a shared component genuinely needs a new capability, add it as an opt-in prop with a default that preserves existing behavior.
 
@@ -83,8 +83,8 @@ Online English education platform targeting Uzbekistan. Three apps + a Telegram 
 - **CRM Code**: unique student identifier (plain sequence number, e.g., "1", "42"), used across all views
 - **Day patterns**: 1,3,5 (Mon/Wed/Fri) or 2,4,6 (Tue/Thu/Sat) — all scheduling is built on this
 - **Time slots**: flexible — stored as strings (e.g., "14:00"), not a fixed enum
-- **Lesson duration**: 80 minutes default, can be 60 — stored per group
-- **Unified Group model**: both group lessons (up to 6 students) and individual lessons use the same `Group` entity with a `type` field (GROUP or INDIVIDUAL). Individual lessons are typically 1 student but could be 2 (not yet decided) — `maxStudents` handles this.
+- **Lesson duration**: 80 minutes (fixed for all group types, not user-editable)
+- **Unified Group model**: both group lessons (up to 12 students) and individual lessons use the same `Group` entity with a `type` field (GROUP or INDIVIDUAL). Individual lessons are 1 student. `maxStudents` is set automatically (12 for GROUP, 1 for INDIVIDUAL) and not user-editable.
 - **Student lifecycle**: `awaiting_assignment` → `active` → `inactive`
 - **Single student entity**: one record, multiple views (Reception, Group Details, No Payment List, Student Management) via status/filters — not separate tables
 - **Transfers**: moving a student between groups does NOT change their lifecycle status (they stay `active`). Transfers are tracked at the group membership level (join date, leave date, reason). A student's history of which groups they've been in lives in a separate membership record, not on the student entity.

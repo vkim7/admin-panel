@@ -22,7 +22,7 @@ datasource db {
 // 3. Group.maxStudents — enforce in a transaction before adding a GroupMembership.
 //    Count active memberships (leaveDate IS NULL) and reject if >= maxStudents.
 //    Over-capacity is a soft business rule, not a hard DB constraint.
-//    Default: 6 for GROUP type, 1 for INDIVIDUAL type.
+//    Fixed: 12 for GROUP type, 1 for INDIVIDUAL type. Not user-editable.
 //
 // 4. TeacherScheduleSlots are per-date — pre-created alongside Lesson records
 //    when a group is created. Not synced with Group.days (days defines the
@@ -32,8 +32,8 @@ datasource db {
 // 5. Exam duplicates — a group can have multiple exams of the same type (e.g.,
 //    rescheduled mid exam). Validate in the UI if this is intentional.
 //
-// 6. Price must be a multiple of 1,000 — validate pricePerLesson on
-//    PriceSetting (Zod: z.number().int().multipleOf(1000)). This guarantees
+// 6. Price must be a multiple of 500 — validate pricePerLesson on
+//    PriceSetting (Zod: z.number().int().multipleOf(500)). This guarantees
 //    price × discountPercent / 100 always produces a whole number, keeping the
 //    entire billing chain as pure integer math with zero rounding.
 //
@@ -80,11 +80,8 @@ datasource db {
 // 12. Group.days validation — only [1,3,5] (Mon/Wed/Fri) or [2,4,6]
 //     (Tue/Thu/Sat) are valid day patterns. Validate with Zod at the app level.
 //
-// 12a. Group.durationMinutes validation — only 60 or 80 are valid values.
-//     Validate with Zod at the app level (z.union([z.literal(60), z.literal(80)])).
-//     The schedule slot conflict detection assumes lessons fit within the
-//     90-minute grid spacing between start times (14:00/15:30/17:00/18:30/20:00).
-//     A non-standard duration would silently break overlap detection.
+// 12a. Group.durationMinutes — fixed at 80 minutes for all group types.
+//     Not user-editable; hardcoded in server actions.
 //
 // 12b. Group.days immutability — days cannot be changed after group creation.
 //     All Lessons and TeacherScheduleSlots are pre-created based on the day
@@ -660,7 +657,7 @@ model TeacherScheduleSlot {
 
 // Unified model for both group lessons (up to 6 students) and individual
 // lessons (1–2 students, not yet decided). The `type` field determines which:
-// - GROUP: standard group, maxStudents defaults to 6
+// - GROUP: standard group, maxStudents fixed at 12
 // - INDIVIDUAL: individual arrangement, maxStudents = 1 (may become 2)
 //
 // Both types share the same lifecycle: pre-created lessons, attendance
@@ -679,7 +676,7 @@ model Group {
   durationMinutes Int           @default(80)
   level           Level
   progressStage   ProgressStage @default(BEGINNING)
-  maxStudents     Int           @default(6) // 6 for groups, 1 for individual (enforced at app level)
+  maxStudents     Int           @default(12) // 12 for groups, 1 for individual (set by server action, not user-editable)
   // pricePerLesson is determined by PriceSetting (global, keyed by levelCategory + groupType).
   // Derive levelCategory from level: IELTS → IELTS, everything else → GENERAL.
   // Query the most recent PriceSetting where (levelCategory, groupType, effectiveFrom <= target date).
@@ -1479,4 +1476,44 @@ model ScheduledAction {
   @@index([studentId, status])
   @@index([membershipId, status])
   @@index([sourceGroupId, status])
+}
+
+// ─── Leads (from Landing Page) ──────────────────────────────────────────────
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  TRIAL_SCHEDULED
+  CONVERTED
+  LOST
+}
+
+enum LessonPreference {
+  GROUP
+  INDIVIDUAL
+}
+
+enum SelfAssessedLevel {
+  COMPLETE_BEGINNER
+  CONTINUING
+}
+
+model Lead {
+  id                String             @id @default(cuid())
+  firstName         String
+  lastName          String
+  phone             String
+  dateOfBirth       DateTime?
+  note              String?            // visitor's free-text note
+  language          String             // "uz" or "ru" from URL locale
+  lessonPreference  LessonPreference?  // GROUP or INDIVIDUAL
+  selfAssessedLevel SelfAssessedLevel? // visitor's self-assessed English level
+  status            LeadStatus         @default(NEW)
+  adminNote         String?            // internal note by admin after calling
+
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }

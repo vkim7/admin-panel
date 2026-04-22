@@ -3,10 +3,31 @@
   "tasks": {
     "db:deploy": {
       "cache": false,
-      "env": ["DATABASE_URL"]
+      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
+    },
+    "@eng/admin#build": {
+      "dependsOn": ["^build", "^db:deploy"],
+      "env": [
+        "DATABASE_URL",
+        "AUTH_SECRET",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET",
+        "R2_ACCOUNT_ID",
+        "R2_ACCESS_KEY_ID",
+        "R2_SECRET_ACCESS_KEY",
+        "R2_BUCKET_NAME",
+        "CRON_SECRET",
+        "ZOOM_ACCOUNT_ID",
+        "ZOOM_CLIENT_ID",
+        "ZOOM_CLIENT_SECRET",
+        "ZOOM_WEBHOOK_SECRET_TOKEN",
+        "RECORDING_WORKER_URL",
+        "RECORDING_CALLBACK_SECRET"
+      ],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "build": {
-      "dependsOn": ["^build", "^db:deploy"],
+      "dependsOn": ["^build"],
       "env": [
         "DATABASE_URL",
         "AUTH_SECRET",

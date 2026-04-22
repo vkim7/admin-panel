@@ -1,0 +1,188 @@
+{
+  "meta": {
+    "title": "Banana School — Online ingliz tili darslari",
+    "description": "Banana School — kichik guruhlarda online ingliz tili darslari. 13+ yoshlilar uchun. Professional o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
+  },
+  "nav": {
+    "whyUs": "Nega biz",
+    "pricing": "Narxlari",
+    "faq": "FAQ",
+    "offer": "Ommaviy oferta",
+    "cta": "Boshlash"
+  },
+  "hero": {
+    "pill": "Biz kimmiz",
+    "headline": "Ingliz tili — onlayn, tirbandliksiz.",
+    "highlightedWord": "onlayn",
+    "items": [
+      "O'zbekistonning istalgan joyidan",
+      "Jonli darslar, haqiqiy o'qituvchi",
+      "Telefon yoki noutbukdan"
+    ]
+  },
+  "comparison": {
+    "tag": "Taqqoslash",
+    "heading": "Biz va boshqalar",
+    "description": "",
+    "competitors": [
+      {
+        "name": "Boshqa maktablar",
+        "rows": [
+          { "label": "Narxi", "value": "800k – 1 mln" },
+          { "label": "Guruh hajmi", "value": "15–20" },
+          { "label": "Yo'lga ketadigan vaqti", "value": "30–60 daq" }
+        ]
+      },
+      {
+        "name": "Banana School",
+        "featured": true,
+        "badge": "🔥",
+        "rows": [
+          { "label": "Narxi", "value": "570k", "highlight": true },
+          { "label": "Guruh hajmi", "value": "8–12", "highlight": true },
+          { "label": "Yo'lga ketadigan vaqti", "value": "0 daq", "highlight": true }
+        ]
+      }
+    ]
+  },
+  "pricing": {
+    "tag": "Narx",
+    "heading": "Yashirin to'lovlar yo'q.",
+    "description": "",
+    "cta": "Bepul sinov darsi",
+    "group": {
+      "title": "Guruh darslari",
+      "price": "570,000",
+      "period": "UZS / oyiga",
+      "features": [
+        "Oyiga 12 ta dars",
+        "Professional o'qituvchilar",
+        "Live Zoom darslar, 80 daqiqa",
+        "O'quvchilar ilovasi (tez kunda)",
+        "Bepul sinov darsi"
+      ]
+    },
+    "individual": {
+      "title": "Individual darslar",
+      "price": "2,400,000",
+      "period": "UZS / oyiga",
+      "features": [
+        "Oyiga 12 ta dars",
+        "Faqat siz va o'qituvchi",
+        "Maqsadlaringizga mos dastur",
+        "Faqat senga e'tibor",
+        "Sinov darsi — 50% chegirma"
+      ]
+    }
+  },
+  "faq": {
+    "tag": "FAQ",
+    "heading": "Ko'p beriladigan savollar",
+    "items": [
+      {
+        "question": "Darslar qaysi kunlari bo'ladi?",
+        "answer": "Dsh/chr/jm yoki se/pay/sh — haftada 3 marta, har bir dars 80 daqiqa."
+      },
+      {
+        "question": "Beginner bo'lsam ham kelsa bo'ladimi?",
+        "answer": "Albatta! Biz barcha darajadagi o'quvchilarni qabul qilamiz — beginner'dan upper-intermediate'gacha."
+      },
+      {
+        "question": "Sinov darsi bepulmi?",
+        "answer": "Guruh darsi — bepul. Individual dars — 50% chegirma. Shunchaki ro'yxatdan o'ting."
+      },
+      {
+        "question": "Nima kerak darsga kirish uchun?",
+        "answer": "Telefon yoki kompyuter va internet. Hammasi shu!"
+      }
+    ]
+  },
+  "form": {
+    "tag": "Ro'yxatdan o'tish",
+    "heading": "Bepul sinov darsi",
+    "description": "Ma'lumotlaringizni qoldiring — biz siz bilan bog'lanamiz.",
+    "or": "yoki",
+    "firstName": "Ism",
+    "firstNamePlaceholder": "Ismingiz",
+    "lastName": "Familiya",
+    "lastNamePlaceholder": "Familiyangiz",
+    "phone": "Telefon raqam",
+    "phonePlaceholder": "+998 90 123 45 67",
+    "dateOfBirth": "Tug'ilgan sana",
+    "lessonPreference": "Format",
+    "lessonPreferenceOptions": {
+      "GROUP": "Guruh",
+      "INDIVIDUAL": "Individual"
+    },
+    "selfAssessedLevel": "Darajangiz",
+    "selfAssessedLevelOptions": {
+      "COMPLETE_BEGINNER": "Umuman bilmayman",
+      "CONTINUING": "O'qishni davom ettirmoqdaman"
+    },
+    "note": "Izoh",
+    "notePlaceholder": "Qo'shimcha ma'lumot (ixtiyoriy)",
+    "submit": "Yuborish",
+    "success": "Arizangiz qabul qilindi! Tez orada bog'lanamiz.",
+    "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
+  },
+  "testimonials": {
+    "tag": "Sharhlar *",
+    "heading": "Kelajakdagi o'quvchilarimiz nima deydi",
+    "highlightedWord": "Kelajakdagi",
+    "items": [
+      {
+        "name": "Kamila Sh.",
+        "detail": "16 yosh, 1 yil Banana'da",
+        "quote": "Dugonam sinov darsiga olib keldi. Endi men hammani olib kelyapman."
+      },
+      {
+        "name": "Sherzod R.",
+        "detail": "17 yosh, IELTS ga tayyorlanmoqda",
+        "quote": "Banana'dan oldin oddiy o'quv markazga bordim — 20 kishi, o'qituvchi ismimni bilmasdi. Bu yerda birinchi darsda eslab qolishdi."
+      },
+      {
+        "name": "Saida X.",
+        "detail": "O'quvchi onasi, 13 yosh",
+        "quote": "Bu narxga — kichik guruh, yaxshi o'qituvchilar, va qizim o'zi o'qishni xohlaydi. Yana nima kerak?"
+      },
+      {
+        "name": "Dilshod N.",
+        "detail": "Ikki o'quvchining otasi",
+        "quote": "Ikkala bolam o'qiyapti, ikkalasi ham mamnun. Ikkinchi bolaga chegirma ham bor."
+      },
+      {
+        "name": "Amir T.",
+        "detail": "14 yosh, 6 oy o'qigan",
+        "quote": "Banana School'da do'stlar bilan o'rganish juda qiziq — endi inglizcha meme'larni ham tushunaman."
+      },
+      {
+        "name": "Aziza V.",
+        "detail": "13 yosh, noldan → A2",
+        "quote": "Alifbodan boshladim. Jiddiy. 4 oyda o'qituvchi bilan darsda gaplashyapman."
+      }
+    ]
+  },
+  "stats": {
+    "maxGroup": "o'quvchi guruhda",
+    "minLesson": "daqiqa live darslar",
+    "perWeek": "marta haftada",
+    "curriculum": "University Press"
+  },
+  "audience": {
+    "tag": "Kim uchun?",
+    "heading": "Bu sen uchun, agar...",
+    "highlightedWord": "sen uchun",
+    "items": [
+      { "badge": "13+", "text": "Sening yoshing 13 yoki undan katta" },
+      { "badge": "A1", "text": "Hozircha faqat 'hello' va 'thank you'" },
+      { "badge": "C1", "text": "Allaqachon Netflix'ni subtitrsiz ko'rasan" }
+    ]
+  },
+  "footer": {
+    "copyright": "\u00a9 2026 Banana School. Tashkent, Uzbekistan."
+  },
+  "floatingContacts": {
+    "telegram": "Telegram",
+    "phone": "Qo'ng'iroq qilish"
+  }
+}

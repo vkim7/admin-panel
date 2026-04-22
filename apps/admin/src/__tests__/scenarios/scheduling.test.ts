@@ -79,9 +79,7 @@ describe("C#8/C#4: group creation generates lessons", () => {
         teacherId: teacher.id,
         days: [1, 3, 5],
         startTime: "14:30",
-        durationMinutes: 80,
         level: "BEGINNER",
-        maxStudents: 6,
         startDate: "2026-04-01",
       }),
     );
@@ -143,9 +141,7 @@ describe("C#8/C#4: group creation generates lessons", () => {
         teacherId: teacher.id,
         days: [1, 3, 5],
         startTime: "14:30",
-        durationMinutes: 80,
         level: "BEGINNER",
-        maxStudents: 6,
         startDate: "2026-04-01",
       }),
     );
@@ -156,9 +152,7 @@ describe("C#8/C#4: group creation generates lessons", () => {
       teacherId: teacher.id,
       days: [1, 3, 5],
       startTime: "14:30",
-      durationMinutes: 80,
       level: "ELEMENTARY",
-      maxStudents: 6,
       startDate: "2026-04-01",
     });
 
@@ -293,7 +287,6 @@ describe("C#13: updateGroup startTime cascade", () => {
     await expectRedirect(() =>
       updateGroup(group.id, {
         startTime: "16:00",
-        maxStudents: 6,
         skipAutoGraduation: false,
       }),
     );

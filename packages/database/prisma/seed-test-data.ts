@@ -366,9 +366,9 @@ async function main() {
 
   // ─── Global Price Settings ──────────────────────────────────────────────────
   // 4 price points: (GENERAL|IELTS) × (GROUP|INDIVIDUAL)
-  const GENERAL_GROUP_PRICE = 100000;
+  const GENERAL_GROUP_PRICE = 47500;
   const GENERAL_INDIVIDUAL_PRICE = 200000;
-  const IELTS_GROUP_PRICE = 100000;
+  const IELTS_GROUP_PRICE = 47500;
   const IELTS_INDIVIDUAL_PRICE = 200000;
 
   await prisma.priceSetting.createMany({

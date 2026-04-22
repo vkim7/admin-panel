@@ -246,10 +246,10 @@ When a teacher is available to work. One row per day+time block.
 | type | GROUP or INDIVIDUAL |
 | days[] | Which days the group meets, e.g., [1, 3, 5] for Mon/Wed/Fri. **Immutable after creation** — all lessons and schedule slots are pre-created based on this pattern. To change days, create a new group and transfer students. |
 | startTime | Lesson start time, e.g., "14:00" |
-| durationMinutes | Lesson length, default 80. Can be 60. |
+| durationMinutes | Lesson length, fixed at 80 minutes for all group types. Not user-editable. |
 | level | English level |
 | progressStage | BEGINNING, MID, or FINAL — which third of the program |
-| maxStudents | Default 6 for GROUP. For INDIVIDUAL: currently 1, but may be 2 (not yet decided). Enforced at application level. |
+| maxStudents | Fixed: 12 for GROUP, 1 for INDIVIDUAL. Set by server action, not user-editable. |
 | isActive | Soft-delete flag |
 | startDate | When the group starts |
 | endDate | **Required, auto-calculated.** Before 15th → end of startMonth+2, after 15th → end of startMonth+3. Updated when lessons are rescheduled past the original end. |
@@ -760,7 +760,7 @@ Global lesson price settings. 4 price points based on two dimensions:
 |-------|---------|
 | levelCategory | GENERAL or IELTS — derived from the group's `level` at lookup time |
 | groupType | GROUP or INDIVIDUAL |
-| pricePerLesson | UZS per lesson. Must be a multiple of 1,000 (Zod validation). |
+| pricePerLesson | UZS per lesson. Must be a multiple of 500 (Zod validation). |
 | effectiveFrom | First day this price applies (date-only) |
 | changedById | Which admin made the change (null for initial price seeding) |
 
@@ -985,10 +985,10 @@ These are documented at the top of `schema.prisma`:
 
 1. **Student.phone uniqueness** — enforced at DB level (`@unique`). May need to relax later if siblings share a parent's phone.
 2. **Trial membership staleness** — persistent visual alert for any unresolved trial memberships (`isTrial = true AND joinDate < today`). Admin must confirm immediately after the trial class.
-3. **Group.maxStudents** — enforce in transaction before adding membership. Default 6 for GROUP type, 1 for INDIVIDUAL type.
+3. **Group.maxStudents** — enforce in transaction before adding membership. Fixed: 12 for GROUP type, 1 for INDIVIDUAL type. Not user-editable.
 4. **TeacherScheduleSlots are per-date** — pre-created alongside Lesson records when a group is created. Not synced with Group.days (days defines the pattern; slots are the actual dates). Same transaction rule applies for Attendance.groupId (denormalized from Lesson.groupId).
 5. **Exam duplicates** — validate in UI if a group already has an exam of the same type.
-6. **Price must be a multiple of 1,000** — validate `pricePerLesson` on `PriceSetting` (Zod: `z.number().int().multipleOf(1000)`). This guarantees that `price × discountPercent / 100` always produces a whole number, keeping the entire billing chain as pure integer math with zero rounding.
+6. **Price must be a multiple of 500** — validate `pricePerLesson` on `PriceSetting` (Zod: `z.number().int().multipleOf(500)`). This guarantees that `price × discountPercent / 100` always produces a whole number, keeping the entire billing chain as pure integer math with zero rounding.
 7. **Minor enrollment requires Family** — when creating a student whose dateOfBirth makes them under 18 at enrollment time, familyId must be set.
 8. **Lesson pre-creation** — when creating a group, generate all Lesson records and TeacherScheduleSlots from startDate through endDate, skipping holidays. Each Lesson gets `teacherId` and `originalTeacherId` from the group's teacher, startTime denormalized, status SCHEDULED.
 9. **Cancellation flow** — mark Lesson status CANCELLED + set `cancelledAt`, `cancelledById`, and `cancellationReasonId` (plus `otherCancellationReason` if reason is "Other"), delete its TeacherScheduleSlot, create a replacement Lesson at the next valid date after current endDate (with rescheduledFromId pointing to the cancelled one), create a new TeacherScheduleSlot for the replacement, update Group endDate to the new last lesson date.

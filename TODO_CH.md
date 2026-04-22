@@ -1,3 +1,40 @@
+<!-- TODO -->
+does turborepo handle the only necessary deployments?
+e.g. changes in the landing won't trigger deployments in the admin panel
+
+<!-- TODO -->
+DIRECT_DATABASE_URL
+add the url for non-production branches as well
+do non-production branches need a separate R2 Object, etc
+
+
+<!-- TODO -->
+
+OG Image
+
+You'll want a social share image (1200x630px) — this is what shows when someone pastes your
+link in Telegram or Instagram stories. Do you have one, or should we use a simple branded
+card (yellow background, logo, tagline)? We can always replace it later, but having
+something from day one matters since Telegram caches aggressively.
+
+
+<!-- TODO -->
+1. CI on GitHub — run type check + integration tests automatically on push/PR. 
+Right now these only run if you remember to run them locally. A simple GitHub  
+Actions workflow that runs tsc --noEmit and npm run test:integration would
+catch issues before merge.                                                     
+          
+2. Linting — do you have ESLint set up? Catches bugs that type checking misses
+(unused vars, missing dependencies in hooks, etc.).                            
+
+
+<!-- TODO -->
+add DUO
+
+<!-- TODO -->
+set up a dev environment for testing: separate domain?
+
+<!-- TODO -->
 <!-- PARTIALLY RESOLVED: Excused Absences feature implemented -->
 <!-- Billing adjustments for valid absences (illness, power outage, force majeure): -->
 <!-- - Excused absence reduces billing period by 1 lesson + reduces teacher pay -->

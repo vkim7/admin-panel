@@ -176,7 +176,7 @@ export async function seedEssentials() {
       {
         levelCategory: "GENERAL",
         groupType: "GROUP",
-        pricePerLesson: 100_000,
+        pricePerLesson: 47_500,
         effectiveFrom: new Date("2025-01-01"),
         changedById: TEST_ADMIN_ID,
       },
@@ -190,7 +190,7 @@ export async function seedEssentials() {
       {
         levelCategory: "IELTS",
         groupType: "GROUP",
-        pricePerLesson: 100_000,
+        pricePerLesson: 47_500,
         effectiveFrom: new Date("2025-01-01"),
         changedById: TEST_ADMIN_ID,
       },

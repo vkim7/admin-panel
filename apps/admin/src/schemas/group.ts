@@ -3,7 +3,6 @@ import {
   requiredString,
   requiredTime,
   requiredIsoDate,
-  requiredInt,
 } from "./helpers";
 import { TIME_SLOTS } from "@/lib/constants";
 
@@ -30,8 +29,6 @@ export const groupBaseSchema = z.object({
   days: z.array(z.number().int().min(1).max(7)),
   startTime: z.string().min(1, "Start time is required"),
   level: z.enum(LEVELS, { error: "Level is required" }),
-  durationMinutes: z.number().int(),
-  maxStudents: z.number().int().min(1),
   startDate: z.string().min(1, "Start date is required"),
 });
 
@@ -45,8 +42,6 @@ export const groupCreateSchema = z
     days: z.array(z.number().int().min(1).max(7)).min(1, "Days are required"),
     startTime: requiredTime("Start time is required"),
     level: z.enum(LEVELS, { error: "Level is required" }),
-    durationMinutes: requiredInt("Duration is required"),
-    maxStudents: requiredInt("Max students is required"),
     startDate: requiredIsoDate("Start date is required"),
   })
   .refine(
@@ -59,13 +54,6 @@ export const groupCreateSchema = z
       );
     },
     { message: "Days must be Mon/Wed/Fri or Tue/Thu/Sat", path: ["days"] },
-  )
-  .refine(
-    (data) => {
-      // C#12a: Only 60 or 80
-      return data.durationMinutes === 60 || data.durationMinutes === 80;
-    },
-    { message: "Duration must be 60 or 80 minutes", path: ["durationMinutes"] },
   )
   .refine(
     (data) => {
@@ -84,7 +72,6 @@ export const groupCreateSchema = z
 // Edit schema — level/progressStage/days/type/startDate not editable
 export const groupEditSchema = z
   .object({
-    maxStudents: requiredInt("Max students is required"),
     startTime: requiredTime("Start time is required"),
     skipAutoGraduation: z.boolean().default(false),
   })

@@ -117,11 +117,11 @@ describe("C#32: billing period creation", () => {
 
     expect(periods.length).toBeGreaterThan(0);
 
-    // Every period: totalLessons > 0, pricePerLesson = 100_000 (GROUP GENERAL seed),
+    // Every period: totalLessons > 0, pricePerLesson = 47_500 (GROUP GENERAL seed),
     // amountDue = totalLessons * pricePerLesson
     for (const p of periods) {
       expect(p.totalLessons).toBeGreaterThan(0);
-      expect(p.pricePerLesson).toBe(100_000);
+      expect(p.pricePerLesson).toBe(47_500);
       expect(p.amountDue).toBe(p.totalLessons * p.pricePerLesson);
       expect(p.discountAmount).toBeGreaterThanOrEqual(0);
       expect(p.paymentStatus).toBe("UNPAID");
@@ -561,8 +561,8 @@ describe("refund processing", () => {
         periodYear: 2026,
         periodMonth: 4,
         totalLessons: 12,
-        pricePerLesson: 100_000,
-        amountDue: 1_200_000,
+        pricePerLesson: 47_500,
+        amountDue: 570_000,
         discountAmount: 0,
       },
     });
@@ -618,8 +618,8 @@ describe("refund processing", () => {
         periodYear: 2026,
         periodMonth: 4,
         totalLessons: 12,
-        pricePerLesson: 100_000,
-        amountDue: 1_200_000,
+        pricePerLesson: 47_500,
+        amountDue: 570_000,
         discountAmount: 0,
       },
     });
@@ -633,8 +633,8 @@ describe("refund processing", () => {
         periodYear: 2026,
         periodMonth: 5,
         totalLessons: 12,
-        pricePerLesson: 100_000,
-        amountDue: 1_200_000,
+        pricePerLesson: 47_500,
+        amountDue: 570_000,
         discountAmount: 0,
       },
     });

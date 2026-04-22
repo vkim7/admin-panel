@@ -25,11 +25,12 @@ export async function createGroup(data: unknown) {
     teacherId,
     days,
     startTime,
-    durationMinutes,
     level,
-    maxStudents,
     startDate: startDateStr,
   } = parsed.data;
+
+  const durationMinutes = 80;
+  const maxStudents = type === "GROUP" ? 12 : 1;
 
   // Teacher rate guard: reject if teacher has no rate history
   const rateCount = await prisma.teacherRateChange.count({
@@ -187,7 +188,7 @@ export async function updateGroup(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { startTime, maxStudents, skipAutoGraduation } = parsed.data;
+  const { startTime, skipAutoGraduation } = parsed.data;
 
   // Get current group to check if startTime changed
   const currentGroup = await prisma.group.findUnique({
@@ -206,7 +207,7 @@ export async function updateGroup(id: string, data: unknown) {
     await prisma.$transaction(async (tx) => {
       await tx.group.update({
         where: { id },
-        data: { maxStudents, startTime, skipAutoGraduation },
+        data: { startTime, skipAutoGraduation },
       });
 
       const today = new Date();
@@ -241,7 +242,7 @@ export async function updateGroup(id: string, data: unknown) {
     // Simple update, no cascade needed
     await prisma.group.update({
       where: { id },
-      data: { maxStudents, startTime, skipAutoGraduation },
+      data: { startTime, skipAutoGraduation },
     });
   }
 
