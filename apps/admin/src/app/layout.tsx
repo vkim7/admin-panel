@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Admin Panel",
   description: "English courses admin panel",
   other: {
-    ["yandex-verification"]: "ee2da55dad6b65ad",
+    ["yandex-verification"]: "2f720dc929713562",
   },
 };
 
@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={geist.variable}>
       <head>
-        <meta name="yandex-verification" content="ee2da55dad6b65ad" />
+        <meta name="yandex-verification" content="2f720dc929713562" />
       </head>
       <body className="bg-background min-h-screen font-sans antialiased">
         {children}
