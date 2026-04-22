@@ -325,8 +325,8 @@ describe("FAMILY: auto-detection & removal", () => {
     });
     expect(aApplied.length).toBeGreaterThan(0);
 
-    // Discount = 100_000 per period (FAMILY is FIXED_AMOUNT 100K, recurring)
-    expect(aApplied[0]!.discountAmount).toBe(100_000);
+    // Discount = 70_000 per period (FAMILY is FIXED_AMOUNT 70K, recurring)
+    expect(aApplied[0]!.discountAmount).toBe(70_000);
   });
 
   it("family drops below 2 active → FAMILY promo expired, removed from future periods", async () => {

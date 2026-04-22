@@ -1326,26 +1326,26 @@ async function main() {
       name: "Referral Reward",
       type: "REFERRAL",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: false,
       maxUsesPerStudent: 1,
       isActive: true,
     },
   });
-  console.log(`Created referral reward promotion: ${referrerReward.name} (100,000 UZS)`);
+  console.log(`Created referral reward promotion: ${referrerReward.name} (70,000 UZS)`);
 
   const referredReward = await prisma.promotion.create({
     data: {
       name: "Referral Welcome",
       type: "REFERRAL",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: false,
       maxUsesPerStudent: 1,
       isActive: true,
     },
   });
-  console.log(`Created referred welcome promotion: ${referredReward.name} (100,000 UZS)`);
+  console.log(`Created referred welcome promotion: ${referredReward.name} (70,000 UZS)`);
 
   // Family discount (recurring, indefinite)
   await prisma.promotion.create({
@@ -1353,12 +1353,12 @@ async function main() {
       name: "Family Discount",
       type: "FAMILY",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: true,
       isActive: true,
     },
   });
-  console.log("Created FAMILY promotion: Family Discount (100,000 UZS, recurring)");
+  console.log("Created FAMILY promotion: Family Discount (70,000 UZS, recurring)");
 
   // Win-Back discount (one-time)
   await prisma.promotion.create({
@@ -1366,13 +1366,13 @@ async function main() {
       name: "Win-Back Discount",
       type: "WIN_BACK",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: false,
       maxUsesPerStudent: 1,
       isActive: true,
     },
   });
-  console.log("Created WIN_BACK promotion: Win-Back Discount (100,000 UZS)");
+  console.log("Created WIN_BACK promotion: Win-Back Discount (70,000 UZS)");
 
   // Apology discount (one-time, admin-applied)
   await prisma.promotion.create({
@@ -1380,12 +1380,12 @@ async function main() {
       name: "Apology Discount",
       type: "APOLOGY",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: false,
       isActive: true,
     },
   });
-  console.log("Created APOLOGY promotion: Apology Discount (100,000 UZS)");
+  console.log("Created APOLOGY promotion: Apology Discount (70,000 UZS)");
 
   // Reward discount (one-time, admin-applied)
   await prisma.promotion.create({
@@ -1393,12 +1393,12 @@ async function main() {
       name: "Reward Discount",
       type: "REWARD",
       discountType: "FIXED_AMOUNT",
-      discountAmount: 100000,
+      discountAmount: 70000,
       isRecurring: false,
       isActive: true,
     },
   });
-  console.log("Created REWARD promotion: Reward Discount (100,000 UZS)");
+  console.log("Created REWARD promotion: Reward Discount (70,000 UZS)");
 
   // Generate referral codes for existing students
   for (const s of activeStudents) {
