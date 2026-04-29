@@ -221,7 +221,8 @@ export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
 
 export const LessonPreference = {
   GROUP: 'GROUP',
-  INDIVIDUAL: 'INDIVIDUAL'
+  INDIVIDUAL: 'INDIVIDUAL',
+  EITHER: 'EITHER'
 } as const
 
 export type LessonPreference = (typeof LessonPreference)[keyof typeof LessonPreference]

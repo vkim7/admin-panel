@@ -119,8 +119,10 @@ interface StudentOverrides {
   preferredDays?: number[];
   preferredTimeSlots?: string[];
   preferredLanguage?: "UZBEK" | "RUSSIAN" | "ANY";
+  preferredLessonType?: "GROUP" | "INDIVIDUAL" | "EITHER";
   familyId?: string | null;
   comment?: string | null;
+  leadId?: string | null;
 }
 
 /**
@@ -137,8 +139,10 @@ export async function createTestStudent(overrides: StudentOverrides = {}) {
     preferredDays = [1, 3, 5],
     preferredTimeSlots = ["14:30"],
     preferredLanguage = "ANY",
+    preferredLessonType = "EITHER",
     familyId = null,
     comment = null,
+    leadId = null,
   } = overrides;
 
   return prisma.student.create({
@@ -152,8 +156,56 @@ export async function createTestStudent(overrides: StudentOverrides = {}) {
       preferredDays,
       preferredTimeSlots,
       preferredLanguage,
+      preferredLessonType,
       familyId,
       comment,
+      leadId,
+    },
+  });
+}
+
+// ─── Lead ───────────────────────────────────────────────────────────────────
+
+interface LeadOverrides {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: Date | null;
+  language?: string;
+  lessonPreference?: "GROUP" | "INDIVIDUAL" | "EITHER" | null;
+  selfAssessedLevel?: "COMPLETE_BEGINNER" | "CONTINUING" | null;
+  status?: "NEW" | "CONTACTED" | "TRIAL_SCHEDULED" | "CONVERTED" | "LOST";
+  note?: string | null;
+  adminNote?: string | null;
+}
+
+/** Create a Lead. Default status is NEW. */
+export async function createTestLead(overrides: LeadOverrides = {}) {
+  const {
+    firstName = "Test",
+    lastName = `Lead-${uid()}`,
+    phone = randomPhone(),
+    dateOfBirth = new Date("2005-06-15"),
+    language = "uz",
+    lessonPreference = "GROUP",
+    selfAssessedLevel = "COMPLETE_BEGINNER",
+    status = "NEW",
+    note = null,
+    adminNote = null,
+  } = overrides;
+
+  return prisma.lead.create({
+    data: {
+      firstName,
+      lastName,
+      phone,
+      dateOfBirth,
+      language,
+      lessonPreference,
+      selfAssessedLevel,
+      status,
+      note,
+      adminNote,
     },
   });
 }

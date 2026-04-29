@@ -18,6 +18,7 @@ export async function getReceptionStudents() {
       preferredDays: true,
       preferredTimeSlots: true,
       preferredLanguage: true,
+      preferredLessonType: true,
       comment: true,
       family: { select: { parentPhone: true } },
     },

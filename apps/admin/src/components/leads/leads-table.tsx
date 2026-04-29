@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
+import { Button } from "@/components/ui/button";
 import { LeadStatusSelect } from "./lead-status-select";
 import { LeadNoteEditor } from "./lead-note-editor";
 import type {
@@ -27,8 +29,8 @@ type LeadRow = {
 
 const LESSON_PREF_LABELS: Record<string, string> = {
   GROUP: "Group",
-  PAIR: "Pair",
   INDIVIDUAL: "Individual",
+  EITHER: "Either",
 };
 
 const LEVEL_LABELS: Record<string, string> = {
@@ -173,6 +175,30 @@ const columns: ColumnDef<LeadRow>[] = [
       </span>
     ),
     sortingFn: "datetime",
+  },
+  {
+    id: "convert",
+    header: "",
+    cell: ({ row }) => {
+      const isConverted = row.original.status === "CONVERTED";
+      if (isConverted) {
+        return (
+          <Button size="sm" variant="outline" disabled>
+            Converted
+          </Button>
+        );
+      }
+      return (
+        <Button asChild size="sm">
+          <Link
+            href={`/students/new?leadId=${row.original.id}&returnTo=/reception`}
+          >
+            Convert
+          </Link>
+        </Button>
+      );
+    },
+    enableSorting: false,
   },
 ];
 

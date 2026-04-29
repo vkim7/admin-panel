@@ -56,6 +56,12 @@ const LANGUAGES = [
   { value: "RUSSIAN", label: "Russian" },
 ] as const;
 
+const LESSON_TYPES = [
+  { value: "GROUP", label: "Group" },
+  { value: "INDIVIDUAL", label: "Individual" },
+  { value: "EITHER", label: "Either" },
+] as const;
+
 interface StudentFormProps {
   defaultValues?: StudentFormValues;
   studentId?: string;
@@ -66,6 +72,8 @@ interface StudentFormProps {
     parentPhone: string;
   } | null;
   redirectTo?: string;
+  cancelTo?: string;
+  leadId?: string;
 }
 
 export function StudentForm({
@@ -73,6 +81,8 @@ export function StudentForm({
   studentId,
   initialFamily,
   redirectTo,
+  cancelTo,
+  leadId,
 }: StudentFormProps) {
   const [isPending, startTransition] = useTransition();
   const [showFamilyForm, setShowFamilyForm] = useState(false);
@@ -94,6 +104,7 @@ export function StudentForm({
       preferredDays: [],
       preferredTimeSlots: [],
       preferredLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
+      preferredLessonType: "" as unknown as "GROUP" | "INDIVIDUAL" | "EITHER",
       familyId: null,
       comment: null,
       promoCode: null,
@@ -105,11 +116,19 @@ export function StudentForm({
     startTransition(async () => {
       const result = isEdit
         ? await updateStudent(studentId!, values)
-        : await createStudent(values, redirectTo);
+        : await createStudent(values, redirectTo, leadId);
       if (result?.error) {
         toast.error(result.error);
       }
     });
+  }
+
+  function handleCancel() {
+    if (cancelTo) {
+      window.location.href = cancelTo;
+    } else {
+      window.history.back();
+    }
   }
 
   return (
@@ -224,6 +243,40 @@ export function StudentForm({
             )}
           />
         </div>
+
+        {/* Preferred Lesson Type */}
+        <FormField
+          control={form.control}
+          name="preferredLessonType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Lesson Type</FormLabel>
+              <div className="flex gap-2">
+                {LESSON_TYPES.map((opt) => {
+                  const selected = field.value === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => field.onChange(opt.value)}
+                      className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input hover:bg-accent"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <FormDescription>
+                &quot;Either&quot; keeps the student eligible for both group and individual placement.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         {/* Preferred Days */}
         <FormField
@@ -448,7 +501,7 @@ export function StudentForm({
           <Button
             type="button"
             variant="outline"
-            onClick={() => window.history.back()}
+            onClick={handleCancel}
           >
             Cancel
           </Button>

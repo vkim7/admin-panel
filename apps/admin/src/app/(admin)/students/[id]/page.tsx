@@ -178,6 +178,18 @@ export default async function StudentDetailPage({
         </div>
         <div>
           <p className="text-xs font-medium text-muted-foreground">
+            Lesson Type
+          </p>
+          <p className="mt-1 text-sm">
+            {student.preferredLessonType === "GROUP"
+              ? "Group"
+              : student.preferredLessonType === "INDIVIDUAL"
+                ? "Individual"
+                : "Either"}
+          </p>
+        </div>
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">
             Active Groups
           </p>
           <p className="mt-1 text-sm">{activeMemberships.length}</p>

@@ -13,17 +13,20 @@ ALTER TABLE "Lead"
   USING ("lessonPreference"::text::"LessonPreference");
 DROP TYPE "LessonPreference_old";
 
--- 2. SelfAssessedLevel: replace KNOW_A_LITTLE and CAN_HOLD_CONVERSATION with CONTINUING
--- Add CONTINUING to the existing enum first
-ALTER TYPE "SelfAssessedLevel" ADD VALUE IF NOT EXISTS 'CONTINUING';
-
--- Migrate existing rows
-UPDATE "Lead" SET "selfAssessedLevel" = 'CONTINUING' WHERE "selfAssessedLevel" IN ('KNOW_A_LITTLE', 'CAN_HOLD_CONVERSATION');
-
--- Recreate the enum with only the two values
+-- 2. SelfAssessedLevel: replace KNOW_A_LITTLE and CAN_HOLD_CONVERSATION with CONTINUING.
+-- Rename-and-recreate (no ALTER TYPE ADD VALUE — Postgres requires the new value to
+-- be committed before it can be used, which fails when the migration runs inside a
+-- transaction such as Prisma's shadow-DB validation). The CASE in the USING clause
+-- maps both legacy values to CONTINUING in a single pass.
 ALTER TYPE "SelfAssessedLevel" RENAME TO "SelfAssessedLevel_old";
 CREATE TYPE "SelfAssessedLevel" AS ENUM ('COMPLETE_BEGINNER', 'CONTINUING');
 ALTER TABLE "Lead"
   ALTER COLUMN "selfAssessedLevel" TYPE "SelfAssessedLevel"
-  USING ("selfAssessedLevel"::text::"SelfAssessedLevel");
+  USING (
+    CASE
+      WHEN "selfAssessedLevel"::text IN ('KNOW_A_LITTLE', 'CAN_HOLD_CONVERSATION') THEN 'CONTINUING'::"SelfAssessedLevel"
+      WHEN "selfAssessedLevel"::text = 'COMPLETE_BEGINNER' THEN 'COMPLETE_BEGINNER'::"SelfAssessedLevel"
+      ELSE NULL
+    END
+  );
 DROP TYPE "SelfAssessedLevel_old";
