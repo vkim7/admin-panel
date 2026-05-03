@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
 import { MessageCircle, Phone } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 import { submitLead } from "@/app/[lang]/actions";
@@ -57,9 +63,18 @@ function PillGroup({
 export function CtaForm({ dict, locale }: CtaFormProps) {
   const [lessonPreference, setLessonPreference] = useState("GROUP");
   const [selfAssessedLevel, setSelfAssessedLevel] = useState("COMPLETE_BEGINNER");
+  const eventIdRef = useRef<string>("");
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
+      const eventId = crypto.randomUUID();
+      eventIdRef.current = eventId;
+      formData.set("eventId", eventId);
+      formData.set("eventSourceUrl", window.location.href);
+      const getCookie = (name: string) =>
+        document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`)?.pop() ?? "";
+      formData.set("fbc", getCookie("_fbc"));
+      formData.set("fbp", getCookie("_fbp"));
       formData.set("language", locale);
       const phone = formData.get("phone");
       if (typeof phone === "string") {
@@ -69,6 +84,12 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
     },
     null,
   );
+
+  useEffect(() => {
+    if (state?.success && eventIdRef.current) {
+      window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
+    }
+  }, [state?.success]);
 
   if (state?.success) {
     return (
@@ -209,6 +230,25 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
               >
                 {isPending ? "..." : dict.submit}
               </Button>
+              <p className="text-[11px] text-foreground/35 text-center leading-relaxed">
+                {locale === "ru" ? (
+                  <>
+                    Нажимая «Отправить», вы принимаете нашу{" "}
+                    <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground/60">
+                      политику конфиденциальности
+                    </a>
+                    .
+                  </>
+                ) : (
+                  <>
+                    Yuborish orqali siz{" "}
+                    <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground/60">
+                      maxfiylik siyosatimiz
+                    </a>
+                    {" "}bilan rozisiz.
+                  </>
+                )}
+              </p>
             </form>
           </div>
         </div>

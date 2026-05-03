@@ -30,7 +30,7 @@ export default async function LandingPage({
         <Faq dict={dict.faq} />
         <CtaForm dict={dict.form} locale={locale} />
       </main>
-      <Footer />
+      <Footer locale={locale} />
     </>
   );
 }
