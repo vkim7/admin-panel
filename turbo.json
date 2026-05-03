@@ -5,6 +5,15 @@
       "cache": false,
       "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
     },
+    "@eng/landing#build": {
+      "dependsOn": ["^build"],
+      "env": [
+        "DATABASE_URL",
+        "META_ACCESS_TOKEN",
+        "META_TEST_EVENT_CODE"
+      ],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "@eng/admin#build": {
       "dependsOn": ["^build", "^db:deploy"],
       "env": [
