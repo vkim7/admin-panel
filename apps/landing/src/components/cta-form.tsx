@@ -33,9 +33,9 @@ function PillGroup({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid grid-cols-2 gap-2 md:flex md:flex-wrap">
       {Object.entries(options).map(([k, label]) => (
-        <label key={k} className="cursor-pointer">
+        <label key={k} className="cursor-pointer block h-full md:inline md:h-auto">
           <input
             type="radio"
             name={name}
@@ -46,7 +46,7 @@ function PillGroup({
           />
           <div
             className={cn(
-              "px-4 py-2 text-sm font-bold rounded-full border-2 transition-all whitespace-nowrap",
+              "px-4 py-2 text-sm font-bold rounded-full border-2 transition-all text-center h-full flex items-center justify-center md:h-auto md:block md:whitespace-nowrap",
               value === k
                 ? "bg-main text-foreground border-border shadow-[2px_2px_0_var(--border)]"
                 : "bg-secondary-background text-foreground/70 border-border hover:bg-background",
@@ -106,9 +106,9 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
   return (
     <section id="cta" className="py-16 md:py-24 bg-background border-t-2 border-border relative overflow-hidden">
       <div className="max-w-[1080px] mx-auto px-6">
-        <div className="grid md:grid-cols-[1fr_1.2fr] gap-10 md:gap-16 items-start">
-          {/* Left — heading + description + contact */}
-          <div className="md:sticky md:top-32">
+        <div className="grid gap-10 md:grid-cols-[1fr_1.2fr] md:gap-x-16 md:gap-y-10 md:items-start">
+          {/* Heading + description — mobile: 1st, desktop: col 1 row 1 */}
+          <div className="md:col-start-1 md:row-start-1">
             <div className="inline-flex font-bold text-[13px] bg-main border-2 border-border rounded-full px-4 py-1.5 shadow-[2px_2px_0_var(--border)] mb-5 text-foreground">
               {dict.tag}
             </div>
@@ -119,51 +119,10 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
             <p className="text-foreground/50 text-[15px] leading-relaxed">
               {dict.description}
             </p>
-
-            {/* OR divider + contacts */}
-            <div className="flex items-center gap-4 mt-8 mb-6">
-              <div className="h-px flex-1 bg-border" />
-              <span className="text-sm font-bold text-foreground/30 uppercase">{dict.or}</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
-
-            <div className="space-y-3">
-              <a
-                href="https://t.me/bananaschool_uz"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 group"
-              >
-                <div className="w-10 h-10 bg-sky-blue-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
-                  <MessageCircle size={18} strokeWidth={2.5} />
-                </div>
-                <span className="text-[15px] font-bold text-foreground group-hover:underline">Telegram</span>
-              </a>
-              <a
-                href="tel:+998979798808"
-                className="flex items-center gap-3 group"
-              >
-                <div className="w-10 h-10 bg-leaf-green-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
-                  <Phone size={18} strokeWidth={2.5} />
-                </div>
-                <span className="text-[15px] font-bold text-foreground group-hover:underline">+998 97 979 88 08</span>
-              </a>
-              <a
-                href="https://www.instagram.com/bananaschool.uz/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 group"
-              >
-                <div className="w-10 h-10 bg-purple-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" /></svg>
-                </div>
-                <span className="text-[15px] font-bold text-foreground group-hover:underline">@bananaschool.uz</span>
-              </a>
-            </div>
           </div>
 
-          {/* Right — white card form */}
-          <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8">
+          {/* Form — mobile: 2nd, desktop: col 2 spanning both rows */}
+          <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8 md:col-start-2 md:row-start-1 md:row-span-2">
             <form action={formAction} className="space-y-4">
               {/* Name row */}
               <div className="grid grid-cols-2 gap-3">
@@ -189,7 +148,7 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
               </div>
 
               {/* Lesson format pills */}
-              <div className="space-y-3">
+              <div className="flex flex-col gap-2">
                 <Label className="text-sm font-bold text-foreground">{dict.lessonPreference}</Label>
                 <PillGroup
                   name="lessonPreference"
@@ -200,7 +159,7 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
               </div>
 
               {/* Level pills */}
-              <div className="space-y-3">
+              <div className="flex flex-col gap-2">
                 <Label className="text-sm font-bold text-foreground">{dict.selfAssessedLevel}</Label>
                 <PillGroup
                   name="selfAssessedLevel"
@@ -250,6 +209,49 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
                 )}
               </p>
             </form>
+          </div>
+
+          {/* OR + contacts — mobile: 3rd, desktop: col 1 row 2 */}
+          <div className="md:col-start-1 md:row-start-2">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="h-px flex-1 bg-border" />
+              <span className="text-sm font-bold text-foreground/30 uppercase">{dict.or}</span>
+              <div className="h-px flex-1 bg-border" />
+            </div>
+
+            <div className="space-y-3">
+              <a
+                href="https://t.me/bananaschool_uz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-sky-blue-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <MessageCircle size={18} strokeWidth={2.5} />
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">Telegram</span>
+              </a>
+              <a
+                href="tel:+998979798808"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-leaf-green-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <Phone size={18} strokeWidth={2.5} />
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">+998 97 979 88 08</span>
+              </a>
+              <a
+                href="https://www.instagram.com/bananaschool.uz/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 group"
+              >
+                <div className="w-10 h-10 bg-purple-bg border-2 border-border rounded-full shadow-[2px_2px_0_var(--border)] flex items-center justify-center text-foreground transition-all group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" /><circle cx="12" cy="12" r="5" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none" /></svg>
+                </div>
+                <span className="text-[15px] font-bold text-foreground group-hover:underline">@bananaschool.uz</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
