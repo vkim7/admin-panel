@@ -1,31 +1,16 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
+import { Tooltip as TooltipPrimitive } from "radix-ui";
 import { type ColumnDef } from "@tanstack/react-table";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { LeadStatusSelect } from "./lead-status-select";
 import { LeadNoteEditor } from "./lead-note-editor";
-import type {
-  LeadStatus,
-  LessonPreference,
-  SelfAssessedLevel,
-} from "@eng/database";
-
-type LeadRow = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  dateOfBirth: Date | null;
-  note: string | null;
-  language: string;
-  lessonPreference: LessonPreference | null;
-  selfAssessedLevel: SelfAssessedLevel | null;
-  status: LeadStatus;
-  adminNote: string | null;
-  createdAt: Date;
-};
+import { getStaleInfo } from "@/lib/helpers/lead-staleness";
+import type { LeadStatus } from "@eng/database";
+import type { TabId, LeadForTabs as LeadRow } from "./leads-tabs";
 
 const LESSON_PREF_LABELS: Record<string, string> = {
   GROUP: "Group",
@@ -39,9 +24,24 @@ const LEVEL_LABELS: Record<string, string> = {
   CAN_HOLD_CONVERSATION: "Conversational",
 };
 
+const STATUS_LABELS: Record<LeadStatus, string> = {
+  NEW: "New",
+  CONTACTED: "Contacted",
+  TRIAL_SCHEDULED: "Trial Scheduled",
+  CONVERTED: "Converted",
+  LOST: "Lost",
+};
+
+const STATUS_COLORS: Record<LeadStatus, string> = {
+  NEW: "bg-blue-100 text-blue-700",
+  CONTACTED: "bg-amber-100 text-amber-700",
+  TRIAL_SCHEDULED: "bg-purple-100 text-purple-700",
+  CONVERTED: "bg-green-100 text-green-700",
+  LOST: "bg-slate-100 text-slate-600",
+};
+
 function formatDate(date: Date): string {
-  const d = new Date(date);
-  return d.toLocaleDateString("en-GB", {
+  return new Date(date).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -63,153 +63,210 @@ function formatRelative(date: Date): string {
   return formatDate(date);
 }
 
-const columns: ColumnDef<LeadRow>[] = [
-  {
-    id: "name",
-    accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-    header: ({ column }) => (
-      <SortableHeader column={column}>Name</SortableHeader>
-    ),
-    cell: ({ row }) => (
-      <span className="font-medium">
-        {row.original.firstName} {row.original.lastName}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-    cell: ({ row }) => (
-      <a
-        href={`tel:${row.original.phone}`}
-        className="text-primary hover:underline"
-      >
-        {row.original.phone}
-      </a>
-    ),
-  },
-  {
-    accessorKey: "dateOfBirth",
-    header: "DOB",
-    cell: ({ row }) =>
-      row.original.dateOfBirth
-        ? formatDate(row.original.dateOfBirth)
-        : "—",
-  },
-  {
-    accessorKey: "language",
-    header: "Lang",
-    cell: ({ row }) => (
-      <span
-        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-          row.original.language === "uz"
-            ? "bg-blue-100 text-blue-800"
-            : "bg-purple-100 text-purple-800"
-        }`}
-      >
-        {row.original.language.toUpperCase()}
-      </span>
-    ),
-    filterFn: "equals",
-  },
-  {
-    accessorKey: "lessonPreference",
-    header: "Lesson Type",
-    cell: ({ row }) =>
-      row.original.lessonPreference
-        ? LESSON_PREF_LABELS[row.original.lessonPreference] ?? row.original.lessonPreference
-        : "—",
-  },
-  {
-    accessorKey: "selfAssessedLevel",
-    header: "Level",
-    cell: ({ row }) =>
-      row.original.selfAssessedLevel
-        ? LEVEL_LABELS[row.original.selfAssessedLevel] ?? row.original.selfAssessedLevel
-        : "—",
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <LeadStatusSelect
-        leadId={row.original.id}
-        currentStatus={row.original.status}
-      />
-    ),
-    filterFn: "equals",
-  },
-  {
-    accessorKey: "note",
-    header: "Note",
-    cell: ({ row }) =>
-      row.original.note ? (
-        <span
-          className="max-w-[150px] truncate block text-muted-foreground text-xs"
-          title={row.original.note}
-        >
-          {row.original.note}
+function buildColumns(activeTab: TabId): ColumnDef<LeadRow>[] {
+  const cols: ColumnDef<LeadRow>[] = [
+    {
+      id: "name",
+      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
+      header: ({ column }) => (
+        <SortableHeader column={column}>Name</SortableHeader>
+      ),
+      cell: ({ row }) => (
+        <span className="font-medium">
+          {row.original.firstName} {row.original.lastName}
         </span>
-      ) : null,
-    enableSorting: false,
-  },
-  {
-    accessorKey: "adminNote",
-    header: "Admin Note",
-    cell: ({ row }) => (
-      <LeadNoteEditor
-        leadId={row.original.id}
-        currentNote={row.original.adminNote}
-      />
-    ),
-    enableSorting: false,
-  },
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <SortableHeader column={column}>Created</SortableHeader>
-    ),
-    cell: ({ row }) => (
-      <span className="text-muted-foreground text-xs" title={formatDate(row.original.createdAt)}>
-        {formatRelative(row.original.createdAt)}
-      </span>
-    ),
-    sortingFn: "datetime",
-  },
-  {
-    id: "convert",
-    header: "",
-    cell: ({ row }) => {
-      const isConverted = row.original.status === "CONVERTED";
-      if (isConverted) {
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone",
+      cell: ({ row }) => (
+        <a
+          href={`tel:${row.original.phone}`}
+          className="text-primary hover:underline"
+        >
+          {row.original.phone}
+        </a>
+      ),
+    },
+    {
+      accessorKey: "dateOfBirth",
+      header: "DOB",
+      cell: ({ row }) =>
+        row.original.dateOfBirth ? formatDate(row.original.dateOfBirth) : "—",
+    },
+    {
+      accessorKey: "language",
+      header: "Lang",
+      cell: ({ row }) => (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
+            row.original.language === "uz"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-purple-100 text-purple-800"
+          }`}
+        >
+          {row.original.language.toUpperCase()}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "lessonPreference",
+      header: "Lesson Type",
+      cell: ({ row }) =>
+        row.original.lessonPreference
+          ? (LESSON_PREF_LABELS[row.original.lessonPreference] ??
+            row.original.lessonPreference)
+          : "—",
+    },
+    {
+      accessorKey: "selfAssessedLevel",
+      header: "Level",
+      cell: ({ row }) =>
+        row.original.selfAssessedLevel
+          ? (LEVEL_LABELS[row.original.selfAssessedLevel] ??
+            row.original.selfAssessedLevel)
+          : "—",
+    },
+    // Status: editable select for active stages, static badge for Closed
+    activeTab === "CLOSED"
+      ? {
+          accessorKey: "status",
+          header: "Status",
+          cell: ({ row }) => (
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[row.original.status]}`}
+            >
+              {STATUS_LABELS[row.original.status]}
+            </span>
+          ),
+        }
+      : {
+          accessorKey: "status",
+          header: "Status",
+          cell: ({ row }) => (
+            <LeadStatusSelect
+              leadId={row.original.id}
+              currentStatus={row.original.status}
+            />
+          ),
+        },
+    {
+      accessorKey: "note",
+      header: "Note",
+      enableSorting: false,
+      cell: ({ row }) =>
+        row.original.note ? (
+          <span
+            className="max-w-[150px] truncate block text-muted-foreground text-xs"
+            title={row.original.note}
+          >
+            {row.original.note}
+          </span>
+        ) : null,
+    },
+    {
+      accessorKey: "adminNote",
+      header: "Admin Note",
+      enableSorting: false,
+      cell: ({ row }) => (
+        <LeadNoteEditor
+          leadId={row.original.id}
+          currentNote={row.original.adminNote}
+        />
+      ),
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <SortableHeader column={column}>Created</SortableHeader>
+      ),
+      sortingFn: "datetime",
+      cell: ({ row }) => {
+        const stale = getStaleInfo(row.original);
         return (
-          <Button size="sm" variant="outline" disabled>
-            Converted
-          </Button>
+          <span className="flex items-center gap-1.5">
+            {stale && (
+              <TooltipPrimitive.Root>
+                <TooltipPrimitive.Trigger asChild>
+                  <span
+                    className={`inline-block w-2 h-2 rounded-full shrink-0 cursor-default ${
+                      stale.color === "red" ? "bg-red-500" : "bg-amber-400"
+                    }`}
+                  />
+                </TooltipPrimitive.Trigger>
+                <TooltipPrimitive.Portal>
+                  <TooltipPrimitive.Content
+                    side="top"
+                    sideOffset={4}
+                    className="z-50 rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
+                  >
+                    {stale.reason}
+                    <TooltipPrimitive.Arrow className="fill-popover" />
+                  </TooltipPrimitive.Content>
+                </TooltipPrimitive.Portal>
+              </TooltipPrimitive.Root>
+            )}
+            <span
+              className="text-muted-foreground text-xs"
+              title={formatDate(row.original.createdAt)}
+            >
+              {formatRelative(row.original.createdAt)}
+            </span>
+          </span>
         );
-      }
-      return (
+      },
+    },
+  ];
+
+  if (activeTab === "NEW" || activeTab === "CONTACTED") {
+    cols.push({
+      id: "convert",
+      header: "",
+      enableSorting: false,
+      cell: ({ row }) => (
         <Button asChild size="sm">
           <Link
-            href={`/students/new?leadId=${row.original.id}&returnTo=/reception`}
+            href={`/students/new?leadId=${row.original.id}&returnTo=/leads`}
           >
             Convert
           </Link>
         </Button>
-      );
-    },
-    enableSorting: false,
-  },
-];
+      ),
+    });
+  }
 
-export function LeadsTable({ data }: { data: LeadRow[] }) {
+  return cols;
+}
+
+export function LeadsTable({
+  data,
+  activeTab,
+  searchQuery,
+  tabLabel,
+}: {
+  data: LeadRow[];
+  activeTab: TabId;
+  searchQuery: string;
+  tabLabel: string;
+}) {
+  const columns = useMemo(() => buildColumns(activeTab), [activeTab]);
+
+  if (data.length === 0) {
+    return (
+      <div className="rounded-md border">
+        <div className="h-24 flex items-center justify-center text-sm text-muted-foreground">
+          {searchQuery
+            ? `No matches for "${searchQuery}" in ${tabLabel}.`
+            : `No leads in ${tabLabel}.`}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      searchKey="name"
-      searchPlaceholder="Search leads..."
-      initialSorting={[{ id: "createdAt", desc: true }]}
-    />
+    <TooltipPrimitive.Provider delayDuration={300}>
+      <DataTable columns={columns} data={data} />
+    </TooltipPrimitive.Provider>
   );
 }

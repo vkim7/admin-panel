@@ -15,6 +15,7 @@ export async function getLeads() {
       status: true,
       adminNote: true,
       createdAt: true,
+      updatedAt: true,
     },
     orderBy: { createdAt: "desc" },
   });
