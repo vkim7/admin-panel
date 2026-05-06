@@ -4,14 +4,15 @@ import { useState } from "react";
 import { ReceptionTable } from "./reception-table";
 import { FirstLessons } from "./first-lessons";
 import { SecondLessons } from "./second-lessons";
-import type { FirstLessonRow, SecondLessonRow } from "@/lib/queries/reception";
+import { ScheduledTab } from "./scheduled-tab";
+import type { FirstLessonRow, ScheduledAssignmentRow, SecondLessonRow } from "@/lib/queries/reception";
 import type { LostReason } from "@/lib/queries/students";
 import type { TransferGroup } from "@/lib/queries/transfers";
 import type { GroupOption } from "./assign-dialog";
 
 type ReceptionStudent = Parameters<typeof ReceptionTable>[0]["data"][number];
 
-type ViewTab = "reception" | "first" | "second";
+type ViewTab = "reception" | "scheduled" | "first" | "second";
 
 interface ReceptionViewProps {
   students: ReceptionStudent[];
@@ -20,6 +21,7 @@ interface ReceptionViewProps {
   secondLessons: SecondLessonRow[];
   lostReasons: LostReason[];
   transferGroups: TransferGroup[];
+  scheduledAssignments: ScheduledAssignmentRow[];
 }
 
 export function ReceptionView({
@@ -29,11 +31,13 @@ export function ReceptionView({
   secondLessons,
   lostReasons,
   transferGroups,
+  scheduledAssignments,
 }: ReceptionViewProps) {
   const [view, setView] = useState<ViewTab>("reception");
 
   const tabs: { value: ViewTab; label: string; count: number }[] = [
     { value: "reception", label: "Reception", count: students.length },
+    { value: "scheduled", label: "Scheduled", count: scheduledAssignments.length },
     { value: "first", label: "First Lessons", count: firstLessons.length },
     { value: "second", label: "Second Lessons", count: secondLessons.length },
   ];
@@ -58,6 +62,7 @@ export function ReceptionView({
       </div>
 
       {view === "reception" && <ReceptionTable data={students} groups={groups} />}
+      {view === "scheduled" && <ScheduledTab data={scheduledAssignments} />}
       {view === "first" && (
         <FirstLessons data={firstLessons} lostReasons={lostReasons} transferGroups={transferGroups} />
       )}

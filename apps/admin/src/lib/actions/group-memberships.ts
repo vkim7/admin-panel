@@ -66,6 +66,7 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
     revalidatePath(`/groups/${groupId}`);
     revalidatePath("/scheduled-actions");
     revalidatePath("/schedule");
+    revalidatePath("/reception");
     return { success: true, scheduled: true };
   }
 
