@@ -2,6 +2,7 @@
 
 import { createHash } from "crypto";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/server/db";
 import { env } from "@/env.js";
@@ -70,7 +71,7 @@ async function sendLeadEvent(opts: {
         event_name: "Lead",
         event_time: Math.floor(Date.now() / 1000),
         action_source: "website",
-        event_source_url: opts.eventSourceUrl ?? "https://bananaschool.uz",
+        event_source_url: opts.eventSourceUrl || "https://bananaschool.uz",
         ...(opts.eventId ? { event_id: opts.eventId } : {}),
         user_data: userData,
       },
@@ -80,7 +81,7 @@ async function sendLeadEvent(opts: {
       : {}),
   };
 
-  await fetch(
+  const res = await fetch(
     `https://graph.facebook.com/v22.0/${PIXEL_ID}/events?access_token=${env.META_ACCESS_TOKEN}`,
     {
       method: "POST",
@@ -88,6 +89,12 @@ async function sendLeadEvent(opts: {
       body: JSON.stringify(payload),
     },
   );
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    console.error(
+      `[CAPI] Lead event rejected: ${res.status} ${res.statusText} ${body}`,
+    );
+  }
 }
 
 export async function submitLead(
@@ -123,17 +130,23 @@ export async function submitLead(
   const clientIp =
     h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip");
 
-  sendLeadEvent({
-    firstName: leadData.firstName,
-    lastName: leadData.lastName,
-    phone: leadData.phone,
-    eventId,
-    eventSourceUrl,
-    userAgent,
-    clientIp,
-    fbc,
-    fbp,
-  }).catch(() => {});
+  after(async () => {
+    try {
+      await sendLeadEvent({
+        firstName: leadData.firstName,
+        lastName: leadData.lastName,
+        phone: leadData.phone,
+        eventId,
+        eventSourceUrl,
+        userAgent,
+        clientIp,
+        fbc,
+        fbp,
+      });
+    } catch (err) {
+      console.error("[CAPI] Lead event failed", err);
+    }
+  });
 
   return { success: true };
 }
