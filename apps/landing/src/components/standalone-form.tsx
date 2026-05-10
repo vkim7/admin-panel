@@ -11,7 +11,6 @@ import type { Dictionary } from "@/lib/i18n";
 import { submitLead } from "@/app/[lang]/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -150,11 +149,6 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
             value={selfAssessedLevel}
             onChange={setSelfAssessedLevel}
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label className="text-sm font-bold text-foreground">{dict.note}</Label>
-          <Textarea name="note" rows={2} />
         </div>
 
         {state?.error && (
