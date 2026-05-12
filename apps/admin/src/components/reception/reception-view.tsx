@@ -61,7 +61,9 @@ export function ReceptionView({
         ))}
       </div>
 
-      {view === "reception" && <ReceptionTable data={students} groups={groups} />}
+      {view === "reception" && (
+        <ReceptionTable data={students} groups={groups} lostReasons={lostReasons} />
+      )}
       {view === "scheduled" && <ScheduledTab data={scheduledAssignments} />}
       {view === "first" && (
         <FirstLessons data={firstLessons} lostReasons={lostReasons} transferGroups={transferGroups} />

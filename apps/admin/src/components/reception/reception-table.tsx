@@ -1,11 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { type ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
+import { toast } from "sonner";
 import { DataTable, SortableHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { LEVEL_SHORT, STAGE_SHORT, DAYS_LABEL } from "@/lib/constants";
 import { getAge } from "@/lib/helpers/date";
 import {
@@ -13,9 +37,10 @@ import {
   type GroupOption,
   type StudentForAssign,
 } from "./assign-dialog";
-import { ArrowRight } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
-import { updateStudentComment } from "@/lib/actions/students";
+import { updateStudentComment, sendOrphanToLost } from "@/lib/actions/students";
+import type { LostReason } from "@/lib/queries/students";
 import type { LessonPreference } from "@eng/database";
 
 type ReceptionStudent = {
@@ -52,6 +77,7 @@ function getDaysLabel(days: number[]) {
 
 function makeColumns(
   onAssign: (student: ReceptionStudent) => void,
+  onSendToLost: (student: ReceptionStudent) => void,
 ): ColumnDef<ReceptionStudent>[] {
   return [
     {
@@ -164,17 +190,27 @@ function makeColumns(
       enableSorting: false,
     },
     {
-      id: "assign",
+      id: "actions",
       header: "",
       cell: ({ row }) => (
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={() => onAssign(row.original)}
-        >
-          Assign
-          <ArrowRight className="ml-1 size-3.5" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="size-7">
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onSelect={() => onAssign(row.original)}>
+              Assign
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onSelect={() => onSendToLost(row.original)}
+            >
+              Send to Lost list
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
       enableSorting: false,
     },
@@ -184,13 +220,26 @@ function makeColumns(
 interface ReceptionTableProps {
   data: ReceptionStudent[];
   groups: GroupOption[];
+  lostReasons: LostReason[];
 }
 
-export function ReceptionTable({ data, groups }: ReceptionTableProps) {
+type StudentForLost = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
+
+export function ReceptionTable({ data, groups, lostReasons }: ReceptionTableProps) {
   const [selectedStudent, setSelectedStudent] =
     useState<StudentForAssign | null>(null);
+  const [lostStudent, setLostStudent] = useState<StudentForLost | null>(null);
+  const [selectedReasonId, setSelectedReasonId] = useState("");
+  const [otherReason, setOtherReason] = useState("");
+  const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<LessonTypeFilter>("ALL");
+
+  const selectedReason = lostReasons.find((r) => r.id === selectedReasonId);
 
   function handleAssign(student: ReceptionStudent) {
     setSelectedStudent({
@@ -206,7 +255,37 @@ export function ReceptionTable({ data, groups }: ReceptionTableProps) {
     });
   }
 
-  const columns = makeColumns(handleAssign);
+  function handleSendToLost(student: ReceptionStudent) {
+    setLostStudent({
+      id: student.id,
+      firstName: student.firstName,
+      lastName: student.lastName,
+    });
+  }
+
+  function resetLostDialog() {
+    setLostStudent(null);
+    setSelectedReasonId("");
+    setOtherReason("");
+  }
+
+  function submitLost() {
+    if (!lostStudent) return;
+    startTransition(async () => {
+      const result = await sendOrphanToLost(lostStudent.id, {
+        lostReasonId: selectedReasonId,
+        otherLostReason: selectedReason?.isOther ? otherReason : null,
+      });
+      if (result && "error" in result) {
+        toast.error(result.error);
+      } else {
+        toast.success(`${lostStudent.firstName} ${lostStudent.lastName} sent to Lost list`);
+        resetLostDialog();
+      }
+    });
+  }
+
+  const columns = makeColumns(handleAssign, handleSendToLost);
 
   const filtered = data.filter((s) => {
     if (typeFilter !== "ALL" && s.preferredLessonType !== typeFilter) {
@@ -277,6 +356,71 @@ export function ReceptionTable({ data, groups }: ReceptionTableProps) {
           }}
         />
       )}
+      <Dialog
+        open={!!lostStudent}
+        onOpenChange={(open) => {
+          if (!open) resetLostDialog();
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Send to Lost list
+              {lostStudent && ` — ${lostStudent.firstName} ${lostStudent.lastName}`}
+            </DialogTitle>
+            <DialogDescription>
+              The student will be marked inactive and moved to the Lost list. This cannot be undone from this screen.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Reason</Label>
+              <Select onValueChange={setSelectedReasonId} value={selectedReasonId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select a reason..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {lostReasons.map((r) => (
+                    <SelectItem key={r.id} value={r.id}>
+                      {r.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {selectedReason?.isOther && (
+              <div className="space-y-2">
+                <Label>Please specify</Label>
+                <Textarea
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                  placeholder="Why is the student lost?"
+                  rows={2}
+                />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={resetLostDialog} disabled={isPending}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={
+                !selectedReasonId ||
+                isPending ||
+                (!!selectedReason?.isOther && !otherReason.trim())
+              }
+              onClick={submitLost}
+            >
+              {isPending ? "..." : "Send to Lost list"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
