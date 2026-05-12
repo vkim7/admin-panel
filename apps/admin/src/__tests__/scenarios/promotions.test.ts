@@ -56,6 +56,7 @@ function studentData(overrides: Record<string, unknown> = {}) {
     familyId: null,
     comment: null,
     promoCode: null,
+    referredByCode: null,
     ...overrides,
   };
 }

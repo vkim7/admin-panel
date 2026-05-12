@@ -215,7 +215,14 @@ export async function updateStudent(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { dateOfBirth, preferredDays, preferredTimeSlots, promoCode: _promoCode, ...rest } = parsed.data;
+  const {
+    dateOfBirth,
+    preferredDays,
+    preferredTimeSlots,
+    promoCode: _promoCode,
+    referredByCode: _referredByCode,
+    ...rest
+  } = parsed.data;
 
   // Check if familyId is changing (for FAMILY promotion auto-detection/removal)
   const oldStudent = await prisma.student.findUnique({
