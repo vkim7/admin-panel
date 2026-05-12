@@ -27,7 +27,6 @@ const LEVEL_LABELS: Record<string, string> = {
 const STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "New",
   CONTACTED: "Contacted",
-  TRIAL_SCHEDULED: "Trial Scheduled",
   CONVERTED: "Converted",
   LOST: "Lost",
 };
@@ -35,7 +34,6 @@ const STATUS_LABELS: Record<LeadStatus, string> = {
 const STATUS_COLORS: Record<LeadStatus, string> = {
   NEW: "bg-blue-100 text-blue-700",
   CONTACTED: "bg-amber-100 text-amber-700",
-  TRIAL_SCHEDULED: "bg-purple-100 text-purple-700",
   CONVERTED: "bg-green-100 text-green-700",
   LOST: "bg-slate-100 text-slate-600",
 };
@@ -128,8 +126,9 @@ function buildColumns(activeTab: TabId): ColumnDef<LeadRow>[] {
             row.original.selfAssessedLevel)
           : "—",
     },
-    // Status: editable select for active stages, static badge for Closed
-    activeTab === "CLOSED"
+    // Status: static badge on Converted (locked — set only by createStudent);
+    // editable dropdown everywhere else, including Lost (so mistaken LOST is recoverable).
+    activeTab === "CONVERTED"
       ? {
           accessorKey: "status",
           header: "Status",

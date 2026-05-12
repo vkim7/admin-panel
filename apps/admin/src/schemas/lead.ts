@@ -3,7 +3,9 @@ import { requiredString, nullableString } from "./helpers";
 
 export const updateLeadStatusSchema = z.object({
   id: requiredString("Lead ID is required"),
-  status: z.enum(["NEW", "CONTACTED", "TRIAL_SCHEDULED", "CONVERTED", "LOST"]),
+  // CONVERTED is intentionally omitted — it can only be set by createStudent
+  // when a lead is converted to a student. Manual writes are rejected here.
+  status: z.enum(["NEW", "CONTACTED", "LOST"]),
 });
 
 export const updateLeadNoteSchema = z.object({

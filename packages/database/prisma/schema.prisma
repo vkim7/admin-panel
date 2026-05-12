@@ -1486,7 +1486,6 @@ model ScheduledAction {
 enum LeadStatus {
   NEW
   CONTACTED
-  TRIAL_SCHEDULED
   CONVERTED
   LOST
 }

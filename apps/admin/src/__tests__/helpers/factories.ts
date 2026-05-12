@@ -174,7 +174,7 @@ interface LeadOverrides {
   language?: string;
   lessonPreference?: "GROUP" | "INDIVIDUAL" | "EITHER" | null;
   selfAssessedLevel?: "COMPLETE_BEGINNER" | "CONTINUING" | null;
-  status?: "NEW" | "CONTACTED" | "TRIAL_SCHEDULED" | "CONVERTED" | "LOST";
+  status?: "NEW" | "CONTACTED" | "CONVERTED" | "LOST";
   note?: string | null;
   adminNote?: string | null;
 }

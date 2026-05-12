@@ -22,13 +22,13 @@ export type LeadForTabs = {
   updatedAt: Date;
 };
 
-export type TabId = "NEW" | "CONTACTED" | "TRIAL_SCHEDULED" | "CLOSED";
+export type TabId = "NEW" | "CONTACTED" | "CONVERTED" | "LOST";
 
 const TABS: { id: TabId; label: string; statuses: LeadStatus[] }[] = [
   { id: "NEW", label: "New", statuses: ["NEW"] },
   { id: "CONTACTED", label: "Contacted", statuses: ["CONTACTED"] },
-  { id: "TRIAL_SCHEDULED", label: "Trial scheduled", statuses: ["TRIAL_SCHEDULED"] },
-  { id: "CLOSED", label: "Closed", statuses: ["CONVERTED", "LOST"] },
+  { id: "CONVERTED", label: "Converted", statuses: ["CONVERTED"] },
+  { id: "LOST", label: "Lost", statuses: ["LOST"] },
 ];
 
 function staleSeverity(color: "red" | "amber" | null | undefined): number {
@@ -78,7 +78,7 @@ export function LeadsTabs({ leads }: { leads: LeadForTabs[] }) {
       tab.statuses.includes(l.status),
     );
 
-    if (activeTab === "CLOSED") {
+    if (activeTab === "CONVERTED" || activeTab === "LOST") {
       return [...tabLeads].sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
