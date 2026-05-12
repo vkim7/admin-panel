@@ -24,11 +24,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { FamilySearch, type SelectedFamily } from "@/components/families/family-search";
 import { FamilyForm } from "@/components/families/family-form";
 import { TIME_SLOTS } from "@/lib/constants";
+import { getAge } from "@/lib/helpers/date";
 
 const LEVELS = [
   { value: "BEGINNER", label: "Beginner" },
@@ -57,9 +57,9 @@ const LANGUAGES = [
 ] as const;
 
 const LESSON_TYPES = [
+  { value: "EITHER", label: "Any" },
   { value: "GROUP", label: "Group" },
   { value: "INDIVIDUAL", label: "Individual" },
-  { value: "EITHER", label: "Either" },
 ] as const;
 
 interface StudentFormProps {
@@ -99,8 +99,8 @@ export function StudentForm({
       lastName: "",
       phone: "",
       dateOfBirth: "",
-      level: "BEGINNER",
-      progressStage: "BEGINNING",
+      level: "" as unknown as "BEGINNER",
+      progressStage: "" as unknown as "BEGINNING",
       preferredDays: [],
       preferredTimeSlots: [],
       preferredLanguage: "" as unknown as "UZBEK" | "RUSSIAN" | "ANY",
@@ -122,6 +122,11 @@ export function StudentForm({
       }
     });
   }
+
+  const dob = form.watch("dateOfBirth");
+  const familyId = form.watch("familyId");
+  const age = dob ? getAge(new Date(dob)) : null;
+  const showFamily = (age !== null && age < 18) || !!familyId;
 
   function handleCancel() {
     if (cancelTo) {
@@ -244,6 +249,56 @@ export function StudentForm({
           />
         </div>
 
+        {/* Family — only shown for minors (or when a family is already linked) */}
+        {showFamily && (
+          <div className="rounded-lg border bg-muted/30 p-4">
+            <FormField
+              control={form.control}
+              name="familyId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Family (required for minors under 18)</FormLabel>
+                  <div className="space-y-2">
+                    <FamilySearch
+                      selectedFamily={selectedFamily}
+                      onSelect={(family) => {
+                        field.onChange(family.id);
+                        setSelectedFamily(family);
+                        setShowFamilyForm(false);
+                      }}
+                      onClear={() => {
+                        field.onChange(null);
+                        setSelectedFamily(null);
+                      }}
+                    />
+                    {!selectedFamily && !showFamilyForm && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowFamilyForm(true)}
+                      >
+                        + Create New Family
+                      </Button>
+                    )}
+                    {showFamilyForm && (
+                      <FamilyForm
+                        onCreated={(family) => {
+                          field.onChange(family.id);
+                          setSelectedFamily(family);
+                          setShowFamilyForm(false);
+                        }}
+                        onCancel={() => setShowFamilyForm(false)}
+                      />
+                    )}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
+
         {/* Preferred Lesson Type */}
         <FormField
           control={form.control}
@@ -270,21 +325,51 @@ export function StudentForm({
                   );
                 })}
               </div>
-              <FormDescription>
-                &quot;Either&quot; keeps the student eligible for both group and individual placement.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        {/* Preferred Days */}
+        {/* Preferred Language */}
+        <FormField
+          control={form.control}
+          name="preferredLanguage"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Preferred Language</FormLabel>
+              <div className="flex gap-2">
+                {LANGUAGES.map((opt) => {
+                  const selected = field.value === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => field.onChange(opt.value)}
+                      className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input hover:bg-accent"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Days */}
         <FormField
           control={form.control}
           name="preferredDays"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Preferred Days</FormLabel>
+              <FormLabel>
+                <span className="font-normal text-muted-foreground">Optional.</span> Days
+              </FormLabel>
               <div className="flex gap-2">
                 {DAY_OPTIONS.map((opt) => {
                   const selected =
@@ -315,13 +400,15 @@ export function StudentForm({
           )}
         />
 
-        {/* Preferred Time Slots */}
+        {/* Time Slots */}
         <FormField
           control={form.control}
           name="preferredTimeSlots"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Preferred Time Slots</FormLabel>
+              <FormLabel>
+                <span className="font-normal text-muted-foreground">Optional.</span> Time Slots
+              </FormLabel>
               <div className="flex flex-wrap gap-1">
                 {TIME_SLOTS.map((slot) => {
                   const selected = field.value.includes(slot);
@@ -347,82 +434,6 @@ export function StudentForm({
                   );
                 })}
               </div>
-              <FormDescription>Optional — select one or more</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Preferred Language */}
-        <FormField
-          control={form.control}
-          name="preferredLanguage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Preferred Language</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select language..." />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {LANGUAGES.map((l) => (
-                    <SelectItem key={l.value} value={l.value}>
-                      {l.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Family */}
-        <FormField
-          control={form.control}
-          name="familyId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Family (required for minors under 18)</FormLabel>
-              <div className="space-y-2">
-                <FamilySearch
-                  selectedFamily={selectedFamily}
-                  onSelect={(family) => {
-                    field.onChange(family.id);
-                    setSelectedFamily(family);
-                    setShowFamilyForm(false);
-                  }}
-                  onClear={() => {
-                    field.onChange(null);
-                    setSelectedFamily(null);
-                  }}
-                />
-                {!selectedFamily && !showFamilyForm && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowFamilyForm(true)}
-                  >
-                    + Create New Family
-                  </Button>
-                )}
-                {showFamilyForm && (
-                  <FamilyForm
-                    onCreated={(family) => {
-                      field.onChange(family.id);
-                      setSelectedFamily(family);
-                      setShowFamilyForm(false);
-                    }}
-                    onCancel={() => setShowFamilyForm(false)}
-                  />
-                )}
-              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -434,12 +445,13 @@ export function StudentForm({
           name="comment"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Comment</FormLabel>
+              <FormLabel>
+                <span className="font-normal text-muted-foreground">Optional.</span> Comment
+              </FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
                   value={field.value ?? ""}
-                  placeholder="Optional notes about this student..."
                   rows={3}
                 />
               </FormControl>
@@ -456,18 +468,16 @@ export function StudentForm({
               name="promoCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Promo Code</FormLabel>
+                  <FormLabel>
+                    <span className="font-normal text-muted-foreground">Optional.</span> Promo Code
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value ?? ""}
-                      placeholder="e.g. BIEBER2026"
                       disabled={!!form.watch("referredByCode")}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Campaign code for a first-month discount.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -477,18 +487,16 @@ export function StudentForm({
               name="referredByCode"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Referral Code</FormLabel>
+                  <FormLabel>
+                    <span className="font-normal text-muted-foreground">Optional.</span> Referral Code
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       value={field.value ?? ""}
-                      placeholder="e.g. ABC12345"
                       disabled={!!form.watch("promoCode")}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Referring student&apos;s code.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
