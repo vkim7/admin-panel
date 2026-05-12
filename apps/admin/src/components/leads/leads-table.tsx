@@ -88,12 +88,6 @@ function buildColumns(activeTab: TabId): ColumnDef<LeadRow>[] {
       ),
     },
     {
-      accessorKey: "dateOfBirth",
-      header: "DOB",
-      cell: ({ row }) =>
-        row.original.dateOfBirth ? formatDate(row.original.dateOfBirth) : "—",
-    },
-    {
       accessorKey: "language",
       header: "Lang",
       cell: ({ row }) => (
@@ -150,20 +144,6 @@ function buildColumns(activeTab: TabId): ColumnDef<LeadRow>[] {
             />
           ),
         },
-    {
-      accessorKey: "note",
-      header: "Note",
-      enableSorting: false,
-      cell: ({ row }) =>
-        row.original.note ? (
-          <span
-            className="max-w-[150px] truncate block text-muted-foreground text-xs"
-            title={row.original.note}
-          >
-            {row.original.note}
-          </span>
-        ) : null,
-    },
     {
       accessorKey: "adminNote",
       header: "Admin Note",
