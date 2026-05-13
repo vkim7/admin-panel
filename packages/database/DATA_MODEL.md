@@ -132,6 +132,7 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 | preferredDays[] | Scheduling preference, e.g., [1, 3, 5] for Mon/Wed/Fri |
 | preferredTimeSlots[] | Time slot preferences, e.g., ["14:30", "16:00"] — subset of fixed TIME_SLOTS |
 | preferredLanguage | UZBEK, RUSSIAN, or ANY. Defaults to ANY for new students. A mismatch with the group teacher's language triggers a warning (all levels) — admin can still proceed. Used for sorting/boosting in assign dialog suggestions. |
+| preferredLessonType | GROUP, INDIVIDUAL, or EITHER. Required — collected at student creation. **Hard filter** in assign dialog: GROUP-pref students see only GROUP-type groups, INDIVIDUAL-pref see only INDIVIDUAL, EITHER sees both. Drives "can I form a new group?" daily review on /reception. |
 | referralCode | Unique code for referral tracking |
 | isUncertain | Manual flag — teacher/admin gut feeling that student may leave |
 | uncertainFlaggedBy | Who flagged: TEACHER or ADMIN |
@@ -139,6 +140,7 @@ Central entity. One record per student, surfaced in multiple views (Reception, G
 | uncertainComment | Free text when the uncertain reason is "Other" |
 | comment | General admin notes on the student |
 | amoCrmLeadId | Dedup key for amoCRM polling integration |
+| leadId | Optional 1:1 link to the originating Lead row when the student was converted from a `/leads` entry. Unique. Set at creation only — never edited via the student edit form. ON DELETE SET NULL (deleting a lead doesn't cascade to the student). |
 | activatedAt | When status changed to ACTIVE (assigned to first group) |
 | activatedById | Which admin activated (audit trail) |
 | inactivatedAt | When status changed to INACTIVE |

@@ -38,6 +38,7 @@ export default async function EditStudentPage({
           preferredDays: student.preferredDays,
           preferredTimeSlots: student.preferredTimeSlots,
           preferredLanguage: student.preferredLanguage,
+          preferredLessonType: student.preferredLessonType,
           familyId: student.familyId,
           comment: student.comment,
           promoCode: null,

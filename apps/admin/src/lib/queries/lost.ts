@@ -16,6 +16,7 @@ export async function getLostStudents() {
       preferredDays: true,
       preferredTimeSlots: true,
       preferredLanguage: true,
+      preferredLessonType: true,
       lostReason: { select: { id: true, name: true } },
       inactivatedBy: { select: { firstName: true, lastName: true } },
       groupMemberships: {

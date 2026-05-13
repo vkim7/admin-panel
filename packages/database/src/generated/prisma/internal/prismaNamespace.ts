@@ -3357,6 +3357,7 @@ export const StudentScalarFieldEnum = {
   preferredDays: 'preferredDays',
   preferredTimeSlots: 'preferredTimeSlots',
   preferredLanguage: 'preferredLanguage',
+  preferredLessonType: 'preferredLessonType',
   referralCode: 'referralCode',
   isUncertain: 'isUncertain',
   uncertainFlaggedBy: 'uncertainFlaggedBy',
@@ -3364,6 +3365,7 @@ export const StudentScalarFieldEnum = {
   uncertainComment: 'uncertainComment',
   comment: 'comment',
   amoCrmLeadId: 'amoCrmLeadId',
+  leadId: 'leadId',
   activatedAt: 'activatedAt',
   activatedById: 'activatedById',
   inactivatedAt: 'inactivatedAt',
@@ -4102,6 +4104,20 @@ export type ListEnumStudentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'LessonPreference'
+ */
+export type EnumLessonPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonPreference'>
+    
+
+
+/**
+ * Reference to a field of type 'LessonPreference[]'
+ */
+export type ListEnumLessonPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonPreference[]'>
+    
+
+
+/**
  * Reference to a field of type 'UncertainFlagSource'
  */
 export type EnumUncertainFlagSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UncertainFlagSource'>
@@ -4336,20 +4352,6 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
- * Reference to a field of type 'LessonPreference'
- */
-export type EnumLessonPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonPreference'>
-    
-
-
-/**
- * Reference to a field of type 'LessonPreference[]'
- */
-export type ListEnumLessonPreferenceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LessonPreference[]'>
     
 
 

@@ -57,7 +57,7 @@ export function FamilyForm({ onCreated, onCancel }: FamilyFormProps) {
   }
 
   return (
-    <div className="rounded-md border bg-muted/30 p-4">
+    <div className="rounded-md border bg-background p-4">
       <h4 className="mb-3 text-sm font-medium">Create New Family</h4>
       <FormProvider {...form}>
         <div className="space-y-3">

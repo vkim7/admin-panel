@@ -1,11 +1,16 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect, useRef } from "react";
+
+declare global {
+  interface Window {
+    fbq?: (...args: unknown[]) => void;
+  }
+}
 import type { Dictionary } from "@/lib/i18n";
 import { submitLead } from "@/app/[lang]/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -56,9 +61,18 @@ function PillGroup({
 export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
   const [lessonPreference, setLessonPreference] = useState("GROUP");
   const [selfAssessedLevel, setSelfAssessedLevel] = useState("COMPLETE_BEGINNER");
+  const eventIdRef = useRef<string>("");
 
   const [state, formAction, isPending] = useActionState(
     async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
+      const eventId = crypto.randomUUID();
+      eventIdRef.current = eventId;
+      formData.set("eventId", eventId);
+      formData.set("eventSourceUrl", window.location.href);
+      const getCookie = (name: string) =>
+        document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`)?.pop() ?? "";
+      formData.set("fbc", getCookie("_fbc"));
+      formData.set("fbp", getCookie("_fbp"));
       formData.set("language", locale);
       const phone = formData.get("phone");
       if (typeof phone === "string") {
@@ -69,10 +83,21 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
     null,
   );
 
+  useEffect(() => {
+    if (state?.success && eventIdRef.current) {
+      window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
+    }
+  }, [state?.success]);
+
   if (state?.success) {
     return (
-      <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 max-w-md w-full">
-        <p className="text-leaf-green font-bold text-lg text-center">{dict.success}</p>
+      <div className="flex flex-col items-center gap-4 max-w-md w-full">
+        <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 w-full">
+          <p className="text-leaf-green font-bold text-lg text-center">{dict.success}</p>
+        </div>
+        <Button asChild size="lg" className="rounded-full text-base border-main">
+          <a href={`/${locale}`}>{dict.successCta}</a>
+        </Button>
       </div>
     );
   }
@@ -124,11 +149,6 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
             value={selfAssessedLevel}
             onChange={setSelfAssessedLevel}
           />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label className="text-sm font-bold text-foreground">{dict.note}</Label>
-          <Textarea name="note" rows={2} />
         </div>
 
         {state?.error && (

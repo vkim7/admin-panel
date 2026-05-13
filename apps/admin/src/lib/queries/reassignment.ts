@@ -15,6 +15,7 @@ export async function getReassignmentStudents() {
       preferredDays: true,
       preferredTimeSlots: true,
       preferredLanguage: true,
+      preferredLessonType: true,
       comment: true,
       groupMemberships: {
         where: { leaveDate: { not: null } },

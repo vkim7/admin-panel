@@ -7,6 +7,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { addStudentsToGroup } from "@/lib/actions/group-memberships";
 import { DAYS_LABEL, LEVEL_SHORT, STAGE_SHORT, LEVEL_STAGE_ORDER } from "@/lib/constants";
+import { isEligibleByLessonType } from "@/lib/helpers/group-eligibility";
+import type { GroupType, LessonPreference } from "@eng/database";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -52,6 +54,7 @@ export type StudentForAssign = {
   preferredDays: number[];
   preferredTimeSlots: string[];
   preferredLanguage: string;
+  preferredLessonType: LessonPreference;
 };
 
 const assignFormSchema = z.object({
@@ -114,6 +117,11 @@ export function AssignDialog({
     const studentIdx = LEVEL_STAGE_ORDER.indexOf(studentKey);
 
     const eligible = groups.filter((g) => {
+      // Hard filter: lesson-type preference. INDIVIDUAL-only students never see GROUP groups, etc.
+      if (!isEligibleByLessonType(student.preferredLessonType, g.type as GroupType)) {
+        return false;
+      }
+
       const groupKey = `${g.level}:${g.progressStage}`;
       const groupIdx = LEVEL_STAGE_ORDER.indexOf(groupKey);
       if (studentIdx === -1 || groupIdx === -1) return false;
@@ -316,6 +324,14 @@ export function AssignDialog({
               {student.preferredLanguage === "UZBEK" ? "Uzbek" : "Russian"}
             </span>
           )}
+          <span className="text-muted-foreground">
+            Type:{" "}
+            {student.preferredLessonType === "GROUP"
+              ? "Group"
+              : student.preferredLessonType === "INDIVIDUAL"
+                ? "Individual"
+                : "Either"}
+          </span>
         </div>
 
         <Form {...form}>
@@ -354,7 +370,11 @@ export function AssignDialog({
                     )}
                     {hasNoGroups && (
                       <p className="py-4 text-center text-sm text-muted-foreground">
-                        No groups with available seats at this level
+                        {student.preferredLessonType === "GROUP"
+                          ? "No GROUP-type groups with available seats at this level"
+                          : student.preferredLessonType === "INDIVIDUAL"
+                            ? "No INDIVIDUAL-type groups with available seats at this level"
+                            : "No groups with available seats at this level"}
                       </p>
                     )}
                   </div>

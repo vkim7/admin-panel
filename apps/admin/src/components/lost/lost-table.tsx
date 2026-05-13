@@ -16,6 +16,7 @@ import {
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { sendToReassignment } from "@/lib/actions/students";
 import { ArrowRight, RefreshCw } from "lucide-react";
+import type { LessonPreference } from "@eng/database";
 
 type LostStudentRow = {
   id: string;
@@ -30,6 +31,7 @@ type LostStudentRow = {
   preferredDays: number[];
   preferredTimeSlots: string[];
   preferredLanguage: string;
+  preferredLessonType: LessonPreference;
   lostReason: { id: string; name: string } | null;
   inactivatedBy: { firstName: string; lastName: string } | null;
   groupMemberships: {
@@ -211,6 +213,7 @@ export function LostTable({ data, groups }: LostTableProps) {
       preferredDays: student.preferredDays,
       preferredTimeSlots: student.preferredTimeSlots,
       preferredLanguage: student.preferredLanguage,
+      preferredLessonType: student.preferredLessonType,
     });
   }
 

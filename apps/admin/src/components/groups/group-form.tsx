@@ -121,7 +121,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                   <button
                     key={t}
                     type="button"
-                    disabled={isEdit || isPrefilled}
+                    disabled={isEdit}
                     onClick={() => {
                       field.onChange(t);
                     }}
@@ -129,7 +129,7 @@ export function GroupForm({ defaultValues, groupId, teachers, prefill }: GroupFo
                       field.value === t
                         ? "border-primary bg-primary text-primary-foreground"
                         : "border-input hover:bg-accent"
-                    } ${isEdit || isPrefilled ? "cursor-not-allowed opacity-50" : ""}`}
+                    } ${isEdit ? "cursor-not-allowed opacity-50" : ""}`}
                   >
                     {t === "GROUP" ? "Group" : "Individual"}
                   </button>

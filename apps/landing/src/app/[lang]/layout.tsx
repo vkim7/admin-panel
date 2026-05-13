@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geologica, Nunito_Sans } from "next/font/google";
 import { getDictionary, isValidLocale } from "@/lib/i18n";
 import { FloatingContacts } from "@/components/floating-contacts";
@@ -42,6 +43,7 @@ export async function generateMetadata({
     },
     other: {
       "theme-color": "#FFE347",
+      "facebook-domain-verification": "0vlwoydijf1bly2zftgt5vdwsc5t00",
     },
     alternates: {
       canonical: `https://bananaschool.uz/${locale}`,
@@ -113,6 +115,60 @@ export default async function LangLayout({
             }),
           }}
         />
+        <Script id="yandex-metrika" strategy="afterInteractive">
+          {`
+            (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+            (window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=108772502', 'ym');
+
+            ym(108772502, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+          `}
+        </Script>
+        <noscript>
+          <div>
+            <img
+              src="https://mc.yandex.ru/watch/108772502"
+              style={{ position: "absolute", left: "-9999px" }}
+              alt=""
+            />
+          </div>
+        </noscript>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-57G2LVY2SZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-57G2LVY2SZ');
+          `}
+        </Script>
+        <Script id="meta-pixel" strategy="afterInteractive">
+          {`
+            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){
+            n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+            n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t,s)}(window,document,'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init','2184030425473159');
+            fbq('track','PageView');
+          `}
+        </Script>
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            src="https://www.facebook.com/tr?id=2184030425473159&ev=PageView&noscript=1"
+            alt=""
+          />
+        </noscript>
         {children}
         <FloatingContacts />
       </body>

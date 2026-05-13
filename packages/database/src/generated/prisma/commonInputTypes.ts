@@ -241,6 +241,13 @@ export type EnumStudentStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel> | $Enums.StudentStatus
 }
 
+export type EnumLessonPreferenceFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonPreference | Prisma.EnumLessonPreferenceFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel> | $Enums.LessonPreference
+}
+
 export type EnumUncertainFlagSourceNullableFilter<$PrismaModel = never> = {
   equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel> | null
   in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel> | null
@@ -292,6 +299,16 @@ export type EnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
+}
+
+export type EnumLessonPreferenceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonPreference | Prisma.EnumLessonPreferenceFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonPreferenceWithAggregatesFilter<$PrismaModel> | $Enums.LessonPreference
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel>
 }
 
 export type EnumUncertainFlagSourceNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -972,6 +989,13 @@ export type NestedEnumStudentStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel> | $Enums.StudentStatus
 }
 
+export type NestedEnumLessonPreferenceFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonPreference | Prisma.EnumLessonPreferenceFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel> | $Enums.LessonPreference
+}
+
 export type NestedEnumUncertainFlagSourceNullableFilter<$PrismaModel = never> = {
   equals?: $Enums.UncertainFlagSource | Prisma.EnumUncertainFlagSourceFieldRefInput<$PrismaModel> | null
   in?: $Enums.UncertainFlagSource[] | Prisma.ListEnumUncertainFlagSourceFieldRefInput<$PrismaModel> | null
@@ -1034,6 +1058,16 @@ export type NestedEnumStudentStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStudentStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumLessonPreferenceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.LessonPreference | Prisma.EnumLessonPreferenceFieldRefInput<$PrismaModel>
+  in?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.LessonPreference[] | Prisma.ListEnumLessonPreferenceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumLessonPreferenceWithAggregatesFilter<$PrismaModel> | $Enums.LessonPreference
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumLessonPreferenceFilter<$PrismaModel>
 }
 
 export type NestedEnumUncertainFlagSourceNullableWithAggregatesFilter<$PrismaModel = never> = {

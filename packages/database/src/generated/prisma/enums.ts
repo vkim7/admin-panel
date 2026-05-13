@@ -211,7 +211,6 @@ export type RecordingStatus = (typeof RecordingStatus)[keyof typeof RecordingSta
 export const LeadStatus = {
   NEW: 'NEW',
   CONTACTED: 'CONTACTED',
-  TRIAL_SCHEDULED: 'TRIAL_SCHEDULED',
   CONVERTED: 'CONVERTED',
   LOST: 'LOST'
 } as const
@@ -221,7 +220,8 @@ export type LeadStatus = (typeof LeadStatus)[keyof typeof LeadStatus]
 
 export const LessonPreference = {
   GROUP: 'GROUP',
-  INDIVIDUAL: 'INDIVIDUAL'
+  INDIVIDUAL: 'INDIVIDUAL',
+  EITHER: 'EITHER'
 } as const
 
 export type LessonPreference = (typeof LessonPreference)[keyof typeof LessonPreference]

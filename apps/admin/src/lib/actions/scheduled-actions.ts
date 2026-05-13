@@ -81,6 +81,10 @@ export async function cancelScheduledAction(data: unknown) {
   });
 
   revalidatePath("/scheduled-actions");
+  // Cheap unconditional revalidate — only ASSIGNs affect /reception today, but
+  // a type-specific check would silently rot if new types start drawing from
+  // the same page. Reception is small and re-fetches only when re-rendered.
+  revalidatePath("/reception");
   return { success: true };
 }
 

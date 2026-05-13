@@ -33,6 +33,7 @@ import {
 import { sendOrphanToLost, updateStudentComment } from "@/lib/actions/students";
 import { ArrowRight, UserMinus } from "lucide-react";
 import { EditCommentDialog } from "@/components/shared/edit-comment-dialog";
+import type { LessonPreference } from "@eng/database";
 
 type LostReason = {
   id: string;
@@ -52,6 +53,7 @@ type ReassignmentStudent = {
   preferredDays: number[];
   preferredTimeSlots: string[];
   preferredLanguage: string;
+  preferredLessonType: LessonPreference;
   comment: string | null;
   groupMemberships: {
     leaveDate: Date | null;
@@ -221,6 +223,7 @@ export function ReassignmentTable({ data, groups, lostReasons }: ReassignmentTab
       preferredDays: student.preferredDays,
       preferredTimeSlots: student.preferredTimeSlots,
       preferredLanguage: student.preferredLanguage,
+      preferredLessonType: student.preferredLessonType,
     });
   }
 

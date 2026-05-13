@@ -4,7 +4,12 @@ import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
 export async function getReceptionStudents() {
   return prisma.student.findMany({
-    where: { status: "AWAITING_ASSIGNMENT" },
+    where: {
+      status: "AWAITING_ASSIGNMENT",
+      // Hide students that already have a pending scheduled assignment —
+      // they belong on the Scheduled tab until the action fires or is cancelled.
+      scheduledActions: { none: { type: "ASSIGN", status: "PENDING" } },
+    },
     select: {
       id: true,
       crmCode: true,
@@ -18,6 +23,7 @@ export async function getReceptionStudents() {
       preferredDays: true,
       preferredTimeSlots: true,
       preferredLanguage: true,
+      preferredLessonType: true,
       comment: true,
       family: { select: { parentPhone: true } },
     },
@@ -27,8 +33,66 @@ export async function getReceptionStudents() {
 
 export async function getReceptionCount() {
   return prisma.student.count({
-    where: { status: "AWAITING_ASSIGNMENT" },
+    where: {
+      status: "AWAITING_ASSIGNMENT",
+      scheduledActions: { none: { type: "ASSIGN", status: "PENDING" } },
+    },
   });
+}
+
+// ── Scheduled assignments: students with a pending ASSIGN scheduled action ──
+
+export type ScheduledAssignmentRow = {
+  scheduledActionId: string;
+  studentId: string;
+  crmCode: string;
+  firstName: string;
+  lastName: string;
+  phone: string | null;
+  destGroupId: string;
+  destGroupPublicId: string;
+  destGroupType: string;
+  effectiveDate: Date;
+  createdByName: string;
+};
+
+export async function getScheduledAssignments(): Promise<ScheduledAssignmentRow[]> {
+  const actions = await prisma.scheduledAction.findMany({
+    where: {
+      type: "ASSIGN",
+      status: "PENDING",
+      // Scope to the same population that getReceptionStudents() hides — only
+      // first-time placements. Future ASSIGNs against ACTIVE students (e.g. a
+      // second membership) live on /scheduled-actions, not Reception.
+      student: { status: "AWAITING_ASSIGNMENT" },
+    },
+    orderBy: { effectiveDate: "asc" },
+    include: {
+      student: {
+        select: { id: true, crmCode: true, firstName: true, lastName: true, phone: true },
+      },
+      destGroup: {
+        select: { id: true, publicId: true, type: true },
+      },
+      createdBy: { select: { firstName: true, lastName: true } },
+    },
+  });
+
+  return actions
+    .filter((a) => a.student && a.destGroup)
+    .map((a) => ({
+      scheduledActionId: a.id,
+      studentId: a.student!.id,
+      crmCode: a.student!.crmCode,
+      firstName: a.student!.firstName,
+      lastName: a.student!.lastName,
+      phone: a.student!.phone,
+      destGroupId: a.destGroup!.id,
+      destGroupPublicId: a.destGroup!.publicId,
+      destGroupType: a.destGroup!.type,
+      effectiveDate: a.effectiveDate,
+      createdByName: `${a.createdBy.firstName} ${a.createdBy.lastName}`,
+    }));
 }
 
 // ── First Lessons: active trial students with lesson + attendance info ──

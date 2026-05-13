@@ -52,6 +52,7 @@ export type StudentMinAggregateOutputType = {
   status: $Enums.StudentStatus | null
   familyId: string | null
   preferredLanguage: $Enums.PreferredLanguage | null
+  preferredLessonType: $Enums.LessonPreference | null
   referralCode: string | null
   isUncertain: boolean | null
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -59,6 +60,7 @@ export type StudentMinAggregateOutputType = {
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
+  leadId: string | null
   activatedAt: Date | null
   activatedById: string | null
   inactivatedAt: Date | null
@@ -83,6 +85,7 @@ export type StudentMaxAggregateOutputType = {
   status: $Enums.StudentStatus | null
   familyId: string | null
   preferredLanguage: $Enums.PreferredLanguage | null
+  preferredLessonType: $Enums.LessonPreference | null
   referralCode: string | null
   isUncertain: boolean | null
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -90,6 +93,7 @@ export type StudentMaxAggregateOutputType = {
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
+  leadId: string | null
   activatedAt: Date | null
   activatedById: string | null
   inactivatedAt: Date | null
@@ -116,6 +120,7 @@ export type StudentCountAggregateOutputType = {
   preferredDays: number
   preferredTimeSlots: number
   preferredLanguage: number
+  preferredLessonType: number
   referralCode: number
   isUncertain: number
   uncertainFlaggedBy: number
@@ -123,6 +128,7 @@ export type StudentCountAggregateOutputType = {
   uncertainComment: number
   comment: number
   amoCrmLeadId: number
+  leadId: number
   activatedAt: number
   activatedById: number
   inactivatedAt: number
@@ -161,6 +167,7 @@ export type StudentMinAggregateInputType = {
   status?: true
   familyId?: true
   preferredLanguage?: true
+  preferredLessonType?: true
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
@@ -168,6 +175,7 @@ export type StudentMinAggregateInputType = {
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
+  leadId?: true
   activatedAt?: true
   activatedById?: true
   inactivatedAt?: true
@@ -192,6 +200,7 @@ export type StudentMaxAggregateInputType = {
   status?: true
   familyId?: true
   preferredLanguage?: true
+  preferredLessonType?: true
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
@@ -199,6 +208,7 @@ export type StudentMaxAggregateInputType = {
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
+  leadId?: true
   activatedAt?: true
   activatedById?: true
   inactivatedAt?: true
@@ -225,6 +235,7 @@ export type StudentCountAggregateInputType = {
   preferredDays?: true
   preferredTimeSlots?: true
   preferredLanguage?: true
+  preferredLessonType?: true
   referralCode?: true
   isUncertain?: true
   uncertainFlaggedBy?: true
@@ -232,6 +243,7 @@ export type StudentCountAggregateInputType = {
   uncertainComment?: true
   comment?: true
   amoCrmLeadId?: true
+  leadId?: true
   activatedAt?: true
   activatedById?: true
   inactivatedAt?: true
@@ -345,6 +357,7 @@ export type StudentGroupByOutputType = {
   preferredDays: number[]
   preferredTimeSlots: string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode: string | null
   isUncertain: boolean
   uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -352,6 +365,7 @@ export type StudentGroupByOutputType = {
   uncertainComment: string | null
   comment: string | null
   amoCrmLeadId: string | null
+  leadId: string | null
   activatedAt: Date | null
   activatedById: string | null
   inactivatedAt: Date | null
@@ -401,6 +415,7 @@ export type StudentWhereInput = {
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
   preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFilter<"Student"> | $Enums.LessonPreference
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -408,6 +423,7 @@ export type StudentWhereInput = {
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
   comment?: Prisma.StringNullableFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableFilter<"Student"> | string | null
+  leadId?: Prisma.StringNullableFilter<"Student"> | string | null
   activatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   activatedById?: Prisma.StringNullableFilter<"Student"> | string | null
   inactivatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -421,6 +437,7 @@ export type StudentWhereInput = {
   inactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   lostReason?: Prisma.XOR<Prisma.LostReasonNullableScalarRelationFilter, Prisma.LostReasonWhereInput> | null
   uncertainReason?: Prisma.XOR<Prisma.UncertainReasonNullableScalarRelationFilter, Prisma.UncertainReasonWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   uncertainHistories?: Prisma.UncertainHistoryListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
   attendanceRecords?: Prisma.AttendanceListRelationFilter
@@ -452,6 +469,7 @@ export type StudentOrderByWithRelationInput = {
   preferredDays?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
+  preferredLessonType?: Prisma.SortOrder
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -459,6 +477,7 @@ export type StudentOrderByWithRelationInput = {
   uncertainComment?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   inactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -472,6 +491,7 @@ export type StudentOrderByWithRelationInput = {
   inactivatedBy?: Prisma.AdminUserOrderByWithRelationInput
   lostReason?: Prisma.LostReasonOrderByWithRelationInput
   uncertainReason?: Prisma.UncertainReasonOrderByWithRelationInput
+  lead?: Prisma.LeadOrderByWithRelationInput
   uncertainHistories?: Prisma.UncertainHistoryOrderByRelationAggregateInput
   groupMemberships?: Prisma.GroupMembershipOrderByRelationAggregateInput
   attendanceRecords?: Prisma.AttendanceOrderByRelationAggregateInput
@@ -495,6 +515,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   telegramId?: bigint | number
   referralCode?: string
   amoCrmLeadId?: string
+  leadId?: string
   AND?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
   OR?: Prisma.StudentWhereInput[]
   NOT?: Prisma.StudentWhereInput | Prisma.StudentWhereInput[]
@@ -508,6 +529,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
   preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFilter<"Student"> | $Enums.LessonPreference
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
   uncertainReasonId?: Prisma.StringNullableFilter<"Student"> | string | null
@@ -526,6 +548,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   inactivatedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   lostReason?: Prisma.XOR<Prisma.LostReasonNullableScalarRelationFilter, Prisma.LostReasonWhereInput> | null
   uncertainReason?: Prisma.XOR<Prisma.UncertainReasonNullableScalarRelationFilter, Prisma.UncertainReasonWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
   uncertainHistories?: Prisma.UncertainHistoryListRelationFilter
   groupMemberships?: Prisma.GroupMembershipListRelationFilter
   attendanceRecords?: Prisma.AttendanceListRelationFilter
@@ -539,7 +562,7 @@ export type StudentWhereUniqueInput = Prisma.AtLeast<{
   referralReceived?: Prisma.XOR<Prisma.ReferralNullableScalarRelationFilter, Prisma.ReferralWhereInput> | null
   scheduledActions?: Prisma.ScheduledActionListRelationFilter
   excusedAbsences?: Prisma.ExcusedAbsenceListRelationFilter
-}, "id" | "crmCode" | "sequenceNumber" | "phone" | "telegramId" | "referralCode" | "amoCrmLeadId">
+}, "id" | "crmCode" | "sequenceNumber" | "phone" | "telegramId" | "referralCode" | "amoCrmLeadId" | "leadId">
 
 export type StudentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -557,6 +580,7 @@ export type StudentOrderByWithAggregationInput = {
   preferredDays?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
+  preferredLessonType?: Prisma.SortOrder
   referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -564,6 +588,7 @@ export type StudentOrderByWithAggregationInput = {
   uncertainComment?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   activatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   inactivatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -598,6 +623,7 @@ export type StudentScalarWhereWithAggregatesInput = {
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
   preferredLanguage?: Prisma.EnumPreferredLanguageWithAggregatesFilter<"Student"> | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceWithAggregatesFilter<"Student"> | $Enums.LessonPreference
   referralCode?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolWithAggregatesFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableWithAggregatesFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -605,6 +631,7 @@ export type StudentScalarWhereWithAggregatesInput = {
   uncertainComment?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   comment?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
+  leadId?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   activatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
   activatedById?: Prisma.StringNullableWithAggregatesFilter<"Student"> | string | null
   inactivatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Student"> | Date | string | null
@@ -630,6 +657,7 @@ export type StudentCreateInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -646,6 +674,7 @@ export type StudentCreateInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -677,6 +706,7 @@ export type StudentUncheckedCreateInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -684,6 +714,7 @@ export type StudentUncheckedCreateInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -721,6 +752,7 @@ export type StudentUpdateInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -737,6 +769,7 @@ export type StudentUpdateInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -768,6 +801,7 @@ export type StudentUncheckedUpdateInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -775,6 +809,7 @@ export type StudentUncheckedUpdateInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -814,6 +849,7 @@ export type StudentCreateManyInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -821,6 +857,7 @@ export type StudentCreateManyInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -845,6 +882,7 @@ export type StudentUpdateManyMutationInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -874,6 +912,7 @@ export type StudentUncheckedUpdateManyInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -881,6 +920,7 @@ export type StudentUncheckedUpdateManyInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -933,6 +973,7 @@ export type StudentCountOrderByAggregateInput = {
   preferredDays?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
+  preferredLessonType?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
@@ -940,6 +981,7 @@ export type StudentCountOrderByAggregateInput = {
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
   activatedById?: Prisma.SortOrder
   inactivatedAt?: Prisma.SortOrder
@@ -970,6 +1012,7 @@ export type StudentMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
+  preferredLessonType?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
@@ -977,6 +1020,7 @@ export type StudentMaxOrderByAggregateInput = {
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
   activatedById?: Prisma.SortOrder
   inactivatedAt?: Prisma.SortOrder
@@ -1001,6 +1045,7 @@ export type StudentMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   familyId?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
+  preferredLessonType?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   isUncertain?: Prisma.SortOrder
   uncertainFlaggedBy?: Prisma.SortOrder
@@ -1008,6 +1053,7 @@ export type StudentMinOrderByAggregateInput = {
   uncertainComment?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   amoCrmLeadId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   activatedAt?: Prisma.SortOrder
   activatedById?: Prisma.SortOrder
   inactivatedAt?: Prisma.SortOrder
@@ -1188,6 +1234,10 @@ export type StudentUpdatepreferredDaysInput = {
 export type StudentUpdatepreferredTimeSlotsInput = {
   set?: string[]
   push?: string | string[]
+}
+
+export type EnumLessonPreferenceFieldUpdateOperationsInput = {
+  set?: $Enums.LessonPreference
 }
 
 export type NullableEnumUncertainFlagSourceFieldUpdateOperationsInput = {
@@ -1470,6 +1520,38 @@ export type StudentUpdateOneWithoutScheduledActionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutScheduledActionsInput, Prisma.StudentUpdateWithoutScheduledActionsInput>, Prisma.StudentUncheckedUpdateWithoutScheduledActionsInput>
 }
 
+export type StudentCreateNestedOneWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutLeadInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUncheckedCreateNestedOneWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutLeadInput
+  connect?: Prisma.StudentWhereUniqueInput
+}
+
+export type StudentUpdateOneWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutLeadInput
+  upsert?: Prisma.StudentUpsertWithoutLeadInput
+  disconnect?: Prisma.StudentWhereInput | boolean
+  delete?: Prisma.StudentWhereInput | boolean
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutLeadInput, Prisma.StudentUpdateWithoutLeadInput>, Prisma.StudentUncheckedUpdateWithoutLeadInput>
+}
+
+export type StudentUncheckedUpdateOneWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+  connectOrCreate?: Prisma.StudentCreateOrConnectWithoutLeadInput
+  upsert?: Prisma.StudentUpsertWithoutLeadInput
+  disconnect?: Prisma.StudentWhereInput | boolean
+  delete?: Prisma.StudentWhereInput | boolean
+  connect?: Prisma.StudentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutLeadInput, Prisma.StudentUpdateWithoutLeadInput>, Prisma.StudentUncheckedUpdateWithoutLeadInput>
+}
+
 export type StudentCreateWithoutActivatedByInput = {
   id?: string
   crmCode?: string
@@ -1485,6 +1567,7 @@ export type StudentCreateWithoutActivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1500,6 +1583,7 @@ export type StudentCreateWithoutActivatedByInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1531,6 +1615,7 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1538,6 +1623,7 @@ export type StudentUncheckedCreateWithoutActivatedByInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   inactivatedAt?: Date | string | null
   inactivatedById?: string | null
@@ -1585,6 +1671,7 @@ export type StudentCreateWithoutInactivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1600,6 +1687,7 @@ export type StudentCreateWithoutInactivatedByInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1631,6 +1719,7 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1638,6 +1727,7 @@ export type StudentUncheckedCreateWithoutInactivatedByInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -1705,6 +1795,7 @@ export type StudentScalarWhereInput = {
   preferredDays?: Prisma.IntNullableListFilter<"Student">
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Student">
   preferredLanguage?: Prisma.EnumPreferredLanguageFilter<"Student"> | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFilter<"Student"> | $Enums.LessonPreference
   referralCode?: Prisma.StringNullableFilter<"Student"> | string | null
   isUncertain?: Prisma.BoolFilter<"Student"> | boolean
   uncertainFlaggedBy?: Prisma.EnumUncertainFlagSourceNullableFilter<"Student"> | $Enums.UncertainFlagSource | null
@@ -1712,6 +1803,7 @@ export type StudentScalarWhereInput = {
   uncertainComment?: Prisma.StringNullableFilter<"Student"> | string | null
   comment?: Prisma.StringNullableFilter<"Student"> | string | null
   amoCrmLeadId?: Prisma.StringNullableFilter<"Student"> | string | null
+  leadId?: Prisma.StringNullableFilter<"Student"> | string | null
   activatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
   activatedById?: Prisma.StringNullableFilter<"Student"> | string | null
   inactivatedAt?: Prisma.DateTimeNullableFilter<"Student"> | Date | string | null
@@ -1753,6 +1845,7 @@ export type StudentCreateWithoutFamilyInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1768,6 +1861,7 @@ export type StudentCreateWithoutFamilyInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1798,6 +1892,7 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1805,6 +1900,7 @@ export type StudentUncheckedCreateWithoutFamilyInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -1869,6 +1965,7 @@ export type StudentCreateWithoutLostReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1884,6 +1981,7 @@ export type StudentCreateWithoutLostReasonInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -1915,6 +2013,7 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -1922,6 +2021,7 @@ export type StudentUncheckedCreateWithoutLostReasonInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -1985,6 +2085,7 @@ export type StudentCreateWithoutUncertainReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2000,6 +2101,7 @@ export type StudentCreateWithoutUncertainReasonInput = {
   activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -2031,12 +2133,14 @@ export type StudentUncheckedCreateWithoutUncertainReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2101,6 +2205,7 @@ export type StudentCreateWithoutUncertainHistoriesInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2117,6 +2222,7 @@ export type StudentCreateWithoutUncertainHistoriesInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2147,6 +2253,7 @@ export type StudentUncheckedCreateWithoutUncertainHistoriesInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2154,6 +2261,7 @@ export type StudentUncheckedCreateWithoutUncertainHistoriesInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2206,6 +2314,7 @@ export type StudentUpdateWithoutUncertainHistoriesInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2222,6 +2331,7 @@ export type StudentUpdateWithoutUncertainHistoriesInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2252,6 +2362,7 @@ export type StudentUncheckedUpdateWithoutUncertainHistoriesInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2259,6 +2370,7 @@ export type StudentUncheckedUpdateWithoutUncertainHistoriesInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2296,6 +2408,7 @@ export type StudentCreateWithoutGroupMembershipsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2312,6 +2425,7 @@ export type StudentCreateWithoutGroupMembershipsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2342,6 +2456,7 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2349,6 +2464,7 @@ export type StudentUncheckedCreateWithoutGroupMembershipsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2401,6 +2517,7 @@ export type StudentUpdateWithoutGroupMembershipsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2417,6 +2534,7 @@ export type StudentUpdateWithoutGroupMembershipsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2447,6 +2565,7 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2454,6 +2573,7 @@ export type StudentUncheckedUpdateWithoutGroupMembershipsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2491,6 +2611,7 @@ export type StudentCreateWithoutAttendanceRecordsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2507,6 +2628,7 @@ export type StudentCreateWithoutAttendanceRecordsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
@@ -2537,6 +2659,7 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2544,6 +2667,7 @@ export type StudentUncheckedCreateWithoutAttendanceRecordsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2596,6 +2720,7 @@ export type StudentUpdateWithoutAttendanceRecordsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2612,6 +2737,7 @@ export type StudentUpdateWithoutAttendanceRecordsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
@@ -2642,6 +2768,7 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2649,6 +2776,7 @@ export type StudentUncheckedUpdateWithoutAttendanceRecordsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2686,6 +2814,7 @@ export type StudentCreateWithoutExcusedAbsencesInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2702,6 +2831,7 @@ export type StudentCreateWithoutExcusedAbsencesInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -2732,6 +2862,7 @@ export type StudentUncheckedCreateWithoutExcusedAbsencesInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2739,6 +2870,7 @@ export type StudentUncheckedCreateWithoutExcusedAbsencesInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2791,6 +2923,7 @@ export type StudentUpdateWithoutExcusedAbsencesInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2807,6 +2940,7 @@ export type StudentUpdateWithoutExcusedAbsencesInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -2837,6 +2971,7 @@ export type StudentUncheckedUpdateWithoutExcusedAbsencesInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -2844,6 +2979,7 @@ export type StudentUncheckedUpdateWithoutExcusedAbsencesInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2881,6 +3017,7 @@ export type StudentCreateWithoutPaymentPeriodsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2897,6 +3034,7 @@ export type StudentCreateWithoutPaymentPeriodsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -2927,6 +3065,7 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -2934,6 +3073,7 @@ export type StudentUncheckedCreateWithoutPaymentPeriodsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -2986,6 +3126,7 @@ export type StudentUpdateWithoutPaymentPeriodsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3002,6 +3143,7 @@ export type StudentUpdateWithoutPaymentPeriodsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -3032,6 +3174,7 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3039,6 +3182,7 @@ export type StudentUncheckedUpdateWithoutPaymentPeriodsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3076,6 +3220,7 @@ export type StudentCreateWithoutPaymentsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3092,6 +3237,7 @@ export type StudentCreateWithoutPaymentsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -3122,6 +3268,7 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3129,6 +3276,7 @@ export type StudentUncheckedCreateWithoutPaymentsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -3181,6 +3329,7 @@ export type StudentUpdateWithoutPaymentsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3197,6 +3346,7 @@ export type StudentUpdateWithoutPaymentsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -3227,6 +3377,7 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3234,6 +3385,7 @@ export type StudentUncheckedUpdateWithoutPaymentsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3271,6 +3423,7 @@ export type StudentCreateWithoutRefundsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3287,6 +3440,7 @@ export type StudentCreateWithoutRefundsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -3317,6 +3471,7 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3324,6 +3479,7 @@ export type StudentUncheckedCreateWithoutRefundsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -3376,6 +3532,7 @@ export type StudentUpdateWithoutRefundsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3392,6 +3549,7 @@ export type StudentUpdateWithoutRefundsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -3422,6 +3580,7 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3429,6 +3588,7 @@ export type StudentUncheckedUpdateWithoutRefundsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3466,6 +3626,7 @@ export type StudentCreateWithoutStudentPromotionsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3482,6 +3643,7 @@ export type StudentCreateWithoutStudentPromotionsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -3512,6 +3674,7 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3519,6 +3682,7 @@ export type StudentUncheckedCreateWithoutStudentPromotionsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -3571,6 +3735,7 @@ export type StudentUpdateWithoutStudentPromotionsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3587,6 +3752,7 @@ export type StudentUpdateWithoutStudentPromotionsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -3617,6 +3783,7 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3624,6 +3791,7 @@ export type StudentUncheckedUpdateWithoutStudentPromotionsInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3661,6 +3829,7 @@ export type StudentCreateWithoutReferralsMadeInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3677,6 +3846,7 @@ export type StudentCreateWithoutReferralsMadeInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -3707,6 +3877,7 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3714,6 +3885,7 @@ export type StudentUncheckedCreateWithoutReferralsMadeInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -3756,6 +3928,7 @@ export type StudentCreateWithoutReferralReceivedInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3772,6 +3945,7 @@ export type StudentCreateWithoutReferralReceivedInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -3802,6 +3976,7 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -3809,6 +3984,7 @@ export type StudentUncheckedCreateWithoutReferralReceivedInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -3861,6 +4037,7 @@ export type StudentUpdateWithoutReferralsMadeInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3877,6 +4054,7 @@ export type StudentUpdateWithoutReferralsMadeInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -3907,6 +4085,7 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3914,6 +4093,7 @@ export type StudentUncheckedUpdateWithoutReferralsMadeInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3961,6 +4141,7 @@ export type StudentUpdateWithoutReferralReceivedInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -3977,6 +4158,7 @@ export type StudentUpdateWithoutReferralReceivedInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4007,6 +4189,7 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4014,6 +4197,7 @@ export type StudentUncheckedUpdateWithoutReferralReceivedInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4051,6 +4235,7 @@ export type StudentCreateWithoutCallHistoryInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4067,6 +4252,7 @@ export type StudentCreateWithoutCallHistoryInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -4097,6 +4283,7 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4104,6 +4291,7 @@ export type StudentUncheckedCreateWithoutCallHistoryInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -4156,6 +4344,7 @@ export type StudentUpdateWithoutCallHistoryInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4172,6 +4361,7 @@ export type StudentUpdateWithoutCallHistoryInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4202,6 +4392,7 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4209,6 +4400,7 @@ export type StudentUncheckedUpdateWithoutCallHistoryInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4246,6 +4438,7 @@ export type StudentCreateWithoutSmsHistoryInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4262,6 +4455,7 @@ export type StudentCreateWithoutSmsHistoryInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -4292,6 +4486,7 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4299,6 +4494,7 @@ export type StudentUncheckedCreateWithoutSmsHistoryInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -4351,6 +4547,7 @@ export type StudentUpdateWithoutSmsHistoryInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4367,6 +4564,7 @@ export type StudentUpdateWithoutSmsHistoryInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4397,6 +4595,7 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4404,6 +4603,7 @@ export type StudentUncheckedUpdateWithoutSmsHistoryInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4441,6 +4641,7 @@ export type StudentCreateWithoutScheduledActionsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4457,6 +4658,7 @@ export type StudentCreateWithoutScheduledActionsInput = {
   inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
   lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
   uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  lead?: Prisma.LeadCreateNestedOneWithoutStudentInput
   uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
   groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
   attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
@@ -4487,6 +4689,7 @@ export type StudentUncheckedCreateWithoutScheduledActionsInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4494,6 +4697,7 @@ export type StudentUncheckedCreateWithoutScheduledActionsInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -4546,6 +4750,7 @@ export type StudentUpdateWithoutScheduledActionsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4562,6 +4767,7 @@ export type StudentUpdateWithoutScheduledActionsInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4592,6 +4798,210 @@ export type StudentUncheckedUpdateWithoutScheduledActionsInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lostReasonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentCreateWithoutLeadInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  inactivatedAt?: Date | string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  family?: Prisma.FamilyCreateNestedOneWithoutStudentsInput
+  activatedBy?: Prisma.AdminUserCreateNestedOneWithoutActivatedStudentsInput
+  inactivatedBy?: Prisma.AdminUserCreateNestedOneWithoutInactivatedStudentsInput
+  lostReason?: Prisma.LostReasonCreateNestedOneWithoutStudentsInput
+  uncertainReason?: Prisma.UncertainReasonCreateNestedOneWithoutStudentsInput
+  uncertainHistories?: Prisma.UncertainHistoryCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralCreateNestedOneWithoutReferredInput
+  scheduledActions?: Prisma.ScheduledActionCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceCreateNestedManyWithoutStudentInput
+}
+
+export type StudentUncheckedCreateWithoutLeadInput = {
+  id?: string
+  crmCode?: string
+  sequenceNumber?: number
+  firstName: string
+  lastName: string
+  phone: string
+  telegramId?: bigint | number | null
+  dateOfBirth: Date | string
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  status?: $Enums.StudentStatus
+  familyId?: string | null
+  preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
+  preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
+  referralCode?: string | null
+  isUncertain?: boolean
+  uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
+  uncertainReasonId?: string | null
+  uncertainComment?: string | null
+  comment?: string | null
+  amoCrmLeadId?: string | null
+  activatedAt?: Date | string | null
+  activatedById?: string | null
+  inactivatedAt?: Date | string | null
+  inactivatedById?: string | null
+  lostReasonId?: string | null
+  otherLostReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  uncertainHistories?: Prisma.UncertainHistoryUncheckedCreateNestedManyWithoutStudentInput
+  groupMemberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutStudentInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutStudentInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutStudentInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutStudentInput
+  callHistory?: Prisma.CallHistoryUncheckedCreateNestedManyWithoutStudentInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutStudentInput
+  studentPromotions?: Prisma.StudentPromotionUncheckedCreateNestedManyWithoutStudentInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutStudentInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralReceived?: Prisma.ReferralUncheckedCreateNestedOneWithoutReferredInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutStudentInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUncheckedCreateNestedManyWithoutStudentInput
+}
+
+export type StudentCreateOrConnectWithoutLeadInput = {
+  where: Prisma.StudentWhereUniqueInput
+  create: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+}
+
+export type StudentUpsertWithoutLeadInput = {
+  update: Prisma.XOR<Prisma.StudentUpdateWithoutLeadInput, Prisma.StudentUncheckedUpdateWithoutLeadInput>
+  create: Prisma.XOR<Prisma.StudentCreateWithoutLeadInput, Prisma.StudentUncheckedCreateWithoutLeadInput>
+  where?: Prisma.StudentWhereInput
+}
+
+export type StudentUpdateToOneWithWhereWithoutLeadInput = {
+  where?: Prisma.StudentWhereInput
+  data: Prisma.XOR<Prisma.StudentUpdateWithoutLeadInput, Prisma.StudentUncheckedUpdateWithoutLeadInput>
+}
+
+export type StudentUpdateWithoutLeadInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
+  uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  otherLostReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  family?: Prisma.FamilyUpdateOneWithoutStudentsNestedInput
+  activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
+  inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
+  lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
+  groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutStudentNestedInput
+  paymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutStudentNestedInput
+  callHistory?: Prisma.CallHistoryUpdateManyWithoutStudentNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutStudentNestedInput
+  studentPromotions?: Prisma.StudentPromotionUpdateManyWithoutStudentNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutStudentNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralReceived?: Prisma.ReferralUpdateOneWithoutReferredNestedInput
+  scheduledActions?: Prisma.ScheduledActionUpdateManyWithoutStudentNestedInput
+  excusedAbsences?: Prisma.ExcusedAbsenceUpdateManyWithoutStudentNestedInput
+}
+
+export type StudentUncheckedUpdateWithoutLeadInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  crmCode?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  telegramId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  dateOfBirth?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  status?: Prisma.EnumStudentStatusFieldUpdateOperationsInput | $Enums.StudentStatus
+  familyId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
+  preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
+  preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4618,6 +5028,7 @@ export type StudentUncheckedUpdateWithoutScheduledActionsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutStudentNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralReceived?: Prisma.ReferralUncheckedUpdateOneWithoutReferredNestedInput
+  scheduledActions?: Prisma.ScheduledActionUncheckedUpdateManyWithoutStudentNestedInput
   excusedAbsences?: Prisma.ExcusedAbsenceUncheckedUpdateManyWithoutStudentNestedInput
 }
 
@@ -4637,6 +5048,7 @@ export type StudentCreateManyActivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4644,6 +5056,7 @@ export type StudentCreateManyActivatedByInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   inactivatedAt?: Date | string | null
   inactivatedById?: string | null
@@ -4669,6 +5082,7 @@ export type StudentCreateManyInactivatedByInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4676,6 +5090,7 @@ export type StudentCreateManyInactivatedByInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -4699,6 +5114,7 @@ export type StudentUpdateWithoutActivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4714,6 +5130,7 @@ export type StudentUpdateWithoutActivatedByInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4745,6 +5162,7 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4752,6 +5170,7 @@ export type StudentUncheckedUpdateWithoutActivatedByInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4790,6 +5209,7 @@ export type StudentUncheckedUpdateManyWithoutActivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4797,6 +5217,7 @@ export type StudentUncheckedUpdateManyWithoutActivatedByInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   inactivatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4820,6 +5241,7 @@ export type StudentUpdateWithoutInactivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4835,6 +5257,7 @@ export type StudentUpdateWithoutInactivatedByInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -4866,6 +5289,7 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4873,6 +5297,7 @@ export type StudentUncheckedUpdateWithoutInactivatedByInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4911,6 +5336,7 @@ export type StudentUncheckedUpdateManyWithoutInactivatedByInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4918,6 +5344,7 @@ export type StudentUncheckedUpdateManyWithoutInactivatedByInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4942,6 +5369,7 @@ export type StudentCreateManyFamilyInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -4949,6 +5377,7 @@ export type StudentCreateManyFamilyInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -4973,6 +5402,7 @@ export type StudentUpdateWithoutFamilyInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -4988,6 +5418,7 @@ export type StudentUpdateWithoutFamilyInput = {
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -5018,6 +5449,7 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5025,6 +5457,7 @@ export type StudentUncheckedUpdateWithoutFamilyInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5063,6 +5496,7 @@ export type StudentUncheckedUpdateManyWithoutFamilyInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5070,6 +5504,7 @@ export type StudentUncheckedUpdateManyWithoutFamilyInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5096,6 +5531,7 @@ export type StudentCreateManyLostReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
@@ -5103,6 +5539,7 @@ export type StudentCreateManyLostReasonInput = {
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -5126,6 +5563,7 @@ export type StudentUpdateWithoutLostReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5141,6 +5579,7 @@ export type StudentUpdateWithoutLostReasonInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   uncertainReason?: Prisma.UncertainReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -5172,6 +5611,7 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5179,6 +5619,7 @@ export type StudentUncheckedUpdateWithoutLostReasonInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5217,6 +5658,7 @@ export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5224,6 +5666,7 @@ export type StudentUncheckedUpdateManyWithoutLostReasonInput = {
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5249,12 +5692,14 @@ export type StudentCreateManyUncertainReasonInput = {
   preferredDays?: Prisma.StudentCreatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentCreatepreferredTimeSlotsInput | string[]
   preferredLanguage: $Enums.PreferredLanguage
+  preferredLessonType: $Enums.LessonPreference
   referralCode?: string | null
   isUncertain?: boolean
   uncertainFlaggedBy?: $Enums.UncertainFlagSource | null
   uncertainComment?: string | null
   comment?: string | null
   amoCrmLeadId?: string | null
+  leadId?: string | null
   activatedAt?: Date | string | null
   activatedById?: string | null
   inactivatedAt?: Date | string | null
@@ -5279,6 +5724,7 @@ export type StudentUpdateWithoutUncertainReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
@@ -5294,6 +5740,7 @@ export type StudentUpdateWithoutUncertainReasonInput = {
   activatedBy?: Prisma.AdminUserUpdateOneWithoutActivatedStudentsNestedInput
   inactivatedBy?: Prisma.AdminUserUpdateOneWithoutInactivatedStudentsNestedInput
   lostReason?: Prisma.LostReasonUpdateOneWithoutStudentsNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutStudentNestedInput
   uncertainHistories?: Prisma.UncertainHistoryUpdateManyWithoutStudentNestedInput
   groupMemberships?: Prisma.GroupMembershipUpdateManyWithoutStudentNestedInput
   attendanceRecords?: Prisma.AttendanceUpdateManyWithoutStudentNestedInput
@@ -5325,12 +5772,14 @@ export type StudentUncheckedUpdateWithoutUncertainReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5370,12 +5819,14 @@ export type StudentUncheckedUpdateManyWithoutUncertainReasonInput = {
   preferredDays?: Prisma.StudentUpdatepreferredDaysInput | number[]
   preferredTimeSlots?: Prisma.StudentUpdatepreferredTimeSlotsInput | string[]
   preferredLanguage?: Prisma.EnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage
+  preferredLessonType?: Prisma.EnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference
   referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isUncertain?: Prisma.BoolFieldUpdateOperationsInput | boolean
   uncertainFlaggedBy?: Prisma.NullableEnumUncertainFlagSourceFieldUpdateOperationsInput | $Enums.UncertainFlagSource | null
   uncertainComment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amoCrmLeadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   activatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inactivatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5532,6 +5983,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   preferredDays?: boolean
   preferredTimeSlots?: boolean
   preferredLanguage?: boolean
+  preferredLessonType?: boolean
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
@@ -5539,6 +5991,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
+  leadId?: boolean
   activatedAt?: boolean
   activatedById?: boolean
   inactivatedAt?: boolean
@@ -5552,6 +6005,7 @@ export type StudentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
   uncertainHistories?: boolean | Prisma.Student$uncertainHistoriesArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.Student$groupMembershipsArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Student$attendanceRecordsArgs<ExtArgs>
@@ -5584,6 +6038,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   preferredDays?: boolean
   preferredTimeSlots?: boolean
   preferredLanguage?: boolean
+  preferredLessonType?: boolean
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
@@ -5591,6 +6046,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
+  leadId?: boolean
   activatedAt?: boolean
   activatedById?: boolean
   inactivatedAt?: boolean
@@ -5604,6 +6060,7 @@ export type StudentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -5622,6 +6079,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   preferredDays?: boolean
   preferredTimeSlots?: boolean
   preferredLanguage?: boolean
+  preferredLessonType?: boolean
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
@@ -5629,6 +6087,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
+  leadId?: boolean
   activatedAt?: boolean
   activatedById?: boolean
   inactivatedAt?: boolean
@@ -5642,6 +6101,7 @@ export type StudentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
 }, ExtArgs["result"]["student"]>
 
 export type StudentSelectScalar = {
@@ -5660,6 +6120,7 @@ export type StudentSelectScalar = {
   preferredDays?: boolean
   preferredTimeSlots?: boolean
   preferredLanguage?: boolean
+  preferredLessonType?: boolean
   referralCode?: boolean
   isUncertain?: boolean
   uncertainFlaggedBy?: boolean
@@ -5667,6 +6128,7 @@ export type StudentSelectScalar = {
   uncertainComment?: boolean
   comment?: boolean
   amoCrmLeadId?: boolean
+  leadId?: boolean
   activatedAt?: boolean
   activatedById?: boolean
   inactivatedAt?: boolean
@@ -5677,13 +6139,14 @@ export type StudentSelectScalar = {
   updatedAt?: boolean
 }
 
-export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "progressStage" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainReasonId" | "uncertainComment" | "comment" | "amoCrmLeadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
+export type StudentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "crmCode" | "sequenceNumber" | "firstName" | "lastName" | "phone" | "telegramId" | "dateOfBirth" | "level" | "progressStage" | "status" | "familyId" | "preferredDays" | "preferredTimeSlots" | "preferredLanguage" | "preferredLessonType" | "referralCode" | "isUncertain" | "uncertainFlaggedBy" | "uncertainReasonId" | "uncertainComment" | "comment" | "amoCrmLeadId" | "leadId" | "activatedAt" | "activatedById" | "inactivatedAt" | "inactivatedById" | "lostReasonId" | "otherLostReason" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
 export type StudentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.Student$familyArgs<ExtArgs>
   activatedBy?: boolean | Prisma.Student$activatedByArgs<ExtArgs>
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
   uncertainHistories?: boolean | Prisma.Student$uncertainHistoriesArgs<ExtArgs>
   groupMemberships?: boolean | Prisma.Student$groupMembershipsArgs<ExtArgs>
   attendanceRecords?: boolean | Prisma.Student$attendanceRecordsArgs<ExtArgs>
@@ -5705,6 +6168,7 @@ export type StudentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
 }
 export type StudentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   family?: boolean | Prisma.Student$familyArgs<ExtArgs>
@@ -5712,6 +6176,7 @@ export type StudentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   inactivatedBy?: boolean | Prisma.Student$inactivatedByArgs<ExtArgs>
   lostReason?: boolean | Prisma.Student$lostReasonArgs<ExtArgs>
   uncertainReason?: boolean | Prisma.Student$uncertainReasonArgs<ExtArgs>
+  lead?: boolean | Prisma.Student$leadArgs<ExtArgs>
 }
 
 export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5722,6 +6187,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     inactivatedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     lostReason: Prisma.$LostReasonPayload<ExtArgs> | null
     uncertainReason: Prisma.$UncertainReasonPayload<ExtArgs> | null
+    lead: Prisma.$LeadPayload<ExtArgs> | null
     uncertainHistories: Prisma.$UncertainHistoryPayload<ExtArgs>[]
     groupMemberships: Prisma.$GroupMembershipPayload<ExtArgs>[]
     attendanceRecords: Prisma.$AttendancePayload<ExtArgs>[]
@@ -5752,6 +6218,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     preferredDays: number[]
     preferredTimeSlots: string[]
     preferredLanguage: $Enums.PreferredLanguage
+    preferredLessonType: $Enums.LessonPreference
     referralCode: string | null
     isUncertain: boolean
     uncertainFlaggedBy: $Enums.UncertainFlagSource | null
@@ -5759,6 +6226,7 @@ export type $StudentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     uncertainComment: string | null
     comment: string | null
     amoCrmLeadId: string | null
+    leadId: string | null
     activatedAt: Date | null
     activatedById: string | null
     inactivatedAt: Date | null
@@ -6166,6 +6634,7 @@ export interface Prisma__StudentClient<T, Null = never, ExtArgs extends runtime.
   inactivatedBy<T extends Prisma.Student$inactivatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$inactivatedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   lostReason<T extends Prisma.Student$lostReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$lostReasonArgs<ExtArgs>>): Prisma.Prisma__LostReasonClient<runtime.Types.Result.GetResult<Prisma.$LostReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   uncertainReason<T extends Prisma.Student$uncertainReasonArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$uncertainReasonArgs<ExtArgs>>): Prisma.Prisma__UncertainReasonClient<runtime.Types.Result.GetResult<Prisma.$UncertainReasonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead<T extends Prisma.Student$leadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$leadArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   uncertainHistories<T extends Prisma.Student$uncertainHistoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$uncertainHistoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UncertainHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   groupMemberships<T extends Prisma.Student$groupMembershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$groupMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupMembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attendanceRecords<T extends Prisma.Student$attendanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Student$attendanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttendancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6223,6 +6692,7 @@ export interface StudentFieldRefs {
   readonly preferredDays: Prisma.FieldRef<"Student", 'Int[]'>
   readonly preferredTimeSlots: Prisma.FieldRef<"Student", 'String[]'>
   readonly preferredLanguage: Prisma.FieldRef<"Student", 'PreferredLanguage'>
+  readonly preferredLessonType: Prisma.FieldRef<"Student", 'LessonPreference'>
   readonly referralCode: Prisma.FieldRef<"Student", 'String'>
   readonly isUncertain: Prisma.FieldRef<"Student", 'Boolean'>
   readonly uncertainFlaggedBy: Prisma.FieldRef<"Student", 'UncertainFlagSource'>
@@ -6230,6 +6700,7 @@ export interface StudentFieldRefs {
   readonly uncertainComment: Prisma.FieldRef<"Student", 'String'>
   readonly comment: Prisma.FieldRef<"Student", 'String'>
   readonly amoCrmLeadId: Prisma.FieldRef<"Student", 'String'>
+  readonly leadId: Prisma.FieldRef<"Student", 'String'>
   readonly activatedAt: Prisma.FieldRef<"Student", 'DateTime'>
   readonly activatedById: Prisma.FieldRef<"Student", 'String'>
   readonly inactivatedAt: Prisma.FieldRef<"Student", 'DateTime'>
@@ -6726,6 +7197,25 @@ export type Student$uncertainReasonArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.UncertainReasonInclude<ExtArgs> | null
   where?: Prisma.UncertainReasonWhereInput
+}
+
+/**
+ * Student.lead
+ */
+export type Student$leadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
 }
 
 /**

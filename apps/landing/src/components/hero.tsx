@@ -17,7 +17,7 @@ export function Hero({ dict, cta, locale }: HeroProps) {
   const after = parts[1] ?? "";
 
   return (
-    <section className="pt-24 pb-16 md:pt-[100px] md:pb-20">
+    <section className="pt-10 pb-16 md:pt-[100px] md:pb-20">
       <div className="max-w-[1080px] mx-auto px-6 text-center">
         {/* Pill badge */}
         <div className="inline-flex items-center gap-2 font-bold text-sm bg-main border-2 border-border rounded-full px-5 py-2 shadow-[3px_3px_0_var(--border)] mb-8 text-foreground">

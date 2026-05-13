@@ -52,9 +52,11 @@ function studentData(overrides: Record<string, unknown> = {}) {
     preferredDays: [1, 3, 5],
     preferredTimeSlots: ["14:30"],
     preferredLanguage: "ANY",
+    preferredLessonType: "EITHER",
     familyId: null,
     comment: null,
     promoCode: null,
+    referredByCode: null,
     ...overrides,
   };
 }

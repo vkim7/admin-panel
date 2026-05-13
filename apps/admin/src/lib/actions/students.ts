@@ -14,7 +14,7 @@ import { executeSendToLost } from "@/lib/helpers/execute-send-to-lost";
 import { getUzbekistanToday } from "@/lib/helpers/date";
 import { checkImmediateStudentActionConflict, checkImmediateSendToLostConflict, checkScheduledActionConflict } from "@/lib/helpers/scheduled-action-conflicts";
 
-export async function createStudent(data: unknown, redirectTo?: string) {
+export async function createStudent(data: unknown, redirectTo?: string, leadId?: string) {
   await requireAdmin();
   const parsed = studentSchema.safeParse(data);
   if (!parsed.success) {
@@ -80,6 +80,20 @@ export async function createStudent(data: unknown, redirectTo?: string) {
 
   try {
     studentId = await prisma.$transaction(async (tx) => {
+      // Lead conversion: pre-check status before any writes so we can roll back cleanly
+      if (leadId) {
+        const lead = await tx.lead.findUnique({
+          where: { id: leadId },
+          select: { id: true, status: true },
+        });
+        if (!lead) {
+          throw new LeadConversionError("Lead not found");
+        }
+        if (lead.status === "CONVERTED") {
+          throw new LeadConversionError("This lead was already converted");
+        }
+      }
+
       const student = await tx.student.create({
         data: {
           ...rest,
@@ -87,6 +101,7 @@ export async function createStudent(data: unknown, redirectTo?: string) {
           preferredDays,
           preferredTimeSlots,
           referralCode,
+          leadId: leadId ?? null,
         },
       });
 
@@ -148,22 +163,49 @@ export async function createStudent(data: unknown, redirectTo?: string) {
         });
       }
 
+      // Lead conversion: flip the lead to CONVERTED in the same txn
+      if (leadId) {
+        await tx.lead.update({
+          where: { id: leadId },
+          data: { status: "CONVERTED" },
+        });
+      }
+
       return student.id;
     });
   } catch (e: unknown) {
+    if (e instanceof LeadConversionError) {
+      return { error: e.message };
+    }
     if (
       typeof e === "object" &&
       e !== null &&
       "code" in e &&
       (e as { code: string }).code === "P2002"
     ) {
+      const target = (e as { meta?: { target?: string[] | string } }).meta?.target;
+      const targetStr = Array.isArray(target) ? target.join(",") : target ?? "";
+      if (targetStr.includes("leadId")) {
+        return { error: "This lead was already converted" };
+      }
       return { error: "A student with this phone number already exists" };
     }
     throw e;
   }
 
+  if (leadId) {
+    revalidatePath("/leads");
+  }
+
   const safeRedirect = redirectTo === "/reception" ? "/reception" : `/students/${studentId}`;
   redirect(safeRedirect);
+}
+
+class LeadConversionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "LeadConversionError";
+  }
 }
 
 export async function updateStudent(id: string, data: unknown) {
@@ -173,7 +215,14 @@ export async function updateStudent(id: string, data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
-  const { dateOfBirth, preferredDays, preferredTimeSlots, promoCode: _promoCode, ...rest } = parsed.data;
+  const {
+    dateOfBirth,
+    preferredDays,
+    preferredTimeSlots,
+    promoCode: _promoCode,
+    referredByCode: _referredByCode,
+    ...rest
+  } = parsed.data;
 
   // Check if familyId is changing (for FAMILY promotion auto-detection/removal)
   const oldStudent = await prisma.student.findUnique({

@@ -1451,6 +1451,24 @@ Retroactive recording of valid absences with automatic billing and teacher pay a
 
 **Key modified files:** `schema.prisma` (enum + 2 models + back-relations), `seed.ts` (6 reasons), `actions/teacher-payments.ts` (excused count subtraction), `students/[id]/page.tsx` (section + queries), `prisma.config.ts` (shadowDatabaseUrl).
 
+### Phase M: Lead Conversion & Lesson Type Preference ✅
+
+Two intertwined features. Adds `Student.preferredLessonType` (GROUP / INDIVIDUAL / EITHER) — required at creation, drives a hard filter in the assign dialog and a daily filter on /reception. Adds a "Convert" action on every `/leads` row that opens `/students/new?leadId=X&returnTo=/reception` with the form prefilled from lead data; submitting flips the lead to `CONVERTED` and links `Student.leadId` in a single transaction.
+
+- [x] **Schema** — Extended `LessonPreference` enum with `EITHER` (rename-and-recreate pattern, mirrors `simplify_lead_enums`). Added required `Student.preferredLessonType` (backfilled to `EITHER` for existing rows via temporary DEFAULT, then dropped). Added unique nullable `Student.leadId` FK to `Lead` with `ON DELETE SET NULL`. Migration: `20260429120000_add_lesson_type_and_lead_link`.
+- [x] **Validation** — `studentSchema` requires `preferredLessonType`. New `lib/helpers/lead-to-student.ts` maps lead → student form defaults: name/phone/DOB 1:1; `language` (uz/ru) → `preferredLanguage` (UZBEK/RUSSIAN/ANY); `lessonPreference` → `preferredLessonType` (EITHER fallback when null); `selfAssessedLevel COMPLETE_BEGINNER` → `level BEGINNER` (CONTINUING leaves blank); `note` → `comment`.
+- [x] **Server actions** — `createStudent` accepts optional `leadId`; in-txn pre-check rejects already-CONVERTED leads, sets `leadId` on student, flips lead to `CONVERTED`. P2002 on `leadId` unique index maps to "lead already converted" (handles concurrent double-submit).
+- [x] **Queries** — `getLeadForPrefill(id)` (returns `student` link so the page can show "already converted to #X"). `getReceptionStudents`, `getReassignmentStudents`, `getLostStudents` select the new field.
+- [x] **UI: form** — `StudentForm` has a required radio (Group / Individual / Either) and new `cancelTo` prop (Cancel goes to `/leads` from the conversion flow instead of `window.history.back()`). Edit page passes the field.
+- [x] **UI: convert action** — `LeadsTable` has a "Convert" column linking to `/students/new?leadId=X&returnTo=/reception`. Disabled when lead is `CONVERTED`. Stale `PAIR` label dropped.
+- [x] **UI: assign dialog** — Hard filter via `lib/helpers/group-eligibility.ts:isEligibleByLessonType`. Type-mismatched groups disappear entirely. Empty-state copy reflects the filter. Type chip in student-info header.
+- [x] **UI: reception filter** — Segmented buttons (All / Group / Individual / Either) above the table. Type column added. New field shown on `/students/[id]` detail and `reassignment-table`.
+- [x] **Tests** — Factory updates: `createTestStudent` defaults `preferredLessonType: "EITHER"`; new `createTestLead` factory. Test `db.ts` table lists include `Lead`. Integration: `lead-conversion.test.ts` (happy path, already-converted guard, duplicate-phone rollback, concurrent P2002 race, LOST → conversion allowed). Unit: `group-eligibility.test.ts`, `lead-to-student.test.ts`.
+
+**New files:** `lib/helpers/lead-to-student.ts`, `lib/helpers/group-eligibility.ts`, `__tests__/scenarios/lead-conversion.test.ts`, `__tests__/group-eligibility.test.ts`, `__tests__/lead-to-student.test.ts`.
+
+**Key modified files:** `schema.prisma`, `schemas/student.ts`, `lib/queries/leads.ts`, `lib/queries/reception.ts`, `lib/queries/reassignment.ts`, `lib/queries/lost.ts`, `lib/actions/students.ts`, `app/(admin)/students/new/page.tsx`, `app/(admin)/students/[id]/page.tsx`, `app/(admin)/students/[id]/edit/page.tsx`, `components/students/student-form.tsx`, `components/leads/leads-table.tsx`, `components/reception/assign-dialog.tsx`, `components/reception/reception-table.tsx`, `components/reassignment/reassignment-table.tsx`, `components/lost/lost-table.tsx`.
+
 ---
 
 ## Revisit

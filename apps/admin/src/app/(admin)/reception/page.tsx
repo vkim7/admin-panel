@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { UserPlus } from "lucide-react";
-import { getReceptionStudents, getGroupsForAssignment, getFirstLessonsData, getSecondLessonsData } from "@/lib/queries/reception";
+import {
+  getReceptionStudents,
+  getGroupsForAssignment,
+  getFirstLessonsData,
+  getSecondLessonsData,
+  getScheduledAssignments,
+} from "@/lib/queries/reception";
 import { getLostReasons } from "@/lib/queries/students";
 import { getGroupsForTransfer } from "@/lib/queries/transfers";
 import { PageHeader } from "@/components/ui/page-header";
@@ -8,14 +14,16 @@ import { Button } from "@/components/ui/button";
 import { ReceptionView } from "@/components/reception/reception-view";
 
 export default async function ReceptionPage() {
-  const [students, groups, firstLessons, secondLessons, lostReasons, transferGroups] = await Promise.all([
-    getReceptionStudents(),
-    getGroupsForAssignment(),
-    getFirstLessonsData(),
-    getSecondLessonsData(),
-    getLostReasons(),
-    getGroupsForTransfer(),
-  ]);
+  const [students, groups, firstLessons, secondLessons, lostReasons, transferGroups, scheduledAssignments] =
+    await Promise.all([
+      getReceptionStudents(),
+      getGroupsForAssignment(),
+      getFirstLessonsData(),
+      getSecondLessonsData(),
+      getLostReasons(),
+      getGroupsForTransfer(),
+      getScheduledAssignments(),
+    ]);
 
   return (
     <div className="space-y-6">
@@ -38,6 +46,7 @@ export default async function ReceptionPage() {
         secondLessons={secondLessons}
         lostReasons={lostReasons}
         transferGroups={transferGroups}
+        scheduledAssignments={scheduledAssignments}
       />
     </div>
   );
