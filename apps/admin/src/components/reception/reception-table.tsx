@@ -30,8 +30,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { LEVEL_SHORT, STAGE_SHORT, DAYS_LABEL } from "@/lib/constants";
+import {
+  LEVEL_SHORT,
+  STAGE_SHORT,
+  DAYS_LABEL,
+  LEVEL_STAGE_ORDER,
+} from "@/lib/constants";
 import { getAge } from "@/lib/helpers/date";
+import { getReceptionUrgency } from "@/lib/helpers/reception-staleness";
 import {
   AssignDialog,
   type GroupOption,
@@ -67,7 +73,6 @@ const LESSON_TYPE_LABELS: Record<LessonPreference, string> = {
   EITHER: "Either",
 };
 
-type LessonTypeFilter = "ALL" | LessonPreference;
 
 function getDaysLabel(days: number[]) {
   if (days.length === 0) return "—";
@@ -75,19 +80,37 @@ function getDaysLabel(days: number[]) {
   return DAYS_LABEL[key] ?? days.join(",");
 }
 
+const URGENCY_CHIP_CLASS: Record<"red" | "amber" | "blue", string> = {
+  red: "bg-red-100 text-red-800",
+  amber: "bg-amber-100 text-amber-800",
+  blue: "bg-blue-100 text-blue-800",
+};
+
+const LANG_SHORT: Record<string, string> = {
+  UZBEK: "UZ",
+  RUSSIAN: "RU",
+  ANY: "Any",
+};
+
 function makeColumns(
   onAssign: (student: ReceptionStudent) => void,
   onSendToLost: (student: ReceptionStudent) => void,
 ): ColumnDef<ReceptionStudent>[] {
   return [
     {
-      accessorKey: "crmCode",
-      header: ({ column }) => (
-        <SortableHeader column={column}>CRM</SortableHeader>
-      ),
-      cell: ({ row }) => (
-        <span className="font-mono text-sm">{row.original.crmCode}</span>
-      ),
+      id: "urgency",
+      header: "",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const u = getReceptionUrgency(row.original.createdAt);
+        return (
+          <span
+            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${URGENCY_CHIP_CLASS[u.tier]}`}
+          >
+            {u.label}
+          </span>
+        );
+      },
     },
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
@@ -96,17 +119,18 @@ function makeColumns(
         <SortableHeader column={column}>Name</SortableHeader>
       ),
       cell: ({ row }) => (
-        <Link
-          href={`/students/${row.original.id}`}
-          className="font-medium text-primary hover:underline"
-        >
-          {row.original.firstName} {row.original.lastName}
-        </Link>
+        <div className="flex flex-col">
+          <Link
+            href={`/students/${row.original.id}`}
+            className="font-medium text-primary hover:underline leading-tight"
+          >
+            {row.original.firstName} {row.original.lastName}
+          </Link>
+          <span className="text-xs text-muted-foreground leading-tight">
+            {row.original.phone}
+          </span>
+        </div>
       ),
-    },
-    {
-      accessorKey: "phone",
-      header: "Phone",
     },
     {
       id: "age",
@@ -117,66 +141,76 @@ function makeColumns(
       ),
     },
     {
+      id: "typeLang",
+      header: "Type · Lang",
+      enableSorting: false,
+      cell: ({ row }) => {
+        const type = LESSON_TYPE_LABELS[row.original.preferredLessonType];
+        const lang =
+          LANG_SHORT[row.original.preferredLanguage] ??
+          row.original.preferredLanguage;
+        return (
+          <span className="text-sm text-muted-foreground">
+            {type} · {lang}
+          </span>
+        );
+      },
+    },
+    {
       accessorKey: "level",
-      header: "Level",
+      header: ({ column }) => (
+        <SortableHeader column={column}>Level</SortableHeader>
+      ),
+      // Sort by curriculum progression (BEGINNER:BEGINNING through IELTS:FINAL)
+      // rather than the default alphabetical sort which puts IELTS between
+      // ELEMENTARY and INTERMEDIATE. Tie-break by createdAt asc so the
+      // longest-waiting student in each level cluster surfaces first — this
+      // tie-break is only deterministic because getReceptionStudents()'s
+      // query also orders by createdAt asc; keep them aligned.
+      // Unknown level+stage combinations fall to the bottom rather than
+      // mysteriously floating to the top via indexOf returning -1.
+      sortingFn: (a, b) => {
+        const keyA = `${a.original.level}:${a.original.progressStage}`;
+        const keyB = `${b.original.level}:${b.original.progressStage}`;
+        const idxA = LEVEL_STAGE_ORDER.indexOf(keyA);
+        const idxB = LEVEL_STAGE_ORDER.indexOf(keyB);
+        const safeA = idxA === -1 ? Number.MAX_SAFE_INTEGER : idxA;
+        const safeB = idxB === -1 ? Number.MAX_SAFE_INTEGER : idxB;
+        const diff = safeA - safeB;
+        if (diff !== 0) return diff;
+        return (
+          new Date(a.original.createdAt).getTime() -
+          new Date(b.original.createdAt).getTime()
+        );
+      },
       cell: ({ row }) => (
         <Badge variant="secondary" className="text-xs">
           {LEVEL_SHORT[row.original.level] ?? row.original.level}
           {" · "}
-          {STAGE_SHORT[row.original.progressStage] ?? row.original.progressStage}
+          {STAGE_SHORT[row.original.progressStage] ??
+            row.original.progressStage}
         </Badge>
       ),
     },
     {
-      accessorKey: "preferredLessonType",
-      header: "Type",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="text-xs">
-          {LESSON_TYPE_LABELS[row.original.preferredLessonType]}
-        </Badge>
-      ),
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <SortableHeader column={column}>Created</SortableHeader>
-      ),
-      cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {new Date(row.original.createdAt).toLocaleDateString()}
-        </span>
-      ),
-    },
-    {
-      id: "preferredDays",
-      header: "Days",
-      cell: ({ row }) => (
-        <span className="text-sm">
-          {getDaysLabel(row.original.preferredDays)}
-        </span>
-      ),
+      id: "schedule",
+      header: "Schedule",
       enableSorting: false,
-    },
-    {
-      id: "preferredTime",
-      header: "Time",
       cell: ({ row }) => {
+        const days = getDaysLabel(row.original.preferredDays);
         const slots = row.original.preferredTimeSlots;
-        if (slots.length === 0) return <span className="text-sm text-muted-foreground">—</span>;
         return (
-          <div className="flex flex-wrap gap-1">
-            {slots.map((slot) => (
-              <span
-                key={slot}
-                className="rounded border bg-muted px-1.5 py-0.5 text-xs"
-              >
-                {slot}
+          <span className="text-sm">
+            {days}
+            {slots.length > 0 && (
+              <span className="text-muted-foreground">
+                {" · "}
+                {[...slots].sort().join(", ")}
               </span>
-            ))}
-          </div>
+            )}
+          </span>
         );
       },
-      enableSorting: false,
     },
     {
       accessorKey: "comment",
@@ -185,6 +219,7 @@ function makeColumns(
         <EditCommentDialog
           currentComment={row.original.comment}
           onSave={(c) => updateStudentComment(row.original.id, c)}
+          displayMode="multiline"
         />
       ),
       enableSorting: false,
@@ -195,7 +230,12 @@ function makeColumns(
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="size-7">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label="Actions"
+            >
               <MoreHorizontal className="size-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -236,8 +276,6 @@ export function ReceptionTable({ data, groups, lostReasons }: ReceptionTableProp
   const [selectedReasonId, setSelectedReasonId] = useState("");
   const [otherReason, setOtherReason] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState<LessonTypeFilter>("ALL");
 
   const selectedReason = lostReasons.find((r) => r.id === selectedReasonId);
 
@@ -287,65 +325,13 @@ export function ReceptionTable({ data, groups, lostReasons }: ReceptionTableProp
 
   const columns = makeColumns(handleAssign, handleSendToLost);
 
-  const filtered = data.filter((s) => {
-    if (typeFilter !== "ALL" && s.preferredLessonType !== typeFilter) {
-      return false;
-    }
-    if (search) {
-      const q = search.toLowerCase();
-      const name = `${s.firstName} ${s.lastName}`.toLowerCase();
-      const phone = s.phone.toLowerCase();
-      const parentPhone = s.family?.parentPhone?.toLowerCase() ?? "";
-      if (!name.includes(q) && !phone.includes(q) && !parentPhone.includes(q)) {
-        return false;
-      }
-    }
-    return true;
-  });
-
-  const TYPE_FILTERS: { value: LessonTypeFilter; label: string }[] = [
-    { value: "ALL", label: "All" },
-    { value: "GROUP", label: "Group" },
-    { value: "INDIVIDUAL", label: "Individual" },
-    { value: "EITHER", label: "Either" },
-  ];
-
   return (
     <>
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <input
-            type="text"
-            placeholder="Search by name or phone..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 w-full max-w-sm rounded-md border border-input bg-background px-3 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          />
-          <div className="flex gap-1">
-            {TYPE_FILTERS.map((opt) => {
-              const selected = typeFilter === opt.value;
-              return (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setTypeFilter(opt.value)}
-                  className={`rounded-md border px-3 py-1.5 text-sm transition-colors ${
-                    selected
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-input hover:bg-accent"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-        <DataTable
-          columns={columns}
-          data={filtered}
-        />
-      </div>
+      <DataTable
+        columns={columns}
+        data={data}
+        initialSorting={[{ id: "level", desc: false }]}
+      />
       {selectedStudent && (
         <AssignDialog
           student={selectedStudent}
