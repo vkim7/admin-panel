@@ -88,7 +88,8 @@ export const ModelName = {
   Holiday: 'Holiday',
   Exam: 'Exam',
   ScheduledAction: 'ScheduledAction',
-  Lead: 'Lead'
+  Lead: 'Lead',
+  LeadActivity: 'LeadActivity'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -732,11 +733,34 @@ export const LeadScalarFieldEnum = {
   selfAssessedLevel: 'selfAssessedLevel',
   status: 'status',
   adminNote: 'adminNote',
+  preferredDays: 'preferredDays',
+  preferredDaysAny: 'preferredDaysAny',
+  preferredTimeSlots: 'preferredTimeSlots',
+  preferredTimeSlotsAny: 'preferredTimeSlotsAny',
+  testSentAt: 'testSentAt',
+  testLevelSent: 'testLevelSent',
+  testScore: 'testScore',
+  testScoredAt: 'testScoredAt',
+  nextCallbackAt: 'nextCallbackAt',
+  lostReason: 'lostReason',
+  lostReasonOther: 'lostReasonOther',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+export const LeadActivityScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  type: 'type',
+  metadata: 'metadata',
+  actorAdminId: 'actorAdminId',
+  createdAt: 'createdAt'
+} as const
+
+export type LeadActivityScalarFieldEnum = (typeof LeadActivityScalarFieldEnum)[keyof typeof LeadActivityScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -752,6 +776,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

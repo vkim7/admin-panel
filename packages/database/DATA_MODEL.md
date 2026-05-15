@@ -182,6 +182,103 @@ Students can cycle between Lost List and Reassignment multiple times.
 
 ---
 
+## Leads Worklist
+
+The pre-student funnel. A `Lead` enters via the landing page form, gets worked
+by admin through a qualifying conversation, and either converts to a `Student`
+or is closed as `LOST`. `/leads` is the worklist surface where admin scans,
+sorts by urgency, opens the drawer to capture details, and clicks Convert when
+ready.
+
+### Lead
+
+| Field | Purpose |
+|-------|---------|
+| firstName, lastName, phone | Captured by the landing form. Phone is NOT unique on Lead (a lead may resubmit) but is unique on the resulting Student. |
+| dateOfBirth | Optional. Captured by landing form if provided. |
+| note | Visitor's free-text note from the landing form. Read-only after submission. |
+| language | "uz" or "ru" — the locale the form was submitted in. Drives the lead's preferred language at conversion. |
+| lessonPreference | `GROUP` / `INDIVIDUAL` / `EITHER` from landing form. |
+| selfAssessedLevel | `COMPLETE_BEGINNER` or `CONTINUING` — drives whether a placement test is needed. |
+| status | `NEW` → `CONTACTED` → `CONVERTED` or `LOST`. Auto-transitions are emitted as `STATUS_CHANGE` activities. |
+| adminNote | Internal free-text note. Edited from the drawer. |
+| **Qualifying preferences (captured during the call)** | |
+| preferredDays | `Int[]` — `[1,3,5]` (MWF) or `[2,4,6]` (TTS), or empty. Matches `Student.preferredDays` shape so prefill is direct. |
+| preferredDaysAny | `Boolean` — admin explicitly marked days flexible. Distinguishes "captured as Any" from "not yet captured" (both store an empty `preferredDays` array). |
+| preferredTimeSlots | `String[]` — chosen subset of fixed `TIME_SLOTS`. |
+| preferredTimeSlotsAny | `Boolean` — same Any/not-captured distinction as days. |
+| **Placement test workflow (for CONTINUING leads)** | |
+| testSentAt | When admin marked the test sent. Set by `markTestSent` action. |
+| testLevelSent | Which level test was administered (`Level` enum). |
+| testScore | Score returned by the lead (0–100). |
+| testScoredAt | When admin recorded the score. |
+| **Follow-up scheduling** | |
+| nextCallbackAt | When admin should call back. Used by the row urgency tier (overdue → red). Set via the Schedule callback dialog; cleared by Mark callback done. |
+| **Disqualification** | |
+| lostReason | `LeadLostReason` enum. Required when marking a lead as LOST. |
+| lostReasonOther | Free text when `lostReason = OTHER`. |
+| **Relations** | |
+| student | Optional 1:1. Set when the lead is converted via `createStudent({ leadId })`. |
+| activities | Append-only audit log. See LeadActivity. |
+
+**Status transitions and gating:**
+- **NEW → CONTACTED** is auto-transitioned by `autoTransitionToContacted()` whenever admin saves a note, sets a schedule, sets a callback, marks a test sent, or records a score. Each transition emits a `STATUS_CHANGE` activity.
+- **CONTACTED → CONVERTED** happens only via `createStudent({ leadId })`. The action emits both `STATUS_CHANGE` and `CONVERTED` activities transactionally and links the new `Student.leadId`.
+- **Any non-LOST → LOST** happens only via `markLeadLost({ id, reason, otherText? })`. Reason is required. CONVERTED → LOST is rejected.
+- **LOST → CONTACTED** is reachable via `updateLeadStatus` (the drawer's "Restore" affordance). No reason required to restore.
+
+**Conversion gate (advisory, not enforced):**
+`evaluateConversionGate(lead)` returns `{ ready, missing[] }` used by the row
+urgency chip and the drawer's amber missing-details hint. Rules:
+- Beginner (`selfAssessedLevel === COMPLETE_BEGINNER`): `preferredDays` AND `preferredTimeSlots` captured (specific value or `Any` flag).
+- Continuing or unknown: above + `testScore !== null`.
+
+The gate is **not enforced server-side** in `createStudent` — admin can convert with empty preferences and fill them on the student form. This was a deliberate UX decision: the gate informs, it doesn't block.
+
+**Auto-transition rule (intentional):** clicking the Telegram link in the drawer does **not** trigger auto-transition. It's a pure link out, not an activity. Note edits, schedule edits, callback edits, test events, and explicit Mark-as-Lost are the only triggers.
+
+**Indexes:** `status`, `createdAt`, `nextCallbackAt`, `(status, nextCallbackAt)` — the last one supports the worklist's urgency-sorted scans.
+
+### LeadActivity (audit log)
+
+Append-only entries written transactionally with every mutation that touches a Lead. Drives the drawer's Activity section.
+
+| Field | Purpose |
+|-------|---------|
+| leadId | Foreign key. `ON DELETE CASCADE` — activities are scoped to the lead. |
+| type | `LeadActivityType` enum. See below. |
+| metadata | `Json?` — type-discriminated payload (e.g., `{ from, to }` for STATUS_CHANGE, `{ at }` for CALLBACK_SET). The TS layer defines `LeadActivityMetadata` as a discriminated union; Prisma column is opaque JSON. |
+| actorAdminId | Optional FK to `AdminUser`. `ON DELETE SET NULL`. |
+| createdAt | Auto-generated; ordered desc in the feed. |
+
+**Indexes:** `(leadId, createdAt)`.
+
+**Activity types emitted today:**
+- `STATUS_CHANGE` — `{ from, to }`. Auto-transitions + manual restores + conversion + mark-as-lost.
+- `CALLBACK_SET`, `CALLBACK_DONE` — `{ at }` / `{ scheduledFor }`.
+- `TEST_SENT`, `TEST_SCORED` — `{ level }` / `{ score, level }`.
+- `SCHEDULE_SET` — `{ days, timeSlots }`.
+- `LOST` — `{ reason, otherText? }`. Always paired with the prior `STATUS_CHANGE`.
+- `CONVERTED` — `{ studentId }`. Paired with `STATUS_CHANGE` and emitted from `createStudent` in the same transaction.
+
+**Activity types intentionally not emitted (enum values exist for forward-compat):**
+- `NOTE_UPDATED` — note edits are silent (note autosave was too chatty).
+- `CONTACTED_VIA_PHONE`, `CONTACTED_VIA_TELEGRAM`, `CONTACTED_VIA_WHATSAPP` — channel-specific log was dropped along with the Call/WhatsApp buttons. Telegram remains as a pure link.
+
+### Enums
+
+- **LeadStatus**: `NEW`, `CONTACTED`, `CONVERTED`, `LOST`.
+- **LessonPreference**: `GROUP`, `INDIVIDUAL`, `EITHER`. Shared with `Student.preferredLessonType`.
+- **SelfAssessedLevel**: `COMPLETE_BEGINNER`, `CONTINUING`. Lead-only.
+- **LeadLostReason**: `NO_ANSWER`, `WRONG_NUMBER`, `DIDNT_SUBMIT`, `AGE_OUT_OF_RANGE`, `NOT_INTERESTED`, `WANTED_OFFLINE`, `DUPLICATE`, `OTHER`. **Note:** named to avoid collision with the existing `LostReason` model (which is the student-lifecycle reference table — different domain).
+- **LeadActivityType**: see list above.
+
+### Urgency tier (derived, not stored)
+
+The `/leads` table row chip and the drawer header chip are derived at query time by `getUrgencyInfo(lead)`. Tiers are `red`/`green`/`blue`/`amber`/`idle`; priority is red ▸ green ▸ blue ▸ amber ▸ idle. Full chip catalogue in `apps/admin/src/components/leads/CHIPS.md`. Stale thresholds: `STALE_NEW_HOURS = 24`, `TEST_STALE_HOURS = 24`, `STALE_CONTACTED_DAYS = 3`.
+
+---
+
 ## Holidays
 
 ### Holiday

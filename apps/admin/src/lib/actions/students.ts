@@ -13,9 +13,10 @@ import { executeReassignment } from "@/lib/helpers/execute-reassignment";
 import { executeSendToLost } from "@/lib/helpers/execute-send-to-lost";
 import { getUzbekistanToday } from "@/lib/helpers/date";
 import { checkImmediateStudentActionConflict, checkImmediateSendToLostConflict, checkScheduledActionConflict } from "@/lib/helpers/scheduled-action-conflicts";
+import { recordLeadActivity } from "@/lib/helpers/lead-activity";
 
 export async function createStudent(data: unknown, redirectTo?: string, leadId?: string) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const parsed = studentSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
@@ -80,7 +81,11 @@ export async function createStudent(data: unknown, redirectTo?: string, leadId?:
 
   try {
     studentId = await prisma.$transaction(async (tx) => {
-      // Lead conversion: pre-check status before any writes so we can roll back cleanly
+      // Lead conversion: pre-check status before any writes so we can roll
+      // back cleanly. The qualifying gate (days/time/score) is advisory only —
+      // shown as a hint in the drawer, not enforced server-side. Admin can
+      // convert a partially-qualified lead and complete the data on the
+      // student form.
       if (leadId) {
         const lead = await tx.lead.findUnique({
           where: { id: leadId },
@@ -163,11 +168,30 @@ export async function createStudent(data: unknown, redirectTo?: string, leadId?:
         });
       }
 
-      // Lead conversion: flip the lead to CONVERTED in the same txn
+      // Lead conversion: flip the lead to CONVERTED in the same txn + audit log
       if (leadId) {
+        const priorStatus = (
+          await tx.lead.findUnique({
+            where: { id: leadId },
+            select: { status: true },
+          })
+        )?.status;
+
         await tx.lead.update({
           where: { id: leadId },
           data: { status: "CONVERTED" },
+        });
+
+        if (priorStatus && priorStatus !== "CONVERTED") {
+          await recordLeadActivity(tx, leadId, admin.id, {
+            type: "STATUS_CHANGE",
+            from: priorStatus,
+            to: "CONVERTED",
+          });
+        }
+        await recordLeadActivity(tx, leadId, admin.id, {
+          type: "CONVERTED",
+          studentId: student.id,
         });
       }
 

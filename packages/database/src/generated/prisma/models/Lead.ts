@@ -20,8 +20,20 @@ export type LeadModel = runtime.Types.Result.DefaultSelection<Prisma.$LeadPayloa
 
 export type AggregateLead = {
   _count: LeadCountAggregateOutputType | null
+  _avg: LeadAvgAggregateOutputType | null
+  _sum: LeadSumAggregateOutputType | null
   _min: LeadMinAggregateOutputType | null
   _max: LeadMaxAggregateOutputType | null
+}
+
+export type LeadAvgAggregateOutputType = {
+  preferredDays: number | null
+  testScore: number | null
+}
+
+export type LeadSumAggregateOutputType = {
+  preferredDays: number[]
+  testScore: number | null
 }
 
 export type LeadMinAggregateOutputType = {
@@ -36,6 +48,15 @@ export type LeadMinAggregateOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus | null
   adminNote: string | null
+  preferredDaysAny: boolean | null
+  preferredTimeSlotsAny: boolean | null
+  testSentAt: Date | null
+  testLevelSent: $Enums.Level | null
+  testScore: number | null
+  testScoredAt: Date | null
+  nextCallbackAt: Date | null
+  lostReason: $Enums.LeadLostReason | null
+  lostReasonOther: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -52,6 +73,15 @@ export type LeadMaxAggregateOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus | null
   adminNote: string | null
+  preferredDaysAny: boolean | null
+  preferredTimeSlotsAny: boolean | null
+  testSentAt: Date | null
+  testLevelSent: $Enums.Level | null
+  testScore: number | null
+  testScoredAt: Date | null
+  nextCallbackAt: Date | null
+  lostReason: $Enums.LeadLostReason | null
+  lostReasonOther: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -68,11 +98,32 @@ export type LeadCountAggregateOutputType = {
   selfAssessedLevel: number
   status: number
   adminNote: number
+  preferredDays: number
+  preferredDaysAny: number
+  preferredTimeSlots: number
+  preferredTimeSlotsAny: number
+  testSentAt: number
+  testLevelSent: number
+  testScore: number
+  testScoredAt: number
+  nextCallbackAt: number
+  lostReason: number
+  lostReasonOther: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type LeadAvgAggregateInputType = {
+  preferredDays?: true
+  testScore?: true
+}
+
+export type LeadSumAggregateInputType = {
+  preferredDays?: true
+  testScore?: true
+}
 
 export type LeadMinAggregateInputType = {
   id?: true
@@ -86,6 +137,15 @@ export type LeadMinAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  preferredDaysAny?: true
+  preferredTimeSlotsAny?: true
+  testSentAt?: true
+  testLevelSent?: true
+  testScore?: true
+  testScoredAt?: true
+  nextCallbackAt?: true
+  lostReason?: true
+  lostReasonOther?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -102,6 +162,15 @@ export type LeadMaxAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  preferredDaysAny?: true
+  preferredTimeSlotsAny?: true
+  testSentAt?: true
+  testLevelSent?: true
+  testScore?: true
+  testScoredAt?: true
+  nextCallbackAt?: true
+  lostReason?: true
+  lostReasonOther?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -118,6 +187,17 @@ export type LeadCountAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  preferredDays?: true
+  preferredDaysAny?: true
+  preferredTimeSlots?: true
+  preferredTimeSlotsAny?: true
+  testSentAt?: true
+  testLevelSent?: true
+  testScore?: true
+  testScoredAt?: true
+  nextCallbackAt?: true
+  lostReason?: true
+  lostReasonOther?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -161,6 +241,18 @@ export type LeadAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: LeadAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: LeadSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: LeadMinAggregateInputType
@@ -191,6 +283,8 @@ export type LeadGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: LeadCountAggregateInputType | true
+  _avg?: LeadAvgAggregateInputType
+  _sum?: LeadSumAggregateInputType
   _min?: LeadMinAggregateInputType
   _max?: LeadMaxAggregateInputType
 }
@@ -207,9 +301,22 @@ export type LeadGroupByOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus
   adminNote: string | null
+  preferredDays: number[]
+  preferredDaysAny: boolean
+  preferredTimeSlots: string[]
+  preferredTimeSlotsAny: boolean
+  testSentAt: Date | null
+  testLevelSent: $Enums.Level | null
+  testScore: number | null
+  testScoredAt: Date | null
+  nextCallbackAt: Date | null
+  lostReason: $Enums.LeadLostReason | null
+  lostReasonOther: string | null
   createdAt: Date
   updatedAt: Date
   _count: LeadCountAggregateOutputType | null
+  _avg: LeadAvgAggregateOutputType | null
+  _sum: LeadSumAggregateOutputType | null
   _min: LeadMinAggregateOutputType | null
   _max: LeadMaxAggregateOutputType | null
 }
@@ -244,9 +351,21 @@ export type LeadWhereInput = {
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableFilter<"Lead"> | string | null
+  preferredDays?: Prisma.IntNullableListFilter<"Lead">
+  preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
+  preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
+  preferredTimeSlotsAny?: Prisma.BoolFilter<"Lead"> | boolean
+  testSentAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  testLevelSent?: Prisma.EnumLevelNullableFilter<"Lead"> | $Enums.Level | null
+  testScore?: Prisma.IntNullableFilter<"Lead"> | number | null
+  testScoredAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  nextCallbackAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  lostReason?: Prisma.EnumLeadLostReasonNullableFilter<"Lead"> | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.StringNullableFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
+  activities?: Prisma.LeadActivityListRelationFilter
 }
 
 export type LeadOrderByWithRelationInput = {
@@ -261,9 +380,21 @@ export type LeadOrderByWithRelationInput = {
   selfAssessedLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredDays?: Prisma.SortOrder
+  preferredDaysAny?: Prisma.SortOrder
+  preferredTimeSlots?: Prisma.SortOrder
+  preferredTimeSlotsAny?: Prisma.SortOrder
+  testSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  testLevelSent?: Prisma.SortOrderInput | Prisma.SortOrder
+  testScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  testScoredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextCallbackAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lostReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lostReasonOther?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
+  activities?: Prisma.LeadActivityOrderByRelationAggregateInput
 }
 
 export type LeadWhereUniqueInput = Prisma.AtLeast<{
@@ -281,9 +412,21 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableFilter<"Lead"> | string | null
+  preferredDays?: Prisma.IntNullableListFilter<"Lead">
+  preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
+  preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
+  preferredTimeSlotsAny?: Prisma.BoolFilter<"Lead"> | boolean
+  testSentAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  testLevelSent?: Prisma.EnumLevelNullableFilter<"Lead"> | $Enums.Level | null
+  testScore?: Prisma.IntNullableFilter<"Lead"> | number | null
+  testScoredAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  nextCallbackAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
+  lostReason?: Prisma.EnumLeadLostReasonNullableFilter<"Lead"> | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.StringNullableFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
+  activities?: Prisma.LeadActivityListRelationFilter
 }, "id">
 
 export type LeadOrderByWithAggregationInput = {
@@ -298,11 +441,24 @@ export type LeadOrderByWithAggregationInput = {
   selfAssessedLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  preferredDays?: Prisma.SortOrder
+  preferredDaysAny?: Prisma.SortOrder
+  preferredTimeSlots?: Prisma.SortOrder
+  preferredTimeSlotsAny?: Prisma.SortOrder
+  testSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  testLevelSent?: Prisma.SortOrderInput | Prisma.SortOrder
+  testScore?: Prisma.SortOrderInput | Prisma.SortOrder
+  testScoredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextCallbackAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lostReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lostReasonOther?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LeadCountOrderByAggregateInput
+  _avg?: Prisma.LeadAvgOrderByAggregateInput
   _max?: Prisma.LeadMaxOrderByAggregateInput
   _min?: Prisma.LeadMinOrderByAggregateInput
+  _sum?: Prisma.LeadSumOrderByAggregateInput
 }
 
 export type LeadScalarWhereWithAggregatesInput = {
@@ -320,6 +476,17 @@ export type LeadScalarWhereWithAggregatesInput = {
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableWithAggregatesFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusWithAggregatesFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  preferredDays?: Prisma.IntNullableListFilter<"Lead">
+  preferredDaysAny?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
+  preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
+  preferredTimeSlotsAny?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
+  testSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+  testLevelSent?: Prisma.EnumLevelNullableWithAggregatesFilter<"Lead"> | $Enums.Level | null
+  testScore?: Prisma.IntNullableWithAggregatesFilter<"Lead"> | number | null
+  testScoredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+  nextCallbackAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
+  lostReason?: Prisma.EnumLeadLostReasonNullableWithAggregatesFilter<"Lead"> | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Lead"> | Date | string
 }
@@ -336,9 +503,21 @@ export type LeadCreateInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   student?: Prisma.StudentCreateNestedOneWithoutLeadInput
+  activities?: Prisma.LeadActivityCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateInput = {
@@ -353,9 +532,21 @@ export type LeadUncheckedCreateInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutLeadInput
+  activities?: Prisma.LeadActivityUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUpdateInput = {
@@ -370,9 +561,21 @@ export type LeadUpdateInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneWithoutLeadNestedInput
+  activities?: Prisma.LeadActivityUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateInput = {
@@ -387,9 +590,21 @@ export type LeadUncheckedUpdateInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUncheckedUpdateOneWithoutLeadNestedInput
+  activities?: Prisma.LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateManyInput = {
@@ -404,6 +619,17 @@ export type LeadCreateManyInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -420,6 +646,17 @@ export type LeadUpdateManyMutationInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -436,6 +673,17 @@ export type LeadUncheckedUpdateManyInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -457,8 +705,24 @@ export type LeadCountOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  preferredDays?: Prisma.SortOrder
+  preferredDaysAny?: Prisma.SortOrder
+  preferredTimeSlots?: Prisma.SortOrder
+  preferredTimeSlotsAny?: Prisma.SortOrder
+  testSentAt?: Prisma.SortOrder
+  testLevelSent?: Prisma.SortOrder
+  testScore?: Prisma.SortOrder
+  testScoredAt?: Prisma.SortOrder
+  nextCallbackAt?: Prisma.SortOrder
+  lostReason?: Prisma.SortOrder
+  lostReasonOther?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type LeadAvgOrderByAggregateInput = {
+  preferredDays?: Prisma.SortOrder
+  testScore?: Prisma.SortOrder
 }
 
 export type LeadMaxOrderByAggregateInput = {
@@ -473,6 +737,15 @@ export type LeadMaxOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  preferredDaysAny?: Prisma.SortOrder
+  preferredTimeSlotsAny?: Prisma.SortOrder
+  testSentAt?: Prisma.SortOrder
+  testLevelSent?: Prisma.SortOrder
+  testScore?: Prisma.SortOrder
+  testScoredAt?: Prisma.SortOrder
+  nextCallbackAt?: Prisma.SortOrder
+  lostReason?: Prisma.SortOrder
+  lostReasonOther?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -489,8 +762,27 @@ export type LeadMinOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  preferredDaysAny?: Prisma.SortOrder
+  preferredTimeSlotsAny?: Prisma.SortOrder
+  testSentAt?: Prisma.SortOrder
+  testLevelSent?: Prisma.SortOrder
+  testScore?: Prisma.SortOrder
+  testScoredAt?: Prisma.SortOrder
+  nextCallbackAt?: Prisma.SortOrder
+  lostReason?: Prisma.SortOrder
+  lostReasonOther?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type LeadSumOrderByAggregateInput = {
+  preferredDays?: Prisma.SortOrder
+  testScore?: Prisma.SortOrder
+}
+
+export type LeadScalarRelationFilter = {
+  is?: Prisma.LeadWhereInput
+  isNot?: Prisma.LeadWhereInput
 }
 
 export type LeadCreateNestedOneWithoutStudentInput = {
@@ -509,6 +801,14 @@ export type LeadUpdateOneWithoutStudentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutStudentInput, Prisma.LeadUpdateWithoutStudentInput>, Prisma.LeadUncheckedUpdateWithoutStudentInput>
 }
 
+export type LeadCreatepreferredDaysInput = {
+  set: number[]
+}
+
+export type LeadCreatepreferredTimeSlotsInput = {
+  set: string[]
+}
+
 export type NullableEnumLessonPreferenceFieldUpdateOperationsInput = {
   set?: $Enums.LessonPreference | null
 }
@@ -519,6 +819,38 @@ export type NullableEnumSelfAssessedLevelFieldUpdateOperationsInput = {
 
 export type EnumLeadStatusFieldUpdateOperationsInput = {
   set?: $Enums.LeadStatus
+}
+
+export type LeadUpdatepreferredDaysInput = {
+  set?: number[]
+  push?: number | number[]
+}
+
+export type LeadUpdatepreferredTimeSlotsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type NullableEnumLevelFieldUpdateOperationsInput = {
+  set?: $Enums.Level | null
+}
+
+export type NullableEnumLeadLostReasonFieldUpdateOperationsInput = {
+  set?: $Enums.LeadLostReason | null
+}
+
+export type LeadCreateNestedOneWithoutActivitiesInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutActivitiesInput, Prisma.LeadUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutActivitiesInput
+  connect?: Prisma.LeadWhereUniqueInput
+}
+
+export type LeadUpdateOneRequiredWithoutActivitiesNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutActivitiesInput, Prisma.LeadUncheckedCreateWithoutActivitiesInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutActivitiesInput
+  upsert?: Prisma.LeadUpsertWithoutActivitiesInput
+  connect?: Prisma.LeadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutActivitiesInput, Prisma.LeadUpdateWithoutActivitiesInput>, Prisma.LeadUncheckedUpdateWithoutActivitiesInput>
 }
 
 export type LeadCreateWithoutStudentInput = {
@@ -533,8 +865,20 @@ export type LeadCreateWithoutStudentInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activities?: Prisma.LeadActivityCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutStudentInput = {
@@ -549,8 +893,20 @@ export type LeadUncheckedCreateWithoutStudentInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  activities?: Prisma.LeadActivityUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutStudentInput = {
@@ -581,8 +937,20 @@ export type LeadUpdateWithoutStudentInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.LeadActivityUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutStudentInput = {
@@ -597,10 +965,179 @@ export type LeadUncheckedUpdateWithoutStudentInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
 }
 
+export type LeadCreateWithoutActivitiesInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  dateOfBirth?: Date | string | null
+  note?: string | null
+  language: string
+  lessonPreference?: $Enums.LessonPreference | null
+  selfAssessedLevel?: $Enums.SelfAssessedLevel | null
+  status?: $Enums.LeadStatus
+  adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student?: Prisma.StudentCreateNestedOneWithoutLeadInput
+}
+
+export type LeadUncheckedCreateWithoutActivitiesInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  dateOfBirth?: Date | string | null
+  note?: string | null
+  language: string
+  lessonPreference?: $Enums.LessonPreference | null
+  selfAssessedLevel?: $Enums.SelfAssessedLevel | null
+  status?: $Enums.LeadStatus
+  adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutLeadInput
+}
+
+export type LeadCreateOrConnectWithoutActivitiesInput = {
+  where: Prisma.LeadWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeadCreateWithoutActivitiesInput, Prisma.LeadUncheckedCreateWithoutActivitiesInput>
+}
+
+export type LeadUpsertWithoutActivitiesInput = {
+  update: Prisma.XOR<Prisma.LeadUpdateWithoutActivitiesInput, Prisma.LeadUncheckedUpdateWithoutActivitiesInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutActivitiesInput, Prisma.LeadUncheckedCreateWithoutActivitiesInput>
+  where?: Prisma.LeadWhereInput
+}
+
+export type LeadUpdateToOneWithWhereWithoutActivitiesInput = {
+  where?: Prisma.LeadWhereInput
+  data: Prisma.XOR<Prisma.LeadUpdateWithoutActivitiesInput, Prisma.LeadUncheckedUpdateWithoutActivitiesInput>
+}
+
+export type LeadUpdateWithoutActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonPreference?: Prisma.NullableEnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference | null
+  selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneWithoutLeadNestedInput
+}
+
+export type LeadUncheckedUpdateWithoutActivitiesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonPreference?: Prisma.NullableEnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference | null
+  selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUncheckedUpdateOneWithoutLeadNestedInput
+}
+
+
+/**
+ * Count Type LeadCountOutputType
+ */
+
+export type LeadCountOutputType = {
+  activities: number
+}
+
+export type LeadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  activities?: boolean | LeadCountOutputTypeCountActivitiesArgs
+}
+
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeadCountOutputType
+   */
+  select?: Prisma.LeadCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LeadActivityWhereInput
+}
 
 
 export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -615,9 +1152,22 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  preferredDays?: boolean
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: boolean
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: boolean
+  testLevelSent?: boolean
+  testScore?: boolean
+  testScoredAt?: boolean
+  nextCallbackAt?: boolean
+  lostReason?: boolean
+  lostReasonOther?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
+  activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
+  _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
 export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -632,6 +1182,17 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  preferredDays?: boolean
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: boolean
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: boolean
+  testLevelSent?: boolean
+  testScore?: boolean
+  testScoredAt?: boolean
+  nextCallbackAt?: boolean
+  lostReason?: boolean
+  lostReasonOther?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["lead"]>
@@ -648,6 +1209,17 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  preferredDays?: boolean
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: boolean
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: boolean
+  testLevelSent?: boolean
+  testScore?: boolean
+  testScoredAt?: boolean
+  nextCallbackAt?: boolean
+  lostReason?: boolean
+  lostReasonOther?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["lead"]>
@@ -664,13 +1236,26 @@ export type LeadSelectScalar = {
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  preferredDays?: boolean
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: boolean
+  preferredTimeSlotsAny?: boolean
+  testSentAt?: boolean
+  testLevelSent?: boolean
+  testScore?: boolean
+  testScoredAt?: boolean
+  nextCallbackAt?: boolean
+  lostReason?: boolean
+  lostReasonOther?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "preferredDays" | "preferredDaysAny" | "preferredTimeSlots" | "preferredTimeSlotsAny" | "testSentAt" | "testLevelSent" | "testScore" | "testScoredAt" | "nextCallbackAt" | "lostReason" | "lostReasonOther" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
+  activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
+  _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LeadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 export type LeadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -679,6 +1264,7 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "Lead"
   objects: {
     student: Prisma.$StudentPayload<ExtArgs> | null
+    activities: Prisma.$LeadActivityPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -692,6 +1278,17 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     selfAssessedLevel: $Enums.SelfAssessedLevel | null
     status: $Enums.LeadStatus
     adminNote: string | null
+    preferredDays: number[]
+    preferredDaysAny: boolean
+    preferredTimeSlots: string[]
+    preferredTimeSlotsAny: boolean
+    testSentAt: Date | null
+    testLevelSent: $Enums.Level | null
+    testScore: number | null
+    testScoredAt: Date | null
+    nextCallbackAt: Date | null
+    lostReason: $Enums.LeadLostReason | null
+    lostReasonOther: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["lead"]>
@@ -1089,6 +1686,7 @@ readonly fields: LeadFieldRefs;
 export interface Prisma__LeadClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   student<T extends Prisma.Lead$studentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$studentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  activities<T extends Prisma.Lead$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1129,6 +1727,17 @@ export interface LeadFieldRefs {
   readonly selfAssessedLevel: Prisma.FieldRef<"Lead", 'SelfAssessedLevel'>
   readonly status: Prisma.FieldRef<"Lead", 'LeadStatus'>
   readonly adminNote: Prisma.FieldRef<"Lead", 'String'>
+  readonly preferredDays: Prisma.FieldRef<"Lead", 'Int[]'>
+  readonly preferredDaysAny: Prisma.FieldRef<"Lead", 'Boolean'>
+  readonly preferredTimeSlots: Prisma.FieldRef<"Lead", 'String[]'>
+  readonly preferredTimeSlotsAny: Prisma.FieldRef<"Lead", 'Boolean'>
+  readonly testSentAt: Prisma.FieldRef<"Lead", 'DateTime'>
+  readonly testLevelSent: Prisma.FieldRef<"Lead", 'Level'>
+  readonly testScore: Prisma.FieldRef<"Lead", 'Int'>
+  readonly testScoredAt: Prisma.FieldRef<"Lead", 'DateTime'>
+  readonly nextCallbackAt: Prisma.FieldRef<"Lead", 'DateTime'>
+  readonly lostReason: Prisma.FieldRef<"Lead", 'LeadLostReason'>
+  readonly lostReasonOther: Prisma.FieldRef<"Lead", 'String'>
   readonly createdAt: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Lead", 'DateTime'>
 }
@@ -1535,6 +2144,30 @@ export type Lead$studentArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   include?: Prisma.StudentInclude<ExtArgs> | null
   where?: Prisma.StudentWhereInput
+}
+
+/**
+ * Lead.activities
+ */
+export type Lead$activitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LeadActivity
+   */
+  select?: Prisma.LeadActivitySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LeadActivity
+   */
+  omit?: Prisma.LeadActivityOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadActivityInclude<ExtArgs> | null
+  where?: Prisma.LeadActivityWhereInput
+  orderBy?: Prisma.LeadActivityOrderByWithRelationInput | Prisma.LeadActivityOrderByWithRelationInput[]
+  cursor?: Prisma.LeadActivityWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LeadActivityScalarFieldEnum | Prisma.LeadActivityScalarFieldEnum[]
 }
 
 /**

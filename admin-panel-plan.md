@@ -73,11 +73,83 @@ Opened by clicking a group cell on Main Schedule.
 
 ---
 
+## Leads Worklist (/leads)
+
+A native lead-management surface. Captures leads from the landing page form, lets admin work the qualifying conversation (call, send placement test, capture preferences, schedule callbacks), and converts ready leads into students. **This is the upstream of Reception** — once a lead converts, the resulting student lands in Reception awaiting a group assignment.
+
+### Surface
+
+Single page at `/leads`:
+
+- **Search input** — substring match across name, phone, or admin note.
+- **Tabs** — Active (NEW + CONTACTED) / Lost / Converted / All. Default is Active. Non-Active tabs lazy-load on click.
+- **Table** — 4 columns: urgency chip, Name (with relative time stacked below), Lang · Level, Note (growing column, multi-line preserved with `whitespace-pre-wrap line-clamp-3`).
+- **Drawer** (right-side slide-in, opens on row click) — controlled by client state, no URL coupling. Full work surface for one lead.
+
+### Drawer sections
+
+Each in a bordered card:
+
+1. **Header** — urgency-chip pill (or status pill if idle), name, meta caption (`+998... · UZ · Beginner`), Telegram link, Mark as Lost (red link) / Restore (when LOST).
+2. **Preferences** — Single `[Change]` button → dialog with day-pattern radio (MWF / TTS / Any) + time-slot multi-select chips with Any. Rows only render when captured (no em-dash placeholders).
+3. **Callback** — Single `[Schedule]` button when empty. Dialog has tonight quick-sets (17:00/18:00/19:00), relative offsets (+1h/+2h/+3h), and a date+native-time picker. Click commits to a pending selection; Save button at the dialog footer commits. When a callback is set: status row with `[Mark done]` / `[Reschedule]`.
+4. **Placement test** — Always rendered (even for self-declared beginners, in case they were miscategorized). `[Mark sent]` opens a level-picker dialog; `[Change score]` opens a numeric input dialog. Em-dash shown for `Test score: —` when test is sent but no score recorded.
+5. **Note** — `[Change]` button opens a 12-row textarea dialog. Multi-line preserved.
+6. **Activity feed** — read-only, newest first, Tashkent-time-formatted. Source: append-only `LeadActivity` rows written transactionally with every mutation.
+7. **Sticky-bottom Convert button** — always enabled. Amber "Missing details" hint appears when the conversion gate isn't satisfied (advisory only — admin can still convert).
+
+### Status lifecycle
+
+`NEW → CONTACTED → CONVERTED` or `LOST`. Transitions are mostly automatic:
+
+- **NEW → CONTACTED:** auto-transitioned whenever admin saves a note, schedules a callback, marks a test sent, records a score, or saves preferences. Each transition emits a `STATUS_CHANGE` activity. Telegram link clicks do NOT trigger this (pure link out).
+- **CONTACTED → CONVERTED:** only via `createStudent({ leadId })` (the Convert button). Emits paired `STATUS_CHANGE` + `CONVERTED` activities.
+- **→ LOST:** only via Mark-as-Lost dialog. Required reason enum (`NO_ANSWER`, `WRONG_NUMBER`, `DIDNT_SUBMIT`, `AGE_OUT_OF_RANGE`, `NOT_INTERESTED`, `WANTED_OFFLINE`, `DUPLICATE`, `OTHER`).
+- **LOST → CONTACTED:** Restore button. No reason required.
+
+### Conversion gate (advisory, not enforced)
+
+`evaluateConversionGate(lead) → { ready, missing[] }` informs the row chip and drawer hint:
+
+- **Beginner** (`selfAssessedLevel = COMPLETE_BEGINNER`): preferred days + preferred time captured (specific value or `Any` flag).
+- **Continuing or unknown**: above + placement test score recorded.
+
+The gate is **not enforced server-side** in `createStudent`. Admin can convert anytime and fill missing fields on the student form. This is intentional — the gate guides, doesn't block.
+
+### Urgency tier (derived per row, not stored)
+
+`getUrgencyInfo(lead)` derives a tier (red/green/blue/amber/idle) + chip from the lead's current fields. Priority: red ▸ green ▸ blue ▸ amber ▸ idle. Drives the worklist sort and the chip shown on each row and in the drawer header. Full chip catalogue in `apps/admin/src/components/leads/CHIPS.md`. Stale thresholds: NEW > 24h = red, CONTACTED > 3d = amber, test sent > 24h with no score = red.
+
+Table sort: NEW > CONTACTED > CONVERTED > LOST (status primary), then urgency tier desc within status.
+
+### Conventions established here (reusable elsewhere)
+
+- **Auto status transition rule** — mutations that count as "real work" on an entity flip its status forward automatically. The trigger is the mutation, not a separate "Mark as contacted" button. Apply this pattern wherever a status field could otherwise drift behind the actual state.
+- **Bordered-card sections with a single `Change` button + dialog** — every editable section in the drawer follows this shape: card title on the left, `[Change]` button on the right, field rows below, edits happen in a dialog (not inline). Reuse for similar entity detail surfaces.
+- **Append-only activity log per entity** — `LeadActivity` is a model worth replicating for Group, Student lifecycle changes, etc. Transactional with each mutation; gives a free audit trail.
+- **Soft gates with informational hints** — `evaluateConversionGate` is advisory + has a single pure function as the source of truth for both display and any future enforcement. Avoids the trap of disabling buttons admins legitimately need to click.
+
+### Funnel handoff
+
+```
+Landing form submission → Lead (status: NEW)
+        ↓ (admin works the lead from /leads)
+Lead.status: CONTACTED → admin clicks Convert → createStudent({ leadId })
+        ↓ (Student created, Lead.status: CONVERTED, Student.leadId set)
+Reception (status: awaiting_assignment) → group assignment → Student.status: ACTIVE
+```
+
+---
+
 ## Reception (student pipeline)
 
 Filtered view of students with status **"awaiting_assignment"**. Same student entity as Student Management — not a separate record.
 
-### Data Source: amoCRM (Kommo) Integration
+### Data Source
+
+Students enter Reception either from the native `/leads` flow (lead → Convert) or, later, via amoCRM integration:
+
+### amoCRM (Kommo) Integration — later scope
 
 Lead management (initial contact, follow-up calls, ghosting, placement test scheduling) happens in **amoCRM**. Once a student passes the placement test, amoCRM pushes them into our system:
 

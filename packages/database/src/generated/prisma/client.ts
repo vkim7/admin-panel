@@ -231,3 +231,8 @@ export type ScheduledAction = Prisma.ScheduledActionModel
  * 
  */
 export type Lead = Prisma.LeadModel
+/**
+ * Model LeadActivity
+ * 
+ */
+export type LeadActivity = Prisma.LeadActivityModel
