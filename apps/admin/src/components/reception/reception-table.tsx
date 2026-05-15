@@ -101,6 +101,7 @@ function makeColumns(
       id: "urgency",
       header: "",
       enableSorting: false,
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => {
         const u = getReceptionUrgency(row.original.createdAt);
         return (
@@ -115,9 +116,9 @@ function makeColumns(
     {
       accessorFn: (row) => `${row.firstName} ${row.lastName}`,
       id: "name",
-      header: ({ column }) => (
-        <SortableHeader column={column}>Name</SortableHeader>
-      ),
+      header: "Name",
+      enableSorting: false,
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => (
         <div className="flex flex-col">
           <Link
@@ -135,6 +136,7 @@ function makeColumns(
     {
       id: "age",
       header: "Age",
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       accessorFn: (row) => getAge(row.dateOfBirth),
       cell: ({ getValue }) => (
         <span className="text-sm">{getValue<number>()}</span>
@@ -144,6 +146,7 @@ function makeColumns(
       id: "typeLang",
       header: "Type · Lang",
       enableSorting: false,
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => {
         const type = LESSON_TYPE_LABELS[row.original.preferredLessonType];
         const lang =
@@ -161,6 +164,7 @@ function makeColumns(
       header: ({ column }) => (
         <SortableHeader column={column}>Level</SortableHeader>
       ),
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       // Sort by curriculum progression (BEGINNER:BEGINNING through IELTS:FINAL)
       // rather than the default alphabetical sort which puts IELTS between
       // ELEMENTARY and INTERMEDIATE. Tie-break by createdAt asc so the
@@ -196,6 +200,14 @@ function makeColumns(
       id: "schedule",
       header: "Schedule",
       enableSorting: false,
+      // Constrain to ~240px and allow wrapping — without this, a student with
+      // every time slot selected would push the column to fill a third of the
+      // table. `whitespace-normal` overrides TableCell's default
+      // `whitespace-nowrap`.
+      meta: {
+        cellClassName: "pr-10 whitespace-normal min-w-[240px] max-w-[240px]",
+        headerClassName: "pr-10",
+      },
       cell: ({ row }) => {
         const days = getDaysLabel(row.original.preferredDays);
         const slots = row.original.preferredTimeSlots;
@@ -215,6 +227,11 @@ function makeColumns(
     {
       accessorKey: "comment",
       header: "Comment",
+      enableSorting: false,
+      meta: {
+        cellClassName: "w-full text-left align-top",
+        headerClassName: "w-full text-left",
+      },
       cell: ({ row }) => (
         <EditCommentDialog
           currentComment={row.original.comment}
@@ -222,7 +239,6 @@ function makeColumns(
           displayMode="multiline"
         />
       ),
-      enableSorting: false,
     },
     {
       id: "actions",
