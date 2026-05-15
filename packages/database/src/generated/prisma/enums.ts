@@ -233,3 +233,35 @@ export const SelfAssessedLevel = {
 } as const
 
 export type SelfAssessedLevel = (typeof SelfAssessedLevel)[keyof typeof SelfAssessedLevel]
+
+
+export const LeadLostReason = {
+  NO_ANSWER: 'NO_ANSWER',
+  WRONG_NUMBER: 'WRONG_NUMBER',
+  DIDNT_SUBMIT: 'DIDNT_SUBMIT',
+  AGE_OUT_OF_RANGE: 'AGE_OUT_OF_RANGE',
+  NOT_INTERESTED: 'NOT_INTERESTED',
+  WANTED_OFFLINE: 'WANTED_OFFLINE',
+  DUPLICATE: 'DUPLICATE',
+  OTHER: 'OTHER'
+} as const
+
+export type LeadLostReason = (typeof LeadLostReason)[keyof typeof LeadLostReason]
+
+
+export const LeadActivityType = {
+  STATUS_CHANGE: 'STATUS_CHANGE',
+  CALLBACK_SET: 'CALLBACK_SET',
+  CALLBACK_DONE: 'CALLBACK_DONE',
+  TEST_SENT: 'TEST_SENT',
+  TEST_SCORED: 'TEST_SCORED',
+  SCHEDULE_SET: 'SCHEDULE_SET',
+  LOST: 'LOST',
+  CONVERTED: 'CONVERTED',
+  CONTACTED_VIA_PHONE: 'CONTACTED_VIA_PHONE',
+  CONTACTED_VIA_TELEGRAM: 'CONTACTED_VIA_TELEGRAM',
+  CONTACTED_VIA_WHATSAPP: 'CONTACTED_VIA_WHATSAPP',
+  NOTE_UPDATED: 'NOTE_UPDATED'
+} as const
+
+export type LeadActivityType = (typeof LeadActivityType)[keyof typeof LeadActivityType]

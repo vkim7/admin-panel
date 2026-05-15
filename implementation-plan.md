@@ -1469,6 +1469,50 @@ Two intertwined features. Adds `Student.preferredLessonType` (GROUP / INDIVIDUAL
 
 **Key modified files:** `schema.prisma`, `schemas/student.ts`, `lib/queries/leads.ts`, `lib/queries/reception.ts`, `lib/queries/reassignment.ts`, `lib/queries/lost.ts`, `lib/actions/students.ts`, `app/(admin)/students/new/page.tsx`, `app/(admin)/students/[id]/page.tsx`, `app/(admin)/students/[id]/edit/page.tsx`, `components/students/student-form.tsx`, `components/leads/leads-table.tsx`, `components/reception/assign-dialog.tsx`, `components/reception/reception-table.tsx`, `components/reassignment/reassignment-table.tsx`, `components/lost/lost-table.tsx`.
 
+### Phase N: Leads Worklist Overhaul ✅
+
+Reshapes `/leads` from a flat status-tab table with inline edit affordances into a workflow-driven worklist. The page now sorts leads by urgency tier, opens a controlled drawer for each lead, and treats every per-lead action (set callback, mark test sent, edit preferences, etc.) as a structured mutation with a transactional activity-log entry. Born from reading 122 production admin notes and watching admins drown in free-text shorthand (`НЕДОЗВОН`, `Не оставлял`, test scores, callback times all hand-typed into one field).
+
+Built across the conversation in five logical phases — schema/foundation, drawer + Mark-as-Lost dialog, callback/test/preferences sections + soft conversion gate, urgency cues + sort + tabs, and a final perf pass (client-side drawer + tab-scoped fetching).
+
+- [x] **Schema** — Two migrations.
+  - `leads_worklist`: new Lead fields (`preferredDays`, `preferredTimeSlots`, `testSentAt`, `testLevelSent`, `testScore`, `testScoredAt`, `nextCallbackAt`, `lostReason`, `lostReasonOther`), new `LeadActivity` append-only model with FK cascade to Lead and SetNull to AdminUser, new enums (`LeadLostReason` — named to avoid collision with the existing `LostReason` student-lifecycle reference table; `LeadActivityType`), new indexes `nextCallbackAt` and `(status, nextCallbackAt)`.
+  - `lead_preferences_any`: `preferredDaysAny` and `preferredTimeSlotsAny` Boolean flags so "admin explicitly marked flexible" is distinguishable from "not yet captured" (both store empty arrays).
+- [x] **Activity log** — `recordLeadActivity()` chokepoint helper writes inside the caller's transaction. Discriminated `LeadActivityMetadata` TS union mirrors the JSON column shape. `autoTransitionToContacted()` flips NEW → CONTACTED + emits `STATUS_CHANGE` whenever admin touches a NEW lead (note save, schedule set, callback set, test marked sent, score recorded). Telegram link click does **not** auto-transition (deliberate — link-only).
+- [x] **Soft conversion gate** — `evaluateConversionGate(lead) → { ready, missing[] }` is a single pure helper used by the drawer hint and the row urgency chip. Beginner gate: days + time captured. Continuing gate: above + test score. **Not enforced** in `createStudent` — admin can convert anytime; the gate just informs.
+- [x] **Server actions** — `actions/lead-fields.ts` (new): `setPreferredSchedule`, `setNextCallback`, `markCallbackDone`, `markTestSent`, `recordTestScore`. `actions/leads.ts`: `markLeadLost` added with required reason enum (rejects CONVERTED leads). `actions/lead-fetch.ts` (new): `fetchLeadDetailAction`, `fetchLeadsByTabAction` for client-driven reads (bends the no-reads-via-actions rule for one-off on-demand calls). `actions/students.ts → createStudent` emits `STATUS_CHANGE` + `CONVERTED` activities when flipping the lead.
+- [x] **Drawer (controlled, client-state)** — Right-side Sheet with bordered card sections: Header (status/urgency pill, name, meta caption, Telegram link, Mark as Lost / Restore as red link), Preferences (single Change button → dialog with MWF/TTS/Any + time-slot chips + Any), Callback (Schedule button → dialog with tonight quick-sets / +Xh offsets / native date+time inputs / pending selection + Save), Placement test (Mark sent / Change score dialogs, always rendered even for beginners in case of miscategorization), Note (Change button → dialog with 12-row Textarea, multi-line preserved), Activity feed (read-only, Tashkent time), sticky-bottom Convert button (always enabled, amber missing-details hint when gate unmet). Each mutation calls an `onChange` callback that refetches drawer detail + reloads current tab.
+- [x] **Mark-as-Lost dialog** — 7 enum reasons + OTHER free text. Required.
+- [x] **Urgency tier system** — `getUrgencyInfo(lead)` derives tier (red/green/blue/amber/idle) + chip from lead fields. Priority red ▸ green ▸ blue ▸ amber ▸ idle. 8 chips documented in `apps/admin/src/components/leads/CHIPS.md`. Header pill mirrors row chip colors; status pill is fallback for idle leads. Stale thresholds: NEW > 24h = red, CONTACTED > 3d = amber.
+- [x] **Table simplification** — 4 columns: urgency chip, Name (with relative time stacked below), Lang · Level (plain muted text), Note (growing, multi-line via `whitespace-pre-wrap line-clamp-3`). Removed: status badge column, phone column, lesson-type column, dedicated created column, inline status dropdown, inline note editor, inline Convert column. Sort: NEW > CONTACTED > CONVERTED > LOST (status primary), then urgency tier desc within status.
+- [x] **Tabs simplified** — Active (NEW + CONTACTED) / Lost / Converted / All. Default tab is Active. Per-tab stale-counter removed (urgency cues live on rows now).
+- [x] **DataTable shared component** — Added opt-in `meta.cellClassName` / `meta.headerClassName` pass-through and `onRowClick` prop. Default behavior unchanged for other callers per CLAUDE.md shared-component rule.
+- [x] **Performance pass** —
+  - Tab-scoped fetching: `getLeads({ statuses? })` — page loads only Active leads initially. Other tabs lazy-load via `fetchLeadsByTabAction`. After mutations, the visible non-Active tab refetches explicitly (Active is auto-refreshed via `revalidatePath`).
+  - Client-side drawer state: dropped `?lead=` URL param. Drawer state lives in `LeadsTabs`. Lost URL shareability and browser-back-closes-drawer in exchange for instant drawer toggle (no full page refetch).
+- [x] **Telegram contact link** — Pure `t.me/+phone` link. Removed earlier Call/WhatsApp buttons and per-channel activity emission (too noisy).
+- [x] **Schemas / validation** — `schemas/lead.ts` validators for all new mutations. Day pattern enforces MWF or TTS or empty. Mark-as-Lost refines `otherText` required when reason is OTHER.
+- [x] **Updated `lead-to-student` prefill** — Days/time/level/score now prefill the student form on convert. Test score and admin note prepend into `Student.comment` so the qualifying-call context survives conversion. Unit test fixture extended to cover new fields.
+
+**Documentation:** `apps/admin/src/components/leads/CHIPS.md` (chip catalogue + criteria), `DATA_MODEL.md` (new Leads Worklist section), this entry.
+
+**Not in scope (deferred for follow-up):**
+- Phone deduplication at intake (resubmissions create duplicate Lead rows today).
+- Snooze / defer-until ("call back in autumn" cases).
+- Quick-copy outbound message templates for Telegram.
+- Landing form additions: age field (filter out kids at intake), Telegram username (more reliable fallback).
+- Integration tests for the new mutation actions — only the existing `lead-to-student` unit tests cover Phase N today.
+- Cross-tab search (search is scoped to the currently loaded tab).
+- URL-driven drawer deep-links (removed for perf; could be re-added behind a feature flag if shareability becomes important).
+
+**New files:** `lib/helpers/lead-activity.ts`, `lib/helpers/lead-conversion-gate.ts`, `lib/actions/lead-fields.ts`, `lib/actions/lead-fetch.ts`, `components/leads/lead-drawer.tsx`, `components/leads/lead-drawer-header.tsx`, `components/leads/lead-drawer-note.tsx`, `components/leads/lead-activity-feed.tsx`, `components/leads/lead-callback-section.tsx`, `components/leads/lead-test-section.tsx`, `components/leads/lead-convert-button.tsx`, `components/leads/lead-urgency-chip.tsx`, `components/leads/mark-as-lost-dialog.tsx`, `components/leads/CHIPS.md`.
+
+**Renamed in place:** `components/leads/lead-conversion-checklist.tsx` (now exports `LeadPreferences`).
+
+**Deleted:** `components/leads/lead-status-select.tsx`, `components/leads/lead-note-editor.tsx` (inline editors superseded by drawer).
+
+**Key modified files:** `packages/database/prisma/schema.prisma`, `lib/helpers/lead-staleness.ts` (added urgency tier + chip), `lib/helpers/lead-to-student.ts` (extended prefill), `lib/queries/leads.ts` (statuses filter + activity feed), `lib/actions/leads.ts` (markLeadLost + transactional activity emission), `lib/actions/students.ts` (CONVERTED activity), `schemas/lead.ts`, `components/leads/leads-table.tsx`, `components/leads/leads-tabs.tsx`, `components/ui/data-table.tsx` (opt-in meta className + onRowClick), `app/(admin)/leads/page.tsx`.
+
 ---
 
 ## Revisit

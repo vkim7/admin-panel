@@ -1,51 +1,28 @@
 "use client";
 
 import { useMemo } from "react";
-import Link from "next/link";
-import { Tooltip as TooltipPrimitive } from "radix-ui";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DataTable, SortableHeader } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
-import { LeadStatusSelect } from "./lead-status-select";
-import { LeadNoteEditor } from "./lead-note-editor";
-import { getStaleInfo } from "@/lib/helpers/lead-staleness";
+import { DataTable } from "@/components/ui/data-table";
+import {
+  getUrgencyInfo,
+  tierRank,
+  type UrgencyInfo,
+} from "@/lib/helpers/lead-staleness";
+import { LeadUrgencyChip } from "./lead-urgency-chip";
 import type { LeadStatus } from "@eng/database";
-import type { TabId, LeadForTabs as LeadRow } from "./leads-tabs";
+import type { LeadForTabs as LeadRow } from "./leads-tabs";
 
-const LESSON_PREF_LABELS: Record<string, string> = {
-  GROUP: "Group",
-  INDIVIDUAL: "Individual",
-  EITHER: "Either",
+// Status-first sort: NEW leads always sort above CONTACTED, regardless of
+// urgency tier on the CONTACTED side. Within each status the urgency tier
+// breaks the tie (red stale-NEW above fresh-NEW, etc.).
+const STATUS_PRIORITY: Record<LeadStatus, number> = {
+  NEW: 0,
+  CONTACTED: 1,
+  CONVERTED: 2,
+  LOST: 3,
 };
 
-const LEVEL_LABELS: Record<string, string> = {
-  COMPLETE_BEGINNER: "Beginner",
-  KNOW_A_LITTLE: "Some English",
-  CAN_HOLD_CONVERSATION: "Conversational",
-};
-
-const STATUS_LABELS: Record<LeadStatus, string> = {
-  NEW: "New",
-  CONTACTED: "Contacted",
-  CONVERTED: "Converted",
-  LOST: "Lost",
-};
-
-const STATUS_COLORS: Record<LeadStatus, string> = {
-  NEW: "bg-blue-100 text-blue-700",
-  CONTACTED: "bg-amber-100 text-amber-700",
-  CONVERTED: "bg-green-100 text-green-700",
-  LOST: "bg-slate-100 text-slate-600",
-};
-
-function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}
+type RowWithUrgency = LeadRow & { _urgency: UrgencyInfo };
 
 function formatRelative(date: Date): string {
   const now = Date.now();
@@ -58,180 +35,123 @@ function formatRelative(date: Date): string {
   if (minutes < 60) return `${minutes}m ago`;
   if (hours < 24) return `${hours}h ago`;
   if (days < 7) return `${days}d ago`;
-  return formatDate(date);
+  return new Date(date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Tashkent",
+  });
 }
 
-function buildColumns(activeTab: TabId): ColumnDef<LeadRow>[] {
-  const cols: ColumnDef<LeadRow>[] = [
+function buildColumns(): ColumnDef<RowWithUrgency>[] {
+  return [
     {
-      id: "name",
-      accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-      header: ({ column }) => (
-        <SortableHeader column={column}>Name</SortableHeader>
-      ),
-      cell: ({ row }) => (
-        <span className="font-medium">
-          {row.original.firstName} {row.original.lastName}
-        </span>
-      ),
+      id: "urgency",
+      header: "",
+      enableSorting: false,
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
+      cell: ({ row }) => <LeadUrgencyChip info={row.original._urgency} />,
     },
     {
-      accessorKey: "phone",
-      header: "Phone",
+      id: "name",
+      header: "Name",
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => (
-        <a
-          href={`tel:${row.original.phone}`}
-          className="text-primary hover:underline"
-        >
-          {row.original.phone}
-        </a>
+        <div className="flex flex-col">
+          <span className="font-medium leading-tight">
+            {row.original.firstName} {row.original.lastName}
+          </span>
+          <span className="text-xs text-muted-foreground leading-tight">
+            {formatRelative(row.original.createdAt)}
+          </span>
+        </div>
       ),
     },
     {
       accessorKey: "language",
-      header: "Lang",
-      cell: ({ row }) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${
-            row.original.language === "uz"
-              ? "bg-blue-100 text-blue-800"
-              : "bg-purple-100 text-purple-800"
-          }`}
-        >
-          {row.original.language.toUpperCase()}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "lessonPreference",
-      header: "Lesson Type",
-      cell: ({ row }) =>
-        row.original.lessonPreference
-          ? (LESSON_PREF_LABELS[row.original.lessonPreference] ??
-            row.original.lessonPreference)
-          : "—",
-    },
-    {
-      accessorKey: "selfAssessedLevel",
-      header: "Level",
-      cell: ({ row }) =>
-        row.original.selfAssessedLevel
-          ? (LEVEL_LABELS[row.original.selfAssessedLevel] ??
-            row.original.selfAssessedLevel)
-          : "—",
-    },
-    // Status: static badge on Converted (locked — set only by createStudent);
-    // editable dropdown everywhere else, including Lost (so mistaken LOST is recoverable).
-    activeTab === "CONVERTED"
-      ? {
-          accessorKey: "status",
-          header: "Status",
-          cell: ({ row }) => (
-            <span
-              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_COLORS[row.original.status]}`}
-            >
-              {STATUS_LABELS[row.original.status]}
-            </span>
-          ),
-        }
-      : {
-          accessorKey: "status",
-          header: "Status",
-          cell: ({ row }) => (
-            <LeadStatusSelect
-              leadId={row.original.id}
-              currentStatus={row.original.status}
-            />
-          ),
-        },
-    {
-      accessorKey: "adminNote",
-      header: "Admin Note",
-      enableSorting: false,
-      cell: ({ row }) => (
-        <LeadNoteEditor
-          leadId={row.original.id}
-          currentNote={row.original.adminNote}
-        />
-      ),
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <SortableHeader column={column}>Created</SortableHeader>
-      ),
-      sortingFn: "datetime",
+      header: "Lang · Level",
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => {
-        const stale = getStaleInfo(row.original);
+        const lang = row.original.language.toUpperCase();
+        const level =
+          row.original.selfAssessedLevel === "COMPLETE_BEGINNER"
+            ? "Beginner"
+            : row.original.selfAssessedLevel === "CONTINUING"
+              ? "Continuing"
+              : null;
         return (
-          <span className="flex items-center gap-1.5">
-            {stale && (
-              <TooltipPrimitive.Root>
-                <TooltipPrimitive.Trigger asChild>
-                  <span
-                    className={`inline-block w-2 h-2 rounded-full shrink-0 cursor-default ${
-                      stale.color === "red" ? "bg-red-500" : "bg-amber-400"
-                    }`}
-                  />
-                </TooltipPrimitive.Trigger>
-                <TooltipPrimitive.Portal>
-                  <TooltipPrimitive.Content
-                    side="top"
-                    sideOffset={4}
-                    className="z-50 rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95"
-                  >
-                    {stale.reason}
-                    <TooltipPrimitive.Arrow className="fill-popover" />
-                  </TooltipPrimitive.Content>
-                </TooltipPrimitive.Portal>
-              </TooltipPrimitive.Root>
-            )}
-            <span
-              className="text-muted-foreground text-xs"
-              title={formatDate(row.original.createdAt)}
-            >
-              {formatRelative(row.original.createdAt)}
-            </span>
+          <span className="text-muted-foreground text-xs">
+            <span className="uppercase">{lang}</span>
+            {level && ` · ${level}`}
           </span>
         );
       },
     },
-  ];
-
-  if (activeTab === "NEW" || activeTab === "CONTACTED") {
-    cols.push({
-      id: "convert",
-      header: "",
+    {
+      accessorKey: "adminNote",
+      header: "Note",
       enableSorting: false,
-      cell: ({ row }) => (
-        <Button asChild size="sm">
-          <Link
-            href={`/students/new?leadId=${row.original.id}&returnTo=/leads`}
-          >
-            Convert
-          </Link>
-        </Button>
-      ),
-    });
-  }
-
-  return cols;
+      meta: {
+        cellClassName: "w-full text-left align-top",
+        headerClassName: "w-full text-left",
+      },
+      cell: ({ row }) =>
+        row.original.adminNote ? (
+          // `whitespace-pre-wrap` preserves newlines from the textarea; line-clamp
+          // caps height so rows stay scannable (full note is visible in the drawer).
+          <span className="block text-xs text-muted-foreground whitespace-pre-wrap line-clamp-3 max-w-md">
+            {row.original.adminNote}
+          </span>
+        ) : null,
+    },
+  ];
 }
 
 export function LeadsTable({
   data,
-  activeTab,
   searchQuery,
   tabLabel,
+  onOpenLead,
 }: {
   data: LeadRow[];
-  activeTab: TabId;
   searchQuery: string;
   tabLabel: string;
+  onOpenLead: (id: string) => void;
 }) {
-  const columns = useMemo(() => buildColumns(activeTab), [activeTab]);
+  const columns = useMemo(() => buildColumns(), []);
 
-  if (data.length === 0) {
+  // Compute urgency once per render, sort by status then tier.
+  const enriched = useMemo<RowWithUrgency[]>(() => {
+    const withInfo = data.map((lead) => ({
+      ...lead,
+      _urgency: getUrgencyInfo(lead),
+    }));
+
+    withInfo.sort((a, b) => {
+      // 1) Status priority: NEW above CONTACTED above CONVERTED above LOST.
+      const statusDiff = STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status];
+      if (statusDiff !== 0) return statusDiff;
+
+      // 2) Urgency tier within status: red above green above blue above amber above idle.
+      const tierDiff = tierRank(b._urgency.tier) - tierRank(a._urgency.tier);
+      if (tierDiff !== 0) return tierDiff;
+
+      // 3) Earlier callbacks first, then newest leads.
+      const aCb = a.nextCallbackAt
+        ? new Date(a.nextCallbackAt).getTime()
+        : Infinity;
+      const bCb = b.nextCallbackAt
+        ? new Date(b.nextCallbackAt).getTime()
+        : Infinity;
+      if (aCb !== bCb) return aCb - bCb;
+
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+
+    return withInfo;
+  }, [data]);
+
+  if (enriched.length === 0) {
     return (
       <div className="rounded-md border">
         <div className="h-24 flex items-center justify-center text-sm text-muted-foreground">
@@ -244,8 +164,10 @@ export function LeadsTable({
   }
 
   return (
-    <TooltipPrimitive.Provider delayDuration={300}>
-      <DataTable columns={columns} data={data} />
-    </TooltipPrimitive.Provider>
+    <DataTable
+      columns={columns}
+      data={enriched}
+      onRowClick={(row) => onOpenLead(row.id)}
+    />
   );
 }

@@ -421,7 +421,8 @@ export const ModelName = {
   Holiday: 'Holiday',
   Exam: 'Exam',
   ScheduledAction: 'ScheduledAction',
-  Lead: 'Lead'
+  Lead: 'Lead',
+  LeadActivity: 'LeadActivity'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -437,7 +438,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "excusedAbsenceReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "excusedAbsence" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction" | "lead"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "excusedAbsenceReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "excusedAbsence" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction" | "lead" | "leadActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3253,6 +3254,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LeadActivity: {
+      payload: Prisma.$LeadActivityPayload<ExtArgs>
+      fields: Prisma.LeadActivityFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LeadActivityFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LeadActivityFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        findFirst: {
+          args: Prisma.LeadActivityFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LeadActivityFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        findMany: {
+          args: Prisma.LeadActivityFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+        }
+        create: {
+          args: Prisma.LeadActivityCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        createMany: {
+          args: Prisma.LeadActivityCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LeadActivityCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+        }
+        delete: {
+          args: Prisma.LeadActivityDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        update: {
+          args: Prisma.LeadActivityUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        deleteMany: {
+          args: Prisma.LeadActivityDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LeadActivityUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LeadActivityUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>[]
+        }
+        upsert: {
+          args: Prisma.LeadActivityUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LeadActivityPayload>
+        }
+        aggregate: {
+          args: Prisma.LeadActivityAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLeadActivity>
+        }
+        groupBy: {
+          args: Prisma.LeadActivityGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadActivityGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LeadActivityCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LeadActivityCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3917,11 +3992,34 @@ export const LeadScalarFieldEnum = {
   selfAssessedLevel: 'selfAssessedLevel',
   status: 'status',
   adminNote: 'adminNote',
+  preferredDays: 'preferredDays',
+  preferredDaysAny: 'preferredDaysAny',
+  preferredTimeSlots: 'preferredTimeSlots',
+  preferredTimeSlotsAny: 'preferredTimeSlotsAny',
+  testSentAt: 'testSentAt',
+  testLevelSent: 'testLevelSent',
+  testScore: 'testScore',
+  testScoredAt: 'testScoredAt',
+  nextCallbackAt: 'nextCallbackAt',
+  lostReason: 'lostReason',
+  lostReasonOther: 'lostReasonOther',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type LeadScalarFieldEnum = (typeof LeadScalarFieldEnum)[keyof typeof LeadScalarFieldEnum]
+
+
+export const LeadActivityScalarFieldEnum = {
+  id: 'id',
+  leadId: 'leadId',
+  type: 'type',
+  metadata: 'metadata',
+  actorAdminId: 'actorAdminId',
+  createdAt: 'createdAt'
+} as const
+
+export type LeadActivityScalarFieldEnum = (typeof LeadActivityScalarFieldEnum)[keyof typeof LeadActivityScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -3937,6 +4035,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -4384,6 +4490,34 @@ export type ListEnumLeadStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'LeadLostReason'
+ */
+export type EnumLeadLostReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadLostReason'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadLostReason[]'
+ */
+export type ListEnumLeadLostReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadLostReason[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadActivityType'
+ */
+export type EnumLeadActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadActivityType'>
+    
+
+
+/**
+ * Reference to a field of type 'LeadActivityType[]'
+ */
+export type ListEnumLeadActivityTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LeadActivityType[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -4529,6 +4663,7 @@ export type GlobalOmitConfig = {
   exam?: Prisma.ExamOmit
   scheduledAction?: Prisma.ScheduledActionOmit
   lead?: Prisma.LeadOmit
+  leadActivity?: Prisma.LeadActivityOmit
 }
 
 /* Types for Logging */

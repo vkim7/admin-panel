@@ -455,6 +455,7 @@ model AdminUser {
   resolvedUncertain        UncertainHistory[]        @relation("ResolvedUncertain")
   scheduledActions         ScheduledAction[]         @relation("ScheduledActionCreatedBy")
   excusedAbsencesCreated   ExcusedAbsence[]          @relation("ExcusedAbsenceCreatedBy")
+  leadActivities           LeadActivity[]            @relation("LeadActivityActor")
 }
 
 model Teacher {
@@ -1501,6 +1502,32 @@ enum SelfAssessedLevel {
   CONTINUING
 }
 
+enum LeadLostReason {
+  NO_ANSWER
+  WRONG_NUMBER
+  DIDNT_SUBMIT
+  AGE_OUT_OF_RANGE
+  NOT_INTERESTED
+  WANTED_OFFLINE
+  DUPLICATE
+  OTHER
+}
+
+enum LeadActivityType {
+  STATUS_CHANGE
+  CALLBACK_SET
+  CALLBACK_DONE
+  TEST_SENT
+  TEST_SCORED
+  SCHEDULE_SET
+  LOST
+  CONVERTED
+  CONTACTED_VIA_PHONE
+  CONTACTED_VIA_TELEGRAM
+  CONTACTED_VIA_WHATSAPP
+  NOTE_UPDATED
+}
+
 model Lead {
   id                String             @id @default(cuid())
   firstName         String
@@ -1514,11 +1541,47 @@ model Lead {
   status            LeadStatus         @default(NEW)
   adminNote         String?            // internal note by admin after calling
 
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  // Qualifying conversation — captured during CONTACTED phase
+  preferredDays         Int[]    // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.
+  preferredDaysAny      Boolean  @default(false) // explicit "flexible" — distinguishes captured-as-Any from not-yet-captured
+  preferredTimeSlots    String[] // e.g. ["19:00", "20:30"]. Matches Student.preferredTimeSlots.
+  preferredTimeSlotsAny Boolean  @default(false) // explicit "flexible" — same rationale
 
-  student           Student?
+  // Placement test workflow (CONTINUING leads)
+  testSentAt    DateTime?
+  testLevelSent Level?
+  testScore     Int?        // 0–100
+  testScoredAt  DateTime?
+
+  // Follow-up scheduling
+  nextCallbackAt DateTime?
+
+  // Disqualification
+  lostReason      LeadLostReason?
+  lostReasonOther String?         // free text when lostReason = OTHER
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  student    Student?
+  activities LeadActivity[]
 
   @@index([status])
   @@index([createdAt])
+  @@index([nextCallbackAt])
+  @@index([status, nextCallbackAt])
+}
+
+model LeadActivity {
+  id           String           @id @default(cuid())
+  leadId       String
+  type         LeadActivityType
+  metadata     Json?            // type-discriminated payload (validated in TS)
+  actorAdminId String?
+  createdAt    DateTime         @default(now())
+
+  lead  Lead       @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  actor AdminUser? @relation("LeadActivityActor", fields: [actorAdminId], references: [id], onDelete: SetNull)
+
+  @@index([leadId, createdAt])
 }
