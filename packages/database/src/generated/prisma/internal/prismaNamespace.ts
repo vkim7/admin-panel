@@ -3996,6 +3996,7 @@ export const LeadScalarFieldEnum = {
   preferredDaysAny: 'preferredDaysAny',
   preferredTimeSlots: 'preferredTimeSlots',
   preferredTimeSlotsAny: 'preferredTimeSlotsAny',
+  preferredLanguage: 'preferredLanguage',
   testSentAt: 'testSentAt',
   testLevelSent: 'testLevelSent',
   testScore: 'testScore',

@@ -19,12 +19,21 @@ interface EditCommentDialogProps {
   currentComment: string | null;
   onSave: (comment: string | null) => Promise<{ error?: string }>;
   title?: string;
+  /**
+   * Display mode for the trigger when a comment exists:
+   * - "truncate" (default): single-line truncation, 200px max, preserves
+   *   existing behavior in every callsite.
+   * - "multiline": preserves newlines (`whitespace-pre-wrap`), clamps to 3
+   *   visible lines, wider max width. Matches the /leads Note column.
+   */
+  displayMode?: "truncate" | "multiline";
 }
 
 export function EditCommentDialog({
   currentComment,
   onSave,
   title = "Edit Comment",
+  displayMode = "truncate",
 }: EditCommentDialogProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(currentComment ?? "");
@@ -54,7 +63,11 @@ export function EditCommentDialog({
         {currentComment ? (
           <button
             type="button"
-            className="max-w-[200px] cursor-pointer truncate text-left text-sm hover:underline"
+            className={
+              displayMode === "multiline"
+                ? "block max-w-md cursor-pointer whitespace-pre-wrap text-left text-sm line-clamp-3 hover:underline"
+                : "max-w-[200px] cursor-pointer truncate text-left text-sm hover:underline"
+            }
             title={currentComment}
           >
             {currentComment}

@@ -719,6 +719,13 @@ export type EnumLeadStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
 }
 
+export type EnumPreferredLanguageNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel> | $Enums.PreferredLanguage | null
+}
+
 export type EnumLevelNullableFilter<$PrismaModel = never> = {
   equals?: $Enums.Level | Prisma.EnumLevelFieldRefInput<$PrismaModel> | null
   in?: $Enums.Level[] | Prisma.ListEnumLevelFieldRefInput<$PrismaModel> | null
@@ -761,6 +768,16 @@ export type EnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+}
+
+export type EnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
 }
 
 export type EnumLevelNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -1542,6 +1559,13 @@ export type NestedEnumLeadStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel> | $Enums.LeadStatus
 }
 
+export type NestedEnumPreferredLanguageNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel> | $Enums.PreferredLanguage | null
+}
+
 export type NestedEnumLevelNullableFilter<$PrismaModel = never> = {
   equals?: $Enums.Level | Prisma.EnumLevelFieldRefInput<$PrismaModel> | null
   in?: $Enums.Level[] | Prisma.ListEnumLevelFieldRefInput<$PrismaModel> | null
@@ -1584,6 +1608,16 @@ export type NestedEnumLeadStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumLeadStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PreferredLanguage | Prisma.EnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  in?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.PreferredLanguage[] | Prisma.ListEnumPreferredLanguageFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumPreferredLanguageNullableWithAggregatesFilter<$PrismaModel> | $Enums.PreferredLanguage | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPreferredLanguageNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumLevelNullableWithAggregatesFilter<$PrismaModel = never> = {

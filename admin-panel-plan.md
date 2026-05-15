@@ -180,6 +180,38 @@ Our DB: student created (status: awaiting_assignment)
 
 **Workflow:** amoCRM pipeline → placement test passed → student record created in our DB (status: awaiting_assignment) → appears in Reception → admin assigns to group → status becomes "active" → student notified via Telegram
 
+**Reception worklist — current shape (post-UX pass):**
+
+Page layout (top to bottom):
+1. **Search input** (max 240px) — visible on every tab. Substring match across name, CRM code, and phone (digit-normalized so `+998 90 123` matches `+998901230000`). Reception tab additionally searches parent phone.
+2. **Type / Lang filters** as `ToggleGroup`s (outline · sm, `/schedule` UZ/RU style) — visible on **Reception tab only**. Vertical dividers (`h-5 w-px bg-border`) separate search ↔ Type ↔ Lang. Selected toggle is high-contrast primary (overrides the default subtle accent).
+3. **Tabs** (`/leads` underline style — `flex border-b` + `border-b-2 -mb-px`): `Reception` / `Scheduled` / `First Lessons` / `Second Lessons`, each with muted count.
+4. Active tab content.
+
+Reception table columns (left to right):
+- **Urgency chip** — `Just arrived` / `Waiting Xh` / `Waiting Xd`. Tier colors: blue (< 3 days), amber (≥ 3 days), red (≥ 7 days).
+- **Name + phone** — name as a `Link` to student detail; student phone as muted subtitle below.
+- **Age** — computed from `dateOfBirth`.
+- **Type · Lang** — plain muted text: `Group · UZ` / `Individual · RU` / `Either · Any`.
+- **Level** — `Badge` showing `BEG · MID`, sortable by curriculum progression via `LEVEL_STAGE_ORDER`. Unknown level+stage combos fall to the bottom.
+- **Schedule** — `Days · Time` merged: `MWF · 19:00, 20:30`.
+- **Comment** — multi-line preserved (`whitespace-pre-wrap line-clamp-3`); click opens edit dialog. Uses opt-in `displayMode="multiline"` on the shared `EditCommentDialog`.
+- **Actions** — kebab menu (`aria-label="Actions"`) with Assign / Send to Lost.
+
+Filter semantics (intentionally loose):
+- `Type: Group` matches `GROUP` OR `EITHER` (flexible students are eligible).
+- `Type: Individual` matches `INDIVIDUAL` OR `EITHER`.
+- `Lang: UZ` matches `UZBEK` OR `ANY`.
+- `Lang: RU` matches `RUSSIAN` OR `ANY`.
+- Empty toggle selection = no filter. No standalone "All" / "Either" / "Any" filter values — they'd be redundant with the semantic match.
+
+Default sort: **by curriculum level**, tie-break by `createdAt asc` (longest-waiting student in each level cluster surfaces first). Tie-break is deterministic only because `getReceptionStudents()` query also orders by `createdAt asc`; keep them aligned.
+
+**Deferred enhancements (later scope):**
+- **Group-suggestion column.** For each awaiting student, surface a one-row recommendation derived from their preferences + open groups: *"Fits Group #43 (1,3,5 · 19:00 · BEG·MID · 8/12)"* with a click-to-assign shortcut. Would dramatically reduce time-to-assign by pre-computing the assignment-eligibility math.
+- **Drawer-based assign flow.** Currently a centered modal; could match the /leads drawer convention for visual consistency.
+- **Tabs / kebab a11y debt.** Tabs are raw `<button>`s (matching `/leads`); migrate the codebase to shadcn `Tabs` with proper ARIA `role="tablist" / "tab"` + keyboard arrow nav in one sweep.
+
 ---
 
 ## No Payment List (daily ops tool)

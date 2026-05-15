@@ -1513,6 +1513,32 @@ Built across the conversation in five logical phases — schema/foundation, draw
 
 **Key modified files:** `packages/database/prisma/schema.prisma`, `lib/helpers/lead-staleness.ts` (added urgency tier + chip), `lib/helpers/lead-to-student.ts` (extended prefill), `lib/queries/leads.ts` (statuses filter + activity feed), `lib/actions/leads.ts` (markLeadLost + transactional activity emission), `lib/actions/students.ts` (CONVERTED activity), `schemas/lead.ts`, `components/leads/leads-table.tsx`, `components/leads/leads-tabs.tsx`, `components/ui/data-table.tsx` (opt-in meta className + onRowClick), `app/(admin)/leads/page.tsx`.
 
+### Phase O: Reception Worklist Redesign ✅
+
+Same pattern as Phase N applied to `/reception` — turns the awaiting-assignment table into a worklist driven by an urgency chip and curriculum-ordered sort, with page-level search and Reception-scoped Type/Lang filters lifted out of the table.
+
+- [x] **Urgency chip column** — new helper `lib/helpers/reception-staleness.ts` with `getReceptionUrgency(createdAt) → { tier, label }`. Tiers: blue (< 3d), amber (≥ 3d), red (≥ 7d). Label shape: `Just arrived` / `Waiting Xh` / `Waiting Xd`. Always rendered (no null tier); thresholds exported as `RECEPTION_AMBER_DAYS = 3`, `RECEPTION_RED_DAYS = 7`.
+- [x] **Default sort by curriculum level** — custom `sortingFn` uses `LEVEL_STAGE_ORDER` (BEGINNER:BEGINNING → IELTS:FINAL); tie-break by `createdAt asc` (longest-waiting in each level cluster first); unknown level+stage combos fall to the bottom via `Number.MAX_SAFE_INTEGER` rather than mysteriously floating to the top via `indexOf` returning −1.
+- [x] **Column trim** — dropped CRM, Phone (now subtitle of Name), Created (info carried by chip), separate Days/Time (merged into `Schedule`), separate Type (merged into `Type · Lang`).
+- [x] **Multi-line `Comment`** — shared `EditCommentDialog` gained an opt-in `displayMode: "truncate" | "multiline"` prop with `truncate` default. Reception passes `multiline`; the other 3 callsites (reassignment-table, groups/student-list, students/student-comment-edit) keep existing single-line behavior.
+- [x] **Search lifted to page level** — visible on every tab (`Reception` / `Scheduled` / `First Lessons` / `Second Lessons`). Substring match across name, CRM code, and phone (digit-normalized); Reception also includes parent phone. Shadcn `<Input>` for theming consistency with `/leads`.
+- [x] **Type / Lang filters scoped to Reception** — `ToggleGroup`s in the `/schedule` UZ/RU style. Selected state high-contrast (`data-[state=on]:bg-primary`). Vertical dividers between search ↔ Type ↔ Lang. Filter semantics intentionally loose: `Type: Group` matches `GROUP` OR `EITHER`; `Lang: UZ` matches `UZBEK` OR `ANY`. No "All" / "Either" / "Any" filter values — they'd be redundant.
+- [x] **Tabs converted to `/leads`-style underline** — `flex border-b` + `border-b-2 -mb-px` per item; muted count next to each label.
+- [x] **State lifted to `ReceptionView`** — search, type filter, lang filter, and the four filtered arrays all derived in the view and passed down. `ReceptionTable` is now a pure presentation component.
+- [x] **Hygiene** — new `ReceptionStudentRow` export from `queries/reception.ts` (cleaner than the previous `Parameters<typeof ReceptionTable>[0]["data"][number]` indirection). `matchesSearch` extracted to a top-level helper accepting variadic phones, killing four `eslint-disable react-hooks/exhaustive-deps` comments. Kebab trigger got `aria-label="Actions"`. `Type · Lang` cell normalized to `text-sm` matching `Schedule`.
+
+**Not in scope (deferred):**
+- Group-suggestion column (one-row recommendation per student).
+- Drawer-based assign flow (currently a centered modal; could match the /leads drawer convention).
+- Tabs / kebab accessibility — raw `<button>` tabs lose ARIA tablist semantics; codebase-wide migration (also affects `/leads`).
+- Hydration warning from `Date.now()` in the chip cell — known noise, accept until a proper "no chip until mounted" gating is justified.
+
+**New files:** `lib/helpers/reception-staleness.ts`.
+
+**Key modified files:** `components/reception/reception-view.tsx`, `components/reception/reception-table.tsx`, `components/shared/edit-comment-dialog.tsx` (opt-in `displayMode` prop), `lib/queries/reception.ts` (`ReceptionStudentRow` export).
+
+**Documentation:** `admin-panel-plan.md` Reception section rewritten to describe the post-UX-pass shape (layout, columns, filter semantics, sort).
+
 ---
 
 ## Revisit

@@ -2,6 +2,12 @@ import { prisma } from "@/server/db";
 import { getTrialMembershipAttendance } from "./students";
 import { getGroupScheduledCounts } from "@/lib/helpers/capacity";
 
+/** Row shape returned by `getReceptionStudents`. Re-exported so the view and
+ * table can share the type without one depending on the other's props. */
+export type ReceptionStudentRow = Awaited<
+  ReturnType<typeof getReceptionStudents>
+>[number];
+
 export async function getReceptionStudents() {
   return prisma.student.findMany({
     where: {

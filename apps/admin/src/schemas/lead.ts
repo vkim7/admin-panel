@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { requiredString, nullableString } from "./helpers";
+import { requiredString, nullableString, nullableIsoDate } from "./helpers";
 import { TIME_SLOTS } from "@/lib/constants";
 
 export const updateLeadStatusSchema = z.object({
@@ -47,12 +47,20 @@ const timeSlots = z
   .array(z.enum(TIME_SLOTS))
   .max(5, "Pick up to 5 time slots");
 
+const LESSON_PREFERENCE_VALUES = ["GROUP", "INDIVIDUAL", "EITHER"] as const;
+const PREFERRED_LANGUAGE_VALUES = ["UZBEK", "RUSSIAN", "ANY"] as const;
+
 export const setLeadScheduleSchema = z.object({
   id: requiredString("Lead ID is required"),
   preferredDays: dayPattern,
   preferredTimeSlots: timeSlots,
   preferredDaysAny: z.boolean(),
   preferredTimeSlotsAny: z.boolean(),
+  // Nullable because each field is independently set; the dialog's canSave
+  // guard enforces that all are non-null at save time.
+  lessonPreference: z.enum(LESSON_PREFERENCE_VALUES).nullable(),
+  preferredLanguage: z.enum(PREFERRED_LANGUAGE_VALUES).nullable(),
+  dateOfBirth: nullableIsoDate(),
 });
 
 export const setNextCallbackSchema = z

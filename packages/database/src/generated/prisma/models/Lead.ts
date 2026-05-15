@@ -50,6 +50,7 @@ export type LeadMinAggregateOutputType = {
   adminNote: string | null
   preferredDaysAny: boolean | null
   preferredTimeSlotsAny: boolean | null
+  preferredLanguage: $Enums.PreferredLanguage | null
   testSentAt: Date | null
   testLevelSent: $Enums.Level | null
   testScore: number | null
@@ -75,6 +76,7 @@ export type LeadMaxAggregateOutputType = {
   adminNote: string | null
   preferredDaysAny: boolean | null
   preferredTimeSlotsAny: boolean | null
+  preferredLanguage: $Enums.PreferredLanguage | null
   testSentAt: Date | null
   testLevelSent: $Enums.Level | null
   testScore: number | null
@@ -102,6 +104,7 @@ export type LeadCountAggregateOutputType = {
   preferredDaysAny: number
   preferredTimeSlots: number
   preferredTimeSlotsAny: number
+  preferredLanguage: number
   testSentAt: number
   testLevelSent: number
   testScore: number
@@ -139,6 +142,7 @@ export type LeadMinAggregateInputType = {
   adminNote?: true
   preferredDaysAny?: true
   preferredTimeSlotsAny?: true
+  preferredLanguage?: true
   testSentAt?: true
   testLevelSent?: true
   testScore?: true
@@ -164,6 +168,7 @@ export type LeadMaxAggregateInputType = {
   adminNote?: true
   preferredDaysAny?: true
   preferredTimeSlotsAny?: true
+  preferredLanguage?: true
   testSentAt?: true
   testLevelSent?: true
   testScore?: true
@@ -191,6 +196,7 @@ export type LeadCountAggregateInputType = {
   preferredDaysAny?: true
   preferredTimeSlots?: true
   preferredTimeSlotsAny?: true
+  preferredLanguage?: true
   testSentAt?: true
   testLevelSent?: true
   testScore?: true
@@ -305,6 +311,7 @@ export type LeadGroupByOutputType = {
   preferredDaysAny: boolean
   preferredTimeSlots: string[]
   preferredTimeSlotsAny: boolean
+  preferredLanguage: $Enums.PreferredLanguage | null
   testSentAt: Date | null
   testLevelSent: $Enums.Level | null
   testScore: number | null
@@ -355,6 +362,7 @@ export type LeadWhereInput = {
   preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
   preferredTimeSlotsAny?: Prisma.BoolFilter<"Lead"> | boolean
+  preferredLanguage?: Prisma.EnumPreferredLanguageNullableFilter<"Lead"> | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   testLevelSent?: Prisma.EnumLevelNullableFilter<"Lead"> | $Enums.Level | null
   testScore?: Prisma.IntNullableFilter<"Lead"> | number | null
@@ -384,6 +392,7 @@ export type LeadOrderByWithRelationInput = {
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrderInput | Prisma.SortOrder
   testSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   testLevelSent?: Prisma.SortOrderInput | Prisma.SortOrder
   testScore?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -416,6 +425,7 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
   preferredTimeSlotsAny?: Prisma.BoolFilter<"Lead"> | boolean
+  preferredLanguage?: Prisma.EnumPreferredLanguageNullableFilter<"Lead"> | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   testLevelSent?: Prisma.EnumLevelNullableFilter<"Lead"> | $Enums.Level | null
   testScore?: Prisma.IntNullableFilter<"Lead"> | number | null
@@ -445,6 +455,7 @@ export type LeadOrderByWithAggregationInput = {
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrderInput | Prisma.SortOrder
   testSentAt?: Prisma.SortOrderInput | Prisma.SortOrder
   testLevelSent?: Prisma.SortOrderInput | Prisma.SortOrder
   testScore?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -480,6 +491,7 @@ export type LeadScalarWhereWithAggregatesInput = {
   preferredDaysAny?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
   preferredTimeSlotsAny?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
+  preferredLanguage?: Prisma.EnumPreferredLanguageNullableWithAggregatesFilter<"Lead"> | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Lead"> | Date | string | null
   testLevelSent?: Prisma.EnumLevelNullableWithAggregatesFilter<"Lead"> | $Enums.Level | null
   testScore?: Prisma.IntNullableWithAggregatesFilter<"Lead"> | number | null
@@ -507,6 +519,7 @@ export type LeadCreateInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -536,6 +549,7 @@ export type LeadUncheckedCreateInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -565,6 +579,7 @@ export type LeadUpdateInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -594,6 +609,7 @@ export type LeadUncheckedUpdateInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -623,6 +639,7 @@ export type LeadCreateManyInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -650,6 +667,7 @@ export type LeadUpdateManyMutationInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -677,6 +695,7 @@ export type LeadUncheckedUpdateManyInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -709,6 +728,7 @@ export type LeadCountOrderByAggregateInput = {
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   testSentAt?: Prisma.SortOrder
   testLevelSent?: Prisma.SortOrder
   testScore?: Prisma.SortOrder
@@ -739,6 +759,7 @@ export type LeadMaxOrderByAggregateInput = {
   adminNote?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   testSentAt?: Prisma.SortOrder
   testLevelSent?: Prisma.SortOrder
   testScore?: Prisma.SortOrder
@@ -764,6 +785,7 @@ export type LeadMinOrderByAggregateInput = {
   adminNote?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
+  preferredLanguage?: Prisma.SortOrder
   testSentAt?: Prisma.SortOrder
   testLevelSent?: Prisma.SortOrder
   testScore?: Prisma.SortOrder
@@ -831,6 +853,10 @@ export type LeadUpdatepreferredTimeSlotsInput = {
   push?: string | string[]
 }
 
+export type NullableEnumPreferredLanguageFieldUpdateOperationsInput = {
+  set?: $Enums.PreferredLanguage | null
+}
+
 export type NullableEnumLevelFieldUpdateOperationsInput = {
   set?: $Enums.Level | null
 }
@@ -869,6 +895,7 @@ export type LeadCreateWithoutStudentInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -897,6 +924,7 @@ export type LeadUncheckedCreateWithoutStudentInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -941,6 +969,7 @@ export type LeadUpdateWithoutStudentInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -969,6 +998,7 @@ export type LeadUncheckedUpdateWithoutStudentInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -997,6 +1027,7 @@ export type LeadCreateWithoutActivitiesInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -1025,6 +1056,7 @@ export type LeadUncheckedCreateWithoutActivitiesInput = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
   testSentAt?: Date | string | null
   testLevelSent?: $Enums.Level | null
   testScore?: number | null
@@ -1069,6 +1101,7 @@ export type LeadUpdateWithoutActivitiesInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1097,6 +1130,7 @@ export type LeadUncheckedUpdateWithoutActivitiesInput = {
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
   preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
   testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
   testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
@@ -1156,6 +1190,7 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: boolean
   testSentAt?: boolean
   testLevelSent?: boolean
   testScore?: boolean
@@ -1186,6 +1221,7 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: boolean
   testSentAt?: boolean
   testLevelSent?: boolean
   testScore?: boolean
@@ -1213,6 +1249,7 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: boolean
   testSentAt?: boolean
   testLevelSent?: boolean
   testScore?: boolean
@@ -1240,6 +1277,7 @@ export type LeadSelectScalar = {
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
   preferredTimeSlotsAny?: boolean
+  preferredLanguage?: boolean
   testSentAt?: boolean
   testLevelSent?: boolean
   testScore?: boolean
@@ -1251,7 +1289,7 @@ export type LeadSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "preferredDays" | "preferredDaysAny" | "preferredTimeSlots" | "preferredTimeSlotsAny" | "testSentAt" | "testLevelSent" | "testScore" | "testScoredAt" | "nextCallbackAt" | "lostReason" | "lostReasonOther" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "preferredDays" | "preferredDaysAny" | "preferredTimeSlots" | "preferredTimeSlotsAny" | "preferredLanguage" | "testSentAt" | "testLevelSent" | "testScore" | "testScoredAt" | "nextCallbackAt" | "lostReason" | "lostReasonOther" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
   activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
@@ -1282,6 +1320,7 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     preferredDaysAny: boolean
     preferredTimeSlots: string[]
     preferredTimeSlotsAny: boolean
+    preferredLanguage: $Enums.PreferredLanguage | null
     testSentAt: Date | null
     testLevelSent: $Enums.Level | null
     testScore: number | null
@@ -1731,6 +1770,7 @@ export interface LeadFieldRefs {
   readonly preferredDaysAny: Prisma.FieldRef<"Lead", 'Boolean'>
   readonly preferredTimeSlots: Prisma.FieldRef<"Lead", 'String[]'>
   readonly preferredTimeSlotsAny: Prisma.FieldRef<"Lead", 'Boolean'>
+  readonly preferredLanguage: Prisma.FieldRef<"Lead", 'PreferredLanguage'>
   readonly testSentAt: Prisma.FieldRef<"Lead", 'DateTime'>
   readonly testLevelSent: Prisma.FieldRef<"Lead", 'Level'>
   readonly testScore: Prisma.FieldRef<"Lead", 'Int'>
