@@ -22,6 +22,8 @@ export async function setPreferredSchedule(data: unknown) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
+  const dob = parsed.data.dateOfBirth ? new Date(parsed.data.dateOfBirth) : null;
+
   await prisma.$transaction(async (tx) => {
     const lead = await tx.lead.findUnique({
       where: { id: parsed.data.id },
@@ -30,6 +32,9 @@ export async function setPreferredSchedule(data: unknown) {
         preferredTimeSlots: true,
         preferredDaysAny: true,
         preferredTimeSlotsAny: true,
+        lessonPreference: true,
+        preferredLanguage: true,
+        dateOfBirth: true,
       },
     });
     if (!lead) return;
@@ -46,7 +51,21 @@ export async function setPreferredSchedule(data: unknown) {
     const sameDaysAny = lead.preferredDaysAny === parsed.data.preferredDaysAny;
     const sameSlotsAny =
       lead.preferredTimeSlotsAny === parsed.data.preferredTimeSlotsAny;
-    if (sameDays && sameSlots && sameDaysAny && sameSlotsAny) return;
+    const sameLessonPref = lead.lessonPreference === parsed.data.lessonPreference;
+    const sameLanguage = lead.preferredLanguage === parsed.data.preferredLanguage;
+    const sameDob =
+      (lead.dateOfBirth?.toISOString().slice(0, 10) ?? null) ===
+      (parsed.data.dateOfBirth ?? null);
+    if (
+      sameDays &&
+      sameSlots &&
+      sameDaysAny &&
+      sameSlotsAny &&
+      sameLessonPref &&
+      sameLanguage &&
+      sameDob
+    )
+      return;
 
     await autoTransitionToContacted(tx, parsed.data.id, admin.id);
 
@@ -57,6 +76,9 @@ export async function setPreferredSchedule(data: unknown) {
         preferredTimeSlots: parsed.data.preferredTimeSlots,
         preferredDaysAny: parsed.data.preferredDaysAny,
         preferredTimeSlotsAny: parsed.data.preferredTimeSlotsAny,
+        lessonPreference: parsed.data.lessonPreference,
+        preferredLanguage: parsed.data.preferredLanguage,
+        dateOfBirth: dob,
       },
     });
     await recordLeadActivity(tx, parsed.data.id, admin.id, {

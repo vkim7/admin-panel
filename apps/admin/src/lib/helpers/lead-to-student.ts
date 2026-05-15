@@ -14,6 +14,7 @@ type LeadPrefillFields = Pick<
   | "note"
   | "preferredDays"
   | "preferredTimeSlots"
+  | "preferredLanguage"
   | "testLevelSent"
   | "testScore"
 >;
@@ -26,7 +27,10 @@ export function mapLeadToStudentDefaults(
     lastName: lead.lastName,
     phone: lead.phone,
     preferredLessonType: lead.lessonPreference ?? "EITHER",
-    preferredLanguage: mapLanguage(lead.language),
+    // Prefer the admin-captured preferredLanguage. Fall back to mapping the
+    // form's URL locale when admin hasn't captured one yet.
+    preferredLanguage:
+      lead.preferredLanguage ?? mapLanguage(lead.language),
     comment: buildComment(lead),
     preferredDays: lead.preferredDays,
     // Filter to slots known to the Group scheduler; anything else is ignored

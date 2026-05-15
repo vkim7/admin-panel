@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { setPreferredSchedule } from "@/lib/actions/lead-fields";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Dialog,
@@ -13,12 +14,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TIME_SLOTS, DAYS_LABEL } from "@/lib/constants";
+import type { LessonPreference, PreferredLanguage } from "@eng/database";
 
 const DAY_PATTERN_MWF = [1, 3, 5];
 const DAY_PATTERN_TTS = [2, 4, 6];
 
 type DaysMode = "mwf" | "tts" | "any" | "none";
 type TimeMode = "specific" | "any" | "none";
+
+const LESSON_LABEL: Record<LessonPreference, string> = {
+  GROUP: "Group",
+  INDIVIDUAL: "Individual",
+  EITHER: "Any",
+};
+
+const LANG_LABEL: Record<PreferredLanguage, string> = {
+  UZBEK: "Uzbek",
+  RUSSIAN: "Russian",
+  ANY: "Any",
+};
+
+const LESSON_OPTIONS: { id: LessonPreference; label: string }[] = [
+  { id: "EITHER", label: "Any" },
+  { id: "GROUP", label: "Group" },
+  { id: "INDIVIDUAL", label: "Individual" },
+];
+
+const LANG_OPTIONS: { id: PreferredLanguage; label: string }[] = [
+  { id: "ANY", label: "Any" },
+  { id: "UZBEK", label: "Uzbek" },
+  { id: "RUSSIAN", label: "Russian" },
+];
 
 function daysKey(days: number[]): string {
   return [...days].sort((a, b) => a - b).join(",");
@@ -39,12 +65,33 @@ function deriveTimeMode(slots: string[], anyFlag: boolean): TimeMode {
   return "none";
 }
 
+/** Sensible default for preferredLanguage when admin opens the dialog for the
+ * first time: prefer the saved value, fall back to mapping the form's URL
+ * locale (`language`). */
+function deriveInitialLanguage(
+  saved: PreferredLanguage | null,
+  formLanguage: string,
+): PreferredLanguage | null {
+  if (saved) return saved;
+  if (formLanguage === "uz") return "UZBEK";
+  if (formLanguage === "ru") return "RUSSIAN";
+  return null;
+}
+
+function dateToInputValue(d: Date | null): string {
+  return d ? new Date(d).toISOString().slice(0, 10) : "";
+}
+
 function PreferencesDialog({
   leadId,
   initialDays,
   initialDaysAny,
   initialSlots,
   initialSlotsAny,
+  initialLessonPreference,
+  initialPreferredLanguage,
+  initialDateOfBirth,
+  formLanguage,
   open,
   onOpenChange,
   onChange,
@@ -54,6 +101,10 @@ function PreferencesDialog({
   initialDaysAny: boolean;
   initialSlots: string[];
   initialSlotsAny: boolean;
+  initialLessonPreference: LessonPreference | null;
+  initialPreferredLanguage: PreferredLanguage | null;
+  initialDateOfBirth: Date | null;
+  formLanguage: string;
   open: boolean;
   onOpenChange: (o: boolean) => void;
   onChange?: () => Promise<void> | void;
@@ -63,12 +114,23 @@ function PreferencesDialog({
   );
   const [draftSlots, setDraftSlots] = useState<string[]>(initialSlots);
   const [slotsAny, setSlotsAny] = useState<boolean>(initialSlotsAny);
+  const [lessonPref, setLessonPref] = useState<LessonPreference | null>(
+    initialLessonPreference,
+  );
+  const [language, setLanguage] = useState<PreferredLanguage | null>(
+    deriveInitialLanguage(initialPreferredLanguage, formLanguage),
+  );
+  const [dob, setDob] = useState<string>(dateToInputValue(initialDateOfBirth));
   const [isPending, startTransition] = useTransition();
 
-  // Each row must have a non-empty selection — prevents silently wiping
-  // existing capture by saving an unmarked state (Any is a valid choice).
+  // All five fields are required — protects against silently wiping captured
+  // data and aligns the dialog with the conversion gate's expectations.
   const canSave =
-    daysMode !== "none" && (slotsAny || draftSlots.length > 0);
+    daysMode !== "none" &&
+    (slotsAny || draftSlots.length > 0) &&
+    lessonPref !== null &&
+    language !== null &&
+    dob.length > 0;
 
   function toggleSlot(slot: string) {
     setSlotsAny(false);
@@ -86,6 +148,9 @@ function PreferencesDialog({
     setDaysMode(deriveDaysMode(initialDays, initialDaysAny));
     setDraftSlots(initialSlots);
     setSlotsAny(initialSlotsAny);
+    setLessonPref(initialLessonPreference);
+    setLanguage(deriveInitialLanguage(initialPreferredLanguage, formLanguage));
+    setDob(dateToInputValue(initialDateOfBirth));
   }
 
   function save() {
@@ -106,6 +171,9 @@ function PreferencesDialog({
         preferredTimeSlots,
         preferredDaysAny,
         preferredTimeSlotsAny,
+        lessonPreference: lessonPref,
+        preferredLanguage: language,
+        dateOfBirth: dob || null,
       });
       if (result.error) {
         toast.error(result.error);
@@ -131,6 +199,40 @@ function PreferencesDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-2">
+          <div>
+            <Label className="mb-1.5 block">Language</Label>
+            <div className="flex gap-2">
+              {LANG_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.id}
+                  type="button"
+                  size="sm"
+                  variant={language === opt.id ? "default" : "outline"}
+                  onClick={() => setLanguage(opt.id)}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label className="mb-1.5 block">Lesson type</Label>
+            <div className="flex gap-2">
+              {LESSON_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.id}
+                  type="button"
+                  size="sm"
+                  variant={lessonPref === opt.id ? "default" : "outline"}
+                  onClick={() => setLessonPref(opt.id)}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
           <div>
             <Label className="mb-1.5 block">Days</Label>
             <div className="flex gap-2">
@@ -185,6 +287,19 @@ function PreferencesDialog({
               })}
             </div>
           </div>
+
+          <div>
+            <Label htmlFor="dob-input" className="mb-1.5 block">
+              Date of birth
+            </Label>
+            <Input
+              id="dob-input"
+              type="date"
+              value={dob}
+              onChange={(e) => setDob(e.target.value)}
+              className="w-auto"
+            />
+          </div>
         </div>
 
         <DialogFooter>
@@ -200,11 +315,7 @@ function PreferencesDialog({
             type="button"
             onClick={save}
             disabled={isPending || !canSave}
-            title={
-              !canSave
-                ? "Pick days (or Any) and time slots (or Any)"
-                : undefined
-            }
+            title={!canSave ? "Fill all five fields to save" : undefined}
           >
             {isPending ? "Saving..." : "Save"}
           </Button>
@@ -220,6 +331,10 @@ export function LeadPreferences({
   preferredDaysAny,
   preferredTimeSlots,
   preferredTimeSlotsAny,
+  lessonPreference,
+  preferredLanguage,
+  dateOfBirth,
+  formLanguage,
   status,
   onChange,
 }: {
@@ -228,6 +343,12 @@ export function LeadPreferences({
   preferredDaysAny: boolean;
   preferredTimeSlots: string[];
   preferredTimeSlotsAny: boolean;
+  lessonPreference: LessonPreference | null;
+  preferredLanguage: PreferredLanguage | null;
+  dateOfBirth: Date | null;
+  /** Form-submission locale ("uz" / "ru") — used to seed the language radio
+   * when no explicit preferredLanguage is captured yet. */
+  formLanguage: string;
   status: string;
   onChange?: () => Promise<void> | void;
 }) {
@@ -253,6 +374,17 @@ export function LeadPreferences({
         ? "Any"
         : null;
 
+  const lessonLabel = lessonPreference ? LESSON_LABEL[lessonPreference] : null;
+  const languageLabel = preferredLanguage
+    ? LANG_LABEL[preferredLanguage]
+    : null;
+  const dobLabel = dateOfBirth
+    ? new Date(dateOfBirth).toISOString().slice(0, 10)
+    : null;
+
+  const hasAny =
+    languageLabel || lessonLabel || daysLabel || timeLabel || dobLabel;
+
   return (
     <section className="rounded-lg border bg-card p-3 space-y-2">
       <div className="flex items-center justify-between">
@@ -269,8 +401,20 @@ export function LeadPreferences({
         )}
       </div>
 
-      {(daysLabel || timeLabel) && (
+      {hasAny && (
         <div className="space-y-1.5">
+          {languageLabel && (
+            <div className="text-sm">
+              <span className="text-muted-foreground">Language: </span>
+              {languageLabel}
+            </div>
+          )}
+          {lessonLabel && (
+            <div className="text-sm">
+              <span className="text-muted-foreground">Lesson type: </span>
+              {lessonLabel}
+            </div>
+          )}
           {daysLabel && (
             <div className="text-sm">
               <span className="text-muted-foreground">Days: </span>
@@ -283,6 +427,12 @@ export function LeadPreferences({
               {timeLabel}
             </div>
           )}
+          {dobLabel && (
+            <div className="text-sm">
+              <span className="text-muted-foreground">Date of birth: </span>
+              {dobLabel}
+            </div>
+          )}
         </div>
       )}
 
@@ -292,6 +442,10 @@ export function LeadPreferences({
         initialDaysAny={preferredDaysAny}
         initialSlots={preferredTimeSlots}
         initialSlotsAny={preferredTimeSlotsAny}
+        initialLessonPreference={lessonPreference}
+        initialPreferredLanguage={preferredLanguage}
+        initialDateOfBirth={dateOfBirth}
+        formLanguage={formLanguage}
         open={open}
         onOpenChange={setOpen}
         onChange={onChange}

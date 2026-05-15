@@ -1,4 +1,8 @@
-import type { SelfAssessedLevel } from "@eng/database";
+import type {
+  LessonPreference,
+  PreferredLanguage,
+  SelfAssessedLevel,
+} from "@eng/database";
 
 export type ConversionGateInput = {
   selfAssessedLevel: SelfAssessedLevel | null;
@@ -6,6 +10,9 @@ export type ConversionGateInput = {
   preferredDaysAny?: boolean;
   preferredTimeSlots: string[];
   preferredTimeSlotsAny?: boolean;
+  lessonPreference?: LessonPreference | null;
+  preferredLanguage?: PreferredLanguage | null;
+  dateOfBirth?: Date | null;
   testScore: number | null;
 };
 
@@ -18,14 +25,18 @@ export type ConversionGateResult = {
 /**
  * Determines whether a lead is ready to convert to a student.
  *
- * Rules (per product spec):
- * - Beginner (COMPLETE_BEGINNER): preferred days + preferred time captured.
- *   "Any" counts as captured (admin explicitly marked the field flexible).
- * - Continuing or unknown: above + placement test score required.
+ * Required for all leads:
+ *   - preferredDays (specific value or "Any" flag)
+ *   - preferredTimeSlots (specific value or "Any" flag)
+ *   - lessonPreference
+ *   - preferredLanguage
+ *   - dateOfBirth
  *
- * Used both for drawer display (Convert button hint) and for the row urgency
- * tier (blue "Ready to convert"). The server-side enforcement was removed —
- * gate is advisory only.
+ * Additionally for non-beginner leads:
+ *   - testScore recorded
+ *
+ * Advisory only — server-side enforcement was removed. Drives the row urgency
+ * chip ("Ready to convert") and the drawer's amber missing-details hint.
  */
 export function evaluateConversionGate(
   lead: ConversionGateInput,
@@ -38,6 +49,9 @@ export function evaluateConversionGate(
 
   if (!daysCaptured) missing.push("preferred days");
   if (!timeCaptured) missing.push("preferred time");
+  if (!lead.lessonPreference) missing.push("lesson type");
+  if (!lead.preferredLanguage) missing.push("preferred language");
+  if (!lead.dateOfBirth) missing.push("date of birth");
 
   const needsTest = lead.selfAssessedLevel !== "COMPLETE_BEGINNER";
   if (needsTest && lead.testScore === null) {

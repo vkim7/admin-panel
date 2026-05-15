@@ -1,4 +1,10 @@
-import type { Level, LeadStatus, SelfAssessedLevel } from "@eng/database";
+import type {
+  Level,
+  LeadStatus,
+  LessonPreference,
+  PreferredLanguage,
+  SelfAssessedLevel,
+} from "@eng/database";
 import { evaluateConversionGate } from "./lead-conversion-gate";
 
 export const STALE_NEW_HOURS = 24;
@@ -31,6 +37,9 @@ export type UrgencyInput = {
   preferredDaysAny?: boolean;
   preferredTimeSlots: string[];
   preferredTimeSlotsAny?: boolean;
+  lessonPreference?: LessonPreference | null;
+  preferredLanguage?: PreferredLanguage | null;
+  dateOfBirth?: Date | null;
   testSentAt: Date | null;
   testLevelSent: Level | null;
   testScore: number | null;
@@ -156,6 +165,9 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
     preferredDaysAny: lead.preferredDaysAny,
     preferredTimeSlots: lead.preferredTimeSlots,
     preferredTimeSlotsAny: lead.preferredTimeSlotsAny,
+    lessonPreference: lead.lessonPreference,
+    preferredLanguage: lead.preferredLanguage,
+    dateOfBirth: lead.dateOfBirth,
     testScore: lead.testScore,
   });
   if (gate.ready) {
@@ -182,6 +194,9 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
     !!lead.preferredDaysAny ||
     lead.preferredTimeSlots.length > 0 ||
     !!lead.preferredTimeSlotsAny ||
+    !!lead.lessonPreference ||
+    !!lead.preferredLanguage ||
+    !!lead.dateOfBirth ||
     lead.testScore !== null;
   if (anyFilled && gate.missing.length > 0) {
     return {

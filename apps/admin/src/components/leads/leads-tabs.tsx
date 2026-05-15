@@ -11,6 +11,7 @@ import {
 import type {
   LeadStatus,
   LessonPreference,
+  PreferredLanguage,
   SelfAssessedLevel,
   Level,
 } from "@eng/database";
@@ -30,6 +31,7 @@ export type LeadForTabs = {
   preferredDaysAny: boolean;
   preferredTimeSlots: string[];
   preferredTimeSlotsAny: boolean;
+  preferredLanguage: PreferredLanguage | null;
   testSentAt: Date | null;
   testLevelSent: Level | null;
   testScore: number | null;

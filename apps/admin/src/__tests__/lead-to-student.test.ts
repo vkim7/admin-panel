@@ -12,6 +12,7 @@ const baseLead = {
   note: "wants to start in May",
   preferredDays: [],
   preferredTimeSlots: [],
+  preferredLanguage: null,
   testLevelSent: null,
   testScore: null,
 };
@@ -25,10 +26,27 @@ describe("mapLeadToStudentDefaults", () => {
     expect(result.dateOfBirth).toBe("2005-06-15");
   });
 
-  it("maps language uz/ru/other to UZBEK/RUSSIAN/ANY", () => {
+  it("maps language uz/ru/other to UZBEK/RUSSIAN/ANY when preferredLanguage is null", () => {
     expect(mapLeadToStudentDefaults({ ...baseLead, language: "uz" }).preferredLanguage).toBe("UZBEK");
     expect(mapLeadToStudentDefaults({ ...baseLead, language: "ru" }).preferredLanguage).toBe("RUSSIAN");
     expect(mapLeadToStudentDefaults({ ...baseLead, language: "en" }).preferredLanguage).toBe("ANY");
+  });
+
+  it("prefers preferredLanguage when set (takes precedence over form language)", () => {
+    expect(
+      mapLeadToStudentDefaults({
+        ...baseLead,
+        language: "uz",
+        preferredLanguage: "RUSSIAN",
+      }).preferredLanguage,
+    ).toBe("RUSSIAN");
+    expect(
+      mapLeadToStudentDefaults({
+        ...baseLead,
+        language: "ru",
+        preferredLanguage: "ANY",
+      }).preferredLanguage,
+    ).toBe("ANY");
   });
 
   it("maps lessonPreference 1:1 and falls back to EITHER when null", () => {

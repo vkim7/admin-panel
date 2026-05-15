@@ -16,6 +16,8 @@ import { LeadTestSection } from "./lead-test-section";
 import { getUrgencyInfo } from "@/lib/helpers/lead-staleness";
 import type {
   LeadStatus,
+  LessonPreference,
+  PreferredLanguage,
   SelfAssessedLevel,
   LeadActivityType,
   Level,
@@ -26,7 +28,9 @@ export type LeadDrawerDetail = {
   firstName: string;
   lastName: string;
   phone: string;
+  dateOfBirth: Date | null;
   language: string;
+  lessonPreference: LessonPreference | null;
   selfAssessedLevel: SelfAssessedLevel | null;
   status: LeadStatus;
   adminNote: string | null;
@@ -34,6 +38,7 @@ export type LeadDrawerDetail = {
   preferredDaysAny: boolean;
   preferredTimeSlots: string[];
   preferredTimeSlotsAny: boolean;
+  preferredLanguage: PreferredLanguage | null;
   testSentAt: Date | null;
   testLevelSent: Level | null;
   testScore: number | null;
@@ -104,6 +109,10 @@ export function LeadDrawer({
                 preferredDaysAny={detail.preferredDaysAny}
                 preferredTimeSlots={detail.preferredTimeSlots}
                 preferredTimeSlotsAny={detail.preferredTimeSlotsAny}
+                lessonPreference={detail.lessonPreference}
+                preferredLanguage={detail.preferredLanguage}
+                dateOfBirth={detail.dateOfBirth}
+                formLanguage={detail.language}
                 status={detail.status}
                 onChange={onChange}
               />

@@ -1542,10 +1542,11 @@ model Lead {
   adminNote         String?            // internal note by admin after calling
 
   // Qualifying conversation — captured during CONTACTED phase
-  preferredDays         Int[]    // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.
-  preferredDaysAny      Boolean  @default(false) // explicit "flexible" — distinguishes captured-as-Any from not-yet-captured
-  preferredTimeSlots    String[] // e.g. ["19:00", "20:30"]. Matches Student.preferredTimeSlots.
-  preferredTimeSlotsAny Boolean  @default(false) // explicit "flexible" — same rationale
+  preferredDays         Int[]              // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.
+  preferredDaysAny      Boolean            @default(false) // explicit "flexible" — distinguishes captured-as-Any from not-yet-captured
+  preferredTimeSlots    String[]           // e.g. ["19:00", "20:30"]. Matches Student.preferredTimeSlots.
+  preferredTimeSlotsAny Boolean            @default(false) // explicit "flexible" — same rationale
+  preferredLanguage     PreferredLanguage? // admin-editable preference (vs. `language` which is the form's URL locale).
 
   // Placement test workflow (CONTINUING leads)
   testSentAt    DateTime?
