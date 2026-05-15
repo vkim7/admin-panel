@@ -83,7 +83,7 @@ export function AssignDialog({
     resolver: zodResolver(assignFormSchema),
     defaultValues: {
       groupId: "",
-      joinDate: new Date().toISOString().split("T")[0]!,
+      joinDate: "",
     },
   });
 
