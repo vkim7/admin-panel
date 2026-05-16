@@ -39,10 +39,11 @@ type StudentOption = {
 
 interface AddStudentDialogProps {
   groupId: string;
+  groupStartDate: string;
   students: StudentOption[];
 }
 
-export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
+export function AddStudentDialog({ groupId, groupStartDate, students }: AddStudentDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
@@ -51,7 +52,10 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
     resolver: zodResolver(addStudentsBaseSchema),
     defaultValues: {
       studentIds: [],
-      joinDate: new Date().toISOString().split("T")[0]!,
+      joinDate: (() => {
+        const today = new Date().toISOString().split("T")[0]!;
+        return today < groupStartDate ? groupStartDate : today;
+      })(),
       comment: null,
     },
   });
@@ -211,7 +215,7 @@ export function AddStudentDialog({ groupId, students }: AddStudentDialogProps) {
                 <FormItem>
                   <FormLabel>Join Date</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} />
+                    <Input type="date" min={groupStartDate} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

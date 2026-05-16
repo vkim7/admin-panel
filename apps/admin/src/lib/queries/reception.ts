@@ -403,6 +403,7 @@ export async function getGroupsForAssignment() {
         maxStudents: g.maxStudents,
         scheduledDepartures: departures,
         scheduledArrivals: arrivals,
+        startDate: g.startDate.toISOString().slice(0, 10),
       };
     })
     .filter((g) => g.availableSeats > 0);

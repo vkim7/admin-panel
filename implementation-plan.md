@@ -775,6 +775,18 @@ src/app/(admin)/teachers/[id]/page.tsx                   — added payment histo
 - [x] **Graduation UI**: show student selection (continuing vs leaving vs deactivating), preview new group details, confirm. Force a decision for every non-continuing student.
 - [x] **Refund management UI** — list PENDING refunds, "Process refund" action (record completion), "Convert to credit" action (cancel refund, create transfer credit on a specified billing period). Needed by Phase 9 (transfer residual credit), Phase 11 (graduation with pending refund), and dropout/reassignment/lost flows (Phase A expanded refund triggers to all membership closures).
 
+### Group Close (early termination)
+
+- [x] **Close empty group:** third terminal outcome alongside graduate and merge, used when all students have left and the group should be retired without a successor.
+  1. Predicate: group is active, every `GroupMembership` has `leaveDate` set, no PENDING `ScheduledAction` referencing the group as source or destination
+  2. Delete future SCHEDULED lessons (today onward) + their `TeacherScheduleSlot`s — frees teacher's calendar
+  3. Delete future `Exam` rows
+  4. Close open `GroupTeacherHistory` row (`endDate = today`)
+  5. Set `Group.isActive = false`, `closedAt`, `closedById`, `closedReason`; clear `zoomMeetingId`/`zoomJoinUrl`
+  6. Best-effort delete Zoom recurring meeting (outside txn, mirrors graduation)
+- [x] **Preserved on close:** memberships (with leaveDate), past lessons + attendance, past exams, billing periods, payroll, recordings — all unaffected.
+- [x] **Close UI**: button on group detail page (grouped with Merge/Graduate), only shown when eligible. Confirmation dialog with reason dropdown (STUDENTS_LEFT / LOW_ENROLLMENT / ADMIN_ERROR / OTHER) and preview of what gets cancelled.
+
 ### Shared Helpers
 
 - [x] `src/lib/helpers/transfer-credit.ts` — extracted credit spillover logic from `transfers.ts` into reusable `applyTransferCredit()`. Used by merge and refund-conversion.
@@ -788,6 +800,7 @@ src/app/(admin)/teachers/[id]/page.tsx                   — added payment histo
 - **Graduation dialog:** `max-w-2xl` with async preview. Sections: new group preview, student decision table (Continue/Reassign/Deactivate per student), pending refund warning, summary footer.
 - **Graduation does NOT call `performLeaveBilling`:** all lessons are already COMPLETED/CANCELLED, billing periods are finalized. `leaveDate` is set purely for record-keeping.
 - **Refund management:** standalone `/refunds` page with DataTable. Two actions per pending refund: Process (record payment) and Convert to Credit (apply to unpaid period). Sidebar badge shows pending count.
+- **Close group:** `endDate` is NOT mutated on close — it represents the originally-planned program end, useful for reporting "closed N days early". The three terminal outcomes are distinguished by which audit field is set: `graduatedIntoGroupId`, `mergedIntoGroupId`, or `closedAt`. Predicate is re-checked inside the transaction (race-safe).
 
 ### Files
 
@@ -797,15 +810,19 @@ src/lib/helpers/transfer-credit.ts          — shared credit spillover logic
 src/lib/helpers/level-progression.ts        — level ordering + graduation eligibility
 src/lib/queries/group-merge.ts              — merge groups query + billing preview
 src/lib/queries/group-graduation.ts         — graduation preview data
+src/lib/queries/group-close.ts              — close eligibility predicate + preview counts
 src/lib/queries/refunds.ts                  — refund queries + count
 src/schemas/group-merge.ts                  — merge validation
 src/schemas/group-graduation.ts             — graduation validation with student decisions
+src/schemas/group-close.ts                  — close validation (reason enum)
 src/schemas/refund.ts                       — refund processing schemas
 src/lib/actions/group-merge.ts              — merge action
 src/lib/actions/group-graduation.ts         — graduation action
+src/lib/actions/group-close.ts              — close action
 src/lib/actions/refunds.ts                  — process/convert refund actions
 src/components/groups/merge-dialog.tsx       — merge dialog
 src/components/groups/graduation-dialog.tsx  — graduation dialog
+src/components/groups/close-group-dialog.tsx — close group dialog
 src/components/refunds/refund-table.tsx      — refund TanStack table
 src/components/refunds/process-refund-dialog.tsx  — process refund dialog
 src/components/refunds/convert-to-credit-dialog.tsx — convert to credit dialog

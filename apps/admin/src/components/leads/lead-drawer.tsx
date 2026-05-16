@@ -96,6 +96,7 @@ export function LeadDrawer({
               lastName={detail.lastName}
               phone={detail.phone}
               language={detail.language}
+              lessonPreference={detail.lessonPreference}
               selfAssessedLevel={detail.selfAssessedLevel}
               status={detail.status}
               urgency={getUrgencyInfo(detail)}

@@ -7,8 +7,13 @@ import { updateLeadStatus } from "@/lib/actions/leads";
 import { telegramLink } from "@/lib/helpers/contact-links";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { MarkAsLostDialog } from "./mark-as-lost-dialog";
+import { LESSON_LABEL } from "@/lib/constants";
 import type { UrgencyInfo } from "@/lib/helpers/lead-staleness";
-import type { LeadStatus, SelfAssessedLevel } from "@eng/database";
+import type {
+  LeadStatus,
+  LessonPreference,
+  SelfAssessedLevel,
+} from "@eng/database";
 
 const STATUS_LABELS: Record<LeadStatus, string> = {
   NEW: "New",
@@ -43,6 +48,7 @@ export function LeadDrawerHeader({
   lastName,
   phone,
   language,
+  lessonPreference,
   selfAssessedLevel,
   status,
   urgency,
@@ -53,6 +59,7 @@ export function LeadDrawerHeader({
   lastName: string;
   phone: string;
   language: string;
+  lessonPreference: LessonPreference | null;
   selfAssessedLevel: SelfAssessedLevel | null;
   status: LeadStatus;
   urgency: UrgencyInfo;
@@ -77,25 +84,33 @@ export function LeadDrawerHeader({
   const meta = [
     phone,
     language.toUpperCase(),
+    lessonPreference ? LESSON_LABEL[lessonPreference] : null,
     selfAssessedLevel ? LEVEL_LABELS[selfAssessedLevel] : null,
   ].filter(Boolean);
 
   return (
     <div className="border-b p-4 space-y-3 pr-8">
       <div className="space-y-1.5">
-        {urgency.chip ? (
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${URGENCY_PILL[urgency.tier]}`}
-          >
-            {urgency.chip.label}
-          </span>
-        ) : (
-          <span
-            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[status]}`}
-          >
-            {STATUS_LABELS[status]}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {urgency.chip ? (
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${URGENCY_PILL[urgency.tier]}`}
+            >
+              {urgency.chip.label}
+            </span>
+          ) : (
+            <span
+              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_PILL[status]}`}
+            >
+              {STATUS_LABELS[status]}
+            </span>
+          )}
+          {urgency.callbackChip && (
+            <span className="inline-flex items-center rounded-full border border-slate-300 bg-transparent px-2 py-0.5 text-xs font-medium text-slate-600">
+              {urgency.callbackChip.label}
+            </span>
+          )}
+        </div>
         <div className="font-semibold text-lg leading-tight">
           {firstName} {lastName}
         </div>

@@ -43,6 +43,7 @@ export type GroupOption = {
   teachingLanguage: string;
   scheduledDepartures: number;
   scheduledArrivals: number;
+  startDate: string;
 };
 
 export type StudentForAssign = {
@@ -387,15 +388,18 @@ export function AssignDialog({
             <FormField
               control={form.control}
               name="joinDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Join Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                const selectedGroup = groups.find((g) => g.id === selectedGroupId);
+                return (
+                  <FormItem>
+                    <FormLabel>Join Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" min={selectedGroup?.startDate} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
 
             {/* Actions */}

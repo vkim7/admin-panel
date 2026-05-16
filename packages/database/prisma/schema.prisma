@@ -322,6 +322,13 @@ enum GroupType {
   INDIVIDUAL
 }
 
+enum GroupClosedReason {
+  STUDENTS_LEFT     // All students churned/transferred before program end
+  LOW_ENROLLMENT    // Group never filled enough to be viable
+  ADMIN_ERROR       // Created in error (wrong teacher/time/level)
+  OTHER
+}
+
 enum PaymentStatus {
   UNPAID
   PARTIALLY_PAID
@@ -456,6 +463,7 @@ model AdminUser {
   scheduledActions         ScheduledAction[]         @relation("ScheduledActionCreatedBy")
   excusedAbsencesCreated   ExcusedAbsence[]          @relation("ExcusedAbsenceCreatedBy")
   leadActivities           LeadActivity[]            @relation("LeadActivityActor")
+  closedGroups             Group[]                   @relation("GroupClosedByAdmin")
 }
 
 model Teacher {
@@ -694,10 +702,18 @@ model Group {
   zoomMeetingId        String?  @unique // Zoom recurring meeting ID — needed for API calls (update/delete)
   zoomJoinUrl          String?  // Stable join URL for students
 
+  // Early-close audit trail. Set when admin closes a group that's neither
+  // graduated nor merged (i.e. all students left and admin retires the group).
+  // closedAt being non-null is the canonical signal for "closed early".
+  closedAt      DateTime?
+  closedById    String?
+  closedReason  GroupClosedReason?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   teacher               Teacher                @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  closedBy              AdminUser?             @relation("GroupClosedByAdmin", fields: [closedById], references: [id], onDelete: Restrict)
   mergedIntoGroup       Group?                 @relation("GroupMerge", fields: [mergedIntoGroupId], references: [id], onDelete: Restrict)
   mergedFromGroups      Group[]                @relation("GroupMerge")
   graduatedIntoGroup    Group?                 @relation("GroupGraduation", fields: [graduatedIntoGroupId], references: [id], onDelete: Restrict)

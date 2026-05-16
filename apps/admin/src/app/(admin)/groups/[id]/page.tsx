@@ -17,6 +17,7 @@ import {
   getGroupsForTransfer,
 } from "@/lib/queries/transfers";
 import { getGroupsForMerge } from "@/lib/queries/group-merge";
+import { getGroupCloseEligibility } from "@/lib/queries/group-close";
 import { getLostReasons, getUncertainReasons } from "@/lib/queries/students";
 import { getProgressStage } from "@/lib/helpers/lesson-generation";
 import { canGraduate } from "@/lib/helpers/level-progression";
@@ -24,6 +25,7 @@ import { StudentList } from "@/components/groups/student-list";
 import { AddStudentDialog } from "@/components/groups/add-student-dialog";
 import { MergeDialog } from "@/components/groups/merge-dialog";
 import { GraduationDialog } from "@/components/groups/graduation-dialog";
+import { CloseGroupDialog } from "@/components/groups/close-group-dialog";
 import { LessonGrid } from "@/components/lessons/lesson-grid";
 import { TeacherChangeDialog } from "@/components/lessons/teacher-change-dialog";
 import { getScheduledActionsForGroup } from "@/lib/queries/scheduled-actions";
@@ -50,7 +52,7 @@ export default async function GroupDetailPage({
   if (!group) notFound();
 
 
-  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons, groupScheduledActions, scheduledCapacity, recordingCounts] = await Promise.all([
+  const [lessons, cancellationReasons, reassignmentTeachers, attendanceRecords, lessonAttendanceStatus, transferReasons, transferGroups, mergeGroups, lostReasons, uncertainReasons, groupScheduledActions, scheduledCapacity, recordingCounts, closeEligibility] = await Promise.all([
     getLessonsForGroup(id),
     getCancellationReasons(),
     getTeachersForGroupReassignment(id),
@@ -64,6 +66,7 @@ export default async function GroupDetailPage({
     getScheduledActionsForGroup(id),
     getScheduledCapacity(id, STEADY_STATE_DATE),
     getRecordingCountsForGroup(id),
+    getGroupCloseEligibility(id),
   ]);
 
   // Get student cancellation count for current month (for INDIVIDUAL groups)
@@ -146,7 +149,11 @@ export default async function GroupDetailPage({
         actions={
           <div className="flex gap-2">
             {group.isActive && hasCapacity && (
-              <AddStudentDialog groupId={id} students={availableStudents} />
+              <AddStudentDialog
+                groupId={id}
+                groupStartDate={new Date(group.startDate).toISOString().slice(0, 10)}
+                students={availableStudents}
+              />
             )}
             {group.isActive && (
               <TeacherChangeDialog groupId={id} teachers={reassignmentTeachers} />
@@ -164,6 +171,15 @@ export default async function GroupDetailPage({
                 groupId={id}
                 groupPublicId={group.publicId}
                 lostReasons={lostReasons}
+              />
+            )}
+            {closeEligibility?.canClose && (
+              <CloseGroupDialog
+                groupId={id}
+                groupPublicId={group.publicId}
+                futureLessonCount={closeEligibility.futureLessonCount}
+                futureExamCount={closeEligibility.futureExamCount}
+                hasZoomMeeting={closeEligibility.hasZoomMeeting}
               />
             )}
             <Button variant="outline" size="sm" asChild>

@@ -1,3 +1,5 @@
+import type { LessonPreference } from "@eng/database";
+
 // Fixed time slots for group scheduling (90-minute spacing)
 export const TIME_SLOTS = [
   "07:00",
@@ -33,6 +35,15 @@ export const LEVEL_LABEL: Record<string, string> = {
   INTERMEDIATE: "Intermediate",
   UPPER_INTERMEDIATE: "Upper-Intermediate",
   IELTS: "IELTS",
+};
+
+// Lesson preference labels — `EITHER` reads as "Any" in the leads UI to match
+// the preferences dialog. Reception uses a different "Either" label, kept
+// locally there.
+export const LESSON_LABEL: Record<LessonPreference, string> = {
+  GROUP: "Group",
+  INDIVIDUAL: "Individual",
+  EITHER: "Any",
 };
 
 // Day pattern labels

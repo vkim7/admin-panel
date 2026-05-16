@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { TIME_SLOTS, DAYS_LABEL } from "@/lib/constants";
+import { TIME_SLOTS, DAYS_LABEL, LESSON_LABEL } from "@/lib/constants";
 import type { LessonPreference, PreferredLanguage } from "@eng/database";
 
 const DAY_PATTERN_MWF = [1, 3, 5];
@@ -21,12 +21,6 @@ const DAY_PATTERN_TTS = [2, 4, 6];
 
 type DaysMode = "mwf" | "tts" | "any" | "none";
 type TimeMode = "specific" | "any" | "none";
-
-const LESSON_LABEL: Record<LessonPreference, string> = {
-  GROUP: "Group",
-  INDIVIDUAL: "Individual",
-  EITHER: "Any",
-};
 
 const LANG_LABEL: Record<PreferredLanguage, string> = {
   UZBEK: "Uzbek",
@@ -382,8 +376,12 @@ export function LeadPreferences({
     ? new Date(dateOfBirth).toISOString().slice(0, 10)
     : null;
 
-  const hasAny =
-    languageLabel || lessonLabel || daysLabel || timeLabel || dobLabel;
+  // Only render the captured values once all 5 fields are set. Partial values
+  // (typically intake-prefilled lessonPreference / preferredLanguage) misled
+  // admins into thinking preferences were already confirmed — the dialog
+  // pre-populates from the same data, so they're still visible behind Change.
+  const allCaptured =
+    languageLabel && lessonLabel && daysLabel && timeLabel && dobLabel;
 
   return (
     <section className="rounded-lg border bg-card p-3 space-y-2">
@@ -401,38 +399,28 @@ export function LeadPreferences({
         )}
       </div>
 
-      {hasAny && (
+      {allCaptured && (
         <div className="space-y-1.5">
-          {languageLabel && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Language: </span>
-              {languageLabel}
-            </div>
-          )}
-          {lessonLabel && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Lesson type: </span>
-              {lessonLabel}
-            </div>
-          )}
-          {daysLabel && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Days: </span>
-              {daysLabel}
-            </div>
-          )}
-          {timeLabel && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Time: </span>
-              {timeLabel}
-            </div>
-          )}
-          {dobLabel && (
-            <div className="text-sm">
-              <span className="text-muted-foreground">Date of birth: </span>
-              {dobLabel}
-            </div>
-          )}
+          <div className="text-sm">
+            <span className="text-muted-foreground">Language: </span>
+            {languageLabel}
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Lesson type: </span>
+            {lessonLabel}
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Days: </span>
+            {daysLabel}
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Time: </span>
+            {timeLabel}
+          </div>
+          <div className="text-sm">
+            <span className="text-muted-foreground">Date of birth: </span>
+            {dobLabel}
+          </div>
         </div>
       )}
 

@@ -8,17 +8,33 @@ const CHIP_CLASS: Record<UrgencyInfo["tier"], string> = {
   idle: "bg-muted text-muted-foreground",
 };
 
+// Outlined / muted treatment so the secondary callback pill reads as
+// informational next to a louder primary state chip.
+const SECONDARY_CHIP_CLASS =
+  "border border-slate-300 text-slate-600 bg-transparent";
+
 export function LeadUrgencyChip({ info }: { info: UrgencyInfo }) {
-  if (!info.chip) {
+  if (!info.chip && !info.callbackChip) {
     // Reserve column space so rows stay aligned.
     return <span className="inline-block h-5 w-5" aria-hidden />;
   }
 
   return (
-    <span
-      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${CHIP_CLASS[info.tier]}`}
-    >
-      {info.chip.label}
-    </span>
+    <div className="flex flex-col items-start gap-1">
+      {info.chip && (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${CHIP_CLASS[info.tier]}`}
+        >
+          {info.chip.label}
+        </span>
+      )}
+      {info.callbackChip && (
+        <span
+          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${SECONDARY_CHIP_CLASS}`}
+        >
+          {info.callbackChip.label}
+        </span>
+      )}
+    </div>
   );
 }

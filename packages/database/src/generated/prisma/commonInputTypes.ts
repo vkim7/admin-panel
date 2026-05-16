@@ -328,6 +328,13 @@ export type EnumGroupTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
 }
 
+export type EnumGroupClosedReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupClosedReason | Prisma.EnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel> | $Enums.GroupClosedReason | null
+}
+
 export type EnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GroupType | Prisma.EnumGroupTypeFieldRefInput<$PrismaModel>
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
@@ -336,6 +343,16 @@ export type EnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
+}
+
+export type EnumGroupClosedReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupClosedReason | Prisma.EnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumGroupClosedReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.GroupClosedReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel>
 }
 
 export type EnumUncertainFlagSourceFilter<$PrismaModel = never> = {
@@ -1206,6 +1223,13 @@ export type NestedEnumGroupTypeFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel> | $Enums.GroupType
 }
 
+export type NestedEnumGroupClosedReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupClosedReason | Prisma.EnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel> | $Enums.GroupClosedReason | null
+}
+
 export type NestedEnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.GroupType | Prisma.EnumGroupTypeFieldRefInput<$PrismaModel>
   in?: $Enums.GroupType[] | Prisma.ListEnumGroupTypeFieldRefInput<$PrismaModel>
@@ -1214,6 +1238,16 @@ export type NestedEnumGroupTypeWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumGroupTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumGroupClosedReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.GroupClosedReason | Prisma.EnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.GroupClosedReason[] | Prisma.ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumGroupClosedReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.GroupClosedReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumGroupClosedReasonNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumUncertainFlagSourceFilter<$PrismaModel = never> = {

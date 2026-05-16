@@ -9,6 +9,7 @@ import {
   type UrgencyInfo,
 } from "@/lib/helpers/lead-staleness";
 import { LeadUrgencyChip } from "./lead-urgency-chip";
+import { LESSON_LABEL } from "@/lib/constants";
 import type { LeadStatus } from "@eng/database";
 import type { LeadForTabs as LeadRow } from "./leads-tabs";
 
@@ -69,10 +70,13 @@ function buildColumns(): ColumnDef<RowWithUrgency>[] {
     },
     {
       accessorKey: "language",
-      header: "Lang · Level",
+      header: "Lang · Type · Level",
       meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => {
         const lang = row.original.language.toUpperCase();
+        const lesson = row.original.lessonPreference
+          ? LESSON_LABEL[row.original.lessonPreference]
+          : null;
         const level =
           row.original.selfAssessedLevel === "COMPLETE_BEGINNER"
             ? "Beginner"
@@ -82,6 +86,7 @@ function buildColumns(): ColumnDef<RowWithUrgency>[] {
         return (
           <span className="text-muted-foreground text-xs">
             <span className="uppercase">{lang}</span>
+            {lesson && ` · ${lesson}`}
             {level && ` · ${level}`}
           </span>
         );

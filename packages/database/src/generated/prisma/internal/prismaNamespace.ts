@@ -3511,6 +3511,9 @@ export const GroupScalarFieldEnum = {
   graduatedIntoGroupId: 'graduatedIntoGroupId',
   zoomMeetingId: 'zoomMeetingId',
   zoomJoinUrl: 'zoomJoinUrl',
+  closedAt: 'closedAt',
+  closedById: 'closedById',
+  closedReason: 'closedReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -4249,6 +4252,20 @@ export type EnumGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
  * Reference to a field of type 'GroupType[]'
  */
 export type ListEnumGroupTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'GroupClosedReason'
+ */
+export type EnumGroupClosedReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupClosedReason'>
+    
+
+
+/**
+ * Reference to a field of type 'GroupClosedReason[]'
+ */
+export type ListEnumGroupClosedReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GroupClosedReason[]'>
     
 
 
