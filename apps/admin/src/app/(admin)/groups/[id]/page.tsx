@@ -146,7 +146,11 @@ export default async function GroupDetailPage({
         actions={
           <div className="flex gap-2">
             {group.isActive && hasCapacity && (
-              <AddStudentDialog groupId={id} students={availableStudents} />
+              <AddStudentDialog
+                groupId={id}
+                groupStartDate={new Date(group.startDate).toISOString().slice(0, 10)}
+                students={availableStudents}
+              />
             )}
             {group.isActive && (
               <TeacherChangeDialog groupId={id} teachers={reassignmentTeachers} />

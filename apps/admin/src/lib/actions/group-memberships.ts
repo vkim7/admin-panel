@@ -24,17 +24,21 @@ export async function addStudentsToGroup(groupId: string, data: unknown) {
   const joinDate = new Date(joinDateStr + "T00:00:00Z");
   const today = getUzbekistanToday();
 
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: { id: true, type: true, startDate: true },
+  });
+  if (!group) return { error: "Group not found" };
+
+  if (joinDate.getTime() < group.startDate.getTime()) {
+    const startStr = group.startDate.toISOString().slice(0, 10);
+    return { error: `Join date can't be before group start date (${startStr})` };
+  }
+
   const isFuture = joinDate.getTime() > today.getTime();
 
   if (isFuture) {
     // Future join date → create scheduled action(s), one per student
-    // Run validations before scheduling
-    const group = await prisma.group.findUnique({
-      where: { id: groupId },
-      select: { id: true, type: true },
-    });
-    if (!group) return { error: "Group not found" };
-
     // Capacity check
     const capacity = await getScheduledCapacity(groupId, joinDate);
     if (studentIds.length > capacity.availableSlots) {
