@@ -65,6 +65,16 @@ export const GroupType = {
 export type GroupType = (typeof GroupType)[keyof typeof GroupType]
 
 
+export const GroupClosedReason = {
+  STUDENTS_LEFT: 'STUDENTS_LEFT',
+  LOW_ENROLLMENT: 'LOW_ENROLLMENT',
+  ADMIN_ERROR: 'ADMIN_ERROR',
+  OTHER: 'OTHER'
+} as const
+
+export type GroupClosedReason = (typeof GroupClosedReason)[keyof typeof GroupClosedReason]
+
+
 export const PaymentStatus = {
   UNPAID: 'UNPAID',
   PARTIALLY_PAID: 'PARTIALLY_PAID',

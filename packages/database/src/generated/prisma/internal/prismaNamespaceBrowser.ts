@@ -252,6 +252,9 @@ export const GroupScalarFieldEnum = {
   graduatedIntoGroupId: 'graduatedIntoGroupId',
   zoomMeetingId: 'zoomMeetingId',
   zoomJoinUrl: 'zoomJoinUrl',
+  closedAt: 'closedAt',
+  closedById: 'closedById',
+  closedReason: 'closedReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

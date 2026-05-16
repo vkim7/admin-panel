@@ -59,6 +59,9 @@ export type GroupMinAggregateOutputType = {
   graduatedIntoGroupId: string | null
   zoomMeetingId: string | null
   zoomJoinUrl: string | null
+  closedAt: Date | null
+  closedById: string | null
+  closedReason: $Enums.GroupClosedReason | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -82,6 +85,9 @@ export type GroupMaxAggregateOutputType = {
   graduatedIntoGroupId: string | null
   zoomMeetingId: string | null
   zoomJoinUrl: string | null
+  closedAt: Date | null
+  closedById: string | null
+  closedReason: $Enums.GroupClosedReason | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -106,6 +112,9 @@ export type GroupCountAggregateOutputType = {
   graduatedIntoGroupId: number
   zoomMeetingId: number
   zoomJoinUrl: number
+  closedAt: number
+  closedById: number
+  closedReason: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -145,6 +154,9 @@ export type GroupMinAggregateInputType = {
   graduatedIntoGroupId?: true
   zoomMeetingId?: true
   zoomJoinUrl?: true
+  closedAt?: true
+  closedById?: true
+  closedReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -168,6 +180,9 @@ export type GroupMaxAggregateInputType = {
   graduatedIntoGroupId?: true
   zoomMeetingId?: true
   zoomJoinUrl?: true
+  closedAt?: true
+  closedById?: true
+  closedReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -192,6 +207,9 @@ export type GroupCountAggregateInputType = {
   graduatedIntoGroupId?: true
   zoomMeetingId?: true
   zoomJoinUrl?: true
+  closedAt?: true
+  closedById?: true
+  closedReason?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -303,6 +321,9 @@ export type GroupGroupByOutputType = {
   graduatedIntoGroupId: string | null
   zoomMeetingId: string | null
   zoomJoinUrl: string | null
+  closedAt: Date | null
+  closedById: string | null
+  closedReason: $Enums.GroupClosedReason | null
   createdAt: Date
   updatedAt: Date
   _count: GroupCountAggregateOutputType | null
@@ -350,9 +371,13 @@ export type GroupWhereInput = {
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
   zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Group"> | Date | string | null
+  closedById?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedReason?: Prisma.EnumGroupClosedReasonNullableFilter<"Group"> | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
+  closedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   mergedIntoGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
   mergedFromGroups?: Prisma.GroupListRelationFilter
   graduatedIntoGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
@@ -390,9 +415,13 @@ export type GroupOrderByWithRelationInput = {
   graduatedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   zoomMeetingId?: Prisma.SortOrderInput | Prisma.SortOrder
   zoomJoinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   teacher?: Prisma.TeacherOrderByWithRelationInput
+  closedBy?: Prisma.AdminUserOrderByWithRelationInput
   mergedIntoGroup?: Prisma.GroupOrderByWithRelationInput
   mergedFromGroups?: Prisma.GroupOrderByRelationAggregateInput
   graduatedIntoGroup?: Prisma.GroupOrderByWithRelationInput
@@ -433,9 +462,13 @@ export type GroupWhereUniqueInput = Prisma.AtLeast<{
   skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
   graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
   zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Group"> | Date | string | null
+  closedById?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedReason?: Prisma.EnumGroupClosedReasonNullableFilter<"Group"> | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
   teacher?: Prisma.XOR<Prisma.TeacherScalarRelationFilter, Prisma.TeacherWhereInput>
+  closedBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
   mergedIntoGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
   mergedFromGroups?: Prisma.GroupListRelationFilter
   graduatedIntoGroup?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
@@ -473,6 +506,9 @@ export type GroupOrderByWithAggregationInput = {
   graduatedIntoGroupId?: Prisma.SortOrderInput | Prisma.SortOrder
   zoomMeetingId?: Prisma.SortOrderInput | Prisma.SortOrder
   zoomJoinUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  closedReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.GroupCountOrderByAggregateInput
@@ -505,6 +541,9 @@ export type GroupScalarWhereWithAggregatesInput = {
   graduatedIntoGroupId?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   zoomMeetingId?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
   zoomJoinUrl?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
+  closedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Group"> | Date | string | null
+  closedById?: Prisma.StringNullableWithAggregatesFilter<"Group"> | string | null
+  closedReason?: Prisma.EnumGroupClosedReasonNullableWithAggregatesFilter<"Group"> | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Group"> | Date | string
 }
@@ -526,9 +565,12 @@ export type GroupCreateInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -566,6 +608,9 @@ export type GroupUncheckedCreateInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -599,9 +644,12 @@ export type GroupUpdateInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -639,6 +687,9 @@ export type GroupUncheckedUpdateInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -676,6 +727,9 @@ export type GroupCreateManyInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -696,6 +750,8 @@ export type GroupUpdateManyMutationInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -720,6 +776,9 @@ export type GroupUncheckedUpdateManyInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -764,6 +823,9 @@ export type GroupCountOrderByAggregateInput = {
   graduatedIntoGroupId?: Prisma.SortOrder
   zoomMeetingId?: Prisma.SortOrder
   zoomJoinUrl?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  closedById?: Prisma.SortOrder
+  closedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -794,6 +856,9 @@ export type GroupMaxOrderByAggregateInput = {
   graduatedIntoGroupId?: Prisma.SortOrder
   zoomMeetingId?: Prisma.SortOrder
   zoomJoinUrl?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  closedById?: Prisma.SortOrder
+  closedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -817,6 +882,9 @@ export type GroupMinOrderByAggregateInput = {
   graduatedIntoGroupId?: Prisma.SortOrder
   zoomMeetingId?: Prisma.SortOrder
   zoomJoinUrl?: Prisma.SortOrder
+  closedAt?: Prisma.SortOrder
+  closedById?: Prisma.SortOrder
+  closedReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -826,6 +894,48 @@ export type GroupSumOrderByAggregateInput = {
   days?: Prisma.SortOrder
   durationMinutes?: Prisma.SortOrder
   maxStudents?: Prisma.SortOrder
+}
+
+export type GroupCreateNestedManyWithoutClosedByInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput> | Prisma.GroupCreateWithoutClosedByInput[] | Prisma.GroupUncheckedCreateWithoutClosedByInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutClosedByInput | Prisma.GroupCreateOrConnectWithoutClosedByInput[]
+  createMany?: Prisma.GroupCreateManyClosedByInputEnvelope
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+}
+
+export type GroupUncheckedCreateNestedManyWithoutClosedByInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput> | Prisma.GroupCreateWithoutClosedByInput[] | Prisma.GroupUncheckedCreateWithoutClosedByInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutClosedByInput | Prisma.GroupCreateOrConnectWithoutClosedByInput[]
+  createMany?: Prisma.GroupCreateManyClosedByInputEnvelope
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+}
+
+export type GroupUpdateManyWithoutClosedByNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput> | Prisma.GroupCreateWithoutClosedByInput[] | Prisma.GroupUncheckedCreateWithoutClosedByInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutClosedByInput | Prisma.GroupCreateOrConnectWithoutClosedByInput[]
+  upsert?: Prisma.GroupUpsertWithWhereUniqueWithoutClosedByInput | Prisma.GroupUpsertWithWhereUniqueWithoutClosedByInput[]
+  createMany?: Prisma.GroupCreateManyClosedByInputEnvelope
+  set?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  disconnect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  delete?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  update?: Prisma.GroupUpdateWithWhereUniqueWithoutClosedByInput | Prisma.GroupUpdateWithWhereUniqueWithoutClosedByInput[]
+  updateMany?: Prisma.GroupUpdateManyWithWhereWithoutClosedByInput | Prisma.GroupUpdateManyWithWhereWithoutClosedByInput[]
+  deleteMany?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+}
+
+export type GroupUncheckedUpdateManyWithoutClosedByNestedInput = {
+  create?: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput> | Prisma.GroupCreateWithoutClosedByInput[] | Prisma.GroupUncheckedCreateWithoutClosedByInput[]
+  connectOrCreate?: Prisma.GroupCreateOrConnectWithoutClosedByInput | Prisma.GroupCreateOrConnectWithoutClosedByInput[]
+  upsert?: Prisma.GroupUpsertWithWhereUniqueWithoutClosedByInput | Prisma.GroupUpsertWithWhereUniqueWithoutClosedByInput[]
+  createMany?: Prisma.GroupCreateManyClosedByInputEnvelope
+  set?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  disconnect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  delete?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  connect?: Prisma.GroupWhereUniqueInput | Prisma.GroupWhereUniqueInput[]
+  update?: Prisma.GroupUpdateWithWhereUniqueWithoutClosedByInput | Prisma.GroupUpdateWithWhereUniqueWithoutClosedByInput[]
+  updateMany?: Prisma.GroupUpdateManyWithWhereWithoutClosedByInput | Prisma.GroupUpdateManyWithWhereWithoutClosedByInput[]
+  deleteMany?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
 }
 
 export type GroupCreateNestedManyWithoutTeacherInput = {
@@ -935,6 +1045,10 @@ export type EnumGroupTypeFieldUpdateOperationsInput = {
 export type GroupUpdatedaysInput = {
   set?: number[]
   push?: number | number[]
+}
+
+export type NullableEnumGroupClosedReasonFieldUpdateOperationsInput = {
+  set?: $Enums.GroupClosedReason | null
 }
 
 export type GroupUpdateOneWithoutMergedFromGroupsNestedInput = {
@@ -1157,6 +1271,140 @@ export type GroupUpdateOneWithoutScheduledActionsAsDestNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GroupUpdateToOneWithWhereWithoutScheduledActionsAsDestInput, Prisma.GroupUpdateWithoutScheduledActionsAsDestInput>, Prisma.GroupUncheckedUpdateWithoutScheduledActionsAsDestInput>
 }
 
+export type GroupCreateWithoutClosedByInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  skipAutoGraduation?: boolean
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
+  mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
+  graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryCreateNestedManyWithoutGroupInput
+  recordings?: Prisma.RecordingCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionCreateNestedManyWithoutDestGroupInput
+}
+
+export type GroupUncheckedCreateWithoutClosedByInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  teacherId: string
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  mergedIntoGroupId?: string | null
+  skipAutoGraduation?: boolean
+  graduatedIntoGroupId?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
+  graduatedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutGraduatedIntoGroupInput
+  memberships?: Prisma.GroupMembershipUncheckedCreateNestedManyWithoutGroupInput
+  lessons?: Prisma.LessonUncheckedCreateNestedManyWithoutGroupInput
+  attendanceRecords?: Prisma.AttendanceUncheckedCreateNestedManyWithoutGroupInput
+  exams?: Prisma.ExamUncheckedCreateNestedManyWithoutGroupInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedCreateNestedManyWithoutGroupInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedCreateNestedManyWithoutGroupInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedCreateNestedManyWithoutGroupInput
+  recordings?: Prisma.RecordingUncheckedCreateNestedManyWithoutGroupInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutSourceGroupInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedCreateNestedManyWithoutDestGroupInput
+}
+
+export type GroupCreateOrConnectWithoutClosedByInput = {
+  where: Prisma.GroupWhereUniqueInput
+  create: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput>
+}
+
+export type GroupCreateManyClosedByInputEnvelope = {
+  data: Prisma.GroupCreateManyClosedByInput | Prisma.GroupCreateManyClosedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type GroupUpsertWithWhereUniqueWithoutClosedByInput = {
+  where: Prisma.GroupWhereUniqueInput
+  update: Prisma.XOR<Prisma.GroupUpdateWithoutClosedByInput, Prisma.GroupUncheckedUpdateWithoutClosedByInput>
+  create: Prisma.XOR<Prisma.GroupCreateWithoutClosedByInput, Prisma.GroupUncheckedCreateWithoutClosedByInput>
+}
+
+export type GroupUpdateWithWhereUniqueWithoutClosedByInput = {
+  where: Prisma.GroupWhereUniqueInput
+  data: Prisma.XOR<Prisma.GroupUpdateWithoutClosedByInput, Prisma.GroupUncheckedUpdateWithoutClosedByInput>
+}
+
+export type GroupUpdateManyWithWhereWithoutClosedByInput = {
+  where: Prisma.GroupScalarWhereInput
+  data: Prisma.XOR<Prisma.GroupUpdateManyMutationInput, Prisma.GroupUncheckedUpdateManyWithoutClosedByInput>
+}
+
+export type GroupScalarWhereInput = {
+  AND?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+  OR?: Prisma.GroupScalarWhereInput[]
+  NOT?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
+  id?: Prisma.StringFilter<"Group"> | string
+  publicId?: Prisma.StringFilter<"Group"> | string
+  sequenceNumber?: Prisma.IntFilter<"Group"> | number
+  type?: Prisma.EnumGroupTypeFilter<"Group"> | $Enums.GroupType
+  teacherId?: Prisma.StringFilter<"Group"> | string
+  days?: Prisma.IntNullableListFilter<"Group">
+  startTime?: Prisma.StringFilter<"Group"> | string
+  durationMinutes?: Prisma.IntFilter<"Group"> | number
+  level?: Prisma.EnumLevelFilter<"Group"> | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFilter<"Group"> | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFilter<"Group"> | number
+  isActive?: Prisma.BoolFilter<"Group"> | boolean
+  startDate?: Prisma.DateTimeFilter<"Group"> | Date | string
+  endDate?: Prisma.DateTimeFilter<"Group"> | Date | string
+  mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
+  skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
+  graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
+  zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedAt?: Prisma.DateTimeNullableFilter<"Group"> | Date | string | null
+  closedById?: Prisma.StringNullableFilter<"Group"> | string | null
+  closedReason?: Prisma.EnumGroupClosedReasonNullableFilter<"Group"> | $Enums.GroupClosedReason | null
+  createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
+}
+
 export type GroupCreateWithoutTeacherInput = {
   id?: string
   publicId?: string
@@ -1174,8 +1422,11 @@ export type GroupCreateWithoutTeacherInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -1212,6 +1463,9 @@ export type GroupUncheckedCreateWithoutTeacherInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1255,33 +1509,6 @@ export type GroupUpdateManyWithWhereWithoutTeacherInput = {
   data: Prisma.XOR<Prisma.GroupUpdateManyMutationInput, Prisma.GroupUncheckedUpdateManyWithoutTeacherInput>
 }
 
-export type GroupScalarWhereInput = {
-  AND?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
-  OR?: Prisma.GroupScalarWhereInput[]
-  NOT?: Prisma.GroupScalarWhereInput | Prisma.GroupScalarWhereInput[]
-  id?: Prisma.StringFilter<"Group"> | string
-  publicId?: Prisma.StringFilter<"Group"> | string
-  sequenceNumber?: Prisma.IntFilter<"Group"> | number
-  type?: Prisma.EnumGroupTypeFilter<"Group"> | $Enums.GroupType
-  teacherId?: Prisma.StringFilter<"Group"> | string
-  days?: Prisma.IntNullableListFilter<"Group">
-  startTime?: Prisma.StringFilter<"Group"> | string
-  durationMinutes?: Prisma.IntFilter<"Group"> | number
-  level?: Prisma.EnumLevelFilter<"Group"> | $Enums.Level
-  progressStage?: Prisma.EnumProgressStageFilter<"Group"> | $Enums.ProgressStage
-  maxStudents?: Prisma.IntFilter<"Group"> | number
-  isActive?: Prisma.BoolFilter<"Group"> | boolean
-  startDate?: Prisma.DateTimeFilter<"Group"> | Date | string
-  endDate?: Prisma.DateTimeFilter<"Group"> | Date | string
-  mergedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  skipAutoGraduation?: Prisma.BoolFilter<"Group"> | boolean
-  graduatedIntoGroupId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomMeetingId?: Prisma.StringNullableFilter<"Group"> | string | null
-  zoomJoinUrl?: Prisma.StringNullableFilter<"Group"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Group"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Group"> | Date | string
-}
-
 export type GroupCreateWithoutScheduleSlotsInput = {
   id?: string
   publicId?: string
@@ -1299,9 +1526,12 @@ export type GroupCreateWithoutScheduleSlotsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -1338,6 +1568,9 @@ export type GroupUncheckedCreateWithoutScheduleSlotsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1386,9 +1619,12 @@ export type GroupUpdateWithoutScheduleSlotsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -1425,6 +1661,9 @@ export type GroupUncheckedUpdateWithoutScheduleSlotsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -1458,9 +1697,12 @@ export type GroupCreateWithoutMergedFromGroupsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
   graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
@@ -1497,6 +1739,9 @@ export type GroupUncheckedCreateWithoutMergedFromGroupsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   graduatedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutGraduatedIntoGroupInput
@@ -1535,9 +1780,12 @@ export type GroupCreateWithoutMergedIntoGroupInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
   graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
@@ -1573,6 +1821,9 @@ export type GroupUncheckedCreateWithoutMergedIntoGroupInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1617,9 +1868,12 @@ export type GroupCreateWithoutGraduatedFromGroupsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -1656,6 +1910,9 @@ export type GroupUncheckedCreateWithoutGraduatedFromGroupsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1694,9 +1951,12 @@ export type GroupCreateWithoutGraduatedIntoGroupInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedFromGroups?: Prisma.GroupCreateNestedManyWithoutGraduatedIntoGroupInput
@@ -1732,6 +1992,9 @@ export type GroupUncheckedCreateWithoutGraduatedIntoGroupInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -1786,9 +2049,12 @@ export type GroupUpdateWithoutMergedFromGroupsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
   graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
@@ -1825,6 +2091,9 @@ export type GroupUncheckedUpdateWithoutMergedFromGroupsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   graduatedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutGraduatedIntoGroupNestedInput
@@ -1884,9 +2153,12 @@ export type GroupUpdateWithoutGraduatedFromGroupsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -1923,6 +2195,9 @@ export type GroupUncheckedUpdateWithoutGraduatedFromGroupsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -1972,9 +2247,12 @@ export type GroupCreateWithoutTeacherHistoryInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2011,6 +2289,9 @@ export type GroupUncheckedCreateWithoutTeacherHistoryInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2059,9 +2340,12 @@ export type GroupUpdateWithoutTeacherHistoryInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2098,6 +2382,9 @@ export type GroupUncheckedUpdateWithoutTeacherHistoryInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2131,9 +2418,12 @@ export type GroupCreateWithoutMembershipsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2170,6 +2460,9 @@ export type GroupUncheckedCreateWithoutMembershipsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2218,9 +2511,12 @@ export type GroupUpdateWithoutMembershipsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2257,6 +2553,9 @@ export type GroupUncheckedUpdateWithoutMembershipsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2290,9 +2589,12 @@ export type GroupCreateWithoutLessonsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2329,6 +2631,9 @@ export type GroupUncheckedCreateWithoutLessonsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2377,9 +2682,12 @@ export type GroupUpdateWithoutLessonsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2416,6 +2724,9 @@ export type GroupUncheckedUpdateWithoutLessonsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2449,9 +2760,12 @@ export type GroupCreateWithoutAttendanceRecordsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2488,6 +2802,9 @@ export type GroupUncheckedCreateWithoutAttendanceRecordsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2536,9 +2853,12 @@ export type GroupUpdateWithoutAttendanceRecordsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2575,6 +2895,9 @@ export type GroupUncheckedUpdateWithoutAttendanceRecordsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2608,9 +2931,12 @@ export type GroupCreateWithoutRecordingsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2647,6 +2973,9 @@ export type GroupUncheckedCreateWithoutRecordingsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2695,9 +3024,12 @@ export type GroupUpdateWithoutRecordingsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2734,6 +3066,9 @@ export type GroupUncheckedUpdateWithoutRecordingsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2767,9 +3102,12 @@ export type GroupCreateWithoutStudentPaymentPeriodsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2806,6 +3144,9 @@ export type GroupUncheckedCreateWithoutStudentPaymentPeriodsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -2854,9 +3195,12 @@ export type GroupUpdateWithoutStudentPaymentPeriodsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -2893,6 +3237,9 @@ export type GroupUncheckedUpdateWithoutStudentPaymentPeriodsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -2926,9 +3273,12 @@ export type GroupCreateWithoutTeacherPaymentPeriodsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -2965,6 +3315,9 @@ export type GroupUncheckedCreateWithoutTeacherPaymentPeriodsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3013,9 +3366,12 @@ export type GroupUpdateWithoutTeacherPaymentPeriodsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -3052,6 +3408,9 @@ export type GroupUncheckedUpdateWithoutTeacherPaymentPeriodsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3085,9 +3444,12 @@ export type GroupCreateWithoutExamsInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -3124,6 +3486,9 @@ export type GroupUncheckedCreateWithoutExamsInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3172,9 +3537,12 @@ export type GroupUpdateWithoutExamsInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -3211,6 +3579,9 @@ export type GroupUncheckedUpdateWithoutExamsInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3244,9 +3615,12 @@ export type GroupCreateWithoutScheduledActionsAsSourceInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -3283,6 +3657,9 @@ export type GroupUncheckedCreateWithoutScheduledActionsAsSourceInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3321,9 +3698,12 @@ export type GroupCreateWithoutScheduledActionsAsDestInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   teacher: Prisma.TeacherCreateNestedOneWithoutGroupsInput
+  closedBy?: Prisma.AdminUserCreateNestedOneWithoutClosedGroupsInput
   mergedIntoGroup?: Prisma.GroupCreateNestedOneWithoutMergedFromGroupsInput
   mergedFromGroups?: Prisma.GroupCreateNestedManyWithoutMergedIntoGroupInput
   graduatedIntoGroup?: Prisma.GroupCreateNestedOneWithoutGraduatedFromGroupsInput
@@ -3360,6 +3740,9 @@ export type GroupUncheckedCreateWithoutScheduledActionsAsDestInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   mergedFromGroups?: Prisma.GroupUncheckedCreateNestedManyWithoutMergedIntoGroupInput
@@ -3408,9 +3791,12 @@ export type GroupUpdateWithoutScheduledActionsAsSourceInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -3447,6 +3833,9 @@ export type GroupUncheckedUpdateWithoutScheduledActionsAsSourceInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3490,9 +3879,12 @@ export type GroupUpdateWithoutScheduledActionsAsDestInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -3529,6 +3921,9 @@ export type GroupUncheckedUpdateWithoutScheduledActionsAsDestInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3543,6 +3938,135 @@ export type GroupUncheckedUpdateWithoutScheduledActionsAsDestInput = {
   teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
   recordings?: Prisma.RecordingUncheckedUpdateManyWithoutGroupNestedInput
   scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+}
+
+export type GroupCreateManyClosedByInput = {
+  id?: string
+  publicId?: string
+  sequenceNumber?: number
+  type?: $Enums.GroupType
+  teacherId: string
+  days?: Prisma.GroupCreatedaysInput | number[]
+  startTime: string
+  durationMinutes?: number
+  level: $Enums.Level
+  progressStage?: $Enums.ProgressStage
+  maxStudents?: number
+  isActive?: boolean
+  startDate: Date | string
+  endDate: Date | string
+  mergedIntoGroupId?: string | null
+  skipAutoGraduation?: boolean
+  graduatedIntoGroupId?: string | null
+  zoomMeetingId?: string | null
+  zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedReason?: $Enums.GroupClosedReason | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type GroupUpdateWithoutClosedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
+  mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
+  graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUpdateManyWithoutGroupNestedInput
+  recordings?: Prisma.RecordingUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUpdateManyWithoutDestGroupNestedInput
+}
+
+export type GroupUncheckedUpdateWithoutClosedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
+  graduatedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutGraduatedIntoGroupNestedInput
+  memberships?: Prisma.GroupMembershipUncheckedUpdateManyWithoutGroupNestedInput
+  lessons?: Prisma.LessonUncheckedUpdateManyWithoutGroupNestedInput
+  attendanceRecords?: Prisma.AttendanceUncheckedUpdateManyWithoutGroupNestedInput
+  exams?: Prisma.ExamUncheckedUpdateManyWithoutGroupNestedInput
+  studentPaymentPeriods?: Prisma.StudentPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  teacherPaymentPeriods?: Prisma.TeacherPaymentPeriodUncheckedUpdateManyWithoutGroupNestedInput
+  scheduleSlots?: Prisma.TeacherScheduleSlotUncheckedUpdateManyWithoutGroupNestedInput
+  teacherHistory?: Prisma.GroupTeacherHistoryUncheckedUpdateManyWithoutGroupNestedInput
+  recordings?: Prisma.RecordingUncheckedUpdateManyWithoutGroupNestedInput
+  scheduledActionsAsSource?: Prisma.ScheduledActionUncheckedUpdateManyWithoutSourceGroupNestedInput
+  scheduledActionsAsDest?: Prisma.ScheduledActionUncheckedUpdateManyWithoutDestGroupNestedInput
+}
+
+export type GroupUncheckedUpdateManyWithoutClosedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  sequenceNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  type?: Prisma.EnumGroupTypeFieldUpdateOperationsInput | $Enums.GroupType
+  teacherId?: Prisma.StringFieldUpdateOperationsInput | string
+  days?: Prisma.GroupUpdatedaysInput | number[]
+  startTime?: Prisma.StringFieldUpdateOperationsInput | string
+  durationMinutes?: Prisma.IntFieldUpdateOperationsInput | number
+  level?: Prisma.EnumLevelFieldUpdateOperationsInput | $Enums.Level
+  progressStage?: Prisma.EnumProgressStageFieldUpdateOperationsInput | $Enums.ProgressStage
+  maxStudents?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  mergedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type GroupCreateManyTeacherInput = {
@@ -3564,6 +4088,9 @@ export type GroupCreateManyTeacherInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3584,8 +4111,11 @@ export type GroupUpdateWithoutTeacherInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
@@ -3622,6 +4152,9 @@ export type GroupUncheckedUpdateWithoutTeacherInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3658,6 +4191,9 @@ export type GroupUncheckedUpdateManyWithoutTeacherInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3681,6 +4217,9 @@ export type GroupCreateManyMergedIntoGroupInput = {
   graduatedIntoGroupId?: string | null
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3704,6 +4243,9 @@ export type GroupCreateManyGraduatedIntoGroupInput = {
   skipAutoGraduation?: boolean
   zoomMeetingId?: string | null
   zoomJoinUrl?: string | null
+  closedAt?: Date | string | null
+  closedById?: string | null
+  closedReason?: $Enums.GroupClosedReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3724,9 +4266,12 @@ export type GroupUpdateWithoutMergedIntoGroupInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedIntoGroup?: Prisma.GroupUpdateOneWithoutGraduatedFromGroupsNestedInput
   graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
@@ -3762,6 +4307,9 @@ export type GroupUncheckedUpdateWithoutMergedIntoGroupInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3798,6 +4346,9 @@ export type GroupUncheckedUpdateManyWithoutMergedIntoGroupInput = {
   graduatedIntoGroupId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3818,9 +4369,12 @@ export type GroupUpdateWithoutGraduatedIntoGroupInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   teacher?: Prisma.TeacherUpdateOneRequiredWithoutGroupsNestedInput
+  closedBy?: Prisma.AdminUserUpdateOneWithoutClosedGroupsNestedInput
   mergedIntoGroup?: Prisma.GroupUpdateOneWithoutMergedFromGroupsNestedInput
   mergedFromGroups?: Prisma.GroupUpdateManyWithoutMergedIntoGroupNestedInput
   graduatedFromGroups?: Prisma.GroupUpdateManyWithoutGraduatedIntoGroupNestedInput
@@ -3856,6 +4410,9 @@ export type GroupUncheckedUpdateWithoutGraduatedIntoGroupInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   mergedFromGroups?: Prisma.GroupUncheckedUpdateManyWithoutMergedIntoGroupNestedInput
@@ -3892,6 +4449,9 @@ export type GroupUncheckedUpdateManyWithoutGraduatedIntoGroupInput = {
   skipAutoGraduation?: Prisma.BoolFieldUpdateOperationsInput | boolean
   zoomMeetingId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   zoomJoinUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  closedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  closedReason?: Prisma.NullableEnumGroupClosedReasonFieldUpdateOperationsInput | $Enums.GroupClosedReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -4055,9 +4615,13 @@ export type GroupSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   graduatedIntoGroupId?: boolean
   zoomMeetingId?: boolean
   zoomJoinUrl?: boolean
+  closedAt?: boolean
+  closedById?: boolean
+  closedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   mergedFromGroups?: boolean | Prisma.Group$mergedFromGroupsArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
@@ -4096,9 +4660,13 @@ export type GroupSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   graduatedIntoGroupId?: boolean
   zoomMeetingId?: boolean
   zoomJoinUrl?: boolean
+  closedAt?: boolean
+  closedById?: boolean
+  closedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
@@ -4123,9 +4691,13 @@ export type GroupSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   graduatedIntoGroupId?: boolean
   zoomMeetingId?: boolean
   zoomJoinUrl?: boolean
+  closedAt?: boolean
+  closedById?: boolean
+  closedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
 }, ExtArgs["result"]["group"]>
@@ -4150,13 +4722,17 @@ export type GroupSelectScalar = {
   graduatedIntoGroupId?: boolean
   zoomMeetingId?: boolean
   zoomJoinUrl?: boolean
+  closedAt?: boolean
+  closedById?: boolean
+  closedReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "sequenceNumber" | "type" | "teacherId" | "days" | "startTime" | "durationMinutes" | "level" | "progressStage" | "maxStudents" | "isActive" | "startDate" | "endDate" | "mergedIntoGroupId" | "skipAutoGraduation" | "graduatedIntoGroupId" | "zoomMeetingId" | "zoomJoinUrl" | "createdAt" | "updatedAt", ExtArgs["result"]["group"]>
+export type GroupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "sequenceNumber" | "type" | "teacherId" | "days" | "startTime" | "durationMinutes" | "level" | "progressStage" | "maxStudents" | "isActive" | "startDate" | "endDate" | "mergedIntoGroupId" | "skipAutoGraduation" | "graduatedIntoGroupId" | "zoomMeetingId" | "zoomJoinUrl" | "closedAt" | "closedById" | "closedReason" | "createdAt" | "updatedAt", ExtArgs["result"]["group"]>
 export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   mergedFromGroups?: boolean | Prisma.Group$mergedFromGroupsArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
@@ -4176,11 +4752,13 @@ export type GroupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 }
 export type GroupIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
 }
 export type GroupIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.TeacherDefaultArgs<ExtArgs>
+  closedBy?: boolean | Prisma.Group$closedByArgs<ExtArgs>
   mergedIntoGroup?: boolean | Prisma.Group$mergedIntoGroupArgs<ExtArgs>
   graduatedIntoGroup?: boolean | Prisma.Group$graduatedIntoGroupArgs<ExtArgs>
 }
@@ -4189,6 +4767,7 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Group"
   objects: {
     teacher: Prisma.$TeacherPayload<ExtArgs>
+    closedBy: Prisma.$AdminUserPayload<ExtArgs> | null
     mergedIntoGroup: Prisma.$GroupPayload<ExtArgs> | null
     mergedFromGroups: Prisma.$GroupPayload<ExtArgs>[]
     graduatedIntoGroup: Prisma.$GroupPayload<ExtArgs> | null
@@ -4225,6 +4804,9 @@ export type $GroupPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     graduatedIntoGroupId: string | null
     zoomMeetingId: string | null
     zoomJoinUrl: string | null
+    closedAt: Date | null
+    closedById: string | null
+    closedReason: $Enums.GroupClosedReason | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["group"]>
@@ -4622,6 +5204,7 @@ readonly fields: GroupFieldRefs;
 export interface Prisma__GroupClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   teacher<T extends Prisma.TeacherDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TeacherDefaultArgs<ExtArgs>>): Prisma.Prisma__TeacherClient<runtime.Types.Result.GetResult<Prisma.$TeacherPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  closedBy<T extends Prisma.Group$closedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$closedByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   mergedIntoGroup<T extends Prisma.Group$mergedIntoGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$mergedIntoGroupArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   mergedFromGroups<T extends Prisma.Group$mergedFromGroupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$mergedFromGroupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   graduatedIntoGroup<T extends Prisma.Group$graduatedIntoGroupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Group$graduatedIntoGroupArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -4685,6 +5268,9 @@ export interface GroupFieldRefs {
   readonly graduatedIntoGroupId: Prisma.FieldRef<"Group", 'String'>
   readonly zoomMeetingId: Prisma.FieldRef<"Group", 'String'>
   readonly zoomJoinUrl: Prisma.FieldRef<"Group", 'String'>
+  readonly closedAt: Prisma.FieldRef<"Group", 'DateTime'>
+  readonly closedById: Prisma.FieldRef<"Group", 'String'>
+  readonly closedReason: Prisma.FieldRef<"Group", 'GroupClosedReason'>
   readonly createdAt: Prisma.FieldRef<"Group", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Group", 'DateTime'>
 }
@@ -5080,6 +5666,25 @@ export type GroupDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Groups to delete.
    */
   limit?: number
+}
+
+/**
+ * Group.closedBy
+ */
+export type Group$closedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AdminUser
+   */
+  select?: Prisma.AdminUserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AdminUser
+   */
+  omit?: Prisma.AdminUserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AdminUserInclude<ExtArgs> | null
+  where?: Prisma.AdminUserWhereInput
 }
 
 /**

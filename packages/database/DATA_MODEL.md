@@ -353,6 +353,9 @@ When a teacher is available to work. One row per day+time block.
 | startDate | When the group starts |
 | endDate | **Required, auto-calculated.** Before 15th → end of startMonth+2, after 15th → end of startMonth+3. Updated when lessons are rescheduled past the original end. |
 | mergedIntoGroupId | Self-reference — set if this group was merged into another (GROUP or INDIVIDUAL type) |
+| closedAt | Set when the group was closed early (all students left, neither graduated nor merged). Canonical signal for "closed early". |
+| closedById | Admin who closed the group |
+| closedReason | Why the group was closed: STUDENTS_LEFT, LOW_ENROLLMENT, ADMIN_ERROR, OTHER |
 | zoomLink | Group's Zoom meeting link |
 
 **endDate calculation:**
@@ -390,6 +393,31 @@ When a teacher is available to work. One row per day+time block.
 - A group can have `mergedIntoGroupId` OR `graduatedIntoGroupId`, but not both — merge and graduation are mutually exclusive end-of-life events (enforced by Zod at the app level).
 - Merge is allowed for both GROUP and INDIVIDUAL types. Individual merge example: two 1-student individual arrangements combine into one 2-student individual group.
 - The new group starts fresh with its own lessons, schedule slots, and billing periods.
+
+**Group close (early termination):** Third terminal outcome for a group, alongside graduation and merge. Used when all students have left (trial rejection, dropout, reassignment) before the program ends and the group should be retired without creating a successor.
+
+| Field | Purpose |
+|-------|---------|
+| closedAt | Timestamp when the close action ran. Non-null = "closed early" (distinct from graduated/merged). |
+| closedById | Admin who triggered the close |
+| closedReason | Enum: STUDENTS_LEFT, LOW_ENROLLMENT, ADMIN_ERROR, OTHER |
+
+**Close workflow:**
+1. Admin triggers close on a group with no active memberships (every membership has `leaveDate` set) and no PENDING `ScheduledAction` referencing the group as source or destination
+2. Future SCHEDULED lessons (today onward) are deleted, along with their `TeacherScheduleSlot`s — freeing the teacher's calendar
+3. Future `Exam` rows are deleted
+4. The open `GroupTeacherHistory` row gets `endDate = today`
+5. `Group.isActive = false`, `closedAt = now`, `closedById`, `closedReason` set. `zoomMeetingId`/`zoomJoinUrl` cleared.
+6. Zoom recurring meeting deleted via API (best-effort, outside the transaction)
+7. `endDate` is NOT mutated — it represents the originally-planned program end, which remains useful for reporting "closed N days early".
+
+**Preserved:** `GroupMembership` rows (with their `leaveDate`s), past `Lesson` rows + `Attendance`, past `Exam` rows, `StudentPaymentPeriod`, `TeacherPaymentPeriod`, `Recording` rows. All money lives on the student / refund queue and is unaffected by close.
+
+**Distinguishing the three terminal outcomes:**
+- `graduatedIntoGroupId` set → graduated
+- `mergedIntoGroupId` set → merged
+- `closedAt` set, neither pointer → closed early
+- `isActive = false` but none of the above → legacy (predates the close feature)
 
 **Lesson price** is determined by `PriceSetting` — a global table with 4 price points: (GENERAL|IELTS) × (GROUP|INDIVIDUAL). Derive `levelCategory` from the group's `level` (IELTS → IELTS, everything else → GENERAL). See [PriceSetting](#pricesetting) for details.
 
