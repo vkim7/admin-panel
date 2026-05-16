@@ -49,6 +49,12 @@ export type UrgencyInput = {
 export type UrgencyInfo = {
   tier: UrgencyTier;
   chip: LeadChip | null;
+  /** Secondary chip for a scheduled future callback. Rendered alongside the
+   * primary chip so the admin sees both the state and the next committed
+   * action at once. Null when no callback is scheduled, when the callback is
+   * overdue (which becomes the primary red chip), or for NEW/LOST/CONVERTED
+   * leads where callbacks don't apply. */
+  callbackChip: LeadChip | null;
 };
 
 // Tier ordinals — higher = more urgent. Drives the in-memory sort.
@@ -92,16 +98,22 @@ const LEVEL_SHORT: Record<Level, string> = {
 };
 
 /**
- * Derive urgency tier + row chip for a lead. Pure function — single source of
+ * Derive urgency tier + row chips for a lead. Pure function — single source of
  * truth for the table's visual prioritisation. LOST and CONVERTED return idle.
  *
- * Priority when multiple conditions apply: red beats blue beats amber. Within
- * a tier, the most informative chip wins (overdue callback over generic stale).
+ * Returns up to two chips: a primary (state — overdue / ready / half-qualified
+ * / etc.) and a secondary callback chip when a future callback is scheduled.
+ * The dual-pill model means a scheduled callback never gets eclipsed by an
+ * amber drift signal — admin always sees the next committed action.
+ *
+ * Primary precedence: red > green > amber > idle. The secondary callback
+ * pairs with anything except the overdue-callback red (mutually exclusive
+ * with a future callback by data model).
  */
 export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
-  // Terminal states — no chip.
+  // Terminal states — no chips.
   if (lead.status === "LOST" || lead.status === "CONVERTED") {
-    return { tier: "idle", chip: null };
+    return { tier: "idle", chip: null, callbackChip: null };
   }
 
   const now = Date.now();
@@ -116,17 +128,33 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
       return {
         tier: "red",
         chip: { kind: "untouched", label: `Untouched · ${days}d` },
+        callbackChip: null,
       };
     }
     return {
       tier: "blue",
       chip: { kind: "new-lead", label: "New" },
+      callbackChip: null,
     };
   }
 
-  // ─── CONTACTED: red > green > amber > idle ───────────────────────────────
+  // ─── CONTACTED ───────────────────────────────────────────────────────────
 
-  // Red: overdue callback
+  // Secondary chip: future callback. Computed once, attached to every CONTACTED
+  // result below except the overdue-callback branch (which is mutually
+  // exclusive — nextCallbackAt can't be both past and future).
+  let callbackChip: LeadChip | null = null;
+  if (lead.nextCallbackAt !== null) {
+    const cb = new Date(lead.nextCallbackAt).getTime();
+    if (cb >= now) {
+      callbackChip = {
+        kind: "callback-scheduled",
+        label: `Callback · ${fmtTashkentShort(lead.nextCallbackAt)}`,
+      };
+    }
+  }
+
+  // Red: overdue callback (no secondary — by definition, no future callback)
   if (lead.nextCallbackAt !== null) {
     const cb = new Date(lead.nextCallbackAt).getTime();
     if (cb < now) {
@@ -136,6 +164,7 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
           kind: "callback-overdue",
           label: `Callback · ${fmtTashkentTime(lead.nextCallbackAt)}`,
         },
+        callbackChip: null,
       };
     }
   }
@@ -154,6 +183,7 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
           kind: "test-stale",
           label: `Test${lvl} · ${Math.floor(ageHours)}h`,
         },
+        callbackChip,
       };
     }
   }
@@ -174,6 +204,7 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
     return {
       tier: "green",
       chip: { kind: "ready", label: "Ready to convert" },
+      callbackChip,
     };
   }
 
@@ -184,37 +215,35 @@ export function getUrgencyInfo(lead: UrgencyInput): UrgencyInfo {
     return {
       tier: "amber",
       chip: { kind: "stale", label: `Stale ${days}d` },
+      callbackChip,
     };
   }
 
-  // Amber: half-qualified — at least one gate field captured but not all.
-  // Surfaces leads mid-conversation so admin doesn't lose them.
-  const anyFilled =
+  // Amber: half-qualified — at least one admin-captured gate field, but gate
+  // not satisfied. Surfaces leads mid-conversation so admin doesn't lose them.
+  //
+  // `lessonPreference` and `preferredLanguage` are excluded: those can arrive
+  // pre-filled from the intake form, and a lead that has only intake data
+  // shouldn't be flagged as "half-qualified" — the admin hasn't done anything
+  // yet. The remaining fields can only be set via admin action (the prefs
+  // dialog writes days/timeslots/DOB together; testScore comes from recording
+  // a placement test result), so any of these being set is a reliable signal
+  // that the admin has started qualifying this lead.
+  const adminTouched =
     lead.preferredDays.length > 0 ||
     !!lead.preferredDaysAny ||
     lead.preferredTimeSlots.length > 0 ||
     !!lead.preferredTimeSlotsAny ||
-    !!lead.lessonPreference ||
-    !!lead.preferredLanguage ||
     !!lead.dateOfBirth ||
     lead.testScore !== null;
-  if (anyFilled && gate.missing.length > 0) {
+  if (adminTouched && gate.missing.length > 0) {
     return {
       tier: "amber",
       chip: { kind: "half-qualified", label: "Half-qualified" },
+      callbackChip,
     };
   }
 
-  // Idle: future callback is informational only, not urgent
-  if (lead.nextCallbackAt !== null) {
-    return {
-      tier: "idle",
-      chip: {
-        kind: "callback-scheduled",
-        label: `Callback · ${fmtTashkentShort(lead.nextCallbackAt)}`,
-      },
-    };
-  }
-
-  return { tier: "idle", chip: null };
+  // No primary signal — the secondary callback (if any) stands alone.
+  return { tier: "idle", chip: null, callbackChip };
 }

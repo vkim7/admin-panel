@@ -75,7 +75,7 @@ const LESSON_TYPE_LABELS: Record<LessonPreference, string> = {
 
 
 function getDaysLabel(days: number[]) {
-  if (days.length === 0) return "—";
+  if (days.length === 0) return "Any";
   const key = days.join(",");
   return DAYS_LABEL[key] ?? days.join(",");
 }
@@ -143,18 +143,18 @@ function makeColumns(
       ),
     },
     {
-      id: "typeLang",
-      header: "Type · Lang",
+      id: "langType",
+      header: "Lang · Type",
       enableSorting: false,
       meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
       cell: ({ row }) => {
-        const type = LESSON_TYPE_LABELS[row.original.preferredLessonType];
         const lang =
           LANG_SHORT[row.original.preferredLanguage] ??
           row.original.preferredLanguage;
+        const type = LESSON_TYPE_LABELS[row.original.preferredLessonType];
         return (
           <span className="text-sm text-muted-foreground">
-            {type} · {lang}
+            {lang} · {type}
           </span>
         );
       },
@@ -211,15 +211,15 @@ function makeColumns(
       cell: ({ row }) => {
         const days = getDaysLabel(row.original.preferredDays);
         const slots = row.original.preferredTimeSlots;
+        const slotsLabel =
+          slots.length > 0 ? [...slots].sort().join(", ") : "Any";
         return (
           <span className="text-sm">
             {days}
-            {slots.length > 0 && (
-              <span className="text-muted-foreground">
-                {" · "}
-                {[...slots].sort().join(", ")}
-              </span>
-            )}
+            <span className="text-muted-foreground">
+              {" · "}
+              {slotsLabel}
+            </span>
           </span>
         );
       },
