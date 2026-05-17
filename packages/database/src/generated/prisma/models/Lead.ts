@@ -374,6 +374,7 @@ export type LeadWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
   activities?: Prisma.LeadActivityListRelationFilter
+  smsHistory?: Prisma.SmsHistoryListRelationFilter
 }
 
 export type LeadOrderByWithRelationInput = {
@@ -404,6 +405,7 @@ export type LeadOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
   activities?: Prisma.LeadActivityOrderByRelationAggregateInput
+  smsHistory?: Prisma.SmsHistoryOrderByRelationAggregateInput
 }
 
 export type LeadWhereUniqueInput = Prisma.AtLeast<{
@@ -437,6 +439,7 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Lead"> | Date | string
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
   activities?: Prisma.LeadActivityListRelationFilter
+  smsHistory?: Prisma.SmsHistoryListRelationFilter
 }, "id">
 
 export type LeadOrderByWithAggregationInput = {
@@ -531,6 +534,7 @@ export type LeadCreateInput = {
   updatedAt?: Date | string
   student?: Prisma.StudentCreateNestedOneWithoutLeadInput
   activities?: Prisma.LeadActivityCreateNestedManyWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateInput = {
@@ -561,6 +565,7 @@ export type LeadUncheckedCreateInput = {
   updatedAt?: Date | string
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutLeadInput
   activities?: Prisma.LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUpdateInput = {
@@ -591,6 +596,7 @@ export type LeadUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneWithoutLeadNestedInput
   activities?: Prisma.LeadActivityUpdateManyWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateInput = {
@@ -621,6 +627,7 @@ export type LeadUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUncheckedUpdateOneWithoutLeadNestedInput
   activities?: Prisma.LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadCreateManyInput = {
@@ -823,6 +830,22 @@ export type LeadUpdateOneWithoutStudentNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutStudentInput, Prisma.LeadUpdateWithoutStudentInput>, Prisma.LeadUncheckedUpdateWithoutStudentInput>
 }
 
+export type LeadCreateNestedOneWithoutSmsHistoryInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutSmsHistoryInput, Prisma.LeadUncheckedCreateWithoutSmsHistoryInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutSmsHistoryInput
+  connect?: Prisma.LeadWhereUniqueInput
+}
+
+export type LeadUpdateOneWithoutSmsHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.LeadCreateWithoutSmsHistoryInput, Prisma.LeadUncheckedCreateWithoutSmsHistoryInput>
+  connectOrCreate?: Prisma.LeadCreateOrConnectWithoutSmsHistoryInput
+  upsert?: Prisma.LeadUpsertWithoutSmsHistoryInput
+  disconnect?: Prisma.LeadWhereInput | boolean
+  delete?: Prisma.LeadWhereInput | boolean
+  connect?: Prisma.LeadWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LeadUpdateToOneWithWhereWithoutSmsHistoryInput, Prisma.LeadUpdateWithoutSmsHistoryInput>, Prisma.LeadUncheckedUpdateWithoutSmsHistoryInput>
+}
+
 export type LeadCreatepreferredDaysInput = {
   set: number[]
 }
@@ -906,6 +929,7 @@ export type LeadCreateWithoutStudentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.LeadActivityCreateNestedManyWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutStudentInput = {
@@ -935,6 +959,7 @@ export type LeadUncheckedCreateWithoutStudentInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   activities?: Prisma.LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutStudentInput = {
@@ -980,6 +1005,7 @@ export type LeadUpdateWithoutStudentInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   activities?: Prisma.LeadActivityUpdateManyWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutStudentInput = {
@@ -1008,6 +1034,143 @@ export type LeadUncheckedUpdateWithoutStudentInput = {
   lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activities?: Prisma.LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutLeadNestedInput
+}
+
+export type LeadCreateWithoutSmsHistoryInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  dateOfBirth?: Date | string | null
+  note?: string | null
+  language: string
+  lessonPreference?: $Enums.LessonPreference | null
+  selfAssessedLevel?: $Enums.SelfAssessedLevel | null
+  status?: $Enums.LeadStatus
+  adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student?: Prisma.StudentCreateNestedOneWithoutLeadInput
+  activities?: Prisma.LeadActivityCreateNestedManyWithoutLeadInput
+}
+
+export type LeadUncheckedCreateWithoutSmsHistoryInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  phone: string
+  dateOfBirth?: Date | string | null
+  note?: string | null
+  language: string
+  lessonPreference?: $Enums.LessonPreference | null
+  selfAssessedLevel?: $Enums.SelfAssessedLevel | null
+  status?: $Enums.LeadStatus
+  adminNote?: string | null
+  preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
+  preferredDaysAny?: boolean
+  preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: boolean
+  preferredLanguage?: $Enums.PreferredLanguage | null
+  testSentAt?: Date | string | null
+  testLevelSent?: $Enums.Level | null
+  testScore?: number | null
+  testScoredAt?: Date | string | null
+  nextCallbackAt?: Date | string | null
+  lostReason?: $Enums.LeadLostReason | null
+  lostReasonOther?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  student?: Prisma.StudentUncheckedCreateNestedOneWithoutLeadInput
+  activities?: Prisma.LeadActivityUncheckedCreateNestedManyWithoutLeadInput
+}
+
+export type LeadCreateOrConnectWithoutSmsHistoryInput = {
+  where: Prisma.LeadWhereUniqueInput
+  create: Prisma.XOR<Prisma.LeadCreateWithoutSmsHistoryInput, Prisma.LeadUncheckedCreateWithoutSmsHistoryInput>
+}
+
+export type LeadUpsertWithoutSmsHistoryInput = {
+  update: Prisma.XOR<Prisma.LeadUpdateWithoutSmsHistoryInput, Prisma.LeadUncheckedUpdateWithoutSmsHistoryInput>
+  create: Prisma.XOR<Prisma.LeadCreateWithoutSmsHistoryInput, Prisma.LeadUncheckedCreateWithoutSmsHistoryInput>
+  where?: Prisma.LeadWhereInput
+}
+
+export type LeadUpdateToOneWithWhereWithoutSmsHistoryInput = {
+  where?: Prisma.LeadWhereInput
+  data: Prisma.XOR<Prisma.LeadUpdateWithoutSmsHistoryInput, Prisma.LeadUncheckedUpdateWithoutSmsHistoryInput>
+}
+
+export type LeadUpdateWithoutSmsHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonPreference?: Prisma.NullableEnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference | null
+  selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneWithoutLeadNestedInput
+  activities?: Prisma.LeadActivityUpdateManyWithoutLeadNestedInput
+}
+
+export type LeadUncheckedUpdateWithoutSmsHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  lessonPreference?: Prisma.NullableEnumLessonPreferenceFieldUpdateOperationsInput | $Enums.LessonPreference | null
+  selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
+  status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
+  adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
+  preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
+  preferredTimeSlotsAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preferredLanguage?: Prisma.NullableEnumPreferredLanguageFieldUpdateOperationsInput | $Enums.PreferredLanguage | null
+  testSentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  testLevelSent?: Prisma.NullableEnumLevelFieldUpdateOperationsInput | $Enums.Level | null
+  testScore?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  testScoredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextCallbackAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lostReason?: Prisma.NullableEnumLeadLostReasonFieldUpdateOperationsInput | $Enums.LeadLostReason | null
+  lostReasonOther?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUncheckedUpdateOneWithoutLeadNestedInput
   activities?: Prisma.LeadActivityUncheckedUpdateManyWithoutLeadNestedInput
 }
 
@@ -1038,6 +1201,7 @@ export type LeadCreateWithoutActivitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   student?: Prisma.StudentCreateNestedOneWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryCreateNestedManyWithoutLeadInput
 }
 
 export type LeadUncheckedCreateWithoutActivitiesInput = {
@@ -1067,6 +1231,7 @@ export type LeadUncheckedCreateWithoutActivitiesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   student?: Prisma.StudentUncheckedCreateNestedOneWithoutLeadInput
+  smsHistory?: Prisma.SmsHistoryUncheckedCreateNestedManyWithoutLeadInput
 }
 
 export type LeadCreateOrConnectWithoutActivitiesInput = {
@@ -1112,6 +1277,7 @@ export type LeadUpdateWithoutActivitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUpdateOneWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUpdateManyWithoutLeadNestedInput
 }
 
 export type LeadUncheckedUpdateWithoutActivitiesInput = {
@@ -1141,6 +1307,7 @@ export type LeadUncheckedUpdateWithoutActivitiesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   student?: Prisma.StudentUncheckedUpdateOneWithoutLeadNestedInput
+  smsHistory?: Prisma.SmsHistoryUncheckedUpdateManyWithoutLeadNestedInput
 }
 
 
@@ -1150,10 +1317,12 @@ export type LeadUncheckedUpdateWithoutActivitiesInput = {
 
 export type LeadCountOutputType = {
   activities: number
+  smsHistory: number
 }
 
 export type LeadCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   activities?: boolean | LeadCountOutputTypeCountActivitiesArgs
+  smsHistory?: boolean | LeadCountOutputTypeCountSmsHistoryArgs
 }
 
 /**
@@ -1171,6 +1340,13 @@ export type LeadCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type LeadCountOutputTypeCountActivitiesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.LeadActivityWhereInput
+}
+
+/**
+ * LeadCountOutputType without action
+ */
+export type LeadCountOutputTypeCountSmsHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SmsHistoryWhereInput
 }
 
 
@@ -1202,6 +1378,7 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
   activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
+  smsHistory?: boolean | Prisma.Lead$smsHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lead"]>
 
@@ -1293,6 +1470,7 @@ export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
   activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
+  smsHistory?: boolean | Prisma.Lead$smsHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.LeadCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LeadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1303,6 +1481,7 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     student: Prisma.$StudentPayload<ExtArgs> | null
     activities: Prisma.$LeadActivityPayload<ExtArgs>[]
+    smsHistory: Prisma.$SmsHistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1726,6 +1905,7 @@ export interface Prisma__LeadClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   student<T extends Prisma.Lead$studentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$studentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   activities<T extends Prisma.Lead$activitiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$activitiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LeadActivityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  smsHistory<T extends Prisma.Lead$smsHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Lead$smsHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SmsHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2208,6 +2388,30 @@ export type Lead$activitiesArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.LeadActivityScalarFieldEnum | Prisma.LeadActivityScalarFieldEnum[]
+}
+
+/**
+ * Lead.smsHistory
+ */
+export type Lead$smsHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SmsHistory
+   */
+  select?: Prisma.SmsHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SmsHistory
+   */
+  omit?: Prisma.SmsHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SmsHistoryInclude<ExtArgs> | null
+  where?: Prisma.SmsHistoryWhereInput
+  orderBy?: Prisma.SmsHistoryOrderByWithRelationInput | Prisma.SmsHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.SmsHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SmsHistoryScalarFieldEnum | Prisma.SmsHistoryScalarFieldEnum[]
 }
 
 /**

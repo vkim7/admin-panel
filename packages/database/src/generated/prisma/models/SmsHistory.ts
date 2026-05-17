@@ -20,93 +20,135 @@ export type SmsHistoryModel = runtime.Types.Result.DefaultSelection<Prisma.$SmsH
 
 export type AggregateSmsHistory = {
   _count: SmsHistoryCountAggregateOutputType | null
+  _avg: SmsHistoryAvgAggregateOutputType | null
+  _sum: SmsHistorySumAggregateOutputType | null
   _min: SmsHistoryMinAggregateOutputType | null
   _max: SmsHistoryMaxAggregateOutputType | null
+}
+
+export type SmsHistoryAvgAggregateOutputType = {
+  eskizMessageId: number | null
+}
+
+export type SmsHistorySumAggregateOutputType = {
+  eskizMessageId: number | null
 }
 
 export type SmsHistoryMinAggregateOutputType = {
   id: string | null
   studentId: string | null
+  leadId: string | null
   phone: string | null
   message: string | null
+  language: string | null
+  templateId: string | null
   sentAt: Date | null
   sentById: string | null
   status: $Enums.SmsStatus | null
   deliveredAt: Date | null
   failureReason: string | null
-  providerMessageId: string | null
+  eskizRequestId: string | null
+  eskizMessageId: number | null
   createdAt: Date | null
 }
 
 export type SmsHistoryMaxAggregateOutputType = {
   id: string | null
   studentId: string | null
+  leadId: string | null
   phone: string | null
   message: string | null
+  language: string | null
+  templateId: string | null
   sentAt: Date | null
   sentById: string | null
   status: $Enums.SmsStatus | null
   deliveredAt: Date | null
   failureReason: string | null
-  providerMessageId: string | null
+  eskizRequestId: string | null
+  eskizMessageId: number | null
   createdAt: Date | null
 }
 
 export type SmsHistoryCountAggregateOutputType = {
   id: number
   studentId: number
+  leadId: number
   phone: number
   message: number
+  language: number
+  templateId: number
   sentAt: number
   sentById: number
   status: number
   deliveredAt: number
   failureReason: number
-  providerMessageId: number
+  eskizRequestId: number
+  eskizMessageId: number
   createdAt: number
   _all: number
 }
 
 
+export type SmsHistoryAvgAggregateInputType = {
+  eskizMessageId?: true
+}
+
+export type SmsHistorySumAggregateInputType = {
+  eskizMessageId?: true
+}
+
 export type SmsHistoryMinAggregateInputType = {
   id?: true
   studentId?: true
+  leadId?: true
   phone?: true
   message?: true
+  language?: true
+  templateId?: true
   sentAt?: true
   sentById?: true
   status?: true
   deliveredAt?: true
   failureReason?: true
-  providerMessageId?: true
+  eskizRequestId?: true
+  eskizMessageId?: true
   createdAt?: true
 }
 
 export type SmsHistoryMaxAggregateInputType = {
   id?: true
   studentId?: true
+  leadId?: true
   phone?: true
   message?: true
+  language?: true
+  templateId?: true
   sentAt?: true
   sentById?: true
   status?: true
   deliveredAt?: true
   failureReason?: true
-  providerMessageId?: true
+  eskizRequestId?: true
+  eskizMessageId?: true
   createdAt?: true
 }
 
 export type SmsHistoryCountAggregateInputType = {
   id?: true
   studentId?: true
+  leadId?: true
   phone?: true
   message?: true
+  language?: true
+  templateId?: true
   sentAt?: true
   sentById?: true
   status?: true
   deliveredAt?: true
   failureReason?: true
-  providerMessageId?: true
+  eskizRequestId?: true
+  eskizMessageId?: true
   createdAt?: true
   _all?: true
 }
@@ -149,6 +191,18 @@ export type SmsHistoryAggregateArgs<ExtArgs extends runtime.Types.Extensions.Int
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: SmsHistoryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: SmsHistorySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: SmsHistoryMinAggregateInputType
@@ -179,23 +233,31 @@ export type SmsHistoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   _count?: SmsHistoryCountAggregateInputType | true
+  _avg?: SmsHistoryAvgAggregateInputType
+  _sum?: SmsHistorySumAggregateInputType
   _min?: SmsHistoryMinAggregateInputType
   _max?: SmsHistoryMaxAggregateInputType
 }
 
 export type SmsHistoryGroupByOutputType = {
   id: string
-  studentId: string
+  studentId: string | null
+  leadId: string | null
   phone: string
   message: string
+  language: string
+  templateId: string | null
   sentAt: Date
   sentById: string | null
   status: $Enums.SmsStatus
   deliveredAt: Date | null
   failureReason: string | null
-  providerMessageId: string | null
+  eskizRequestId: string | null
+  eskizMessageId: number | null
   createdAt: Date
   _count: SmsHistoryCountAggregateOutputType | null
+  _avg: SmsHistoryAvgAggregateOutputType | null
+  _sum: SmsHistorySumAggregateOutputType | null
   _min: SmsHistoryMinAggregateOutputType | null
   _max: SmsHistoryMaxAggregateOutputType | null
 }
@@ -220,33 +282,45 @@ export type SmsHistoryWhereInput = {
   OR?: Prisma.SmsHistoryWhereInput[]
   NOT?: Prisma.SmsHistoryWhereInput | Prisma.SmsHistoryWhereInput[]
   id?: Prisma.StringFilter<"SmsHistory"> | string
-  studentId?: Prisma.StringFilter<"SmsHistory"> | string
+  studentId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  leadId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   phone?: Prisma.StringFilter<"SmsHistory"> | string
   message?: Prisma.StringFilter<"SmsHistory"> | string
+  language?: Prisma.StringFilter<"SmsHistory"> | string
+  templateId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   sentAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
   sentById?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   status?: Prisma.EnumSmsStatusFilter<"SmsHistory"> | $Enums.SmsStatus
   deliveredAt?: Prisma.DateTimeNullableFilter<"SmsHistory"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
-  providerMessageId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizRequestId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizMessageId?: Prisma.IntNullableFilter<"SmsHistory"> | number | null
   createdAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
-  student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
+  student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
+  template?: Prisma.XOR<Prisma.SmsTemplateNullableScalarRelationFilter, Prisma.SmsTemplateWhereInput> | null
   sentBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
 }
 
 export type SmsHistoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  studentId?: Prisma.SortOrder
+  studentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  templateId?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   sentById?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  providerMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
+  eskizRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  eskizMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   student?: Prisma.StudentOrderByWithRelationInput
+  lead?: Prisma.LeadOrderByWithRelationInput
+  template?: Prisma.SmsTemplateOrderByWithRelationInput
   sentBy?: Prisma.AdminUserOrderByWithRelationInput
 }
 
@@ -255,35 +329,47 @@ export type SmsHistoryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.SmsHistoryWhereInput | Prisma.SmsHistoryWhereInput[]
   OR?: Prisma.SmsHistoryWhereInput[]
   NOT?: Prisma.SmsHistoryWhereInput | Prisma.SmsHistoryWhereInput[]
-  studentId?: Prisma.StringFilter<"SmsHistory"> | string
+  studentId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  leadId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   phone?: Prisma.StringFilter<"SmsHistory"> | string
   message?: Prisma.StringFilter<"SmsHistory"> | string
+  language?: Prisma.StringFilter<"SmsHistory"> | string
+  templateId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   sentAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
   sentById?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   status?: Prisma.EnumSmsStatusFilter<"SmsHistory"> | $Enums.SmsStatus
   deliveredAt?: Prisma.DateTimeNullableFilter<"SmsHistory"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
-  providerMessageId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizRequestId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizMessageId?: Prisma.IntNullableFilter<"SmsHistory"> | number | null
   createdAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
-  student?: Prisma.XOR<Prisma.StudentScalarRelationFilter, Prisma.StudentWhereInput>
+  student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
+  lead?: Prisma.XOR<Prisma.LeadNullableScalarRelationFilter, Prisma.LeadWhereInput> | null
+  template?: Prisma.XOR<Prisma.SmsTemplateNullableScalarRelationFilter, Prisma.SmsTemplateWhereInput> | null
   sentBy?: Prisma.XOR<Prisma.AdminUserNullableScalarRelationFilter, Prisma.AdminUserWhereInput> | null
 }, "id">
 
 export type SmsHistoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  studentId?: Prisma.SortOrder
+  studentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  leadId?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  templateId?: Prisma.SortOrderInput | Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   sentById?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  providerMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
+  eskizRequestId?: Prisma.SortOrderInput | Prisma.SortOrder
+  eskizMessageId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.SmsHistoryCountOrderByAggregateInput
+  _avg?: Prisma.SmsHistoryAvgOrderByAggregateInput
   _max?: Prisma.SmsHistoryMaxOrderByAggregateInput
   _min?: Prisma.SmsHistoryMinOrderByAggregateInput
+  _sum?: Prisma.SmsHistorySumOrderByAggregateInput
 }
 
 export type SmsHistoryScalarWhereWithAggregatesInput = {
@@ -291,15 +377,19 @@ export type SmsHistoryScalarWhereWithAggregatesInput = {
   OR?: Prisma.SmsHistoryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.SmsHistoryScalarWhereWithAggregatesInput | Prisma.SmsHistoryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"SmsHistory"> | string
-  studentId?: Prisma.StringWithAggregatesFilter<"SmsHistory"> | string
+  studentId?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
+  leadId?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
   phone?: Prisma.StringWithAggregatesFilter<"SmsHistory"> | string
   message?: Prisma.StringWithAggregatesFilter<"SmsHistory"> | string
+  language?: Prisma.StringWithAggregatesFilter<"SmsHistory"> | string
+  templateId?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
   sentAt?: Prisma.DateTimeWithAggregatesFilter<"SmsHistory"> | Date | string
   sentById?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
   status?: Prisma.EnumSmsStatusWithAggregatesFilter<"SmsHistory"> | $Enums.SmsStatus
   deliveredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"SmsHistory"> | Date | string | null
   failureReason?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
-  providerMessageId?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
+  eskizRequestId?: Prisma.StringNullableWithAggregatesFilter<"SmsHistory"> | string | null
+  eskizMessageId?: Prisma.IntNullableWithAggregatesFilter<"SmsHistory"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SmsHistory"> | Date | string
 }
 
@@ -307,27 +397,35 @@ export type SmsHistoryCreateInput = {
   id?: string
   phone: string
   message: string
+  language: string
   sentAt?: Date | string
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
-  student: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  student?: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  lead?: Prisma.LeadCreateNestedOneWithoutSmsHistoryInput
+  template?: Prisma.SmsTemplateCreateNestedOneWithoutSmsHistoryInput
   sentBy?: Prisma.AdminUserCreateNestedOneWithoutSmsSentInput
 }
 
 export type SmsHistoryUncheckedCreateInput = {
   id?: string
-  studentId: string
+  studentId?: string | null
+  leadId?: string | null
   phone: string
   message: string
+  language: string
+  templateId?: string | null
   sentAt?: Date | string
   sentById?: string | null
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -335,41 +433,53 @@ export type SmsHistoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneRequiredWithoutSmsHistoryNestedInput
+  student?: Prisma.StudentUpdateOneWithoutSmsHistoryNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutSmsHistoryNestedInput
+  template?: Prisma.SmsTemplateUpdateOneWithoutSmsHistoryNestedInput
   sentBy?: Prisma.AdminUserUpdateOneWithoutSmsSentNestedInput
 }
 
 export type SmsHistoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SmsHistoryCreateManyInput = {
   id?: string
-  studentId: string
+  studentId?: string | null
+  leadId?: string | null
   phone: string
   message: string
+  language: string
+  templateId?: string | null
   sentAt?: Date | string
   sentById?: string | null
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -377,25 +487,31 @@ export type SmsHistoryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SmsHistoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -412,43 +528,63 @@ export type SmsHistoryOrderByRelationAggregateInput = {
 export type SmsHistoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  templateId?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  providerMessageId?: Prisma.SortOrder
+  eskizRequestId?: Prisma.SortOrder
+  eskizMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type SmsHistoryAvgOrderByAggregateInput = {
+  eskizMessageId?: Prisma.SortOrder
 }
 
 export type SmsHistoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  templateId?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  providerMessageId?: Prisma.SortOrder
+  eskizRequestId?: Prisma.SortOrder
+  eskizMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type SmsHistoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   studentId?: Prisma.SortOrder
+  leadId?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   message?: Prisma.SortOrder
+  language?: Prisma.SortOrder
+  templateId?: Prisma.SortOrder
   sentAt?: Prisma.SortOrder
   sentById?: Prisma.SortOrder
   status?: Prisma.SortOrder
   deliveredAt?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  providerMessageId?: Prisma.SortOrder
+  eskizRequestId?: Prisma.SortOrder
+  eskizMessageId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type SmsHistorySumOrderByAggregateInput = {
+  eskizMessageId?: Prisma.SortOrder
 }
 
 export type SmsHistoryCreateNestedManyWithoutSentByInput = {
@@ -539,29 +675,121 @@ export type EnumSmsStatusFieldUpdateOperationsInput = {
   set?: $Enums.SmsStatus
 }
 
+export type SmsHistoryCreateNestedManyWithoutTemplateInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput> | Prisma.SmsHistoryCreateWithoutTemplateInput[] | Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput | Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput[]
+  createMany?: Prisma.SmsHistoryCreateManyTemplateInputEnvelope
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+}
+
+export type SmsHistoryUncheckedCreateNestedManyWithoutTemplateInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput> | Prisma.SmsHistoryCreateWithoutTemplateInput[] | Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput | Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput[]
+  createMany?: Prisma.SmsHistoryCreateManyTemplateInputEnvelope
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+}
+
+export type SmsHistoryUpdateManyWithoutTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput> | Prisma.SmsHistoryCreateWithoutTemplateInput[] | Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput | Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput[]
+  upsert?: Prisma.SmsHistoryUpsertWithWhereUniqueWithoutTemplateInput | Prisma.SmsHistoryUpsertWithWhereUniqueWithoutTemplateInput[]
+  createMany?: Prisma.SmsHistoryCreateManyTemplateInputEnvelope
+  set?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  disconnect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  delete?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  update?: Prisma.SmsHistoryUpdateWithWhereUniqueWithoutTemplateInput | Prisma.SmsHistoryUpdateWithWhereUniqueWithoutTemplateInput[]
+  updateMany?: Prisma.SmsHistoryUpdateManyWithWhereWithoutTemplateInput | Prisma.SmsHistoryUpdateManyWithWhereWithoutTemplateInput[]
+  deleteMany?: Prisma.SmsHistoryScalarWhereInput | Prisma.SmsHistoryScalarWhereInput[]
+}
+
+export type SmsHistoryUncheckedUpdateManyWithoutTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput> | Prisma.SmsHistoryCreateWithoutTemplateInput[] | Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput | Prisma.SmsHistoryCreateOrConnectWithoutTemplateInput[]
+  upsert?: Prisma.SmsHistoryUpsertWithWhereUniqueWithoutTemplateInput | Prisma.SmsHistoryUpsertWithWhereUniqueWithoutTemplateInput[]
+  createMany?: Prisma.SmsHistoryCreateManyTemplateInputEnvelope
+  set?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  disconnect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  delete?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  update?: Prisma.SmsHistoryUpdateWithWhereUniqueWithoutTemplateInput | Prisma.SmsHistoryUpdateWithWhereUniqueWithoutTemplateInput[]
+  updateMany?: Prisma.SmsHistoryUpdateManyWithWhereWithoutTemplateInput | Prisma.SmsHistoryUpdateManyWithWhereWithoutTemplateInput[]
+  deleteMany?: Prisma.SmsHistoryScalarWhereInput | Prisma.SmsHistoryScalarWhereInput[]
+}
+
+export type SmsHistoryCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput> | Prisma.SmsHistoryCreateWithoutLeadInput[] | Prisma.SmsHistoryUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutLeadInput | Prisma.SmsHistoryCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.SmsHistoryCreateManyLeadInputEnvelope
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+}
+
+export type SmsHistoryUncheckedCreateNestedManyWithoutLeadInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput> | Prisma.SmsHistoryCreateWithoutLeadInput[] | Prisma.SmsHistoryUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutLeadInput | Prisma.SmsHistoryCreateOrConnectWithoutLeadInput[]
+  createMany?: Prisma.SmsHistoryCreateManyLeadInputEnvelope
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+}
+
+export type SmsHistoryUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput> | Prisma.SmsHistoryCreateWithoutLeadInput[] | Prisma.SmsHistoryUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutLeadInput | Prisma.SmsHistoryCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.SmsHistoryUpsertWithWhereUniqueWithoutLeadInput | Prisma.SmsHistoryUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.SmsHistoryCreateManyLeadInputEnvelope
+  set?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  disconnect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  delete?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  update?: Prisma.SmsHistoryUpdateWithWhereUniqueWithoutLeadInput | Prisma.SmsHistoryUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.SmsHistoryUpdateManyWithWhereWithoutLeadInput | Prisma.SmsHistoryUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.SmsHistoryScalarWhereInput | Prisma.SmsHistoryScalarWhereInput[]
+}
+
+export type SmsHistoryUncheckedUpdateManyWithoutLeadNestedInput = {
+  create?: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput> | Prisma.SmsHistoryCreateWithoutLeadInput[] | Prisma.SmsHistoryUncheckedCreateWithoutLeadInput[]
+  connectOrCreate?: Prisma.SmsHistoryCreateOrConnectWithoutLeadInput | Prisma.SmsHistoryCreateOrConnectWithoutLeadInput[]
+  upsert?: Prisma.SmsHistoryUpsertWithWhereUniqueWithoutLeadInput | Prisma.SmsHistoryUpsertWithWhereUniqueWithoutLeadInput[]
+  createMany?: Prisma.SmsHistoryCreateManyLeadInputEnvelope
+  set?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  disconnect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  delete?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  connect?: Prisma.SmsHistoryWhereUniqueInput | Prisma.SmsHistoryWhereUniqueInput[]
+  update?: Prisma.SmsHistoryUpdateWithWhereUniqueWithoutLeadInput | Prisma.SmsHistoryUpdateWithWhereUniqueWithoutLeadInput[]
+  updateMany?: Prisma.SmsHistoryUpdateManyWithWhereWithoutLeadInput | Prisma.SmsHistoryUpdateManyWithWhereWithoutLeadInput[]
+  deleteMany?: Prisma.SmsHistoryScalarWhereInput | Prisma.SmsHistoryScalarWhereInput[]
+}
+
 export type SmsHistoryCreateWithoutSentByInput = {
   id?: string
   phone: string
   message: string
+  language: string
   sentAt?: Date | string
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
-  student: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  student?: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  lead?: Prisma.LeadCreateNestedOneWithoutSmsHistoryInput
+  template?: Prisma.SmsTemplateCreateNestedOneWithoutSmsHistoryInput
 }
 
 export type SmsHistoryUncheckedCreateWithoutSentByInput = {
   id?: string
-  studentId: string
+  studentId?: string | null
+  leadId?: string | null
   phone: string
   message: string
+  language: string
+  templateId?: string | null
   sentAt?: Date | string
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -596,15 +824,19 @@ export type SmsHistoryScalarWhereInput = {
   OR?: Prisma.SmsHistoryScalarWhereInput[]
   NOT?: Prisma.SmsHistoryScalarWhereInput | Prisma.SmsHistoryScalarWhereInput[]
   id?: Prisma.StringFilter<"SmsHistory"> | string
-  studentId?: Prisma.StringFilter<"SmsHistory"> | string
+  studentId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  leadId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   phone?: Prisma.StringFilter<"SmsHistory"> | string
   message?: Prisma.StringFilter<"SmsHistory"> | string
+  language?: Prisma.StringFilter<"SmsHistory"> | string
+  templateId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   sentAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
   sentById?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
   status?: Prisma.EnumSmsStatusFilter<"SmsHistory"> | $Enums.SmsStatus
   deliveredAt?: Prisma.DateTimeNullableFilter<"SmsHistory"> | Date | string | null
   failureReason?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
-  providerMessageId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizRequestId?: Prisma.StringNullableFilter<"SmsHistory"> | string | null
+  eskizMessageId?: Prisma.IntNullableFilter<"SmsHistory"> | number | null
   createdAt?: Prisma.DateTimeFilter<"SmsHistory"> | Date | string
 }
 
@@ -612,25 +844,33 @@ export type SmsHistoryCreateWithoutStudentInput = {
   id?: string
   phone: string
   message: string
+  language: string
   sentAt?: Date | string
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
+  lead?: Prisma.LeadCreateNestedOneWithoutSmsHistoryInput
+  template?: Prisma.SmsTemplateCreateNestedOneWithoutSmsHistoryInput
   sentBy?: Prisma.AdminUserCreateNestedOneWithoutSmsSentInput
 }
 
 export type SmsHistoryUncheckedCreateWithoutStudentInput = {
   id?: string
+  leadId?: string | null
   phone: string
   message: string
+  language: string
+  templateId?: string | null
   sentAt?: Date | string
   sentById?: string | null
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -660,16 +900,140 @@ export type SmsHistoryUpdateManyWithWhereWithoutStudentInput = {
   data: Prisma.XOR<Prisma.SmsHistoryUpdateManyMutationInput, Prisma.SmsHistoryUncheckedUpdateManyWithoutStudentInput>
 }
 
-export type SmsHistoryCreateManySentByInput = {
+export type SmsHistoryCreateWithoutTemplateInput = {
   id?: string
-  studentId: string
   phone: string
   message: string
+  language: string
   sentAt?: Date | string
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+  student?: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  lead?: Prisma.LeadCreateNestedOneWithoutSmsHistoryInput
+  sentBy?: Prisma.AdminUserCreateNestedOneWithoutSmsSentInput
+}
+
+export type SmsHistoryUncheckedCreateWithoutTemplateInput = {
+  id?: string
+  studentId?: string | null
+  leadId?: string | null
+  phone: string
+  message: string
+  language: string
+  sentAt?: Date | string
+  sentById?: string | null
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+}
+
+export type SmsHistoryCreateOrConnectWithoutTemplateInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput>
+}
+
+export type SmsHistoryCreateManyTemplateInputEnvelope = {
+  data: Prisma.SmsHistoryCreateManyTemplateInput | Prisma.SmsHistoryCreateManyTemplateInput[]
+  skipDuplicates?: boolean
+}
+
+export type SmsHistoryUpsertWithWhereUniqueWithoutTemplateInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.SmsHistoryUpdateWithoutTemplateInput, Prisma.SmsHistoryUncheckedUpdateWithoutTemplateInput>
+  create: Prisma.XOR<Prisma.SmsHistoryCreateWithoutTemplateInput, Prisma.SmsHistoryUncheckedCreateWithoutTemplateInput>
+}
+
+export type SmsHistoryUpdateWithWhereUniqueWithoutTemplateInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.SmsHistoryUpdateWithoutTemplateInput, Prisma.SmsHistoryUncheckedUpdateWithoutTemplateInput>
+}
+
+export type SmsHistoryUpdateManyWithWhereWithoutTemplateInput = {
+  where: Prisma.SmsHistoryScalarWhereInput
+  data: Prisma.XOR<Prisma.SmsHistoryUpdateManyMutationInput, Prisma.SmsHistoryUncheckedUpdateManyWithoutTemplateInput>
+}
+
+export type SmsHistoryCreateWithoutLeadInput = {
+  id?: string
+  phone: string
+  message: string
+  language: string
+  sentAt?: Date | string
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+  student?: Prisma.StudentCreateNestedOneWithoutSmsHistoryInput
+  template?: Prisma.SmsTemplateCreateNestedOneWithoutSmsHistoryInput
+  sentBy?: Prisma.AdminUserCreateNestedOneWithoutSmsSentInput
+}
+
+export type SmsHistoryUncheckedCreateWithoutLeadInput = {
+  id?: string
+  studentId?: string | null
+  phone: string
+  message: string
+  language: string
+  templateId?: string | null
+  sentAt?: Date | string
+  sentById?: string | null
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+}
+
+export type SmsHistoryCreateOrConnectWithoutLeadInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput>
+}
+
+export type SmsHistoryCreateManyLeadInputEnvelope = {
+  data: Prisma.SmsHistoryCreateManyLeadInput | Prisma.SmsHistoryCreateManyLeadInput[]
+  skipDuplicates?: boolean
+}
+
+export type SmsHistoryUpsertWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.SmsHistoryUpdateWithoutLeadInput, Prisma.SmsHistoryUncheckedUpdateWithoutLeadInput>
+  create: Prisma.XOR<Prisma.SmsHistoryCreateWithoutLeadInput, Prisma.SmsHistoryUncheckedCreateWithoutLeadInput>
+}
+
+export type SmsHistoryUpdateWithWhereUniqueWithoutLeadInput = {
+  where: Prisma.SmsHistoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.SmsHistoryUpdateWithoutLeadInput, Prisma.SmsHistoryUncheckedUpdateWithoutLeadInput>
+}
+
+export type SmsHistoryUpdateManyWithWhereWithoutLeadInput = {
+  where: Prisma.SmsHistoryScalarWhereInput
+  data: Prisma.XOR<Prisma.SmsHistoryUpdateManyMutationInput, Prisma.SmsHistoryUncheckedUpdateManyWithoutLeadInput>
+}
+
+export type SmsHistoryCreateManySentByInput = {
+  id?: string
+  studentId?: string | null
+  leadId?: string | null
+  phone: string
+  message: string
+  language: string
+  templateId?: string | null
+  sentAt?: Date | string
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -677,51 +1041,67 @@ export type SmsHistoryUpdateWithoutSentByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  student?: Prisma.StudentUpdateOneRequiredWithoutSmsHistoryNestedInput
+  student?: Prisma.StudentUpdateOneWithoutSmsHistoryNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutSmsHistoryNestedInput
+  template?: Prisma.SmsTemplateUpdateOneWithoutSmsHistoryNestedInput
 }
 
 export type SmsHistoryUncheckedUpdateWithoutSentByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SmsHistoryUncheckedUpdateManyWithoutSentByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  studentId?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SmsHistoryCreateManyStudentInput = {
   id?: string
+  leadId?: string | null
   phone: string
   message: string
+  language: string
+  templateId?: string | null
   sentAt?: Date | string
   sentById?: string | null
   status?: $Enums.SmsStatus
   deliveredAt?: Date | string | null
   failureReason?: string | null
-  providerMessageId?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
   createdAt?: Date | string
 }
 
@@ -729,38 +1109,186 @@ export type SmsHistoryUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lead?: Prisma.LeadUpdateOneWithoutSmsHistoryNestedInput
+  template?: Prisma.SmsTemplateUpdateOneWithoutSmsHistoryNestedInput
   sentBy?: Prisma.AdminUserUpdateOneWithoutSmsSentNestedInput
 }
 
 export type SmsHistoryUncheckedUpdateWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type SmsHistoryUncheckedUpdateManyWithoutStudentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
   deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  providerMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SmsHistoryCreateManyTemplateInput = {
+  id?: string
+  studentId?: string | null
+  leadId?: string | null
+  phone: string
+  message: string
+  language: string
+  sentAt?: Date | string
+  sentById?: string | null
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+}
+
+export type SmsHistoryUpdateWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneWithoutSmsHistoryNestedInput
+  lead?: Prisma.LeadUpdateOneWithoutSmsHistoryNestedInput
+  sentBy?: Prisma.AdminUserUpdateOneWithoutSmsSentNestedInput
+}
+
+export type SmsHistoryUncheckedUpdateWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SmsHistoryUncheckedUpdateManyWithoutTemplateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  leadId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SmsHistoryCreateManyLeadInput = {
+  id?: string
+  studentId?: string | null
+  phone: string
+  message: string
+  language: string
+  templateId?: string | null
+  sentAt?: Date | string
+  sentById?: string | null
+  status?: $Enums.SmsStatus
+  deliveredAt?: Date | string | null
+  failureReason?: string | null
+  eskizRequestId?: string | null
+  eskizMessageId?: number | null
+  createdAt?: Date | string
+}
+
+export type SmsHistoryUpdateWithoutLeadInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  student?: Prisma.StudentUpdateOneWithoutSmsHistoryNestedInput
+  template?: Prisma.SmsTemplateUpdateOneWithoutSmsHistoryNestedInput
+  sentBy?: Prisma.AdminUserUpdateOneWithoutSmsSentNestedInput
+}
+
+export type SmsHistoryUncheckedUpdateWithoutLeadInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type SmsHistoryUncheckedUpdateManyWithoutLeadInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  studentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  language?: Prisma.StringFieldUpdateOperationsInput | string
+  templateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumSmsStatusFieldUpdateOperationsInput | $Enums.SmsStatus
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizRequestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  eskizMessageId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -769,96 +1297,130 @@ export type SmsHistoryUncheckedUpdateManyWithoutStudentInput = {
 export type SmsHistorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   studentId?: boolean
+  leadId?: boolean
   phone?: boolean
   message?: boolean
+  language?: boolean
+  templateId?: boolean
   sentAt?: boolean
   sentById?: boolean
   status?: boolean
   deliveredAt?: boolean
   failureReason?: boolean
-  providerMessageId?: boolean
+  eskizRequestId?: boolean
+  eskizMessageId?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }, ExtArgs["result"]["smsHistory"]>
 
 export type SmsHistorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   studentId?: boolean
+  leadId?: boolean
   phone?: boolean
   message?: boolean
+  language?: boolean
+  templateId?: boolean
   sentAt?: boolean
   sentById?: boolean
   status?: boolean
   deliveredAt?: boolean
   failureReason?: boolean
-  providerMessageId?: boolean
+  eskizRequestId?: boolean
+  eskizMessageId?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }, ExtArgs["result"]["smsHistory"]>
 
 export type SmsHistorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   studentId?: boolean
+  leadId?: boolean
   phone?: boolean
   message?: boolean
+  language?: boolean
+  templateId?: boolean
   sentAt?: boolean
   sentById?: boolean
   status?: boolean
   deliveredAt?: boolean
   failureReason?: boolean
-  providerMessageId?: boolean
+  eskizRequestId?: boolean
+  eskizMessageId?: boolean
   createdAt?: boolean
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }, ExtArgs["result"]["smsHistory"]>
 
 export type SmsHistorySelectScalar = {
   id?: boolean
   studentId?: boolean
+  leadId?: boolean
   phone?: boolean
   message?: boolean
+  language?: boolean
+  templateId?: boolean
   sentAt?: boolean
   sentById?: boolean
   status?: boolean
   deliveredAt?: boolean
   failureReason?: boolean
-  providerMessageId?: boolean
+  eskizRequestId?: boolean
+  eskizMessageId?: boolean
   createdAt?: boolean
 }
 
-export type SmsHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "phone" | "message" | "sentAt" | "sentById" | "status" | "deliveredAt" | "failureReason" | "providerMessageId" | "createdAt", ExtArgs["result"]["smsHistory"]>
+export type SmsHistoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "studentId" | "leadId" | "phone" | "message" | "language" | "templateId" | "sentAt" | "sentById" | "status" | "deliveredAt" | "failureReason" | "eskizRequestId" | "eskizMessageId" | "createdAt", ExtArgs["result"]["smsHistory"]>
 export type SmsHistoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }
 export type SmsHistoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }
 export type SmsHistoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  student?: boolean | Prisma.StudentDefaultArgs<ExtArgs>
+  student?: boolean | Prisma.SmsHistory$studentArgs<ExtArgs>
+  lead?: boolean | Prisma.SmsHistory$leadArgs<ExtArgs>
+  template?: boolean | Prisma.SmsHistory$templateArgs<ExtArgs>
   sentBy?: boolean | Prisma.SmsHistory$sentByArgs<ExtArgs>
 }
 
 export type $SmsHistoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "SmsHistory"
   objects: {
-    student: Prisma.$StudentPayload<ExtArgs>
+    student: Prisma.$StudentPayload<ExtArgs> | null
+    lead: Prisma.$LeadPayload<ExtArgs> | null
+    template: Prisma.$SmsTemplatePayload<ExtArgs> | null
     sentBy: Prisma.$AdminUserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    studentId: string
+    studentId: string | null
+    leadId: string | null
     phone: string
     message: string
+    language: string
+    templateId: string | null
     sentAt: Date
     sentById: string | null
     status: $Enums.SmsStatus
     deliveredAt: Date | null
     failureReason: string | null
-    providerMessageId: string | null
+    eskizRequestId: string | null
+    eskizMessageId: number | null
     createdAt: Date
   }, ExtArgs["result"]["smsHistory"]>
   composites: {}
@@ -1254,7 +1816,9 @@ readonly fields: SmsHistoryFieldRefs;
  */
 export interface Prisma__SmsHistoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  student<T extends Prisma.StudentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StudentDefaultArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  student<T extends Prisma.SmsHistory$studentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsHistory$studentArgs<ExtArgs>>): Prisma.Prisma__StudentClient<runtime.Types.Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  lead<T extends Prisma.SmsHistory$leadArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsHistory$leadArgs<ExtArgs>>): Prisma.Prisma__LeadClient<runtime.Types.Result.GetResult<Prisma.$LeadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  template<T extends Prisma.SmsHistory$templateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsHistory$templateArgs<ExtArgs>>): Prisma.Prisma__SmsTemplateClient<runtime.Types.Result.GetResult<Prisma.$SmsTemplatePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   sentBy<T extends Prisma.SmsHistory$sentByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SmsHistory$sentByArgs<ExtArgs>>): Prisma.Prisma__AdminUserClient<runtime.Types.Result.GetResult<Prisma.$AdminUserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1287,14 +1851,18 @@ export interface Prisma__SmsHistoryClient<T, Null = never, ExtArgs extends runti
 export interface SmsHistoryFieldRefs {
   readonly id: Prisma.FieldRef<"SmsHistory", 'String'>
   readonly studentId: Prisma.FieldRef<"SmsHistory", 'String'>
+  readonly leadId: Prisma.FieldRef<"SmsHistory", 'String'>
   readonly phone: Prisma.FieldRef<"SmsHistory", 'String'>
   readonly message: Prisma.FieldRef<"SmsHistory", 'String'>
+  readonly language: Prisma.FieldRef<"SmsHistory", 'String'>
+  readonly templateId: Prisma.FieldRef<"SmsHistory", 'String'>
   readonly sentAt: Prisma.FieldRef<"SmsHistory", 'DateTime'>
   readonly sentById: Prisma.FieldRef<"SmsHistory", 'String'>
   readonly status: Prisma.FieldRef<"SmsHistory", 'SmsStatus'>
   readonly deliveredAt: Prisma.FieldRef<"SmsHistory", 'DateTime'>
   readonly failureReason: Prisma.FieldRef<"SmsHistory", 'String'>
-  readonly providerMessageId: Prisma.FieldRef<"SmsHistory", 'String'>
+  readonly eskizRequestId: Prisma.FieldRef<"SmsHistory", 'String'>
+  readonly eskizMessageId: Prisma.FieldRef<"SmsHistory", 'Int'>
   readonly createdAt: Prisma.FieldRef<"SmsHistory", 'DateTime'>
 }
     
@@ -1689,6 +2257,63 @@ export type SmsHistoryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many SmsHistories to delete.
    */
   limit?: number
+}
+
+/**
+ * SmsHistory.student
+ */
+export type SmsHistory$studentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Student
+   */
+  select?: Prisma.StudentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Student
+   */
+  omit?: Prisma.StudentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.StudentInclude<ExtArgs> | null
+  where?: Prisma.StudentWhereInput
+}
+
+/**
+ * SmsHistory.lead
+ */
+export type SmsHistory$leadArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Lead
+   */
+  select?: Prisma.LeadSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Lead
+   */
+  omit?: Prisma.LeadOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LeadInclude<ExtArgs> | null
+  where?: Prisma.LeadWhereInput
+}
+
+/**
+ * SmsHistory.template
+ */
+export type SmsHistory$templateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SmsTemplate
+   */
+  select?: Prisma.SmsTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SmsTemplate
+   */
+  omit?: Prisma.SmsTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SmsTemplateInclude<ExtArgs> | null
+  where?: Prisma.SmsTemplateWhereInput
 }
 
 /**

@@ -22,7 +22,7 @@ Student
   ├── StudentPromotion* (active promotions for this student)
   ├── Referral* (as referrer or as referred)
   ├── CallHistory* (reception follow-up calls)
-  ├── SmsHistory* (payment reminder texts)
+  ├── SmsHistory* (every outgoing SMS — payment reminders, etc.; also linked from Lead pre-conversion)
   └── ScheduledAction* (future-dated operations targeting this student)
 
 Teacher
@@ -220,6 +220,7 @@ ready.
 | **Relations** | |
 | student | Optional 1:1. Set when the lead is converted via `createStudent({ leadId })`. |
 | activities | Append-only audit log. See LeadActivity. |
+| smsHistory | Outgoing SMS sent while the record was still a Lead (greeting on creation, manual callback reminders). After conversion, the rows stay linked to the Lead — the merged student-side timeline reads both `studentId = X` and `leadId = student.leadId`. |
 
 **Status transitions and gating:**
 - **NEW → CONTACTED** is auto-transitioned by `autoTransitionToContacted()` whenever admin saves a note, sets a schedule, sets a callback, marks a test sent, or records a score. Each transition emits a `STATUS_CHANGE` activity.
@@ -993,17 +994,46 @@ Reception follow-up calls. Used to track "did we call this lead back?"
 | calledById | Which admin made the call |
 
 ### SmsHistory
-Payment reminder texts. Used to track "did we already text this parent?" and whether the message was actually delivered.
+Every outgoing SMS, regardless of recipient type. Used to display per-lead and per-student communication timelines, audit "did we already text this person?", and reconcile delivery via Eskiz callbacks.
+
+**Polymorphic recipient:** exactly one of `studentId` or `leadId` is set per row. Enforced by a DB CHECK constraint (`(studentId IS NULL) <> (leadId IS NULL)`). When a Lead converts to a Student, the old lead-era rows keep `leadId` set — the student detail page merges history at query time via `Student.leadId`. No data migration on conversion.
 
 | Field | Purpose |
 |-------|---------|
-| phone | The actual phone number texted (student's or parent's via Family) |
-| message | SMS content |
-| sentById | Which admin sent it |
-| status | SENT → DELIVERED or FAILED. Default SENT at creation, updated via provider callback. |
-| deliveredAt | When the SMS provider confirmed delivery (null while pending or failed) |
-| failureReason | Why delivery failed, if status = FAILED |
-| providerMessageId | SMS provider's message ID for tracking delivery callbacks |
+| studentId / leadId | Polymorphic recipient — exactly one is set |
+| phone | The actual phone number texted (lead's, student's, or parent's via Family) |
+| message | Rendered SMS body — exactly what was sent (placeholders already substituted) |
+| language | `"ru"` or `"uz"` at send time — preserved so the historical record is honest even if templates change |
+| templateId | Which `SmsTemplate` produced this send (null for ad-hoc/legacy rows) |
+| sentById | Which admin triggered it (null for system-triggered, e.g. landing greeting) |
+| status | SENT → DELIVERED or FAILED via Eskiz callback. SKIPPED if `SMS_ALLOWED_PHONES` excluded the recipient — message never reached Eskiz. |
+| deliveredAt | When Eskiz callback confirmed delivery (null while pending or failed) |
+| failureReason | Why delivery failed (Eskiz status string or local error) |
+| eskizRequestId | UUID Eskiz returns synchronously from POST /api/message/sms/send |
+| eskizMessageId | Integer SMS ID Eskiz includes in delivery callbacks |
+
+### SmsTemplate
+SMS templates registered with (and moderated by) Eskiz. Production sends must match an approved `service` template; Eskiz rejects unrecognized text. Until `eskizTemplateId` is populated, sends short-circuit to `SmsHistory.status = FAILED` with `failureReason = "Template pending Eskiz approval"`.
+
+| Field | Purpose |
+|-------|---------|
+| code | Stable internal handle (`lead_greeting`, `lead_callback_reminder`) — code looks up templates by `code + language` |
+| language | `"ru"` or `"uz"` — same `code` exists once per language |
+| body | Template text with `{name}` placeholder for runtime substitution |
+| eskizTemplateId | Numeric ID Eskiz returns on approval (null while in moderation) |
+| status | Mirrors Eskiz lifecycle: `moderation`, `service` (approved transactional), `reklama` (approved promotional), `rejected` |
+| isActive | Soft-disable flag — set false to retire a template without deleting historical rows referencing it |
+
+**Unique constraint:** `(code, language)`.
+
+### EskizToken
+Singleton row caching the Eskiz JWT. Vercel serverless cold starts would otherwise re-login every time. `id` is always `"default"` — convention-enforced singleton. Refresh logic lives in `packages/sms/auth.ts`; we refresh at the 25-day mark (Eskiz JWTs last 30 days) for safety.
+
+| Field | Purpose |
+|-------|---------|
+| token | The current JWT — used as Bearer for every Eskiz request |
+| expiresAt | When the JWT expires (30 days from acquisition) |
+| refreshedAt | When we last successfully refreshed |
 
 ---
 

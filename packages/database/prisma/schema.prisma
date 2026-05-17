@@ -323,9 +323,9 @@ enum GroupType {
 }
 
 enum GroupClosedReason {
-  STUDENTS_LEFT     // All students churned/transferred before program end
-  LOW_ENROLLMENT    // Group never filled enough to be viable
-  ADMIN_ERROR       // Created in error (wrong teacher/time/level)
+  STUDENTS_LEFT // All students churned/transferred before program end
+  LOW_ENROLLMENT // Group never filled enough to be viable
+  ADMIN_ERROR // Created in error (wrong teacher/time/level)
   OTHER
 }
 
@@ -401,6 +401,7 @@ enum SmsStatus {
   SENT
   DELIVERED
   FAILED
+  SKIPPED // SMS_ALLOWED_PHONES guard excluded the recipient — message never reached Eskiz
 }
 
 enum ScheduledActionType {
@@ -487,7 +488,7 @@ model Teacher {
 
   isActive        Boolean   @default(true)
   deactivatedAt   DateTime? // When isActive was set to false (audit trail)
-  deactivatedById String?   // Which admin deactivated this teacher
+  deactivatedById String? // Which admin deactivated this teacher
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -526,11 +527,11 @@ model Student {
   crmCode        String @unique @default("") // e.g. "1", "42" — plain sequenceNumber as string, computed by DB trigger. Provide explicitly to override.
   sequenceNumber Int    @unique @default(autoincrement()) // Race-condition-free ID generation. crmCode is computed from this at creation time.
 
-  firstName   String
-  lastName    String
-  phone       String        @unique // Student's own Telegram-linked phone (required for Mini App invite)
-  telegramId  BigInt?       @unique // For future student Mini App auth via Telegram initData
-  dateOfBirth DateTime      @db.Date
+  firstName     String
+  lastName      String
+  phone         String        @unique // Student's own Telegram-linked phone (required for Mini App invite)
+  telegramId    BigInt?       @unique // For future student Mini App auth via Telegram initData
+  dateOfBirth   DateTime      @db.Date
   level         Level
   progressStage ProgressStage @default(BEGINNING)
   status        StudentStatus @default(AWAITING_ASSIGNMENT)
@@ -568,25 +569,25 @@ model Student {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  family            Family?                @relation(fields: [familyId], references: [id], onDelete: Restrict)
-  activatedBy       AdminUser?             @relation("ActivatedByAdmin", fields: [activatedById], references: [id], onDelete: Restrict)
-  inactivatedBy     AdminUser?             @relation("InactivatedByAdmin", fields: [inactivatedById], references: [id], onDelete: Restrict)
-  lostReason        LostReason?            @relation(fields: [lostReasonId], references: [id], onDelete: Restrict)
-  uncertainReason   UncertainReason?       @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
-  lead              Lead?                  @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  family             Family?                @relation(fields: [familyId], references: [id], onDelete: Restrict)
+  activatedBy        AdminUser?             @relation("ActivatedByAdmin", fields: [activatedById], references: [id], onDelete: Restrict)
+  inactivatedBy      AdminUser?             @relation("InactivatedByAdmin", fields: [inactivatedById], references: [id], onDelete: Restrict)
+  lostReason         LostReason?            @relation(fields: [lostReasonId], references: [id], onDelete: Restrict)
+  uncertainReason    UncertainReason?       @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
+  lead               Lead?                  @relation(fields: [leadId], references: [id], onDelete: SetNull)
   uncertainHistories UncertainHistory[]
-  groupMemberships  GroupMembership[]
-  attendanceRecords Attendance[]
-  payments          Payment[]
-  paymentPeriods    StudentPaymentPeriod[]
-  callHistory       CallHistory[]
-  smsHistory        SmsHistory[]
-  studentPromotions StudentPromotion[]
-  refunds           Refund[]
-  referralsMade     Referral[]             @relation("Referrer")
-  referralReceived  Referral?              @relation("Referred")
-  scheduledActions  ScheduledAction[]
-  excusedAbsences   ExcusedAbsence[]
+  groupMemberships   GroupMembership[]
+  attendanceRecords  Attendance[]
+  payments           Payment[]
+  paymentPeriods     StudentPaymentPeriod[]
+  callHistory        CallHistory[]
+  smsHistory         SmsHistory[]
+  studentPromotions  StudentPromotion[]
+  refunds            Refund[]
+  referralsMade      Referral[]             @relation("Referrer")
+  referralReceived   Referral?              @relation("Referred")
+  scheduledActions   ScheduledAction[]
+  excusedAbsences    ExcusedAbsence[]
 
   @@index([status])
   @@index([level])
@@ -700,35 +701,35 @@ model Group {
   skipAutoGraduation   Boolean  @default(false) // If true, skip auto-graduation prompt when program ends
   graduatedIntoGroupId String? // Self-ref: the next-level group created when this group's program ends
   zoomMeetingId        String?  @unique // Zoom recurring meeting ID — needed for API calls (update/delete)
-  zoomJoinUrl          String?  // Stable join URL for students
+  zoomJoinUrl          String? // Stable join URL for students
 
   // Early-close audit trail. Set when admin closes a group that's neither
   // graduated nor merged (i.e. all students left and admin retires the group).
   // closedAt being non-null is the canonical signal for "closed early".
-  closedAt      DateTime?
-  closedById    String?
-  closedReason  GroupClosedReason?
+  closedAt     DateTime?
+  closedById   String?
+  closedReason GroupClosedReason?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  teacher               Teacher                @relation(fields: [teacherId], references: [id], onDelete: Restrict)
-  closedBy              AdminUser?             @relation("GroupClosedByAdmin", fields: [closedById], references: [id], onDelete: Restrict)
-  mergedIntoGroup       Group?                 @relation("GroupMerge", fields: [mergedIntoGroupId], references: [id], onDelete: Restrict)
-  mergedFromGroups      Group[]                @relation("GroupMerge")
-  graduatedIntoGroup    Group?                 @relation("GroupGraduation", fields: [graduatedIntoGroupId], references: [id], onDelete: Restrict)
-  graduatedFromGroups   Group[]                @relation("GroupGraduation")
-  memberships           GroupMembership[]
-  lessons               Lesson[]
-  attendanceRecords     Attendance[]
-  exams                 Exam[]
-  studentPaymentPeriods StudentPaymentPeriod[]
-  teacherPaymentPeriods TeacherPaymentPeriod[]
-  scheduleSlots             TeacherScheduleSlot[]
-  teacherHistory            GroupTeacherHistory[]
-  recordings                Recording[]
-  scheduledActionsAsSource  ScheduledAction[]       @relation("ScheduledActionSource")
-  scheduledActionsAsDest    ScheduledAction[]       @relation("ScheduledActionDest")
+  teacher                  Teacher                @relation(fields: [teacherId], references: [id], onDelete: Restrict)
+  closedBy                 AdminUser?             @relation("GroupClosedByAdmin", fields: [closedById], references: [id], onDelete: Restrict)
+  mergedIntoGroup          Group?                 @relation("GroupMerge", fields: [mergedIntoGroupId], references: [id], onDelete: Restrict)
+  mergedFromGroups         Group[]                @relation("GroupMerge")
+  graduatedIntoGroup       Group?                 @relation("GroupGraduation", fields: [graduatedIntoGroupId], references: [id], onDelete: Restrict)
+  graduatedFromGroups      Group[]                @relation("GroupGraduation")
+  memberships              GroupMembership[]
+  lessons                  Lesson[]
+  attendanceRecords        Attendance[]
+  exams                    Exam[]
+  studentPaymentPeriods    StudentPaymentPeriod[]
+  teacherPaymentPeriods    TeacherPaymentPeriod[]
+  scheduleSlots            TeacherScheduleSlot[]
+  teacherHistory           GroupTeacherHistory[]
+  recordings               Recording[]
+  scheduledActionsAsSource ScheduledAction[]      @relation("ScheduledActionSource")
+  scheduledActionsAsDest   ScheduledAction[]      @relation("ScheduledActionDest")
 
   @@index([teacherId])
   @@index([isActive, type])
@@ -839,10 +840,10 @@ model UncertainHistory {
   resolvedAt        DateTime?
   resolvedById      String?
 
-  student         Student          @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  uncertainReason UncertainReason  @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
-  flaggedByAdmin  AdminUser?       @relation("FlaggedUncertain", fields: [flaggedById], references: [id], onDelete: Restrict)
-  resolvedByAdmin AdminUser?       @relation("ResolvedUncertain", fields: [resolvedById], references: [id], onDelete: Restrict)
+  student         Student         @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  uncertainReason UncertainReason @relation(fields: [uncertainReasonId], references: [id], onDelete: Restrict)
+  flaggedByAdmin  AdminUser?      @relation("FlaggedUncertain", fields: [flaggedById], references: [id], onDelete: Restrict)
+  resolvedByAdmin AdminUser?      @relation("ResolvedUncertain", fields: [resolvedById], references: [id], onDelete: Restrict)
 
   @@index([studentId])
 }
@@ -854,10 +855,10 @@ model GroupMembership {
   studentId String
   groupId   String
 
-  joinDate  DateTime  @db.Date
-  leaveDate DateTime? @db.Date // null = currently in group
-  isTrial            Boolean  @default(false) // Trial student — occupies a seat but may not commit
-  wasTrialOriginally Boolean  @default(false) // Snapshot: was this membership created as a trial?
+  joinDate           DateTime  @db.Date
+  leaveDate          DateTime? @db.Date // null = currently in group
+  isTrial            Boolean   @default(false) // Trial student — occupies a seat but may not commit
+  wasTrialOriginally Boolean   @default(false) // Snapshot: was this membership created as a trial?
   trialTeacherId     String? // Snapshot: who was the group's teacher at trial time?
 
   // Why the membership ended — inferred from context:
@@ -989,7 +990,7 @@ model Attendance {
 }
 
 model ExcusedAbsence {
-  id                String  @id @default(cuid())
+  id                String @id @default(cuid())
   lessonId          String
   studentId         String
   groupMembershipId String
@@ -1001,14 +1002,14 @@ model ExcusedAbsence {
   // Embedded document (single proof file per excuse)
   documentFileName String?
   documentFileKey  String? // R2 object key
-  documentFileSize Int?    // Bytes
+  documentFileSize Int? // Bytes
 
   createdById String
   createdAt   DateTime @default(now())
 
   lesson          Lesson               @relation(fields: [lessonId], references: [id], onDelete: Restrict)
   student         Student              @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  groupMembership GroupMembership       @relation(fields: [groupMembershipId], references: [id], onDelete: Restrict)
+  groupMembership GroupMembership      @relation(fields: [groupMembershipId], references: [id], onDelete: Restrict)
   reason          ExcusedAbsenceReason @relation(fields: [reasonId], references: [id], onDelete: Restrict)
   createdBy       AdminUser            @relation("ExcusedAbsenceCreatedBy", fields: [createdById], references: [id], onDelete: Restrict)
 
@@ -1039,7 +1040,7 @@ model Recording {
   fileSizeBytes   BigInt
   durationSeconds Int? // For video/audio files; null for chat/transcript
   status          RecordingStatus @default(PENDING)
-  zoomFileId      String @unique // Zoom recording file ID — idempotency key for webhook retries
+  zoomFileId      String          @unique // Zoom recording file ID — idempotency key for webhook retries
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1252,11 +1253,11 @@ model TeacherRateChange {
 }
 
 model TeacherDocument {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
   teacherId    String
   fileName     String // Original file name for display
-  fileKey      String @unique // R2 object key
-  fileSize     Int    // File size in bytes
+  fileKey      String   @unique // R2 object key
+  fileSize     Int // File size in bytes
   uploadedAt   DateTime @default(now())
   uploadedById String
 
@@ -1334,7 +1335,7 @@ model StudentPromotion {
   appliedAt  DateTime  @default(now())
   expiresAt  DateTime? // Calculated from Promotion.validityDays; null = never expires
   monthsUsed Int       @default(0) // Tracks usage for recurring promos
-  comment    String?   // Required for manual assignments (APOLOGY/REWARD)
+  comment    String? // Required for manual assignments (APOLOGY/REWARD)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1399,26 +1400,76 @@ model CallHistory {
   @@index([studentId])
 }
 
+// Polymorphic recipient: exactly one of (studentId, leadId) is set per row.
+// Enforced by a CHECK constraint added in the migration (Prisma can't express
+// XOR-not-null at the schema level). When a Lead converts to a Student, old
+// lead-era rows keep `leadId` set — the student page merges history via
+// `Student.leadId` at query time, no data migration.
 model SmsHistory {
-  id        String   @id @default(cuid())
-  studentId String
-  phone     String // The phone number SMS was sent to (student's own or parent's)
-  message   String
-  sentAt    DateTime @default(now())
-  sentById  String?
+  id         String   @id @default(cuid())
+  studentId  String?
+  leadId     String?
+  phone      String // Number SMS was sent to (student's own, parent's, or lead's)
+  message    String // Rendered body — what was actually sent (with placeholders substituted)
+  language   String // "ru" | "uz" — locale at send time
+  templateId String? // Which SmsTemplate produced this send (null for ad-hoc/legacy)
+  sentAt     DateTime @default(now())
+  sentById   String?
 
   // Delivery tracking
-  status            SmsStatus @default(SENT)
-  deliveredAt       DateTime? // When provider confirmed delivery
-  failureReason     String? // Why delivery failed (if status = FAILED)
-  providerMessageId String? // SMS provider's message ID for tracking
+  status        SmsStatus @default(SENT)
+  deliveredAt   DateTime? // When Eskiz callback confirmed delivery
+  failureReason String? // Why delivery failed (Eskiz status string or local error)
+
+  // Eskiz returns two correlation IDs at different points in the lifecycle.
+  eskizRequestId String? // UUID returned synchronously by POST /api/message/sms/send
+  eskizMessageId Int? // Integer SMS ID, arrives via delivery callback
 
   createdAt DateTime @default(now())
 
-  student Student    @relation(fields: [studentId], references: [id], onDelete: Restrict)
-  sentBy  AdminUser? @relation("SentByAdmin", fields: [sentById], references: [id], onDelete: Restrict)
+  student  Student?     @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  // leadId uses Restrict (not SetNull) to keep the CHECK constraint satisfiable:
+  // a SetNull on a lead-only row (studentId=null, leadId=X) would null both
+  // columns and violate the XOR. In practice leads aren't deleted in this
+  // system, so this just turns a confusing CHECK error into a clear FK error.
+  lead     Lead?        @relation(fields: [leadId], references: [id], onDelete: Restrict)
+  template SmsTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  sentBy   AdminUser?   @relation("SentByAdmin", fields: [sentById], references: [id], onDelete: Restrict)
 
   @@index([studentId])
+  @@index([leadId])
+  @@index([eskizRequestId])
+}
+
+// SMS templates registered with (and moderated by) Eskiz. Production messages
+// must match an approved `service` template — Eskiz rejects unrecognized text.
+// `eskizTemplateId` is filled in once Eskiz approves; until then, sends short-
+// circuit to status=FAILED with reason "Template pending Eskiz approval".
+model SmsTemplate {
+  id              String   @id @default(cuid())
+  code            String // Stable internal handle: "lead_greeting" | "lead_callback_reminder"
+  language        String // "ru" | "uz"
+  body            String // Template text with `{name}` placeholders
+  eskizTemplateId Int? // Numeric ID Eskiz returns on approval
+  status          String // Mirrors Eskiz lifecycle: "moderation" | "service" | "reklama" | "rejected"
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  smsHistory SmsHistory[]
+
+  @@unique([code, language])
+}
+
+// Singleton row caching the Eskiz JWT (30-day lifetime) so cold starts on
+// Vercel don't re-login. `id` is always "default" — convention-enforced
+// singleton. Refresh logic lives in packages/sms/auth.ts.
+model EskizToken {
+  id          String   @id @default("default")
+  token       String
+  expiresAt   DateTime // When the JWT itself expires (30d from acquisition)
+  refreshedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // ─── Holidays ────────────────────────────────────────────────────────────────────
@@ -1550,24 +1601,24 @@ model Lead {
   lastName          String
   phone             String
   dateOfBirth       DateTime?
-  note              String?            // visitor's free-text note
-  language          String             // "uz" or "ru" from URL locale
-  lessonPreference  LessonPreference?  // GROUP or INDIVIDUAL
+  note              String? // visitor's free-text note
+  language          String // "uz" or "ru" from URL locale
+  lessonPreference  LessonPreference? // GROUP or INDIVIDUAL
   selfAssessedLevel SelfAssessedLevel? // visitor's self-assessed English level
   status            LeadStatus         @default(NEW)
-  adminNote         String?            // internal note by admin after calling
+  adminNote         String? // internal note by admin after calling
 
   // Qualifying conversation — captured during CONTACTED phase
-  preferredDays         Int[]              // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.
+  preferredDays         Int[] // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.
   preferredDaysAny      Boolean            @default(false) // explicit "flexible" — distinguishes captured-as-Any from not-yet-captured
-  preferredTimeSlots    String[]           // e.g. ["19:00", "20:30"]. Matches Student.preferredTimeSlots.
+  preferredTimeSlots    String[] // e.g. ["19:00", "20:30"]. Matches Student.preferredTimeSlots.
   preferredTimeSlotsAny Boolean            @default(false) // explicit "flexible" — same rationale
   preferredLanguage     PreferredLanguage? // admin-editable preference (vs. `language` which is the form's URL locale).
 
   // Placement test workflow (CONTINUING leads)
   testSentAt    DateTime?
   testLevelSent Level?
-  testScore     Int?        // 0–100
+  testScore     Int? // 0–100
   testScoredAt  DateTime?
 
   // Follow-up scheduling
@@ -1575,13 +1626,14 @@ model Lead {
 
   // Disqualification
   lostReason      LeadLostReason?
-  lostReasonOther String?         // free text when lostReason = OTHER
+  lostReasonOther String? // free text when lostReason = OTHER
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   student    Student?
   activities LeadActivity[]
+  smsHistory SmsHistory[]
 
   @@index([status])
   @@index([createdAt])
@@ -1593,7 +1645,7 @@ model LeadActivity {
   id           String           @id @default(cuid())
   leadId       String
   type         LeadActivityType
-  metadata     Json?            // type-discriminated payload (validated in TS)
+  metadata     Json? // type-discriminated payload (validated in TS)
   actorAdminId String?
   createdAt    DateTime         @default(now())
 

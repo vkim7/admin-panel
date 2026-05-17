@@ -418,6 +418,8 @@ export const ModelName = {
   Referral: 'Referral',
   CallHistory: 'CallHistory',
   SmsHistory: 'SmsHistory',
+  SmsTemplate: 'SmsTemplate',
+  EskizToken: 'EskizToken',
   Holiday: 'Holiday',
   Exam: 'Exam',
   ScheduledAction: 'ScheduledAction',
@@ -438,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "excusedAbsenceReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "excusedAbsence" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "holiday" | "exam" | "scheduledAction" | "lead" | "leadActivity"
+    modelProps: "adminUser" | "teacher" | "family" | "student" | "teacherAvailability" | "teacherUnavailability" | "teacherScheduleSlot" | "group" | "groupTeacherHistory" | "transferReason" | "lostReason" | "cancellationReason" | "excusedAbsenceReason" | "uncertainReason" | "uncertainHistory" | "groupMembership" | "lesson" | "attendance" | "excusedAbsence" | "recording" | "studentPaymentPeriod" | "payment" | "paymentPeriodAdjustment" | "refund" | "teacherPaymentPeriod" | "teacherRateChange" | "teacherDocument" | "priceSetting" | "promotion" | "studentPromotion" | "appliedPromotion" | "referral" | "callHistory" | "smsHistory" | "smsTemplate" | "eskizToken" | "holiday" | "exam" | "scheduledAction" | "lead" | "leadActivity"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2958,6 +2960,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SmsTemplate: {
+      payload: Prisma.$SmsTemplatePayload<ExtArgs>
+      fields: Prisma.SmsTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SmsTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SmsTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.SmsTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SmsTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.SmsTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.SmsTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.SmsTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SmsTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.SmsTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        update: {
+          args: Prisma.SmsTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.SmsTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SmsTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SmsTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.SmsTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SmsTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.SmsTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSmsTemplate>
+        }
+        groupBy: {
+          args: Prisma.SmsTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SmsTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SmsTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SmsTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
+    EskizToken: {
+      payload: Prisma.$EskizTokenPayload<ExtArgs>
+      fields: Prisma.EskizTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EskizTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EskizTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.EskizTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EskizTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        findMany: {
+          args: Prisma.EskizTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>[]
+        }
+        create: {
+          args: Prisma.EskizTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        createMany: {
+          args: Prisma.EskizTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EskizTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.EskizTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        update: {
+          args: Prisma.EskizTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.EskizTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EskizTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EskizTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.EskizTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EskizTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.EskizTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEskizToken>
+        }
+        groupBy: {
+          args: Prisma.EskizTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EskizTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EskizTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EskizTokenCountAggregateOutputType> | number
+        }
+      }
+    }
     Holiday: {
       payload: Prisma.$HolidayPayload<ExtArgs>
       fields: Prisma.HolidayFieldRefs
@@ -3925,18 +4075,48 @@ export type CallHistoryScalarFieldEnum = (typeof CallHistoryScalarFieldEnum)[key
 export const SmsHistoryScalarFieldEnum = {
   id: 'id',
   studentId: 'studentId',
+  leadId: 'leadId',
   phone: 'phone',
   message: 'message',
+  language: 'language',
+  templateId: 'templateId',
   sentAt: 'sentAt',
   sentById: 'sentById',
   status: 'status',
   deliveredAt: 'deliveredAt',
   failureReason: 'failureReason',
-  providerMessageId: 'providerMessageId',
+  eskizRequestId: 'eskizRequestId',
+  eskizMessageId: 'eskizMessageId',
   createdAt: 'createdAt'
 } as const
 
 export type SmsHistoryScalarFieldEnum = (typeof SmsHistoryScalarFieldEnum)[keyof typeof SmsHistoryScalarFieldEnum]
+
+
+export const SmsTemplateScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  language: 'language',
+  body: 'body',
+  eskizTemplateId: 'eskizTemplateId',
+  status: 'status',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SmsTemplateScalarFieldEnum = (typeof SmsTemplateScalarFieldEnum)[keyof typeof SmsTemplateScalarFieldEnum]
+
+
+export const EskizTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  refreshedAt: 'refreshedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EskizTokenScalarFieldEnum = (typeof EskizTokenScalarFieldEnum)[keyof typeof EskizTokenScalarFieldEnum]
 
 
 export const HolidayScalarFieldEnum = {
@@ -4677,6 +4857,8 @@ export type GlobalOmitConfig = {
   referral?: Prisma.ReferralOmit
   callHistory?: Prisma.CallHistoryOmit
   smsHistory?: Prisma.SmsHistoryOmit
+  smsTemplate?: Prisma.SmsTemplateOmit
+  eskizToken?: Prisma.EskizTokenOmit
   holiday?: Prisma.HolidayOmit
   exam?: Prisma.ExamOmit
   scheduledAction?: Prisma.ScheduledActionOmit

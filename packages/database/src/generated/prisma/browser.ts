@@ -188,6 +188,16 @@ export type CallHistory = Prisma.CallHistoryModel
  */
 export type SmsHistory = Prisma.SmsHistoryModel
 /**
+ * Model SmsTemplate
+ * 
+ */
+export type SmsTemplate = Prisma.SmsTemplateModel
+/**
+ * Model EskizToken
+ * 
+ */
+export type EskizToken = Prisma.EskizTokenModel
+/**
  * Model Holiday
  * 
  */

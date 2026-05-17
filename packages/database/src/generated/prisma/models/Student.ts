@@ -1496,10 +1496,12 @@ export type StudentCreateNestedOneWithoutSmsHistoryInput = {
   connect?: Prisma.StudentWhereUniqueInput
 }
 
-export type StudentUpdateOneRequiredWithoutSmsHistoryNestedInput = {
+export type StudentUpdateOneWithoutSmsHistoryNestedInput = {
   create?: Prisma.XOR<Prisma.StudentCreateWithoutSmsHistoryInput, Prisma.StudentUncheckedCreateWithoutSmsHistoryInput>
   connectOrCreate?: Prisma.StudentCreateOrConnectWithoutSmsHistoryInput
   upsert?: Prisma.StudentUpsertWithoutSmsHistoryInput
+  disconnect?: Prisma.StudentWhereInput | boolean
+  delete?: Prisma.StudentWhereInput | boolean
   connect?: Prisma.StudentWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.StudentUpdateToOneWithWhereWithoutSmsHistoryInput, Prisma.StudentUpdateWithoutSmsHistoryInput>, Prisma.StudentUncheckedUpdateWithoutSmsHistoryInput>
 }
