@@ -89,6 +89,24 @@ export async function getLeadDetail(id: string) {
           },
         },
       },
+      // Outgoing SMS for this lead (greeting on creation, manual callback
+      // reminders). After conversion these rows stay linked to the Lead;
+      // the student page merges this with student-side rows via Student.leadId.
+      smsHistory: {
+        orderBy: { sentAt: "asc" },
+        select: {
+          id: true,
+          phone: true,
+          message: true,
+          language: true,
+          sentAt: true,
+          status: true,
+          deliveredAt: true,
+          failureReason: true,
+          template: { select: { code: true } },
+          sentBy: { select: { firstName: true, lastName: true } },
+        },
+      },
     },
   });
 }

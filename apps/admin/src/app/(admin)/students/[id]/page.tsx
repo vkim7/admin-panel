@@ -15,6 +15,8 @@ import { Pencil } from "lucide-react";
 import { StudentCommentEdit } from "@/components/students/student-comment-edit";
 import { ExcusedAbsencesSection } from "@/components/students/excused-absences-section";
 import { CopyZoomButton } from "@/components/copy-zoom-button";
+import { SmsHistoryList } from "@/components/sms/sms-history-list";
+import { getSmsHistoryForStudent } from "@/lib/queries/sms";
 import {
   getStudentExcusedAbsences,
   getExcusedAbsenceReasons,
@@ -70,6 +72,12 @@ export default async function StudentDetailPage({
   ]);
 
   if (!student) notFound();
+
+  // Merged SMS history: rows where the student is the direct recipient OR
+  // was the recipient as a lead pre-conversion (joined via Student.leadId).
+  // Cheap second query — needs student.leadId which isn't known until the
+  // first batch resolves.
+  const smsHistory = await getSmsHistoryForStudent(id, student.leadId);
 
   const activeMemberships = student.groupMemberships.filter(
     (m) => !m.leaveDate,
@@ -417,6 +425,13 @@ export default async function StudentDetailPage({
         reasons={excusedAbsenceReasons}
         eligibleLessons={eligibleLessons}
       />
+
+      {/* Communications — merged with pre-conversion lead-era SMS */}
+      <Separator />
+      <div className="space-y-3">
+        <h3 className="text-lg font-medium">Communications</h3>
+        <SmsHistoryList items={smsHistory} />
+      </div>
 
       {/* Promotions */}
       <Separator />
