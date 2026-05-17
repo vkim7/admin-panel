@@ -14,6 +14,7 @@ import { LeadConvertButton } from "./lead-convert-button";
 import { LeadCallbackSection } from "./lead-callback-section";
 import { LeadTestSection } from "./lead-test-section";
 import { SmsHistoryList } from "@/components/sms/sms-history-list";
+import { SendCallbackReminderButton } from "@/components/sms/send-callback-reminder-button";
 import type { SmsHistoryRow } from "@/lib/queries/sms";
 import { getUrgencyInfo } from "@/lib/helpers/lead-staleness";
 import type {
@@ -143,7 +144,15 @@ export function LeadDrawer({
               />
 
               <section className="space-y-2">
-                <h3 className="text-sm font-medium px-1">Communications</h3>
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-sm font-medium">Communications</h3>
+                  {(detail.status === "NEW" || detail.status === "CONTACTED") && (
+                    <SendCallbackReminderButton
+                      leadId={detail.id}
+                      onSent={onChange}
+                    />
+                  )}
+                </div>
                 <SmsHistoryList items={detail.smsHistory} />
               </section>
 
