@@ -100,15 +100,15 @@ export async function sendTemplatedSms(
     });
   }
 
-  // 5/6/7. Call Eskiz (or mock) and record outcome
+  // 5/6/7. Call Eskiz (or mock) and record outcome.
+  //
+  // We don't pass user_sms_id to Eskiz: their gateway rejects long values
+  // (36-char UUIDs come back as "user_sms_id is invalid"), and we don't
+  // need it — the webhook handler correlates rows via eskizRequestId
+  // (the UUID Eskiz returns synchronously and echoes back in callbacks).
   const from = process.env.ESKIZ_FROM ?? "4546";
   const callbackUrl = process.env.ESKIZ_CALLBACK_URL;
   const mode = process.env.ESKIZ_MODE ?? "live";
-
-  // Pre-allocate the SmsHistory row's id so we can pass it as user_sms_id
-  // to Eskiz — gives the webhook a second correlation key (alongside the
-  // returned request_id UUID).
-  const smsHistoryId = crypto.randomUUID();
 
   try {
     const eskizReq = {
@@ -116,7 +116,6 @@ export async function sendTemplatedSms(
       message,
       from,
       callbackUrl,
-      userSmsId: smsHistoryId,
       // token is supplied below per mode
     };
 
@@ -129,7 +128,6 @@ export async function sendTemplatedSms(
     }
 
     return await recordHistory({
-      id: smsHistoryId,
       recipient,
       sentById: sentById ?? null,
       language: recipient.language,
@@ -147,7 +145,6 @@ export async function sendTemplatedSms(
           : String(err);
 
     return await recordHistory({
-      id: smsHistoryId,
       recipient,
       sentById: sentById ?? null,
       language: recipient.language,
