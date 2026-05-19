@@ -13,6 +13,9 @@ import { LeadPreferences } from "./lead-preferences";
 import { LeadConvertButton } from "./lead-convert-button";
 import { LeadCallbackSection } from "./lead-callback-section";
 import { LeadTestSection } from "./lead-test-section";
+import { SmsHistoryList } from "@/components/sms/sms-history-list";
+import { SendCallbackReminderButton } from "@/components/sms/send-callback-reminder-button";
+import type { SmsHistoryRow } from "@/lib/queries/sms";
 import { getUrgencyInfo } from "@/lib/helpers/lead-staleness";
 import type {
   LeadStatus,
@@ -53,6 +56,7 @@ export type LeadDrawerDetail = {
     createdAt: Date;
     actor: { id: string; firstName: string; lastName: string } | null;
   }[];
+  smsHistory: SmsHistoryRow[];
 };
 
 /**
@@ -138,6 +142,19 @@ export function LeadDrawer({
                 initialNote={detail.adminNote}
                 onChange={onChange}
               />
+
+              <section className="space-y-2">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-sm font-medium">Communications</h3>
+                  {(detail.status === "NEW" || detail.status === "CONTACTED") && (
+                    <SendCallbackReminderButton
+                      leadId={detail.id}
+                      onSent={onChange}
+                    />
+                  )}
+                </div>
+                <SmsHistoryList items={detail.smsHistory} />
+              </section>
 
               <section className="space-y-2">
                 <h3 className="text-sm font-medium px-1">Activity</h3>

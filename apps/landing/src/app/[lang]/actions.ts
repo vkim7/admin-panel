@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/server/db";
+import { sendTemplatedSms } from "@eng/sms";
 import { env } from "@/env.js";
 
 const PIXEL_ID = "2184030425473159";
@@ -123,7 +124,10 @@ export async function submitLead(
 
   const { eventId, eventSourceUrl, fbc, fbp, ...leadData } = parsed.data;
 
-  await prisma.lead.create({ data: leadData });
+  const createdLead = await prisma.lead.create({
+    data: leadData,
+    select: { id: true, firstName: true, phone: true, language: true },
+  });
 
   const h = await headers();
   const userAgent = h.get("user-agent");
@@ -145,6 +149,31 @@ export async function submitLead(
       });
     } catch (err) {
       console.error("[CAPI] Lead event failed", err);
+    }
+  });
+
+  // Greeting SMS — fires post-response so a slow Eskiz call never makes the
+  // form feel laggy. Failures are logged but never bubble to the user (the
+  // lead row was already committed; the form should still report success).
+  // The @eng/sms funnel writes a SmsHistory row regardless of outcome,
+  // so even a failed greeting is visible later in the admin lead drawer.
+  after(async () => {
+    try {
+      const smsLanguage =
+        createdLead.language === "uz" || createdLead.language === "ru"
+          ? createdLead.language
+          : "ru";
+      await sendTemplatedSms({
+        recipient: {
+          leadId: createdLead.id,
+          phone: createdLead.phone,
+          language: smsLanguage,
+        },
+        templateCode: "lead_greeting",
+        variables: { name: createdLead.firstName },
+      });
+    } catch (err) {
+      console.error("[SMS] greeting failed", err);
     }
   });
 

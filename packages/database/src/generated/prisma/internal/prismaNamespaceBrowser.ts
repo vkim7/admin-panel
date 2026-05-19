@@ -85,6 +85,8 @@ export const ModelName = {
   Referral: 'Referral',
   CallHistory: 'CallHistory',
   SmsHistory: 'SmsHistory',
+  SmsTemplate: 'SmsTemplate',
+  EskizToken: 'EskizToken',
   Holiday: 'Holiday',
   Exam: 'Exam',
   ScheduledAction: 'ScheduledAction',
@@ -666,18 +668,48 @@ export type CallHistoryScalarFieldEnum = (typeof CallHistoryScalarFieldEnum)[key
 export const SmsHistoryScalarFieldEnum = {
   id: 'id',
   studentId: 'studentId',
+  leadId: 'leadId',
   phone: 'phone',
   message: 'message',
+  language: 'language',
+  templateId: 'templateId',
   sentAt: 'sentAt',
   sentById: 'sentById',
   status: 'status',
   deliveredAt: 'deliveredAt',
   failureReason: 'failureReason',
-  providerMessageId: 'providerMessageId',
+  eskizRequestId: 'eskizRequestId',
+  eskizMessageId: 'eskizMessageId',
   createdAt: 'createdAt'
 } as const
 
 export type SmsHistoryScalarFieldEnum = (typeof SmsHistoryScalarFieldEnum)[keyof typeof SmsHistoryScalarFieldEnum]
+
+
+export const SmsTemplateScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  language: 'language',
+  body: 'body',
+  eskizTemplateId: 'eskizTemplateId',
+  status: 'status',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SmsTemplateScalarFieldEnum = (typeof SmsTemplateScalarFieldEnum)[keyof typeof SmsTemplateScalarFieldEnum]
+
+
+export const EskizTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  refreshedAt: 'refreshedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EskizTokenScalarFieldEnum = (typeof EskizTokenScalarFieldEnum)[keyof typeof EskizTokenScalarFieldEnum]
 
 
 export const HolidayScalarFieldEnum = {
