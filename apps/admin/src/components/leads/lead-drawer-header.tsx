@@ -5,6 +5,7 @@ import { Send } from "lucide-react";
 import { toast } from "sonner";
 import { updateLeadStatus } from "@/lib/actions/leads";
 import { telegramLink } from "@/lib/helpers/contact-links";
+import { formatUzPhone } from "@/lib/helpers/phone-format";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { MarkAsLostDialog } from "./mark-as-lost-dialog";
 import { LESSON_LABEL } from "@/lib/constants";
@@ -82,7 +83,6 @@ export function LeadDrawerHeader({
   }
 
   const meta = [
-    phone,
     language.toUpperCase(),
     lessonPreference ? LESSON_LABEL[lessonPreference] : null,
     selfAssessedLevel ? LEVEL_LABELS[selfAssessedLevel] : null,
@@ -113,6 +113,9 @@ export function LeadDrawerHeader({
         </div>
         <div className="font-semibold text-lg leading-tight">
           {firstName} {lastName}
+        </div>
+        <div className="text-base font-medium tabular-nums select-all">
+          {formatUzPhone(phone)}
         </div>
         <div className="text-sm text-muted-foreground">{meta.join(" · ")}</div>
       </div>

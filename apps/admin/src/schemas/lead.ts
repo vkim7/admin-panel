@@ -50,7 +50,7 @@ const timeSlots = z
 const LESSON_PREFERENCE_VALUES = ["GROUP", "INDIVIDUAL", "EITHER"] as const;
 const PREFERRED_LANGUAGE_VALUES = ["UZBEK", "RUSSIAN", "ANY"] as const;
 
-export const setLeadScheduleSchema = z.object({
+export const leadPreferencesSchema = z.object({
   id: requiredString("Lead ID is required"),
   preferredDays: dayPattern,
   preferredTimeSlots: timeSlots,
@@ -61,6 +61,7 @@ export const setLeadScheduleSchema = z.object({
   lessonPreference: z.enum(LESSON_PREFERENCE_VALUES).nullable(),
   preferredLanguage: z.enum(PREFERRED_LANGUAGE_VALUES).nullable(),
   dateOfBirth: nullableIsoDate(),
+  adminNote: nullableString(1000),
 });
 
 export const setNextCallbackSchema = z

@@ -117,6 +117,7 @@ export function LeadDrawer({
                 lessonPreference={detail.lessonPreference}
                 preferredLanguage={detail.preferredLanguage}
                 dateOfBirth={detail.dateOfBirth}
+                adminNote={detail.adminNote}
                 formLanguage={detail.language}
                 status={detail.status}
                 onChange={onChange}

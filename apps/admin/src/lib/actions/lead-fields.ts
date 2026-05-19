@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/server/db";
 import { requireAdmin } from "@/lib/auth";
 import {
-  setLeadScheduleSchema,
+  leadPreferencesSchema,
   setNextCallbackSchema,
   markCallbackDoneSchema,
   markTestSentSchema,
@@ -15,9 +15,9 @@ import {
   recordLeadActivity,
 } from "@/lib/helpers/lead-activity";
 
-export async function setPreferredSchedule(data: unknown) {
+export async function saveLeadPreferences(data: unknown) {
   const admin = await requireAdmin();
-  const parsed = setLeadScheduleSchema.safeParse(data);
+  const parsed = leadPreferencesSchema.safeParse(data);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
@@ -35,6 +35,7 @@ export async function setPreferredSchedule(data: unknown) {
         lessonPreference: true,
         preferredLanguage: true,
         dateOfBirth: true,
+        adminNote: true,
       },
     });
     if (!lead) return;
@@ -56,7 +57,9 @@ export async function setPreferredSchedule(data: unknown) {
     const sameDob =
       (lead.dateOfBirth?.toISOString().slice(0, 10) ?? null) ===
       (parsed.data.dateOfBirth ?? null);
-    if (
+    const sameNote = (lead.adminNote ?? "") === (parsed.data.adminNote ?? "");
+
+    const prefsChanged = !(
       sameDays &&
       sameSlots &&
       sameDaysAny &&
@@ -64,28 +67,35 @@ export async function setPreferredSchedule(data: unknown) {
       sameLessonPref &&
       sameLanguage &&
       sameDob
-    )
-      return;
+    );
+    const noteChanged = !sameNote;
+
+    if (!prefsChanged && !noteChanged) return;
 
     await autoTransitionToContacted(tx, parsed.data.id, admin.id);
 
     await tx.lead.update({
       where: { id: parsed.data.id },
       data: {
-        preferredDays: parsed.data.preferredDays,
-        preferredTimeSlots: parsed.data.preferredTimeSlots,
-        preferredDaysAny: parsed.data.preferredDaysAny,
-        preferredTimeSlotsAny: parsed.data.preferredTimeSlotsAny,
-        lessonPreference: parsed.data.lessonPreference,
-        preferredLanguage: parsed.data.preferredLanguage,
-        dateOfBirth: dob,
+        ...(prefsChanged && {
+          preferredDays: parsed.data.preferredDays,
+          preferredTimeSlots: parsed.data.preferredTimeSlots,
+          preferredDaysAny: parsed.data.preferredDaysAny,
+          preferredTimeSlotsAny: parsed.data.preferredTimeSlotsAny,
+          lessonPreference: parsed.data.lessonPreference,
+          preferredLanguage: parsed.data.preferredLanguage,
+          dateOfBirth: dob,
+        }),
+        ...(noteChanged && { adminNote: parsed.data.adminNote }),
       },
     });
-    await recordLeadActivity(tx, parsed.data.id, admin.id, {
-      type: "SCHEDULE_SET",
-      days: parsed.data.preferredDays,
-      timeSlots: parsed.data.preferredTimeSlots,
-    });
+    if (prefsChanged) {
+      await recordLeadActivity(tx, parsed.data.id, admin.id, {
+        type: "SCHEDULE_SET",
+        days: parsed.data.preferredDays,
+        timeSlots: parsed.data.preferredTimeSlots,
+      });
+    }
   });
 
   revalidatePath("/leads");
