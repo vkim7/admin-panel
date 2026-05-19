@@ -3,14 +3,25 @@
   "tasks": {
     "db:deploy": {
       "cache": false,
-      "env": ["DATABASE_URL", "DIRECT_DATABASE_URL"]
+      "env": [
+        "DATABASE_URL",
+        "DIRECT_DATABASE_URL",
+        "DATABASE_URL_UNPOOLED",
+        "POSTGRES_URL_NON_POOLING"
+      ]
     },
     "@eng/landing#build": {
       "dependsOn": ["^build"],
       "env": [
         "DATABASE_URL",
         "META_ACCESS_TOKEN",
-        "META_TEST_EVENT_CODE"
+        "META_TEST_EVENT_CODE",
+        "ESKIZ_EMAIL",
+        "ESKIZ_PASSWORD",
+        "ESKIZ_FROM",
+        "ESKIZ_MODE",
+        "ESKIZ_CALLBACK_URL",
+        "SMS_ALLOWED_PHONES"
       ],
       "outputs": [".next/**", "!.next/cache/**"]
     },
@@ -31,7 +42,14 @@
         "ZOOM_CLIENT_SECRET",
         "ZOOM_WEBHOOK_SECRET_TOKEN",
         "RECORDING_WORKER_URL",
-        "RECORDING_CALLBACK_SECRET"
+        "RECORDING_CALLBACK_SECRET",
+        "ESKIZ_EMAIL",
+        "ESKIZ_PASSWORD",
+        "ESKIZ_FROM",
+        "ESKIZ_MODE",
+        "ESKIZ_CALLBACK_URL",
+        "ESKIZ_WEBHOOK_SECRET",
+        "SMS_ALLOWED_PHONES"
       ],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
@@ -52,7 +70,14 @@
         "ZOOM_CLIENT_SECRET",
         "ZOOM_WEBHOOK_SECRET_TOKEN",
         "RECORDING_WORKER_URL",
-        "RECORDING_CALLBACK_SECRET"
+        "RECORDING_CALLBACK_SECRET",
+        "ESKIZ_EMAIL",
+        "ESKIZ_PASSWORD",
+        "ESKIZ_FROM",
+        "ESKIZ_MODE",
+        "ESKIZ_CALLBACK_URL",
+        "ESKIZ_WEBHOOK_SECRET",
+        "SMS_ALLOWED_PHONES"
       ],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
