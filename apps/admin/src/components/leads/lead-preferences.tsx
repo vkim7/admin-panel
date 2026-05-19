@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { setPreferredSchedule } from "@/lib/actions/lead-fields";
+import { saveLeadPreferences } from "@/lib/actions/lead-fields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -85,6 +86,7 @@ function PreferencesDialog({
   initialLessonPreference,
   initialPreferredLanguage,
   initialDateOfBirth,
+  initialAdminNote,
   formLanguage,
   open,
   onOpenChange,
@@ -98,6 +100,7 @@ function PreferencesDialog({
   initialLessonPreference: LessonPreference | null;
   initialPreferredLanguage: PreferredLanguage | null;
   initialDateOfBirth: Date | null;
+  initialAdminNote: string | null;
   formLanguage: string;
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -115,6 +118,7 @@ function PreferencesDialog({
     deriveInitialLanguage(initialPreferredLanguage, formLanguage),
   );
   const [dob, setDob] = useState<string>(dateToInputValue(initialDateOfBirth));
+  const [note, setNote] = useState<string>(initialAdminNote ?? "");
   const [isPending, startTransition] = useTransition();
 
   // All five fields are required — protects against silently wiping captured
@@ -145,6 +149,7 @@ function PreferencesDialog({
     setLessonPref(initialLessonPreference);
     setLanguage(deriveInitialLanguage(initialPreferredLanguage, formLanguage));
     setDob(dateToInputValue(initialDateOfBirth));
+    setNote(initialAdminNote ?? "");
   }
 
   function save() {
@@ -157,9 +162,10 @@ function PreferencesDialog({
     const preferredDaysAny = daysMode === "any";
     const preferredTimeSlots = slotsAny ? [] : draftSlots;
     const preferredTimeSlotsAny = slotsAny;
+    const trimmedNote = note.trim();
 
     startTransition(async () => {
-      const result = await setPreferredSchedule({
+      const result = await saveLeadPreferences({
         id: leadId,
         preferredDays,
         preferredTimeSlots,
@@ -168,6 +174,7 @@ function PreferencesDialog({
         lessonPreference: lessonPref,
         preferredLanguage: language,
         dateOfBirth: dob || null,
+        adminNote: trimmedNote === "" ? null : trimmedNote,
       });
       if (result.error) {
         toast.error(result.error);
@@ -294,6 +301,20 @@ function PreferencesDialog({
               className="w-auto"
             />
           </div>
+
+          <div>
+            <Label htmlFor="note-input" className="mb-1.5 block">
+              Note
+            </Label>
+            <Textarea
+              id="note-input"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={4}
+              maxLength={1000}
+              placeholder="Anything worth recording from the call"
+            />
+          </div>
         </div>
 
         <DialogFooter>
@@ -328,6 +349,7 @@ export function LeadPreferences({
   lessonPreference,
   preferredLanguage,
   dateOfBirth,
+  adminNote,
   formLanguage,
   status,
   onChange,
@@ -340,6 +362,7 @@ export function LeadPreferences({
   lessonPreference: LessonPreference | null;
   preferredLanguage: PreferredLanguage | null;
   dateOfBirth: Date | null;
+  adminNote: string | null;
   /** Form-submission locale ("uz" / "ru") — used to seed the language radio
    * when no explicit preferredLanguage is captured yet. */
   formLanguage: string;
@@ -433,6 +456,7 @@ export function LeadPreferences({
         initialLessonPreference={lessonPreference}
         initialPreferredLanguage={preferredLanguage}
         initialDateOfBirth={dateOfBirth}
+        initialAdminNote={adminNote}
         formLanguage={formLanguage}
         open={open}
         onOpenChange={setOpen}

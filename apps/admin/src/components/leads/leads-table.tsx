@@ -9,6 +9,7 @@ import {
   type UrgencyInfo,
 } from "@/lib/helpers/lead-staleness";
 import { LeadUrgencyChip } from "./lead-urgency-chip";
+import { formatUzPhone } from "@/lib/helpers/phone-format";
 import { LESSON_LABEL } from "@/lib/constants";
 import type { LeadStatus } from "@eng/database";
 import type { LeadForTabs as LeadRow } from "./leads-tabs";
@@ -66,6 +67,17 @@ function buildColumns(): ColumnDef<RowWithUrgency>[] {
             {formatRelative(row.original.createdAt)}
           </span>
         </div>
+      ),
+    },
+    {
+      accessorKey: "phone",
+      header: "Phone",
+      enableSorting: false,
+      meta: { cellClassName: "pr-10", headerClassName: "pr-10" },
+      cell: ({ row }) => (
+        <span className="text-sm tabular-nums whitespace-nowrap">
+          {formatUzPhone(row.original.phone)}
+        </span>
       ),
     },
     {

@@ -11,6 +11,7 @@ import type { Dictionary } from "@/lib/i18n";
 import { submitLead } from "@/app/[lang]/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
@@ -123,12 +124,7 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
 
         <div className="space-y-1.5">
           <Label className="text-sm font-bold text-foreground">{dict.phone}</Label>
-          <div className="flex">
-            <div className="flex items-center px-3 bg-foreground border-2 border-border rounded-l-base text-sm font-bold text-white">
-              +998
-            </div>
-            <Input name="phone" type="tel" required className="rounded-l-none" />
-          </div>
+          <PhoneInput required />
         </div>
 
         <div className="space-y-3">
