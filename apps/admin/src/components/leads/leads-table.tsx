@@ -129,11 +129,13 @@ export function LeadsTable({
   searchQuery,
   tabLabel,
   onOpenLead,
+  pageSize,
 }: {
   data: LeadRow[];
   searchQuery: string;
   tabLabel: string;
   onOpenLead: (id: string) => void;
+  pageSize?: number;
 }) {
   const columns = useMemo(() => buildColumns(), []);
 
@@ -184,6 +186,7 @@ export function LeadsTable({
     <DataTable
       columns={columns}
       data={enriched}
+      pageSize={pageSize}
       onRowClick={(row) => onOpenLead(row.id)}
     />
   );
