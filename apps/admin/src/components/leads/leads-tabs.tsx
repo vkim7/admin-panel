@@ -188,10 +188,14 @@ export function LeadsTabs({
       </div>
 
       <LeadsTable
+        // Remount on tab change so DataTable's initialState picks up the
+        // per-tab pageSize (TanStack reads initialState only on first render).
+        key={activeTab}
         data={filtered}
         searchQuery={query}
         tabLabel={activeTabLabel}
         onOpenLead={openLead}
+        pageSize={activeTab === "ACTIVE" ? 1000 : 20}
       />
 
       <LeadDrawer
