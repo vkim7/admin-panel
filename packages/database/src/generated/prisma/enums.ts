@@ -272,7 +272,8 @@ export const LeadActivityType = {
   CONTACTED_VIA_PHONE: 'CONTACTED_VIA_PHONE',
   CONTACTED_VIA_TELEGRAM: 'CONTACTED_VIA_TELEGRAM',
   CONTACTED_VIA_WHATSAPP: 'CONTACTED_VIA_WHATSAPP',
-  NOTE_UPDATED: 'NOTE_UPDATED'
+  NOTE_UPDATED: 'NOTE_UPDATED',
+  RESUBMITTED: 'RESUBMITTED'
 } as const
 
 export type LeadActivityType = (typeof LeadActivityType)[keyof typeof LeadActivityType]

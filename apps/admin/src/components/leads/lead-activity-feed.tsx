@@ -57,6 +57,8 @@ function formatActivity(activity: Activity): string {
       return `Opened WhatsApp`;
     case "NOTE_UPDATED":
       return `Note updated`;
+    case "RESUBMITTED":
+      return `Resubmitted the landing form`;
     default:
       return activity.type;
   }
