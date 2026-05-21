@@ -124,6 +124,31 @@ export async function submitLead(
 
   const { eventId, eventSourceUrl, fbc, fbp, ...leadData } = parsed.data;
 
+  // Dedup by phone. A returning visitor sees the same kind of green success
+  // screen (with copy that hints "we already have you"), but we don't create
+  // a second Lead row and we don't fire the greeting SMS or Meta CAPI ping
+  // again. CONVERTED leads are sacred — never touch them, just acknowledge.
+  // For everything else we record a RESUBMITTED activity so admins see the
+  // engagement signal in the drawer.
+  const existing = await prisma.lead.findFirst({
+    where: { phone: leadData.phone },
+    select: { id: true, status: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  if (existing) {
+    if (existing.status !== "CONVERTED") {
+      await prisma.leadActivity.create({
+        data: {
+          leadId: existing.id,
+          type: "RESUBMITTED",
+          actorAdminId: null,
+        },
+      });
+    }
+    return { success: true, duplicate: true };
+  }
+
   const createdLead = await prisma.lead.create({
     data: leadData,
     select: { id: true, firstName: true, phone: true, language: true },
@@ -177,5 +202,5 @@ export async function submitLead(
     }
   });
 
-  return { success: true };
+  return { success: true, duplicate: false };
 }

@@ -123,6 +123,7 @@
     "notePlaceholder": "Qo'shimcha ma'lumot (ixtiyoriy)",
     "submit": "Yuborish",
     "success": "Arizangiz qabul qilindi! Tez orada bog'lanamiz.",
+    "duplicateSuccess": "Arizangiz allaqachon qabul qilingan. Tez orada bog'lanamiz!",
     "successCta": "Biz haqimizda",
     "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
   },

@@ -65,7 +65,10 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
   const eventIdRef = useRef<string>("");
 
   const [state, formAction, isPending] = useActionState(
-    async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
+    async (
+      _prevState: { success?: boolean; duplicate?: boolean; error?: string } | null,
+      formData: FormData,
+    ) => {
       const eventId = crypto.randomUUID();
       eventIdRef.current = eventId;
       formData.set("eventId", eventId);
@@ -85,16 +88,20 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
   );
 
   useEffect(() => {
-    if (state?.success && eventIdRef.current) {
+    // Suppress the Pixel/CAPI Lead event on resubmits — same person, not a
+    // new conversion. (Server also skips the CAPI ping in that branch.)
+    if (state?.success && !state.duplicate && eventIdRef.current) {
       window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
     }
-  }, [state?.success]);
+  }, [state?.success, state?.duplicate]);
 
   if (state?.success) {
     return (
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
         <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 w-full">
-          <p className="text-leaf-green font-bold text-lg text-center">{dict.success}</p>
+          <p className="text-leaf-green font-bold text-lg text-center">
+            {state.duplicate ? dict.duplicateSuccess : dict.success}
+          </p>
         </div>
         <Button asChild size="lg" className="rounded-full text-base border-main">
           <a href={`/${locale}`}>{dict.successCta}</a>

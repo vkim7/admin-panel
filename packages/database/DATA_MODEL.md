@@ -194,7 +194,7 @@ ready.
 
 | Field | Purpose |
 |-------|---------|
-| firstName, lastName, phone | Captured by the landing form. Phone is NOT unique on Lead (a lead may resubmit) but is unique on the resulting Student. |
+| firstName, lastName, phone | Captured by the landing form. Phone has no DB-level uniqueness constraint, but the landing `submitLead` action dedups by phone: a resubmit from an existing (non-CONVERTED) lead logs a `RESUBMITTED` activity on the original row and shows a "we already have your application" message instead of creating a second row. Phone is hard-unique on the resulting Student. |
 | dateOfBirth | Optional. Captured by landing form if provided. |
 | note | Visitor's free-text note from the landing form. Read-only after submission. |
 | language | "uz" or "ru" — the locale the form was submitted in. Drives the lead's preferred language at conversion. |

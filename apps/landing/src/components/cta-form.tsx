@@ -67,7 +67,10 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
   const eventIdRef = useRef<string>("");
 
   const [state, formAction, isPending] = useActionState(
-    async (_prevState: { success?: boolean; error?: string } | null, formData: FormData) => {
+    async (
+      _prevState: { success?: boolean; duplicate?: boolean; error?: string } | null,
+      formData: FormData,
+    ) => {
       const eventId = crypto.randomUUID();
       eventIdRef.current = eventId;
       formData.set("eventId", eventId);
@@ -87,17 +90,21 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
   );
 
   useEffect(() => {
-    if (state?.success && eventIdRef.current) {
+    // Suppress the Pixel/CAPI Lead event on resubmits — same person, not a
+    // new conversion. (Server also skips the CAPI ping in that branch.)
+    if (state?.success && !state.duplicate && eventIdRef.current) {
       window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
     }
-  }, [state?.success]);
+  }, [state?.success, state?.duplicate]);
 
   if (state?.success) {
     return (
       <section id="cta" className="py-16 md:py-24 bg-background border-t-2 border-border relative overflow-hidden">
         <div className="max-w-[1080px] mx-auto px-6 flex items-center justify-center min-h-[400px]">
           <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 max-w-md mx-auto">
-            <p className="text-leaf-green font-bold text-lg text-center">{dict.success}</p>
+            <p className="text-leaf-green font-bold text-lg text-center">
+              {state.duplicate ? dict.duplicateSuccess : dict.success}
+            </p>
           </div>
         </div>
       </section>

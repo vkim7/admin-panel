@@ -17,7 +17,8 @@ export type LeadActivityMetadata =
   | { type: "TEST_SCORED"; score: number; level: Level }
   | { type: "SCHEDULE_SET"; days: number[]; timeSlots: string[] }
   | { type: "LOST"; reason: LeadLostReason; otherText?: string }
-  | { type: "CONVERTED"; studentId: string };
+  | { type: "CONVERTED"; studentId: string }
+  | { type: "RESUBMITTED" };
 
 /**
  * Append a LeadActivity entry inside the caller's transaction. This is the single
