@@ -26,6 +26,8 @@ import {
   Loader2,
   BookOpen,
   Clock,
+  Sparkles,
+  Search,
 } from "lucide-react";
 
 interface NavItem {
@@ -43,6 +45,7 @@ const navSections: NavSection[] = [
   {
     title: "Daily Workflow",
     items: [
+      { label: "Search", href: "/search", icon: Search },
       { label: "Schedule", href: "/schedule", icon: CalendarDays },
       { label: "Reception", href: "/reception", icon: UserPlus },
       { label: "Reassignment", href: "/reassignment", icon: RefreshCw },
@@ -57,6 +60,7 @@ const navSections: NavSection[] = [
     items: [
       { label: "Students", href: "/students", icon: GraduationCap },
       { label: "Groups", href: "/groups", icon: Layers },
+      { label: "Group Planner", href: "/group-planner", icon: Sparkles },
       { label: "Exams", href: "/exams", icon: BookOpen },
     ],
   },
