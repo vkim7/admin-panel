@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Turnstile } from "@/components/turnstile";
 import { cn } from "@/lib/utils";
 
 interface CtaFormProps {
@@ -182,6 +183,8 @@ export function CtaForm({ dict, locale }: CtaFormProps) {
               {state?.error && (
                 <p className="text-vermilion text-sm font-semibold">{dict.error}</p>
               )}
+
+              <Turnstile />
 
               {/* Submit */}
               <Button
