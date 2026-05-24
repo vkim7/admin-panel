@@ -16,6 +16,8 @@
         "DATABASE_URL",
         "META_ACCESS_TOKEN",
         "META_TEST_EVENT_CODE",
+        "TURNSTILE_SECRET_KEY",
+        "NEXT_PUBLIC_TURNSTILE_SITE_KEY",
         "ESKIZ_EMAIL",
         "ESKIZ_PASSWORD",
         "ESKIZ_FROM",

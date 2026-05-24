@@ -147,6 +147,12 @@ export default async function LangLayout({
             gtag('config', 'G-57G2LVY2SZ');
           `}
         </Script>
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
+          async
+          defer
+        />
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
             !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){

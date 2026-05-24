@@ -7,6 +7,7 @@ import { z } from "zod";
 import { prisma } from "@/server/db";
 import { sendTemplatedSms } from "@eng/sms";
 import { env } from "@/env.js";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const PIXEL_ID = "2184030425473159";
 
@@ -122,6 +123,25 @@ export async function submitLead(
     return { error: parsed.error.issues[0]?.message ?? "Validation failed" };
   }
 
+  // Bot check — runs before dedup/CAPI/SMS so failed verifications cost us
+  // nothing (no DB write, no third-party fan-out). Generic error so we don't
+  // give automated scripts a clean signal that they were detected.
+  const turnstileToken = formData.get("cf-turnstile-response");
+  const h = await headers();
+  // CF-Connecting-IP is set by Cloudflare itself and isn't spoofable upstream;
+  // prefer it over x-forwarded-for when present.
+  const clientIp =
+    h.get("cf-connecting-ip") ??
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    h.get("x-real-ip");
+  const verified = await verifyTurnstileToken(
+    typeof turnstileToken === "string" ? turnstileToken : null,
+    clientIp,
+  );
+  if (!verified) {
+    return { error: "Verification failed. Please reload the page and try again." };
+  }
+
   const { eventId, eventSourceUrl, fbc, fbp, ...leadData } = parsed.data;
 
   // Dedup by phone. A returning visitor sees the same kind of green success
@@ -154,10 +174,7 @@ export async function submitLead(
     select: { id: true, firstName: true, phone: true, language: true },
   });
 
-  const h = await headers();
   const userAgent = h.get("user-agent");
-  const clientIp =
-    h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? h.get("x-real-ip");
 
   after(async () => {
     try {

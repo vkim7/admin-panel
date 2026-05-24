@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
+import { Turnstile } from "@/components/turnstile";
 import { cn } from "@/lib/utils";
 
 interface StandaloneFormProps {
@@ -157,6 +158,8 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
         {state?.error && (
           <p className="text-vermilion text-sm font-semibold">{dict.error}</p>
         )}
+
+        <Turnstile />
 
         <Button
           type="submit"
