@@ -169,6 +169,25 @@ export function StandaloneForm({ dict, locale }: StandaloneFormProps) {
         >
           {isPending ? "..." : dict.submit}
         </Button>
+        <p className="text-[11px] text-foreground/35 text-center leading-relaxed">
+          {locale === "ru" ? (
+            <>
+              Нажимая «Отправить», вы принимаете нашу{" "}
+              <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground/60">
+                политику конфиденциальности
+              </a>
+              .
+            </>
+          ) : (
+            <>
+              Yuborish orqali siz{" "}
+              <a href={`/${locale}/privacy`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground/60">
+                maxfiylik siyosatimiz
+              </a>
+              {" "}bilan rozisiz.
+            </>
+          )}
+        </p>
       </form>
     </div>
   );

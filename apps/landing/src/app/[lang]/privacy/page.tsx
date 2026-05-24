@@ -27,7 +27,7 @@ function UzbekPolicy() {
         <h1 className="font-heading font-black text-[clamp(24px,4vw,36px)] text-foreground tracking-[-1px] leading-[1.1] mb-2">
           Maxfiylik siyosati
         </h1>
-        <p className="text-sm text-foreground/40">So'nggi yangilanish: 2026-yil may</p>
+        <p className="text-sm text-foreground/40">So'nggi yangilanish: 2026-yil 24-may</p>
       </div>
 
       <section className="space-y-2">
@@ -68,6 +68,18 @@ function UzbekPolicy() {
           <li><span className="font-semibold">Meta Platforms, Inc.</span> — Facebook va Instagram reklamalari uchun</li>
           <li><span className="font-semibold">Google LLC</span> — sayt tahlili uchun (Google Analytics)</li>
           <li><span className="font-semibold">Yandex LLC</span> — sayt tahlili uchun (Yandex.Metrika)</li>
+          <li>
+            <span className="font-semibold">Cloudflare, Inc.</span> — formalarni botlardan himoya qilish uchun (Turnstile).{" "}
+            <a
+              href="https://www.cloudflare.com/turnstile-privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              Cloudflare Turnstile maxfiylik qo'shimchasi
+            </a>
+            .
+          </li>
         </ul>
         <p>
           Ushbu tashkilotlar o'zlarining maxfiylik siyosatlariga muvofiq ma'lumotlarni qayta ishlaydi. Biz ma'lumotlaringizni uchinchi tomonlarga sotmaymiz.
@@ -119,7 +131,7 @@ function RussianPolicy() {
         <h1 className="font-heading font-black text-[clamp(24px,4vw,36px)] text-foreground tracking-[-1px] leading-[1.1] mb-2">
           Политика конфиденциальности
         </h1>
-        <p className="text-sm text-foreground/40">Последнее обновление: май 2026 г.</p>
+        <p className="text-sm text-foreground/40">Последнее обновление: 24 мая 2026 г.</p>
       </div>
 
       <section className="space-y-2">
@@ -161,6 +173,18 @@ function RussianPolicy() {
           <li><span className="font-semibold">Meta Platforms, Inc.</span> — для показа рекламы в Facebook и Instagram</li>
           <li><span className="font-semibold">Google LLC</span> — для аналитики сайта (Google Analytics)</li>
           <li><span className="font-semibold">Yandex LLC</span> — для аналитики сайта (Яндекс.Метрика)</li>
+          <li>
+            <span className="font-semibold">Cloudflare, Inc.</span> — для защиты форм от ботов (Turnstile). См.{" "}
+            <a
+              href="https://www.cloudflare.com/turnstile-privacy-policy/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              дополнение Cloudflare к политике Turnstile
+            </a>
+            .
+          </li>
         </ul>
         <p>
           Перечисленные организации обрабатывают данные в соответствии со своими политиками конфиденциальности.
