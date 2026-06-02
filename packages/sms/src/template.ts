@@ -11,7 +11,9 @@ import type { SmsLanguage, TemplateCode, TemplateVariables } from "./types";
  * send silently.
  */
 export function render(body: string, variables: TemplateVariables): string {
-  return body.replace(/\{name\}/g, variables.name);
+  return body
+    .replace(/\{name\}/g, variables.name ?? "{name}")
+    .replace(/\{code\}/g, variables.code ?? "{code}");
 }
 
 export interface LoadedTemplate {

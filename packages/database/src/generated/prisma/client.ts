@@ -217,6 +217,11 @@ export type SmsHistory = Prisma.SmsHistoryModel
  */
 export type SmsTemplate = Prisma.SmsTemplateModel
 /**
+ * Model PhoneVerification
+ * 
+ */
+export type PhoneVerification = Prisma.PhoneVerificationModel
+/**
  * Model EskizToken
  * 
  */

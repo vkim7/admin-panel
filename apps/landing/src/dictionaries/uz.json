@@ -127,6 +127,38 @@
     "successCta": "Biz haqimizda",
     "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
   },
+  "verify": {
+    "heading": "Sinov darsiga yoziling",
+    "description": "Ariza qoldirish uchun telefon raqamingizni tasdiqlang — SMS orqali kod yuboramiz.",
+    "firstName": "Ism",
+    "lastName": "Familiya",
+    "phone": "Telefon raqam",
+    "sendCode": "Kod yuborish",
+    "sending": "Yuborilmoqda…",
+    "codeStepHeading": "SMS dagi kodni kiriting",
+    "codeStepDescription": "{phone} raqamiga 6 xonali kod yubordik.",
+    "editPhone": "Raqamni o'zgartirish",
+    "code": "Tasdiqlash kodi",
+    "resend": "Kodni qayta yuborish",
+    "resendIn": "{seconds} soniyadan keyin qayta yuborish",
+    "submit": "Arizani yuborish",
+    "submitting": "Yuborilmoqda…",
+    "success": "Arizangiz qabul qilindi! Tez orada bog'lanamiz.",
+    "duplicateSuccess": "Arizangiz allaqachon qabul qilingan. Tez orada bog'lanamiz!",
+    "successCta": "Biz haqimizda",
+    "consent": "«Kod yuborish» tugmasini bosish orqali siz",
+    "consentLink": "maxfiylik siyosatimiz",
+    "errors": {
+      "generic": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.",
+      "invalidPhone": "Telefon raqamini to'g'ri kiriting.",
+      "invalidCode": "Kod noto'g'ri. Qaytadan urinib ko'ring.",
+      "codeExpired": "Kod muddati tugagan. Yangi kod so'rang.",
+      "tooManyAttempts": "Juda ko'p urinish. Iltimos, keyinroq urinib ko'ring.",
+      "verificationExpired": "Tasdiqlash muddati tugagan. Raqamni qayta tasdiqlang.",
+      "notEligible": "Bu raqam hozircha sinov bosqichida emas.",
+      "turnstile": "Tekshiruv muvaffaqiyatsiz tugadi. Sahifani qayta yuklang."
+    }
+  },
   "testimonials": {
     "tag": "Sharhlar *",
     "heading": "Kelajakdagi o'quvchilarimiz nima deydi",

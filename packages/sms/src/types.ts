@@ -9,11 +9,16 @@ export type Recipient =
 
 export type SmsLanguage = "ru" | "uz";
 
-export type TemplateCode = "lead_greeting" | "lead_callback_reminder";
+export type TemplateCode =
+  | "lead_greeting"
+  | "lead_callback_reminder"
+  | "verification";
 
 export interface TemplateVariables {
   /** First name — substituted for {name} in template body */
-  name: string;
+  name?: string;
+  /** 6-digit OTP — substituted for {code} in verification templates */
+  code?: string;
 }
 
 /**
