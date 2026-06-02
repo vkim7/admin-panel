@@ -90,6 +90,15 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   // happens when the form-action returns. Without this the input visibly
   // clears during the verify→submit gap.
   const [code, setCode] = useState("");
+  // Set to true when Turnstile's `callback` fires with a token, false on
+  // mount / error / expired. Gates step 1's submit button — without it a fast
+  // user could click "Получить код" before the widget produces
+  // `cf-turnstile-response`, sending an empty token and getting rejected by
+  // the server with "Verification failed. Please reload the page and try
+  // again." The forced reload in editPhone takes care of *stale* widgets
+  // (after a remount cycle); this gate takes care of the *initial render*
+  // delay that happens on every fresh page load including the post-reload.
+  const [turnstileReady, setTurnstileReady] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   // The token we treat as "this session's verified phone". Sourced from
   // `verifyState.verificationToken` when it succeeds, but tracked separately so
@@ -349,12 +358,12 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
             <p className="text-vermilion text-sm font-semibold">{requestError}</p>
           )}
 
-          <Turnstile />
+          <Turnstile onReady={setTurnstileReady} />
 
           <Button
             type="submit"
             size="lg"
-            disabled={requestPending}
+            disabled={requestPending || !turnstileReady}
             className="w-full rounded-full text-base border-main mt-2"
           >
             {requestPending ? dict.sending : dict.sendCode}
