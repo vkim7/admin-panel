@@ -116,6 +116,7 @@ export function LeadDrawer({
                 preferredTimeSlotsAny={detail.preferredTimeSlotsAny}
                 lessonPreference={detail.lessonPreference}
                 preferredLanguage={detail.preferredLanguage}
+                selfAssessedLevel={detail.selfAssessedLevel}
                 dateOfBirth={detail.dateOfBirth}
                 adminNote={detail.adminNote}
                 formLanguage={detail.language}

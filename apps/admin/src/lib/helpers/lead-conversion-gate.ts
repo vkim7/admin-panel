@@ -30,10 +30,16 @@ export type ConversionGateResult = {
  *   - preferredTimeSlots (specific value or "Any" flag)
  *   - lessonPreference
  *   - preferredLanguage
+ *   - selfAssessedLevel (admin captures during qualifying call)
  *   - dateOfBirth
  *
- * Additionally for non-beginner leads:
+ * Additionally for CONTINUING leads:
  *   - testScore recorded
+ *
+ * Beginners skip the test. Leads with a still-null level are flagged as
+ * "missing: level" — that's expected for newly verified leads (the landing
+ * form only collects name + phone), and is captured later via the lead
+ * preferences dialog.
  *
  * Advisory only — server-side enforcement was removed. Drives the row urgency
  * chip ("Ready to convert") and the drawer's amber missing-details hint.
@@ -51,10 +57,10 @@ export function evaluateConversionGate(
   if (!timeCaptured) missing.push("preferred time");
   if (!lead.lessonPreference) missing.push("lesson type");
   if (!lead.preferredLanguage) missing.push("preferred language");
+  if (!lead.selfAssessedLevel) missing.push("level");
   if (!lead.dateOfBirth) missing.push("date of birth");
 
-  const needsTest = lead.selfAssessedLevel !== "COMPLETE_BEGINNER";
-  if (needsTest && lead.testScore === null) {
+  if (lead.selfAssessedLevel === "CONTINUING" && lead.testScore === null) {
     missing.push("test score");
   }
 

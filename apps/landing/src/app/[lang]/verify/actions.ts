@@ -1,6 +1,12 @@
 "use server";
 
-import { createHash, createHmac, randomInt, timingSafeEqual } from "crypto";
+import {
+  createHash,
+  createHmac,
+  randomBytes,
+  randomInt,
+  timingSafeEqual,
+} from "crypto";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
@@ -16,7 +22,11 @@ const PIXEL_ID = "2184030425473159";
 const CODE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 const MAX_ATTEMPTS_PER_CODE = 5;
 const MAX_CODES_PER_PHONE_PER_HOUR = 3;
-const MAX_CODES_PER_IP_PER_HOUR = 10;
+// Within this window an existing unverified PhoneVerification row counts as a
+// "resend" — the user has already cleared Turnstile once for this phone, so
+// we skip re-challenging them. Window is the same hour we rate-limit on, so
+// the bot-abuse ceiling is identical (3 SMS / phone / hour).
+const RESEND_TURNSTILE_GRACE_MS = 60 * 60 * 1000;
 
 const VERIFIED_TOKEN_TTL_MS = 15 * 60 * 1000; // signed token must be redeemed within 15 min
 
@@ -67,29 +77,54 @@ function sign(payload: string): string {
   return createHmac("sha256", TOKEN_HMAC_KEY).update(payload).digest("hex");
 }
 
-function issueVerifiedToken(phone: string): string {
+/**
+ * Issue a verified-phone token. The token carries:
+ *   - verificationId — pins the token to a specific PhoneVerification row, so
+ *     `submitVerifiedLead` can atomically mark it redeemed (single-use).
+ *   - phone — server cross-checks against the submitted phone; a token for
+ *     phone A can't be replayed for phone B.
+ *   - expiresAt — wall-clock TTL.
+ * Format: `verificationId|phone|expiresAt|hmac(verificationId|phone|expiresAt)`,
+ * base64url-encoded.
+ */
+function issueVerifiedToken(verificationId: string, phone: string): string {
   const expiresAt = Date.now() + VERIFIED_TOKEN_TTL_MS;
-  const payload = `${phone}|${expiresAt}`;
+  const payload = `${verificationId}|${phone}|${expiresAt}`;
   const signature = sign(payload);
   return Buffer.from(`${payload}|${signature}`, "utf8").toString("base64url");
 }
 
-function verifyToken(token: string, phone: string): boolean {
+type VerifiedTokenPayload = {
+  verificationId: string;
+  phone: string;
+  expiresAt: number;
+};
+
+function verifyToken(
+  token: string,
+  expectedPhone: string,
+): VerifiedTokenPayload | null {
   try {
     const decoded = Buffer.from(token, "base64url").toString("utf8");
     const parts = decoded.split("|");
-    if (parts.length !== 3) return false;
-    const [tokenPhone, expiresStr, signature] = parts as [string, string, string];
-    if (tokenPhone !== phone) return false;
+    if (parts.length !== 4) return null;
+    const [verificationId, tokenPhone, expiresStr, signature] = parts as [
+      string,
+      string,
+      string,
+      string,
+    ];
+    if (tokenPhone !== expectedPhone) return null;
     const expiresAt = Number(expiresStr);
-    if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return false;
-    const expected = sign(`${tokenPhone}|${expiresStr}`);
+    if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) return null;
+    const expected = sign(`${verificationId}|${tokenPhone}|${expiresStr}`);
     const a = Buffer.from(signature, "hex");
     const b = Buffer.from(expected, "hex");
-    if (a.length !== b.length) return false;
-    return timingSafeEqual(a, b);
+    if (a.length !== b.length) return null;
+    if (!timingSafeEqual(a, b)) return null;
+    return { verificationId, phone: tokenPhone, expiresAt };
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -117,7 +152,7 @@ function clientIpFrom(h: Headers): string | null {
 
 export type RequestCodeState =
   | { ok: true; cooldownSeconds: number }
-  | { ok: false; error: string; cooldownSeconds?: number }
+  | { ok: false; error: string }
   | null;
 
 export async function requestPhoneCode(
@@ -133,19 +168,32 @@ export async function requestPhoneCode(
   }
   const { phone, language } = parsed.data;
 
-  // Turnstile first — same as submitLead, fail closed.
-  const turnstileToken = formData.get("cf-turnstile-response");
-  const h = await headers();
-  const clientIp = clientIpFrom(h);
-  const verified = await verifyTurnstileToken(
-    typeof turnstileToken === "string" ? turnstileToken : null,
-    clientIp,
-  );
-  if (!verified) {
-    return {
-      ok: false,
-      error: "Verification failed. Please reload the page and try again.",
-    };
+  // Resends skip Turnstile: the user already cleared it for this phone once.
+  // The 3/phone/hour rate limit below caps abuse — a bot that solves Turnstile
+  // once gets at most 3 SMS per phone per hour anyway, same as a legit user.
+  const graceCutoff = new Date(Date.now() - RESEND_TURNSTILE_GRACE_MS);
+  const isResend = await prisma.phoneVerification.findFirst({
+    where: {
+      phone,
+      createdAt: { gte: graceCutoff },
+    },
+    select: { id: true },
+  });
+
+  if (!isResend) {
+    const turnstileToken = formData.get("cf-turnstile-response");
+    const h = await headers();
+    const clientIp = clientIpFrom(h);
+    const verified = await verifyTurnstileToken(
+      typeof turnstileToken === "string" ? turnstileToken : null,
+      clientIp,
+    );
+    if (!verified) {
+      return {
+        ok: false,
+        error: "Verification failed. Please reload the page and try again.",
+      };
+    }
   }
 
   if (!isPhoneAllowed(phone)) {
@@ -156,7 +204,7 @@ export async function requestPhoneCode(
     };
   }
 
-  // Rate limit: per-phone and per-IP, 1-hour window.
+  // Rate limit: per-phone, 1-hour window.
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
   const recentForPhone = await prisma.phoneVerification.count({
     where: { phone, createdAt: { gte: oneHourAgo } },
@@ -167,30 +215,38 @@ export async function requestPhoneCode(
       error: "Too many attempts. Please try again later.",
     };
   }
-  // IP rate limit is best-effort — we track via phone history only (no IP
-  // column). Add IP throttling if abuse is observed; not building it
-  // preemptively. The MAX_CODES_PER_IP_PER_HOUR constant is reserved for that.
-  void MAX_CODES_PER_IP_PER_HOUR;
+
+  // Invalidate prior unverified, unexpired codes for this phone. Otherwise a
+  // user who resends because the first SMS was slow, then types the
+  // first-arrived code, would hit "Incorrect code" because verifyPhoneCode
+  // would only check the newest row. Expiring the old rows surfaces them as
+  // expired (clean "request a new code" message) instead of as wrong codes.
+  await prisma.phoneVerification.updateMany({
+    where: {
+      phone,
+      verifiedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+    data: { expiresAt: new Date() },
+  });
 
   // Generate code: 6 digits, leading zeros preserved.
   const code = String(randomInt(0, 1_000_000)).padStart(6, "0");
+  const salt = randomBytes(16).toString("hex");
+  const codeHash = hashCode(code, salt);
   const expiresAt = new Date(Date.now() + CODE_TTL_MS);
 
-  const row = await prisma.phoneVerification.create({
+  // Single create — no empty-hash window. The previous two-step pattern
+  // (create then update) let a racing user burn the 5-attempt budget against
+  // an empty codeHash before the update landed.
+  await prisma.phoneVerification.create({
     data: {
       phone,
-      // Use the row's id as salt: known to us, unique per row, never leaves
-      // the server. We compute the hash after the row exists so we can salt
-      // with `row.id`.
-      codeHash: "",
+      salt,
+      codeHash,
       expiresAt,
     },
     select: { id: true },
-  });
-  const codeHash = hashCode(code, row.id);
-  await prisma.phoneVerification.update({
-    where: { id: row.id },
-    data: { codeHash },
   });
 
   // Send the SMS post-response. The form already shows "Code sent" so a slow
@@ -234,6 +290,9 @@ export async function verifyPhoneCode(
   }
   const { phone, code } = parsed.data;
 
+  // Only the newest unverified row is checked — `requestPhoneCode` expires
+  // prior rows on resend, so there can be at most one active code per phone
+  // at any time.
   const row = await prisma.phoneVerification.findFirst({
     where: { phone, verifiedAt: null, expiresAt: { gte: new Date() } },
     orderBy: { createdAt: "desc" },
@@ -246,7 +305,7 @@ export async function verifyPhoneCode(
     return { ok: false, error: "Too many attempts. Please request a new code." };
   }
 
-  const expectedHash = hashCode(code, row.id);
+  const expectedHash = hashCode(code, row.salt);
   const a = Buffer.from(expectedHash, "hex");
   const b = Buffer.from(row.codeHash, "hex");
   const matches = a.length === b.length && timingSafeEqual(a, b);
@@ -264,12 +323,25 @@ export async function verifyPhoneCode(
     };
   }
 
-  await prisma.phoneVerification.update({
-    where: { id: row.id },
+  // Guarded update — a concurrent `requestPhoneCode` resend can push this
+  // row's expiresAt into the past between our findFirst above and the update
+  // below. Re-checking expiresAt in the WHERE clause (via updateMany) closes
+  // that window: if the row was expired by a resend mid-flight, count===0 and
+  // we surface the same "expired" message instead of issuing a token for a
+  // row that's now expired.
+  const verified = await prisma.phoneVerification.updateMany({
+    where: {
+      id: row.id,
+      verifiedAt: null,
+      expiresAt: { gte: new Date() },
+    },
     data: { verifiedAt: new Date() },
   });
+  if (verified.count === 0) {
+    return { ok: false, error: "Code expired or not found. Please request a new code." };
+  }
 
-  return { ok: true, verificationToken: issueVerifiedToken(phone) };
+  return { ok: true, verificationToken: issueVerifiedToken(row.id, phone) };
 }
 
 // ─── submitVerifiedLead ─────────────────────────────────────────────────────
@@ -357,36 +429,104 @@ export async function submitVerifiedLead(
   // been verified — if it's missing, expired, or for a different phone, we
   // refuse. We don't fall back to looking up PhoneVerification by phone alone
   // (that would let a client submit any phone after verifying any other).
-  if (!verifyToken(verificationToken, phone)) {
+  const tokenPayload = verifyToken(verificationToken, phone);
+  if (!tokenPayload) {
     return { error: "Verification expired. Please verify your phone again." };
   }
 
-  // Dedup by phone — same semantics as submitLead. CONVERTED leads are sacred.
-  const existing = await prisma.lead.findFirst({
-    where: { phone },
-    select: { id: true, status: true },
-    orderBy: { createdAt: "asc" },
-  });
+  // Redemption + lead creation happen in a single transaction. If lead.create
+  // throws anything other than P2002, the transaction rolls back, leaving
+  // `redeemedAt` null so the user's retry can use the same token. Without
+  // this, a transient DB error during lead.create would burn the verification
+  // (the retry would see redeemed=true, return duplicate=true, and the user
+  // would land on the success screen with no Lead row actually created).
+  //
+  // Three possible outcomes encoded as a discriminated union:
+  //   - `already-redeemed`: token was already used (race / replay) → duplicate
+  //   - `existing-lead`: a Lead with this phone already exists → duplicate
+  //   - `new-lead`: redemption + create both succeeded → schedule side effects
+  type TxResult =
+    | { kind: "already-redeemed" }
+    | { kind: "existing-lead" }
+    | {
+        kind: "new-lead";
+        lead: { id: string; firstName: string; phone: string; language: string };
+      };
 
-  if (existing) {
-    if (existing.status !== "CONVERTED") {
-      await prisma.leadActivity.create({
-        data: { leadId: existing.id, type: "RESUBMITTED", actorAdminId: null },
+  let txResult: TxResult;
+  try {
+    txResult = await prisma.$transaction(async (tx) => {
+      // Atomically mark redeemed. The updateMany with redeemedAt IS NULL is
+      // race-safe: two parallel calls compete on the row-level lock; only
+      // the first sees count===1.
+      const redemption = await tx.phoneVerification.updateMany({
+        where: {
+          id: tokenPayload.verificationId,
+          phone,
+          verifiedAt: { not: null },
+          redeemedAt: null,
+        },
+        data: { redeemedAt: new Date() },
       });
+      if (redemption.count === 0) {
+        return { kind: "already-redeemed" };
+      }
+
+      // Dedup by phone — same semantics as submitLead. CONVERTED leads are
+      // sacred (admin may have already processed and merged them).
+      const existing = await tx.lead.findFirst({
+        where: { phone },
+        select: { id: true, status: true },
+        orderBy: { createdAt: "asc" },
+      });
+      if (existing) {
+        if (existing.status !== "CONVERTED") {
+          await tx.leadActivity.create({
+            data: {
+              leadId: existing.id,
+              type: "RESUBMITTED",
+              actorAdminId: null,
+            },
+          });
+        }
+        return { kind: "existing-lead" };
+      }
+
+      const lead = await tx.lead.create({
+        data: {
+          firstName,
+          lastName,
+          phone,
+          language,
+          phoneVerified: true,
+        },
+        select: { id: true, firstName: true, phone: true, language: true },
+      });
+      return { kind: "new-lead", lead };
+    });
+  } catch (err) {
+    // Belt-and-suspenders against the parallel-submit race: the findFirst
+    // inside the txn closes 99% of duplicates, but two concurrent
+    // transactions can both pass it (depending on isolation level). The
+    // @unique constraint on Lead.phone is the final word — P2002 means
+    // another transaction won the race; treat as duplicate.
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code: string }).code === "P2002"
+    ) {
+      return { success: true, duplicate: true };
     }
-    return { success: true, duplicate: true };
+    // Anything else — the transaction rolled back, so redeemedAt is still
+    // null and the user can retry with the same token.
+    throw err;
   }
 
-  const createdLead = await prisma.lead.create({
-    data: {
-      firstName,
-      lastName,
-      phone,
-      language,
-      phoneVerified: true,
-    },
-    select: { id: true, firstName: true, phone: true, language: true },
-  });
+  if (txResult.kind === "already-redeemed" || txResult.kind === "existing-lead") {
+    return { success: true, duplicate: true };
+  }
+  const createdLead = txResult.lead;
 
   const h = await headers();
   const userAgent = h.get("user-agent");

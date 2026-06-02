@@ -49,6 +49,7 @@ const timeSlots = z
 
 const LESSON_PREFERENCE_VALUES = ["GROUP", "INDIVIDUAL", "EITHER"] as const;
 const PREFERRED_LANGUAGE_VALUES = ["UZBEK", "RUSSIAN", "ANY"] as const;
+const SELF_ASSESSED_LEVEL_VALUES = ["COMPLETE_BEGINNER", "CONTINUING"] as const;
 
 export const leadPreferencesSchema = z.object({
   id: requiredString("Lead ID is required"),
@@ -60,6 +61,7 @@ export const leadPreferencesSchema = z.object({
   // guard enforces that all are non-null at save time.
   lessonPreference: z.enum(LESSON_PREFERENCE_VALUES).nullable(),
   preferredLanguage: z.enum(PREFERRED_LANGUAGE_VALUES).nullable(),
+  selfAssessedLevel: z.enum(SELF_ASSESSED_LEVEL_VALUES).nullable(),
   dateOfBirth: nullableIsoDate(),
   adminNote: nullableString(1000),
 });

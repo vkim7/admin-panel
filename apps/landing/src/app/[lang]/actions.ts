@@ -169,10 +169,27 @@ export async function submitLead(
     return { success: true, duplicate: true };
   }
 
-  const createdLead = await prisma.lead.create({
-    data: leadData,
-    select: { id: true, firstName: true, phone: true, language: true },
-  });
+  // Belt-and-suspenders against the parallel-submit race: the findFirst above
+  // closes 99% of duplicates, but two concurrent calls can both pass it.
+  // Lead.phone is @unique at the DB level — Prisma raises P2002 on the second
+  // insert, which we translate back to the same duplicate response.
+  let createdLead: { id: string; firstName: string; phone: string; language: string };
+  try {
+    createdLead = await prisma.lead.create({
+      data: leadData,
+      select: { id: true, firstName: true, phone: true, language: true },
+    });
+  } catch (err) {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code: string }).code === "P2002"
+    ) {
+      return { success: true, duplicate: true };
+    }
+    throw err;
+  }
 
   const userAgent = h.get("user-agent");
 

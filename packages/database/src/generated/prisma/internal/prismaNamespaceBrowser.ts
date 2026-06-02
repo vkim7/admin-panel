@@ -705,10 +705,12 @@ export type SmsTemplateScalarFieldEnum = (typeof SmsTemplateScalarFieldEnum)[key
 export const PhoneVerificationScalarFieldEnum = {
   id: 'id',
   phone: 'phone',
+  salt: 'salt',
   codeHash: 'codeHash',
   expiresAt: 'expiresAt',
   attempts: 'attempts',
   verifiedAt: 'verifiedAt',
+  redeemedAt: 'redeemedAt',
   createdAt: 'createdAt'
 } as const
 

@@ -37,30 +37,36 @@ export type PhoneVerificationSumAggregateOutputType = {
 export type PhoneVerificationMinAggregateOutputType = {
   id: string | null
   phone: string | null
+  salt: string | null
   codeHash: string | null
   expiresAt: Date | null
   attempts: number | null
   verifiedAt: Date | null
+  redeemedAt: Date | null
   createdAt: Date | null
 }
 
 export type PhoneVerificationMaxAggregateOutputType = {
   id: string | null
   phone: string | null
+  salt: string | null
   codeHash: string | null
   expiresAt: Date | null
   attempts: number | null
   verifiedAt: Date | null
+  redeemedAt: Date | null
   createdAt: Date | null
 }
 
 export type PhoneVerificationCountAggregateOutputType = {
   id: number
   phone: number
+  salt: number
   codeHash: number
   expiresAt: number
   attempts: number
   verifiedAt: number
+  redeemedAt: number
   createdAt: number
   _all: number
 }
@@ -77,30 +83,36 @@ export type PhoneVerificationSumAggregateInputType = {
 export type PhoneVerificationMinAggregateInputType = {
   id?: true
   phone?: true
+  salt?: true
   codeHash?: true
   expiresAt?: true
   attempts?: true
   verifiedAt?: true
+  redeemedAt?: true
   createdAt?: true
 }
 
 export type PhoneVerificationMaxAggregateInputType = {
   id?: true
   phone?: true
+  salt?: true
   codeHash?: true
   expiresAt?: true
   attempts?: true
   verifiedAt?: true
+  redeemedAt?: true
   createdAt?: true
 }
 
 export type PhoneVerificationCountAggregateInputType = {
   id?: true
   phone?: true
+  salt?: true
   codeHash?: true
   expiresAt?: true
   attempts?: true
   verifiedAt?: true
+  redeemedAt?: true
   createdAt?: true
   _all?: true
 }
@@ -194,10 +206,12 @@ export type PhoneVerificationGroupByArgs<ExtArgs extends runtime.Types.Extension
 export type PhoneVerificationGroupByOutputType = {
   id: string
   phone: string
+  salt: string
   codeHash: string
   expiresAt: Date
   attempts: number
   verifiedAt: Date | null
+  redeemedAt: Date | null
   createdAt: Date
   _count: PhoneVerificationCountAggregateOutputType | null
   _avg: PhoneVerificationAvgAggregateOutputType | null
@@ -227,20 +241,24 @@ export type PhoneVerificationWhereInput = {
   NOT?: Prisma.PhoneVerificationWhereInput | Prisma.PhoneVerificationWhereInput[]
   id?: Prisma.StringFilter<"PhoneVerification"> | string
   phone?: Prisma.StringFilter<"PhoneVerification"> | string
+  salt?: Prisma.StringFilter<"PhoneVerification"> | string
   codeHash?: Prisma.StringFilter<"PhoneVerification"> | string
   expiresAt?: Prisma.DateTimeFilter<"PhoneVerification"> | Date | string
   attempts?: Prisma.IntFilter<"PhoneVerification"> | number
   verifiedAt?: Prisma.DateTimeNullableFilter<"PhoneVerification"> | Date | string | null
+  redeemedAt?: Prisma.DateTimeNullableFilter<"PhoneVerification"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PhoneVerification"> | Date | string
 }
 
 export type PhoneVerificationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  salt?: Prisma.SortOrder
   codeHash?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  redeemedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -250,20 +268,24 @@ export type PhoneVerificationWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PhoneVerificationWhereInput[]
   NOT?: Prisma.PhoneVerificationWhereInput | Prisma.PhoneVerificationWhereInput[]
   phone?: Prisma.StringFilter<"PhoneVerification"> | string
+  salt?: Prisma.StringFilter<"PhoneVerification"> | string
   codeHash?: Prisma.StringFilter<"PhoneVerification"> | string
   expiresAt?: Prisma.DateTimeFilter<"PhoneVerification"> | Date | string
   attempts?: Prisma.IntFilter<"PhoneVerification"> | number
   verifiedAt?: Prisma.DateTimeNullableFilter<"PhoneVerification"> | Date | string | null
+  redeemedAt?: Prisma.DateTimeNullableFilter<"PhoneVerification"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"PhoneVerification"> | Date | string
 }, "id">
 
 export type PhoneVerificationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  salt?: Prisma.SortOrder
   codeHash?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  redeemedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PhoneVerificationCountOrderByAggregateInput
   _avg?: Prisma.PhoneVerificationAvgOrderByAggregateInput
@@ -278,90 +300,108 @@ export type PhoneVerificationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PhoneVerificationScalarWhereWithAggregatesInput | Prisma.PhoneVerificationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"PhoneVerification"> | string
   phone?: Prisma.StringWithAggregatesFilter<"PhoneVerification"> | string
+  salt?: Prisma.StringWithAggregatesFilter<"PhoneVerification"> | string
   codeHash?: Prisma.StringWithAggregatesFilter<"PhoneVerification"> | string
   expiresAt?: Prisma.DateTimeWithAggregatesFilter<"PhoneVerification"> | Date | string
   attempts?: Prisma.IntWithAggregatesFilter<"PhoneVerification"> | number
   verifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PhoneVerification"> | Date | string | null
+  redeemedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PhoneVerification"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PhoneVerification"> | Date | string
 }
 
 export type PhoneVerificationCreateInput = {
   id?: string
   phone: string
+  salt: string
   codeHash: string
   expiresAt: Date | string
   attempts?: number
   verifiedAt?: Date | string | null
+  redeemedAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type PhoneVerificationUncheckedCreateInput = {
   id?: string
   phone: string
+  salt: string
   codeHash: string
   expiresAt: Date | string
   attempts?: number
   verifiedAt?: Date | string | null
+  redeemedAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type PhoneVerificationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
+  salt?: Prisma.StringFieldUpdateOperationsInput | string
   codeHash?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  redeemedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PhoneVerificationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
+  salt?: Prisma.StringFieldUpdateOperationsInput | string
   codeHash?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  redeemedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PhoneVerificationCreateManyInput = {
   id?: string
   phone: string
+  salt: string
   codeHash: string
   expiresAt: Date | string
   attempts?: number
   verifiedAt?: Date | string | null
+  redeemedAt?: Date | string | null
   createdAt?: Date | string
 }
 
 export type PhoneVerificationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
+  salt?: Prisma.StringFieldUpdateOperationsInput | string
   codeHash?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  redeemedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PhoneVerificationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
+  salt?: Prisma.StringFieldUpdateOperationsInput | string
   codeHash?: Prisma.StringFieldUpdateOperationsInput | string
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.IntFieldUpdateOperationsInput | number
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  redeemedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PhoneVerificationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  salt?: Prisma.SortOrder
   codeHash?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  redeemedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -372,20 +412,24 @@ export type PhoneVerificationAvgOrderByAggregateInput = {
 export type PhoneVerificationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  salt?: Prisma.SortOrder
   codeHash?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  redeemedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type PhoneVerificationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  salt?: Prisma.SortOrder
   codeHash?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   attempts?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  redeemedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -398,44 +442,52 @@ export type PhoneVerificationSumOrderByAggregateInput = {
 export type PhoneVerificationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  salt?: boolean
   codeHash?: boolean
   expiresAt?: boolean
   attempts?: boolean
   verifiedAt?: boolean
+  redeemedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["phoneVerification"]>
 
 export type PhoneVerificationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  salt?: boolean
   codeHash?: boolean
   expiresAt?: boolean
   attempts?: boolean
   verifiedAt?: boolean
+  redeemedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["phoneVerification"]>
 
 export type PhoneVerificationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phone?: boolean
+  salt?: boolean
   codeHash?: boolean
   expiresAt?: boolean
   attempts?: boolean
   verifiedAt?: boolean
+  redeemedAt?: boolean
   createdAt?: boolean
 }, ExtArgs["result"]["phoneVerification"]>
 
 export type PhoneVerificationSelectScalar = {
   id?: boolean
   phone?: boolean
+  salt?: boolean
   codeHash?: boolean
   expiresAt?: boolean
   attempts?: boolean
   verifiedAt?: boolean
+  redeemedAt?: boolean
   createdAt?: boolean
 }
 
-export type PhoneVerificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phone" | "codeHash" | "expiresAt" | "attempts" | "verifiedAt" | "createdAt", ExtArgs["result"]["phoneVerification"]>
+export type PhoneVerificationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phone" | "salt" | "codeHash" | "expiresAt" | "attempts" | "verifiedAt" | "redeemedAt" | "createdAt", ExtArgs["result"]["phoneVerification"]>
 
 export type $PhoneVerificationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PhoneVerification"
@@ -443,10 +495,12 @@ export type $PhoneVerificationPayload<ExtArgs extends runtime.Types.Extensions.I
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     phone: string
+    salt: string
     codeHash: string
     expiresAt: Date
     attempts: number
     verifiedAt: Date | null
+    redeemedAt: Date | null
     createdAt: Date
   }, ExtArgs["result"]["phoneVerification"]>
   composites: {}
@@ -873,10 +927,12 @@ export interface Prisma__PhoneVerificationClient<T, Null = never, ExtArgs extend
 export interface PhoneVerificationFieldRefs {
   readonly id: Prisma.FieldRef<"PhoneVerification", 'String'>
   readonly phone: Prisma.FieldRef<"PhoneVerification", 'String'>
+  readonly salt: Prisma.FieldRef<"PhoneVerification", 'String'>
   readonly codeHash: Prisma.FieldRef<"PhoneVerification", 'String'>
   readonly expiresAt: Prisma.FieldRef<"PhoneVerification", 'DateTime'>
   readonly attempts: Prisma.FieldRef<"PhoneVerification", 'Int'>
   readonly verifiedAt: Prisma.FieldRef<"PhoneVerification", 'DateTime'>
+  readonly redeemedAt: Prisma.FieldRef<"PhoneVerification", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"PhoneVerification", 'DateTime'>
 }
     

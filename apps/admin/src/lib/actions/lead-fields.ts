@@ -34,6 +34,7 @@ export async function saveLeadPreferences(data: unknown) {
         preferredTimeSlotsAny: true,
         lessonPreference: true,
         preferredLanguage: true,
+        selfAssessedLevel: true,
         dateOfBirth: true,
         adminNote: true,
       },
@@ -54,6 +55,7 @@ export async function saveLeadPreferences(data: unknown) {
       lead.preferredTimeSlotsAny === parsed.data.preferredTimeSlotsAny;
     const sameLessonPref = lead.lessonPreference === parsed.data.lessonPreference;
     const sameLanguage = lead.preferredLanguage === parsed.data.preferredLanguage;
+    const sameLevel = lead.selfAssessedLevel === parsed.data.selfAssessedLevel;
     const sameDob =
       (lead.dateOfBirth?.toISOString().slice(0, 10) ?? null) ===
       (parsed.data.dateOfBirth ?? null);
@@ -66,6 +68,7 @@ export async function saveLeadPreferences(data: unknown) {
       sameSlotsAny &&
       sameLessonPref &&
       sameLanguage &&
+      sameLevel &&
       sameDob
     );
     const noteChanged = !sameNote;
@@ -84,6 +87,7 @@ export async function saveLeadPreferences(data: unknown) {
           preferredTimeSlotsAny: parsed.data.preferredTimeSlotsAny,
           lessonPreference: parsed.data.lessonPreference,
           preferredLanguage: parsed.data.preferredLanguage,
+          selfAssessedLevel: parsed.data.selfAssessedLevel,
           dateOfBirth: dob,
         }),
         ...(noteChanged && { adminNote: parsed.data.adminNote }),

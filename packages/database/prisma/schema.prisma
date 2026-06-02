@@ -1462,18 +1462,27 @@ model SmsTemplate {
 }
 
 // Phone-number verification challenges issued by the landing /verify flow.
-// One row per code generated. `codeHash` is a bcrypt hash of the 6-digit code
-// — never store the plaintext. `verifiedAt` is set when the visitor enters the
-// matching code; the row stays around as an audit trail. Rate limiting works
-// by counting rows for a phone within a window. Cleanup is left to ops (or a
-// later cron job) — rows are tiny and useful for diagnostics.
+// One row per code generated.
+//   - `codeHash` is a salted SHA-256 of the 6-digit code (`sha256(salt:code)`);
+//     plaintext is never stored. Not a password hash — codes are 5-attempt-
+//     limited and expire in 10 min, so scrypt/argon2 would be overkill.
+//   - `salt` is 32 random hex chars per row, generated on insert.
+//   - `verifiedAt` is set when the visitor enters the matching code.
+//   - `redeemedAt` is set when the verified token is exchanged for a Lead row,
+//     making each verification single-use (prevents token replay after the
+//     Lead is created and even if an admin deletes it later).
+// Rate limiting works by counting rows for a phone within a window. Cleanup
+// is left to ops (or a later cron job) — rows are tiny and useful for
+// diagnostics.
 model PhoneVerification {
   id         String    @id @default(cuid())
   phone      String
+  salt       String
   codeHash   String
   expiresAt  DateTime
   attempts   Int       @default(0)
   verifiedAt DateTime?
+  redeemedAt DateTime?
   createdAt  DateTime  @default(now())
 
   @@index([phone, createdAt])
@@ -1618,7 +1627,7 @@ model Lead {
   id                String             @id @default(cuid())
   firstName         String
   lastName          String
-  phone             String
+  phone             String             @unique
   dateOfBirth       DateTime?
   note              String? // visitor's free-text note
   language          String // "uz" or "ru" from URL locale

@@ -12,9 +12,12 @@ import { Input } from "@/components/ui/input";
 export function PhoneInput({
   name = "phone",
   required,
+  defaultValue,
 }: {
   name?: string;
   required?: boolean;
+  /** 9-digit local part (no +998 prefix). Used to repopulate when returning to the form. */
+  defaultValue?: string;
 }) {
   return (
     <div className="flex">
@@ -27,6 +30,7 @@ export function PhoneInput({
         inputMode="tel"
         maxLength={9}
         required={required}
+        defaultValue={defaultValue}
         autoComplete="tel-national"
         onInput={(e) => {
           const el = e.currentTarget;
