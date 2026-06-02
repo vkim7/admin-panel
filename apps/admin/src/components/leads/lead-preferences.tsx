@@ -15,7 +15,11 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TIME_SLOTS, DAYS_LABEL, LESSON_LABEL } from "@/lib/constants";
-import type { LessonPreference, PreferredLanguage } from "@eng/database";
+import type {
+  LessonPreference,
+  PreferredLanguage,
+  SelfAssessedLevel,
+} from "@eng/database";
 
 const DAY_PATTERN_MWF = [1, 3, 5];
 const DAY_PATTERN_TTS = [2, 4, 6];
@@ -40,6 +44,16 @@ const LANG_OPTIONS: { id: PreferredLanguage; label: string }[] = [
   { id: "UZBEK", label: "Uzbek" },
   { id: "RUSSIAN", label: "Russian" },
 ];
+
+const LEVEL_OPTIONS: { id: SelfAssessedLevel; label: string }[] = [
+  { id: "COMPLETE_BEGINNER", label: "Beginner" },
+  { id: "CONTINUING", label: "Continuing" },
+];
+
+const LEVEL_LABEL: Record<SelfAssessedLevel, string> = {
+  COMPLETE_BEGINNER: "Beginner",
+  CONTINUING: "Continuing",
+};
 
 function daysKey(days: number[]): string {
   return [...days].sort((a, b) => a - b).join(",");
@@ -85,6 +99,7 @@ function PreferencesDialog({
   initialSlotsAny,
   initialLessonPreference,
   initialPreferredLanguage,
+  initialSelfAssessedLevel,
   initialDateOfBirth,
   initialAdminNote,
   formLanguage,
@@ -99,6 +114,7 @@ function PreferencesDialog({
   initialSlotsAny: boolean;
   initialLessonPreference: LessonPreference | null;
   initialPreferredLanguage: PreferredLanguage | null;
+  initialSelfAssessedLevel: SelfAssessedLevel | null;
   initialDateOfBirth: Date | null;
   initialAdminNote: string | null;
   formLanguage: string;
@@ -117,17 +133,26 @@ function PreferencesDialog({
   const [language, setLanguage] = useState<PreferredLanguage | null>(
     deriveInitialLanguage(initialPreferredLanguage, formLanguage),
   );
+  const [level, setLevel] = useState<SelfAssessedLevel | null>(
+    initialSelfAssessedLevel,
+  );
   const [dob, setDob] = useState<string>(dateToInputValue(initialDateOfBirth));
   const [note, setNote] = useState<string>(initialAdminNote ?? "");
   const [isPending, startTransition] = useTransition();
 
-  // All five fields are required — protects against silently wiping captured
-  // data and aligns the dialog with the conversion gate's expectations.
+  // Required fields: must stay captured. The dialog's job is to prevent silent
+  // wipes; the conversion gate is the source of truth for "is this lead ready
+  // to convert". For backward compat, `selfAssessedLevel` is only required at
+  // save time if it was already set when the dialog opened — legacy leads
+  // (saved before the level field existed) can still have their note or other
+  // fields edited without forcing the admin to also pick a level.
+  const levelRequired = initialSelfAssessedLevel !== null;
   const canSave =
     daysMode !== "none" &&
     (slotsAny || draftSlots.length > 0) &&
     lessonPref !== null &&
     language !== null &&
+    (!levelRequired || level !== null) &&
     dob.length > 0;
 
   function toggleSlot(slot: string) {
@@ -148,6 +173,7 @@ function PreferencesDialog({
     setSlotsAny(initialSlotsAny);
     setLessonPref(initialLessonPreference);
     setLanguage(deriveInitialLanguage(initialPreferredLanguage, formLanguage));
+    setLevel(initialSelfAssessedLevel);
     setDob(dateToInputValue(initialDateOfBirth));
     setNote(initialAdminNote ?? "");
   }
@@ -173,6 +199,7 @@ function PreferencesDialog({
         preferredTimeSlotsAny,
         lessonPreference: lessonPref,
         preferredLanguage: language,
+        selfAssessedLevel: level,
         dateOfBirth: dob || null,
         adminNote: trimmedNote === "" ? null : trimmedNote,
       });
@@ -227,6 +254,23 @@ function PreferencesDialog({
                   size="sm"
                   variant={lessonPref === opt.id ? "default" : "outline"}
                   onClick={() => setLessonPref(opt.id)}
+                >
+                  {opt.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label className="mb-1.5 block">Level</Label>
+            <div className="flex gap-2">
+              {LEVEL_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.id}
+                  type="button"
+                  size="sm"
+                  variant={level === opt.id ? "default" : "outline"}
+                  onClick={() => setLevel(opt.id)}
                 >
                   {opt.label}
                 </Button>
@@ -330,7 +374,7 @@ function PreferencesDialog({
             type="button"
             onClick={save}
             disabled={isPending || !canSave}
-            title={!canSave ? "Fill all five fields to save" : undefined}
+            title={!canSave ? "Fill all required fields to save" : undefined}
           >
             {isPending ? "Saving..." : "Save"}
           </Button>
@@ -348,6 +392,7 @@ export function LeadPreferences({
   preferredTimeSlotsAny,
   lessonPreference,
   preferredLanguage,
+  selfAssessedLevel,
   dateOfBirth,
   adminNote,
   formLanguage,
@@ -361,6 +406,7 @@ export function LeadPreferences({
   preferredTimeSlotsAny: boolean;
   lessonPreference: LessonPreference | null;
   preferredLanguage: PreferredLanguage | null;
+  selfAssessedLevel: SelfAssessedLevel | null;
   dateOfBirth: Date | null;
   adminNote: string | null;
   /** Form-submission locale ("uz" / "ru") — used to seed the language radio
@@ -395,16 +441,22 @@ export function LeadPreferences({
   const languageLabel = preferredLanguage
     ? LANG_LABEL[preferredLanguage]
     : null;
+  const levelLabel = selfAssessedLevel ? LEVEL_LABEL[selfAssessedLevel] : null;
   const dobLabel = dateOfBirth
     ? new Date(dateOfBirth).toISOString().slice(0, 10)
     : null;
 
-  // Only render the captured values once all 5 fields are set. Partial values
+  // Only render the captured values once all 6 fields are set. Partial values
   // (typically intake-prefilled lessonPreference / preferredLanguage) misled
   // admins into thinking preferences were already confirmed — the dialog
   // pre-populates from the same data, so they're still visible behind Change.
   const allCaptured =
-    languageLabel && lessonLabel && daysLabel && timeLabel && dobLabel;
+    languageLabel &&
+    lessonLabel &&
+    levelLabel &&
+    daysLabel &&
+    timeLabel &&
+    dobLabel;
 
   return (
     <section className="rounded-lg border bg-card p-3 space-y-2">
@@ -433,6 +485,10 @@ export function LeadPreferences({
             {lessonLabel}
           </div>
           <div className="text-sm">
+            <span className="text-muted-foreground">Level: </span>
+            {levelLabel}
+          </div>
+          <div className="text-sm">
             <span className="text-muted-foreground">Days: </span>
             {daysLabel}
           </div>
@@ -455,6 +511,7 @@ export function LeadPreferences({
         initialSlotsAny={preferredTimeSlotsAny}
         initialLessonPreference={lessonPreference}
         initialPreferredLanguage={preferredLanguage}
+        initialSelfAssessedLevel={selfAssessedLevel}
         initialDateOfBirth={dateOfBirth}
         initialAdminNote={adminNote}
         formLanguage={formLanguage}

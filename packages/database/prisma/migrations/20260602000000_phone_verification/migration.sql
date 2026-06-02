@@ -1,8 +1,10 @@
 -- Phone-number verification for the landing /verify flow.
 -- Adds:
 --   * Lead.phoneVerified — true when the lead came through SMS-OTP verification.
---   * PhoneVerification — one row per code issued. Code stored as bcrypt hash;
---     verifiedAt set on success. Rate limiting uses (phone, createdAt) index.
+--   * PhoneVerification — one row per code issued. Code stored as salted
+--     SHA-256 hash; verifiedAt set on success. Rate limiting uses
+--     (phone, createdAt) index. Per-row salt + single-use redemption added in
+--     a follow-up migration (20260603000003_phone_verification_salt_redemption).
 
 ALTER TABLE "Lead" ADD COLUMN "phoneVerified" BOOLEAN NOT NULL DEFAULT false;
 

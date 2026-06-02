@@ -419,12 +419,12 @@ export type LeadOrderByWithRelationInput = {
 
 export type LeadWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  phone?: string
   AND?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   OR?: Prisma.LeadWhereInput[]
   NOT?: Prisma.LeadWhereInput | Prisma.LeadWhereInput[]
   firstName?: Prisma.StringFilter<"Lead"> | string
   lastName?: Prisma.StringFilter<"Lead"> | string
-  phone?: Prisma.StringFilter<"Lead"> | string
   dateOfBirth?: Prisma.DateTimeNullableFilter<"Lead"> | Date | string | null
   note?: Prisma.StringNullableFilter<"Lead"> | string | null
   language?: Prisma.StringFilter<"Lead"> | string
@@ -450,7 +450,7 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   student?: Prisma.XOR<Prisma.StudentNullableScalarRelationFilter, Prisma.StudentWhereInput> | null
   activities?: Prisma.LeadActivityListRelationFilter
   smsHistory?: Prisma.SmsHistoryListRelationFilter
-}, "id">
+}, "id" | "phone">
 
 export type LeadOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
