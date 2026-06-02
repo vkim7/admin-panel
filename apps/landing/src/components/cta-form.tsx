@@ -38,7 +38,7 @@ export function CtaForm({ dict, verifyDict, locale }: CtaFormProps) {
 
           {/* Form — mobile: 2nd, desktop: col 2 spanning both rows */}
           <div className="md:col-start-2 md:row-start-1 md:row-span-2">
-            <VerifyForm dict={verifyDict} locale={locale} />
+            <VerifyForm dict={verifyDict} locale={locale} hideStep1Heading />
           </div>
 
           {/* OR + contacts — mobile: 3rd, desktop: col 1 row 2 */}
