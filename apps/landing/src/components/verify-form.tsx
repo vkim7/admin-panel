@@ -166,13 +166,19 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
     }
   }, [verifiedToken, submitAction]);
 
-  // Pixel/CAPI event + transition to done screen on successful submit.
+  // Fire Pixel/CAPI event on successful (non-duplicate) submit. The done
+  // screen visibility is derived directly from submitState below — gating it
+  // on a `step === "done"` state would cause one extra render where the
+  // step-2 UI flashes before the useEffect runs.
   useEffect(() => {
-    if (submitState && "success" in submitState && submitState.success) {
-      if (!submitState.duplicate && eventIdRef.current) {
-        window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
-      }
-      setStep("done");
+    if (
+      submitState &&
+      "success" in submitState &&
+      submitState.success &&
+      !submitState.duplicate &&
+      eventIdRef.current
+    ) {
+      window.fbq?.("track", "Lead", {}, { eventID: eventIdRef.current });
     }
   }, [submitState]);
 
