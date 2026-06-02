@@ -221,7 +221,11 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   const [descBefore, descAfter] = dict.codeStepDescription.split("{phone}");
 
   // ─── Done screen ─────────────────────────────────────────────────────────
-  if (step === "done" && submitState && "success" in submitState && submitState.success) {
+  // Gated only on submitState (not `step === "done"`) so the screen appears in
+  // the same render where submit returns success — gating on step would leave
+  // one render with codeVerified=true and submit done but step still "code",
+  // showing the step-2 UI with a disabled "Отправить заявку" button.
+  if (submitState && "success" in submitState && submitState.success) {
     return (
       <div className="flex flex-col items-center gap-4 max-w-md w-full">
         <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 w-full">
