@@ -86,6 +86,7 @@ export const ModelName = {
   CallHistory: 'CallHistory',
   SmsHistory: 'SmsHistory',
   SmsTemplate: 'SmsTemplate',
+  PhoneVerification: 'PhoneVerification',
   EskizToken: 'EskizToken',
   Holiday: 'Holiday',
   Exam: 'Exam',
@@ -701,6 +702,19 @@ export const SmsTemplateScalarFieldEnum = {
 export type SmsTemplateScalarFieldEnum = (typeof SmsTemplateScalarFieldEnum)[keyof typeof SmsTemplateScalarFieldEnum]
 
 
+export const PhoneVerificationScalarFieldEnum = {
+  id: 'id',
+  phone: 'phone',
+  codeHash: 'codeHash',
+  expiresAt: 'expiresAt',
+  attempts: 'attempts',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PhoneVerificationScalarFieldEnum = (typeof PhoneVerificationScalarFieldEnum)[keyof typeof PhoneVerificationScalarFieldEnum]
+
+
 export const EskizTokenScalarFieldEnum = {
   id: 'id',
   token: 'token',
@@ -768,6 +782,7 @@ export const LeadScalarFieldEnum = {
   selfAssessedLevel: 'selfAssessedLevel',
   status: 'status',
   adminNote: 'adminNote',
+  phoneVerified: 'phoneVerified',
   preferredDays: 'preferredDays',
   preferredDaysAny: 'preferredDaysAny',
   preferredTimeSlots: 'preferredTimeSlots',

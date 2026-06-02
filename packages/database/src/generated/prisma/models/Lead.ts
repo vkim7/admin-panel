@@ -48,6 +48,7 @@ export type LeadMinAggregateOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus | null
   adminNote: string | null
+  phoneVerified: boolean | null
   preferredDaysAny: boolean | null
   preferredTimeSlotsAny: boolean | null
   preferredLanguage: $Enums.PreferredLanguage | null
@@ -74,6 +75,7 @@ export type LeadMaxAggregateOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus | null
   adminNote: string | null
+  phoneVerified: boolean | null
   preferredDaysAny: boolean | null
   preferredTimeSlotsAny: boolean | null
   preferredLanguage: $Enums.PreferredLanguage | null
@@ -100,6 +102,7 @@ export type LeadCountAggregateOutputType = {
   selfAssessedLevel: number
   status: number
   adminNote: number
+  phoneVerified: number
   preferredDays: number
   preferredDaysAny: number
   preferredTimeSlots: number
@@ -140,6 +143,7 @@ export type LeadMinAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  phoneVerified?: true
   preferredDaysAny?: true
   preferredTimeSlotsAny?: true
   preferredLanguage?: true
@@ -166,6 +170,7 @@ export type LeadMaxAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  phoneVerified?: true
   preferredDaysAny?: true
   preferredTimeSlotsAny?: true
   preferredLanguage?: true
@@ -192,6 +197,7 @@ export type LeadCountAggregateInputType = {
   selfAssessedLevel?: true
   status?: true
   adminNote?: true
+  phoneVerified?: true
   preferredDays?: true
   preferredDaysAny?: true
   preferredTimeSlots?: true
@@ -307,6 +313,7 @@ export type LeadGroupByOutputType = {
   selfAssessedLevel: $Enums.SelfAssessedLevel | null
   status: $Enums.LeadStatus
   adminNote: string | null
+  phoneVerified: boolean
   preferredDays: number[]
   preferredDaysAny: boolean
   preferredTimeSlots: string[]
@@ -358,6 +365,7 @@ export type LeadWhereInput = {
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableFilter<"Lead"> | string | null
+  phoneVerified?: Prisma.BoolFilter<"Lead"> | boolean
   preferredDays?: Prisma.IntNullableListFilter<"Lead">
   preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
@@ -389,6 +397,7 @@ export type LeadOrderByWithRelationInput = {
   selfAssessedLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  phoneVerified?: Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
@@ -423,6 +432,7 @@ export type LeadWhereUniqueInput = Prisma.AtLeast<{
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableFilter<"Lead"> | string | null
+  phoneVerified?: Prisma.BoolFilter<"Lead"> | boolean
   preferredDays?: Prisma.IntNullableListFilter<"Lead">
   preferredDaysAny?: Prisma.BoolFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
@@ -454,6 +464,7 @@ export type LeadOrderByWithAggregationInput = {
   selfAssessedLevel?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrderInput | Prisma.SortOrder
+  phoneVerified?: Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
@@ -490,6 +501,7 @@ export type LeadScalarWhereWithAggregatesInput = {
   selfAssessedLevel?: Prisma.EnumSelfAssessedLevelNullableWithAggregatesFilter<"Lead"> | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusWithAggregatesFilter<"Lead"> | $Enums.LeadStatus
   adminNote?: Prisma.StringNullableWithAggregatesFilter<"Lead"> | string | null
+  phoneVerified?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
   preferredDays?: Prisma.IntNullableListFilter<"Lead">
   preferredDaysAny?: Prisma.BoolWithAggregatesFilter<"Lead"> | boolean
   preferredTimeSlots?: Prisma.StringNullableListFilter<"Lead">
@@ -518,6 +530,7 @@ export type LeadCreateInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -549,6 +562,7 @@ export type LeadUncheckedCreateInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -580,6 +594,7 @@ export type LeadUpdateInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -611,6 +626,7 @@ export type LeadUncheckedUpdateInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -642,6 +658,7 @@ export type LeadCreateManyInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -670,6 +687,7 @@ export type LeadUpdateManyMutationInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -698,6 +716,7 @@ export type LeadUncheckedUpdateManyInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -731,6 +750,7 @@ export type LeadCountOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  phoneVerified?: Prisma.SortOrder
   preferredDays?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlots?: Prisma.SortOrder
@@ -764,6 +784,7 @@ export type LeadMaxOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  phoneVerified?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
@@ -790,6 +811,7 @@ export type LeadMinOrderByAggregateInput = {
   selfAssessedLevel?: Prisma.SortOrder
   status?: Prisma.SortOrder
   adminNote?: Prisma.SortOrder
+  phoneVerified?: Prisma.SortOrder
   preferredDaysAny?: Prisma.SortOrder
   preferredTimeSlotsAny?: Prisma.SortOrder
   preferredLanguage?: Prisma.SortOrder
@@ -914,6 +936,7 @@ export type LeadCreateWithoutStudentInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -944,6 +967,7 @@ export type LeadUncheckedCreateWithoutStudentInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -990,6 +1014,7 @@ export type LeadUpdateWithoutStudentInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1020,6 +1045,7 @@ export type LeadUncheckedUpdateWithoutStudentInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1050,6 +1076,7 @@ export type LeadCreateWithoutSmsHistoryInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -1080,6 +1107,7 @@ export type LeadUncheckedCreateWithoutSmsHistoryInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -1126,6 +1154,7 @@ export type LeadUpdateWithoutSmsHistoryInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1156,6 +1185,7 @@ export type LeadUncheckedUpdateWithoutSmsHistoryInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1186,6 +1216,7 @@ export type LeadCreateWithoutActivitiesInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -1216,6 +1247,7 @@ export type LeadUncheckedCreateWithoutActivitiesInput = {
   selfAssessedLevel?: $Enums.SelfAssessedLevel | null
   status?: $Enums.LeadStatus
   adminNote?: string | null
+  phoneVerified?: boolean
   preferredDays?: Prisma.LeadCreatepreferredDaysInput | number[]
   preferredDaysAny?: boolean
   preferredTimeSlots?: Prisma.LeadCreatepreferredTimeSlotsInput | string[]
@@ -1262,6 +1294,7 @@ export type LeadUpdateWithoutActivitiesInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1292,6 +1325,7 @@ export type LeadUncheckedUpdateWithoutActivitiesInput = {
   selfAssessedLevel?: Prisma.NullableEnumSelfAssessedLevelFieldUpdateOperationsInput | $Enums.SelfAssessedLevel | null
   status?: Prisma.EnumLeadStatusFieldUpdateOperationsInput | $Enums.LeadStatus
   adminNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredDays?: Prisma.LeadUpdatepreferredDaysInput | number[]
   preferredDaysAny?: Prisma.BoolFieldUpdateOperationsInput | boolean
   preferredTimeSlots?: Prisma.LeadUpdatepreferredTimeSlotsInput | string[]
@@ -1362,6 +1396,7 @@ export type LeadSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  phoneVerified?: boolean
   preferredDays?: boolean
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
@@ -1394,6 +1429,7 @@ export type LeadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  phoneVerified?: boolean
   preferredDays?: boolean
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
@@ -1422,6 +1458,7 @@ export type LeadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  phoneVerified?: boolean
   preferredDays?: boolean
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
@@ -1450,6 +1487,7 @@ export type LeadSelectScalar = {
   selfAssessedLevel?: boolean
   status?: boolean
   adminNote?: boolean
+  phoneVerified?: boolean
   preferredDays?: boolean
   preferredDaysAny?: boolean
   preferredTimeSlots?: boolean
@@ -1466,7 +1504,7 @@ export type LeadSelectScalar = {
   updatedAt?: boolean
 }
 
-export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "preferredDays" | "preferredDaysAny" | "preferredTimeSlots" | "preferredTimeSlotsAny" | "preferredLanguage" | "testSentAt" | "testLevelSent" | "testScore" | "testScoredAt" | "nextCallbackAt" | "lostReason" | "lostReasonOther" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
+export type LeadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "phone" | "dateOfBirth" | "note" | "language" | "lessonPreference" | "selfAssessedLevel" | "status" | "adminNote" | "phoneVerified" | "preferredDays" | "preferredDaysAny" | "preferredTimeSlots" | "preferredTimeSlotsAny" | "preferredLanguage" | "testSentAt" | "testLevelSent" | "testScore" | "testScoredAt" | "nextCallbackAt" | "lostReason" | "lostReasonOther" | "createdAt" | "updatedAt", ExtArgs["result"]["lead"]>
 export type LeadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   student?: boolean | Prisma.Lead$studentArgs<ExtArgs>
   activities?: boolean | Prisma.Lead$activitiesArgs<ExtArgs>
@@ -1495,6 +1533,7 @@ export type $LeadPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     selfAssessedLevel: $Enums.SelfAssessedLevel | null
     status: $Enums.LeadStatus
     adminNote: string | null
+    phoneVerified: boolean
     preferredDays: number[]
     preferredDaysAny: boolean
     preferredTimeSlots: string[]
@@ -1946,6 +1985,7 @@ export interface LeadFieldRefs {
   readonly selfAssessedLevel: Prisma.FieldRef<"Lead", 'SelfAssessedLevel'>
   readonly status: Prisma.FieldRef<"Lead", 'LeadStatus'>
   readonly adminNote: Prisma.FieldRef<"Lead", 'String'>
+  readonly phoneVerified: Prisma.FieldRef<"Lead", 'Boolean'>
   readonly preferredDays: Prisma.FieldRef<"Lead", 'Int[]'>
   readonly preferredDaysAny: Prisma.FieldRef<"Lead", 'Boolean'>
   readonly preferredTimeSlots: Prisma.FieldRef<"Lead", 'String[]'>

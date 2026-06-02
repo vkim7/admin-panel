@@ -1461,6 +1461,24 @@ model SmsTemplate {
   @@unique([code, language])
 }
 
+// Phone-number verification challenges issued by the landing /verify flow.
+// One row per code generated. `codeHash` is a bcrypt hash of the 6-digit code
+// — never store the plaintext. `verifiedAt` is set when the visitor enters the
+// matching code; the row stays around as an audit trail. Rate limiting works
+// by counting rows for a phone within a window. Cleanup is left to ops (or a
+// later cron job) — rows are tiny and useful for diagnostics.
+model PhoneVerification {
+  id         String    @id @default(cuid())
+  phone      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([phone, createdAt])
+}
+
 // Singleton row caching the Eskiz JWT (30-day lifetime) so cold starts on
 // Vercel don't re-login. `id` is always "default" — convention-enforced
 // singleton. Refresh logic lives in packages/sms/auth.ts.
@@ -1608,6 +1626,7 @@ model Lead {
   selfAssessedLevel SelfAssessedLevel? // visitor's self-assessed English level
   status            LeadStatus         @default(NEW)
   adminNote         String? // internal note by admin after calling
+  phoneVerified     Boolean            @default(false) // true when the lead came through the /verify flow (SMS-OTP confirmed)
 
   // Qualifying conversation — captured during CONTACTED phase
   preferredDays         Int[] // 1=Mon..7=Sun (ISO 8601). Matches Student.preferredDays.

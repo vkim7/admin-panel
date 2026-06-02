@@ -14,6 +14,8 @@
 
 export { sendTemplatedSms } from "./send";
 export type { SendTemplatedSmsInput } from "./send";
+export { sendVerificationSms } from "./verification";
+export type { VerificationSendResult } from "./verification";
 export type {
   Recipient,
   SendResult,
