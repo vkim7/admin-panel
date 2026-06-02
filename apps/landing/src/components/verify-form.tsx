@@ -15,7 +15,7 @@ import {
   type RequestCodeState,
   type VerifyCodeState,
   type SubmitVerifiedLeadState,
-} from "@/app/[lang]/verify/actions";
+} from "@/app/[lang]/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PhoneInput } from "@/components/ui/phone-input";
@@ -300,7 +300,7 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   // showing the step-2 UI with a disabled "Отправить заявку" button.
   if (submitState && "success" in submitState && submitState.success) {
     return (
-      <div className="flex flex-col items-center gap-4 max-w-md w-full">
+      <div className="flex flex-col items-center gap-4 w-full">
         <div className="bg-leaf-green/20 border-2 border-leaf-green rounded-xl px-8 py-6 w-full">
           <p className="text-leaf-green font-bold text-lg text-center">
             {submitState.duplicate ? dict.duplicateSuccess : dict.success}
@@ -314,7 +314,7 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   }
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8 w-full max-w-md">
+    <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8 w-full">
       <h1 className="font-heading font-black text-xl text-foreground tracking-tight mb-1">
         {step === "details" ? dict.heading : dict.codeStepHeading}
       </h1>

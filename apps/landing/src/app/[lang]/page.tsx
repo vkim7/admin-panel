@@ -28,7 +28,7 @@ export default async function LandingPage({
         <Comparison dict={dict.comparison} />
         <Testimonials dict={dict.testimonials} />
         <Faq dict={dict.faq} />
-        <CtaForm dict={dict.form} locale={locale} />
+        <CtaForm dict={dict.form} verifyDict={dict.verify} locale={locale} />
       </main>
       <Footer locale={locale} />
     </>
