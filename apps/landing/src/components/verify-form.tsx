@@ -74,6 +74,10 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   const [phone, setPhone] = useState<string>(""); // full E.164 once captured
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  // Controlled so the value survives React 19's automatic form reset that
+  // happens when the form-action returns. Without this the input visibly
+  // clears during the verify→submit gap.
+  const [code, setCode] = useState("");
   const [cooldown, setCooldown] = useState(0);
   // The token we treat as "this session's verified phone". Sourced from
   // `verifyState.verificationToken` when it succeeds, but tracked separately so
@@ -196,7 +200,14 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
     submitState && "error" in submitState ? submitState.error : null;
 
   const codeVerified = verifiedToken !== null;
-  const codeStepPending = verifyPending || submitPending;
+  // Treat "verify returned ok but submit hasn't started yet" as still pending,
+  // so the button stays in "Submitting…" state across the brief render gap
+  // between the verifyAction returning and the auto-submit useEffect firing.
+  // Without this the button flickers back to "Отправить заявку" enabled for a
+  // single render before the auto-submit kicks in.
+  const submitFired = submitState !== null;
+  const codeStepPending =
+    verifyPending || submitPending || (verifyState?.ok === true && !submitFired);
   const codeStepError = verifyError ?? submitError;
 
   // Retry submit when verify succeeded but lead creation failed (network blip,
@@ -211,6 +222,7 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   const editPhone = () => {
     setStep("details");
     setVerifiedToken(null);
+    setCode("");
     lastSubmittedTokenRef.current = null;
   };
 
@@ -321,6 +333,8 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
               pattern="\d{6}"
               autoComplete="one-time-code"
               required
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
               disabled={codeVerified}
               aria-label={dict.code}
             />
