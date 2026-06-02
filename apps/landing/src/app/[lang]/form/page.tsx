@@ -1,5 +1,5 @@
 import { getDictionary, isValidLocale } from "@/lib/i18n";
-import { StandaloneForm } from "@/components/standalone-form";
+import { VerifyForm } from "@/components/verify-form";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default async function FormPage({
@@ -17,7 +17,9 @@ export default async function FormPage({
         <img src="/logo_black.svg" alt="Banana School" className="h-8" />
         <LanguageSwitcher currentLocale={locale} pathSuffix="/form" />
       </div>
-      <StandaloneForm dict={dict.form} locale={locale} />
+      <div className="w-full max-w-md">
+        <VerifyForm dict={dict.verify} locale={locale} />
+      </div>
     </div>
   );
 }
