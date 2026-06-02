@@ -79,6 +79,12 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   // clears during the verify→submit gap.
   const [code, setCode] = useState("");
   const [cooldown, setCooldown] = useState(0);
+  // Tracks whether the Turnstile widget has finished obtaining a token. The
+  // widget takes ~100-500ms to render after mount; without this gate, a fast
+  // user can submit step 1 before the widget produces `cf-turnstile-response`
+  // and the server rejects the (missing) token. Resets to false whenever the
+  // widget remounts (e.g. after editPhone).
+  const [turnstileReady, setTurnstileReady] = useState(false);
   // The token we treat as "this session's verified phone". Sourced from
   // `verifyState.verificationToken` when it succeeds, but tracked separately so
   // editPhone can reset it without depending on useActionState (which has no
@@ -297,12 +303,12 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
             <p className="text-vermilion text-sm font-semibold">{requestError}</p>
           )}
 
-          <Turnstile />
+          <Turnstile onReady={setTurnstileReady} />
 
           <Button
             type="submit"
             size="lg"
-            disabled={requestPending}
+            disabled={requestPending || !turnstileReady}
             className="w-full rounded-full text-base border-main mt-2"
           >
             {requestPending ? dict.sending : dict.sendCode}
