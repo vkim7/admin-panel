@@ -69,22 +69,28 @@ function PencilIcon({ size = 16 }: { size?: number }) {
   );
 }
 
+/**
+ * sessionStorage key used to preserve the user's name fields across the
+ * forced page reload that editPhone triggers. Phone is intentionally left
+ * out — the whole point of the reload is to let them re-enter it.
+ */
+const EDIT_PHONE_STATE_KEY = "verify-form:names";
+
 export function VerifyForm({ dict, locale }: VerifyFormProps) {
   const [step, setStep] = useState<Step>("details");
   const [phone, setPhone] = useState<string>(""); // full E.164 once captured
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  // Incremented after we restore name fields from sessionStorage so the form
+  // remounts with the new defaultValues. Without the remount the Inputs
+  // (uncontrolled, defaultValue-only) would stay empty even though state has
+  // the restored values.
+  const [formInstance, setFormInstance] = useState(0);
   // Controlled so the value survives React 19's automatic form reset that
   // happens when the form-action returns. Without this the input visibly
   // clears during the verify→submit gap.
   const [code, setCode] = useState("");
   const [cooldown, setCooldown] = useState(0);
-  // Tracks whether the Turnstile widget has finished obtaining a token. The
-  // widget takes ~100-500ms to render after mount; without this gate, a fast
-  // user can submit step 1 before the widget produces `cf-turnstile-response`
-  // and the server rejects the (missing) token. Resets to false whenever the
-  // widget remounts (e.g. after editPhone).
-  const [turnstileReady, setTurnstileReady] = useState(false);
   // The token we treat as "this session's verified phone". Sourced from
   // `verifyState.verificationToken` when it succeeds, but tracked separately so
   // editPhone can reset it without depending on useActionState (which has no
@@ -199,6 +205,34 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
     return () => clearInterval(id);
   }, [cooldown]);
 
+  // After an editPhone-triggered page reload, restore the name fields from
+  // sessionStorage so the user only has to re-enter the phone (the reason
+  // they clicked edit). Bumping `formInstance` forces the step-1 form to
+  // remount so its defaultValue-driven Inputs pick up the restored state.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let saved: string | null = null;
+    try {
+      saved = sessionStorage.getItem(EDIT_PHONE_STATE_KEY);
+    } catch {
+      return;
+    }
+    if (!saved) return;
+    try {
+      const data = JSON.parse(saved);
+      if (typeof data.firstName === "string") setFirstName(data.firstName);
+      if (typeof data.lastName === "string") setLastName(data.lastName);
+      setFormInstance((n) => n + 1);
+    } catch {
+      // Bad JSON — discard
+    }
+    try {
+      sessionStorage.removeItem(EDIT_PHONE_STATE_KEY);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const requestError =
     requestState && !requestState.ok ? requestState.error : null;
   const verifyError = verifyState && !verifyState.ok ? verifyState.error : null;
@@ -226,10 +260,22 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
   };
 
   const editPhone = () => {
-    setStep("details");
-    setVerifiedToken(null);
-    setCode("");
-    lastSubmittedTokenRef.current = null;
+    // Save the name fields and force a full page reload. Cloudflare Turnstile
+    // doesn't reliably refresh its widget across React unmount/remount cycles —
+    // a hard reload is the only way to guarantee a fresh widget + token for
+    // the next submission. The mount-time effect above restores the names
+    // from sessionStorage so the user only has to re-enter the phone.
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          EDIT_PHONE_STATE_KEY,
+          JSON.stringify({ firstName, lastName }),
+        );
+      } catch {
+        // Storage unavailable (private mode etc.) — proceed without restore
+      }
+      window.location.reload();
+    }
   };
 
   // Split the localized "we sent a code to {phone}." string around the
@@ -282,7 +328,7 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
       )}
 
       {step === "details" && (
-        <form action={requestAction} className="space-y-4">
+        <form key={formInstance} action={requestAction} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-sm font-bold text-foreground">{dict.firstName}</Label>
@@ -303,12 +349,12 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
             <p className="text-vermilion text-sm font-semibold">{requestError}</p>
           )}
 
-          <Turnstile onReady={setTurnstileReady} />
+          <Turnstile />
 
           <Button
             type="submit"
             size="lg"
-            disabled={requestPending || !turnstileReady}
+            disabled={requestPending}
             className="w-full rounded-full text-base border-main mt-2"
           >
             {requestPending ? dict.sending : dict.sendCode}
