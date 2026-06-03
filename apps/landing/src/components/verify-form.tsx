@@ -27,6 +27,13 @@ type Step = "details" | "code" | "done";
 interface VerifyFormProps {
   dict: Dictionary["verify"];
   locale: string;
+  /**
+   * When true, suppress the step-1 heading. Use when the surrounding context
+   * already has a title that would duplicate the form's "Запишись на пробный
+   * урок" (e.g. the main page's CTA section). Step 2's heading is always
+   * shown because its content is contextual, not duplicative.
+   */
+  hideStep1Heading?: boolean;
 }
 
 /**
@@ -76,7 +83,7 @@ function PencilIcon({ size = 16 }: { size?: number }) {
  */
 const EDIT_PHONE_STATE_KEY = "verify-form:names";
 
-export function VerifyForm({ dict, locale }: VerifyFormProps) {
+export function VerifyForm({ dict, locale, hideStep1Heading }: VerifyFormProps) {
   const [step, setStep] = useState<Step>("details");
   const [phone, setPhone] = useState<string>(""); // full E.164 once captured
   const [firstName, setFirstName] = useState("");
@@ -315,9 +322,11 @@ export function VerifyForm({ dict, locale }: VerifyFormProps) {
 
   return (
     <div className="bg-white rounded-2xl border-2 border-border shadow-[6px_6px_0_var(--border)] p-6 md:p-8 w-full">
-      <h1 className="font-heading font-black text-xl text-foreground tracking-tight mb-1">
-        {step === "details" ? dict.heading : dict.codeStepHeading}
-      </h1>
+      {!(step === "details" && hideStep1Heading) && (
+        <h1 className="font-heading font-black text-xl text-foreground tracking-tight mb-1">
+          {step === "details" ? dict.heading : dict.codeStepHeading}
+        </h1>
+      )}
       {step === "details" ? (
         <p className="text-foreground/50 text-sm mb-5">{dict.description}</p>
       ) : (
