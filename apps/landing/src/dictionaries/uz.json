@@ -128,7 +128,7 @@
     "error": "Xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring."
   },
   "verify": {
-    "heading": "Sinov darsiga yoziling",
+    "heading": "Biz siz bilan bog'lanamiz",
     "description": "Ariza qoldirish uchun telefon raqamingizni tasdiqlang — SMS orqali kod yuboramiz.",
     "firstName": "Ism",
     "lastName": "Familiya",
