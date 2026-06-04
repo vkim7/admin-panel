@@ -14,6 +14,7 @@ import { prisma } from "@/server/db";
 import { sendTemplatedSms, sendVerificationSms } from "@eng/sms";
 import { env } from "@/env.js";
 import { verifyTurnstileToken } from "@/lib/turnstile";
+import { notifyTelegramOfLead } from "@/lib/telegram";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
@@ -569,6 +570,16 @@ export async function submitVerifiedLead(
       console.error("[SMS] greeting failed", err);
     }
   });
+
+  // Push a notification to the admin Telegram group so reception staff don't
+  // have to poll the leads page. No-op if env vars aren't set; never throws.
+  after(() =>
+    notifyTelegramOfLead({
+      firstName,
+      lastName,
+      phone,
+    }),
+  );
 
   return { success: true, duplicate: false };
 }

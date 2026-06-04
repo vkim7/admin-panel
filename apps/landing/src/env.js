@@ -14,6 +14,10 @@ export const env = createEnv({
     // flow. Empty / unset = no restriction (rollout flag — set during initial
     // testing, clear when opening to all phones).
     VERIFY_ALLOWLIST_PHONES: z.string().optional(),
+    // Telegram bot token + group chat_id for "new lead" notifications. Both
+    // optional — if either is missing, the notify helper is a no-op.
+    TELEGRAM_BOT_TOKEN: z.string().optional(),
+    TELEGRAM_LEAD_CHAT_ID: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().min(1),
@@ -25,6 +29,8 @@ export const env = createEnv({
     META_TEST_EVENT_CODE: process.env.META_TEST_EVENT_CODE,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     VERIFY_ALLOWLIST_PHONES: process.env.VERIFY_ALLOWLIST_PHONES,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+    TELEGRAM_LEAD_CHAT_ID: process.env.TELEGRAM_LEAD_CHAT_ID,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
