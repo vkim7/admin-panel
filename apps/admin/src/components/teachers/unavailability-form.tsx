@@ -23,7 +23,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { recordTeacherUnavailability } from "@/lib/actions/teacher-unavailability";
 import { Plus } from "lucide-react";
-import { TIME_SLOTS } from "@/lib/constants";
+import { TIME_SLOTS, AVAILABILITY_END_SLOTS } from "@/lib/constants";
 
 interface UnavailabilityFormProps {
   teacherId: string;
@@ -112,7 +112,7 @@ export function UnavailabilityForm({ teacherId }: UnavailabilityFormProps) {
                       <SelectValue placeholder="Select time..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {TIME_SLOTS.filter((slot) => !startTime || slot > startTime).map((slot) => (
+                      {AVAILABILITY_END_SLOTS.filter((slot) => !startTime || slot > startTime).map((slot) => (
                         <SelectItem key={slot} value={slot}>
                           {slot}
                         </SelectItem>

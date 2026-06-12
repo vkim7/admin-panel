@@ -12,7 +12,7 @@ export const PATTERNS: Record<PatternKey, { label: string; days: readonly number
 };
 
 export const DEFAULT_START = "14:30";
-export const DEFAULT_END = "22:00";
+export const DEFAULT_END = "23:30";
 
 /** Empty pattern state for new teacher creation. */
 export function initialPatternState(): Record<PatternKey, PatternState> {

@@ -1,6 +1,7 @@
 import type { LessonPreference } from "@eng/database";
 
-// Fixed time slots for group scheduling (90-minute spacing)
+// Fixed time slots for group scheduling (90-minute spacing).
+// These are valid lesson START times — 22:00 is the last slot.
 export const TIME_SLOTS = [
   "07:00",
   "08:30",
@@ -16,6 +17,11 @@ export const TIME_SLOTS = [
 ] as const;
 
 export type TimeSlot = (typeof TIME_SLOTS)[number];
+
+// Availability ranges use exclusive end times (slot < endTime). To cover the
+// 22:00 lesson slot, the end must extend past 22:00 — 23:30 is the next 90-min
+// boundary (the 22:00 lesson runs 80 min and ends 23:20).
+export const AVAILABILITY_END_SLOTS = [...TIME_SLOTS, "23:30"] as const;
 
 // Short level labels for compact displays (tables, schedule cells)
 export const LEVEL_SHORT: Record<string, string> = {
