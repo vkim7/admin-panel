@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, X } from "lucide-react";
-import { TIME_SLOTS } from "@/lib/constants";
+import { TIME_SLOTS, AVAILABILITY_END_SLOTS } from "@/lib/constants";
 import {
   type PatternKey,
   type PatternState,
@@ -65,7 +65,7 @@ export function AvailabilityPatternPicker({
   }
 
   const endTimeSlots = (startTime: string) =>
-    TIME_SLOTS.filter((slot) => slot > startTime);
+    AVAILABILITY_END_SLOTS.filter((slot) => slot > startTime);
 
   return (
     <div className="space-y-4">
