@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import Link, { useLinkStatus } from "next/link";
+import { usePathname } from "next/navigation";
+import { useTransition } from "react";
 import { logout } from "@/lib/actions/auth";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -115,6 +115,33 @@ const badgeConfig: Record<string, keyof Omit<AppSidebarProps, "adminName">> = {
   "/leads": "leadCount",
 };
 
+function NavItemContent({
+  icon: Icon,
+  label,
+  badgeCount,
+}: {
+  icon: LucideIcon;
+  label: string;
+  badgeCount: number | undefined;
+}) {
+  const { pending } = useLinkStatus();
+  return (
+    <>
+      {pending ? (
+        <Loader2 className="size-4 animate-spin" />
+      ) : (
+        <Icon className="size-4" />
+      )}
+      {label}
+      {badgeCount ? (
+        <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
+          {badgeCount}
+        </span>
+      ) : null}
+    </>
+  );
+}
+
 export function AppSidebar({
   adminName,
   receptionCount,
@@ -127,10 +154,7 @@ export function AppSidebar({
   leadCount,
 }: AppSidebarProps) {
   const pathname = usePathname();
-  const router = useRouter();
-  const [isNavPending, startNavTransition] = useTransition();
   const [isLogoutPending, startLogoutTransition] = useTransition();
-  const [pendingHref, setPendingHref] = useState<string | null>(null);
 
   const counts: AppSidebarProps = {
     adminName,
@@ -143,16 +167,6 @@ export function AppSidebar({
     scheduledCount,
     leadCount,
   };
-
-  function handleNav(href: string) {
-    setPendingHref(href);
-    startNavTransition(() => {
-      router.push(href);
-    });
-  }
-
-  // Clear pending state once navigation completes (pathname changes)
-  const resolvedPending = isNavPending ? pendingHref : null;
 
   function handleLogout() {
     startLogoutTransition(() => logout());
@@ -175,38 +189,27 @@ export function AppSidebar({
             {section.items.map((item) => {
               const isActive =
                 pathname === item.href || pathname.startsWith(item.href + "/");
-              const isPending = resolvedPending === item.href;
-              const Icon = item.icon;
               const badgeKey = badgeConfig[item.href];
               const badgeCount = badgeKey
                 ? (counts[badgeKey] as number | undefined)
                 : undefined;
 
               return (
-                <button
+                <Link
                   key={item.href}
-                  onClick={() => handleNav(item.href)}
-                  disabled={isNavPending}
+                  href={item.href}
                   className={`flex w-full items-center gap-2.5 rounded-md px-3 py-1.5 text-left text-sm transition-colors ${
                     isActive
                       ? "bg-primary text-primary-foreground"
-                      : isPending
-                        ? "bg-muted text-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
-                  {isPending ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Icon className="size-4" />
-                  )}
-                  {item.label}
-                  {badgeCount ? (
-                    <span className="ml-auto rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-white">
-                      {badgeCount}
-                    </span>
-                  ) : null}
-                </button>
+                  <NavItemContent
+                    icon={item.icon}
+                    label={item.label}
+                    badgeCount={badgeCount}
+                  />
+                </Link>
               );
             })}
           </div>
