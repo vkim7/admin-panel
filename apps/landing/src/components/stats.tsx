@@ -5,7 +5,7 @@ interface StatsProps {
 }
 
 const stats = [
-  { value: "8–12", key: "maxGroup" as const },
+  { value: "4–6", key: "maxGroup" as const },
   { value: "80", key: "minLesson" as const },
   { value: "3×", key: "perWeek" as const },
   { value: "Oxford", key: "curriculum" as const },

@@ -7,7 +7,7 @@ interface PricingProps {
 }
 
 export function Pricing({ dict, locale }: PricingProps) {
-  const plans = [dict.group, dict.individual];
+  const plans = [dict.group, dict.duo, dict.individual];
 
   return (
     <section id="pricing" className="py-16 md:py-24 bg-background border-t-2 border-border">
@@ -26,7 +26,7 @@ export function Pricing({ dict, locale }: PricingProps) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-[860px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1080px] mx-auto">
           {plans.map((plan) => (
             <div key={plan.title} className="bg-white border-2 border-border rounded-xl shadow-[6px_6px_0_var(--border)] overflow-hidden flex flex-col">
               {/* Yellow header */}
