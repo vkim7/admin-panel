@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Banana School — Online ingliz tili darslari",
-    "description": "Banana School — kichik guruhlarda online ingliz tili darslari. 13+ yoshlilar uchun. Professional o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
+    "description": "Banana School — 4–6 kishilik mini guruhlarda online ingliz tili darslari. 13+ yoshlilar uchun. Professional o'qituvchilar, haftada 3 marta, 80 daqiqalik live darslar."
   },
   "nav": {
     "whyUs": "Nega biz",
@@ -38,8 +38,8 @@
         "featured": true,
         "badge": "🔥",
         "rows": [
-          { "label": "Narxi", "value": "570k", "highlight": true },
-          { "label": "Guruh hajmi", "value": "8–12", "highlight": true },
+          { "label": "Narxi", "value": "960k dan", "highlight": true },
+          { "label": "Guruh hajmi", "value": "4–6", "highlight": true },
           { "label": "Yo'lga ketadigan vaqti", "value": "0 daq", "highlight": true }
         ]
       }
@@ -49,17 +49,29 @@
     "tag": "Narx",
     "heading": "Yashirin to'lovlar yo'q.",
     "description": "",
-    "cta": "Bepul sinov darsi",
+    "cta": "Sinov darsiga yoziling",
     "group": {
-      "title": "Guruh darslari",
-      "price": "570,000",
+      "title": "Mini guruh",
+      "price": "960,000",
       "period": "UZS / oyiga",
       "features": [
         "Oyiga 12 ta dars",
-        "Professional o'qituvchilar",
+        "4–6 kishilik guruh",
         "Live Zoom darslar, 80 daqiqa",
-        "O'quvchilar ilovasi (tez kunda)",
-        "Bepul sinov darsi"
+        "Oxford University Press darsliklari",
+        "Birinchi dars — bepul"
+      ]
+    },
+    "duo": {
+      "title": "Juftlik darslari",
+      "price": "1,440,000",
+      "period": "UZS / oyiga",
+      "features": [
+        "Oyiga 12 ta dars",
+        "2 kishi — sen va shering",
+        "Live Zoom darslar, 80 daqiqa",
+        "Oxford University Press darsliklari",
+        "Sinov darsi — 50% chegirma"
       ]
     },
     "individual": {
